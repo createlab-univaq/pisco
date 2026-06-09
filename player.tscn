@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://by337nrm8aqbg"]
+
+[ext_resource type="Script" uid="uid://doknpa2picitl" path="res://Player/player.gd" id="1_1jxqw"]
+
+[node name="Player" type="Node2D" unique_id=591037833]
+position = Vector2(312, 168)
+script = ExtResource("1_1jxqw")
+
+[node name="CompositeSprites" type="Node2D" parent="." unique_id=612745217]
+scale = Vector2(3, 3)
+
+[node name="Body" type="Sprite2D" parent="CompositeSprites" unique_id=176631957]
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="Face" type="Sprite2D" parent="CompositeSprites" unique_id=1174825536]
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="Pants" type="Sprite2D" parent="CompositeSprites" unique_id=1113022327]
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="Shirt" type="Sprite2D" parent="CompositeSprites" unique_id=197214473]
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="Shoes" type="Sprite2D" parent="CompositeSprites" unique_id=227017708]
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="Hair" type="Sprite2D" parent="CompositeSprites" unique_id=1969847478]
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="ChangeHair" type="Button" parent="." unique_id=1918175590]
+offset_left = 72.0
+offset_top = 152.0
+offset_right = 112.0
+offset_bottom = 240.0
+
+[node name="ChangeFace" type="Button" parent="." unique_id=1383432069]
+offset_left = -184.0
+offset_top = 152.0
+offset_right = -144.0
+offset_bottom = 240.0
+
+[node name="ChangeShirt" type="Button" parent="." unique_id=195605890]
+offset_left = 136.0
+offset_top = 152.0
+offset_right = 176.0
+offset_bottom = 240.0
+
+[node name="ChangeShoes" type="Button" parent="." unique_id=1171375504]
+offset_left = -120.0
+offset_top = 152.0
+offset_right = -80.0
+offset_bottom = 240.0
+
+[node name="ChangePants" type="Button" parent="." unique_id=1433477394]
+offset_left = -56.0
+offset_top = 152.0
+offset_right = -16.0
+offset_bottom = 240.0
+
+[node name="ChangeBody" type="Button" parent="." unique_id=2081834423]
+offset_left = 8.0
+offset_top = 152.0
+offset_right = 48.0
+offset_bottom = 240.0
+
+[node name="RandomizeButton" type="Button" parent="." unique_id=312956655]
+offset_left = 136.0
+offset_top = -40.0
+offset_right = 264.0
+offset_bottom = 29.0
+text = "Randomize"
+
+[node name="ChangeGender" type="Button" parent="." unique_id=1754799702]
+offset_left = -248.0
+offset_top = -40.0
+offset_right = -120.0
+offset_bottom = 24.0
+text = "Gender"
+
+[connection signal="pressed" from="ChangeHair" to="." method="_on_change_hair_pressed"]
+[connection signal="pressed" from="ChangeFace" to="." method="_on_change_face_pressed"]
+[connection signal="pressed" from="ChangeShirt" to="." method="_on_change_shirt_pressed"]
+[connection signal="pressed" from="ChangeShoes" to="." method="_on_change_shoes_pressed"]
+[connection signal="pressed" from="ChangePants" to="." method="_on_change_pants_pressed"]
+[connection signal="pressed" from="ChangeBody" to="." method="_on_change_body_pressed"]
+[connection signal="pressed" from="RandomizeButton" to="." method="_on_randomize_button_pressed"]
+[connection signal="pressed" from="ChangeGender" to="." method="_on_change_gender_pressed"]
