@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cqq1sm5tydube"
+
+[deps]
+
+files=["res://dialogs/intro/dialoghi.it.translation", "res://dialogs/intro/dialoghi.en.translation", "res://dialogs/intro/dialoghi.es.translation"]
+
+source_file="res://dialogs/intro/dialoghi.csv"
+dest_files=["res://dialogs/intro/dialoghi.it.translation", "res://dialogs/intro/dialoghi.en.translation", "res://dialogs/intro/dialoghi.es.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

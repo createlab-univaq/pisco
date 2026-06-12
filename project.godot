@@ -11,13 +11,12 @@ config_version=5
 [application]
 
 config/name="PISCO"
+run/main_scene="uid://bmfxrm35oitpd"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=640
-window/size/viewport_height=480
 window/stretch/mode="canvas_items"
 
 [physics]
