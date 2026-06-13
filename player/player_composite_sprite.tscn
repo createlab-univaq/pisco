@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dytodjoa44bgf"]
+
+[ext_resource type="Script" uid="uid://dxht0nl6awv3t" path="res://player/player_composite_sprites.gd" id="1_5gl3p"]
+
+[node name="PlayerCompositeSprite" type="Node2D" unique_id=1531669499]
+scale = Vector2(3, 3)
+script = ExtResource("1_5gl3p")
+
+[node name="BodySprite2D" type="Sprite2D" parent="." unique_id=1430243011]
+offset = Vector2(0, -24)
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="FaceSprite2D" type="Sprite2D" parent="." unique_id=1460828196]
+offset = Vector2(0, -24)
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="PantsSprite2D" type="Sprite2D" parent="." unique_id=741275824]
+offset = Vector2(0, -24)
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="ShirtSprite2D" type="Sprite2D" parent="." unique_id=422071852]
+offset = Vector2(0, -24)
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="ShoesSprite2D" type="Sprite2D" parent="." unique_id=70371441]
+offset = Vector2(0, -24)
+hframes = 13
+vframes = 52
+frame = 26
+
+[node name="HairSprite2D" type="Sprite2D" parent="." unique_id=2024547542]
+offset = Vector2(0, -24)
+hframes = 13
+vframes = 52
+frame = 26

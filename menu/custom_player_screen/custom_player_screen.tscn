@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://by337nrm8aqbg"]
+
+[ext_resource type="Script" uid="uid://doknpa2picitl" path="res://menu/custom_player_screen/custom_player_screen.gd" id="1_62t44"]
+[ext_resource type="PackedScene" uid="uid://dytodjoa44bgf" path="res://player/player_composite_sprite.tscn" id="2_uj80h"]
+[ext_resource type="PackedScene" uid="uid://du4axddra5bje" path="res://menu/custom_player_screen/custom_player_screen_component.tscn" id="3_sjgsg"]
+
+[node name="CustomPlayerScreen" type="Node2D" unique_id=591037833]
+script = ExtResource("1_62t44")
+
+[node name="PlayerCompositeSprite" parent="." unique_id=1531669499 instance=ExtResource("2_uj80h")]
+position = Vector2(184, 184.00002)
+
+[node name="RandomizeButton" type="Button" parent="." unique_id=312956655]
+offset_left = 256.0
+offset_top = 384.0
+offset_right = 384.0
+offset_bottom = 453.0
+text = "Randomize"
+
+[node name="ChangeGenderButton" type="Button" parent="." unique_id=1754799702]
+offset_left = 64.0
+offset_top = 384.0
+offset_right = 192.0
+offset_bottom = 448.0
+text = "Gender"
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1674363477]
+offset_left = 424.0
+offset_top = 40.0
+offset_right = 606.0
+offset_bottom = 444.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=453808522]
+layout_mode = 2
+
+[node name="BodyCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=529609280 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
+layout_mode = 2
+player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
+body_part = 0
+
+[node name="Label" parent="PanelContainer/VBoxContainer/BodyCustomPlayerScreenComponent" index="1" unique_id=823304799]
+text = "Body"
+
+[node name="HairCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=1800616321 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
+layout_mode = 2
+player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
+body_part = 5
+
+[node name="Label" parent="PanelContainer/VBoxContainer/HairCustomPlayerScreenComponent" index="1" unique_id=823304799]
+text = "Hair"
+
+[node name="FaceCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=1139761568 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
+layout_mode = 2
+player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
+body_part = 1
+
+[node name="Label" parent="PanelContainer/VBoxContainer/FaceCustomPlayerScreenComponent" index="1" unique_id=823304799]
+text = "Face"
+
+[node name="ShirtCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=1542732204 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
+layout_mode = 2
+player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
+body_part = 3
+
+[node name="Label" parent="PanelContainer/VBoxContainer/ShirtCustomPlayerScreenComponent" index="1" unique_id=823304799]
+text = "Shirt"
+
+[node name="PantsCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=1257931929 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
+layout_mode = 2
+player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
+body_part = 2
+
+[node name="Label" parent="PanelContainer/VBoxContainer/PantsCustomPlayerScreenComponent" index="1" unique_id=823304799]
+text = "Pants"
+
+[node name="ShoesCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=1408258420 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
+layout_mode = 2
+player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
+body_part = 4
+
+[node name="Label" parent="PanelContainer/VBoxContainer/ShoesCustomPlayerScreenComponent" index="1" unique_id=823304799]
+text = "Shoes"
+
+[connection signal="pressed" from="RandomizeButton" to="." method="_on_randomize_button_pressed"]
+[connection signal="pressed" from="ChangeGenderButton" to="." method="_on_change_gender_button_pressed"]
+
+[editable path="PanelContainer/VBoxContainer/BodyCustomPlayerScreenComponent"]
+[editable path="PanelContainer/VBoxContainer/HairCustomPlayerScreenComponent"]
+[editable path="PanelContainer/VBoxContainer/FaceCustomPlayerScreenComponent"]
+[editable path="PanelContainer/VBoxContainer/ShirtCustomPlayerScreenComponent"]
+[editable path="PanelContainer/VBoxContainer/PantsCustomPlayerScreenComponent"]
+[editable path="PanelContainer/VBoxContainer/ShoesCustomPlayerScreenComponent"]

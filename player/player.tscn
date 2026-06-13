@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://vc0v2m18m6j1"]
+
+[ext_resource type="PackedScene" uid="uid://dytodjoa44bgf" path="res://player/player_composite_sprite.tscn" id="2_q3lat"]
+
+[node name="Player" type="CharacterBody2D" unique_id=56829661]
+
+[node name="PlayerCompositeSprite" parent="." unique_id=1531669499 instance=ExtResource("2_q3lat")]
