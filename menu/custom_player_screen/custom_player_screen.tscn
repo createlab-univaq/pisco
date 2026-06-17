@@ -36,7 +36,6 @@ layout_mode = 2
 [node name="BodyCustomPlayerScreenComponent" parent="PanelContainer/VBoxContainer" unique_id=529609280 node_paths=PackedStringArray("player_composite_sprite") instance=ExtResource("3_sjgsg")]
 layout_mode = 2
 player_composite_sprite = NodePath("../../../PlayerCompositeSprite")
-body_part = 0
 
 [node name="Label" parent="PanelContainer/VBoxContainer/BodyCustomPlayerScreenComponent" index="1" unique_id=823304799]
 text = "Body"

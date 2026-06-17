@@ -19,7 +19,7 @@ func _on_change_previous_button_pressed() -> void:
 			player_composite_sprite.change_to_previous_shirt()
 		PlayerCompositeSprite.BodyPart.PANTS:
 			player_composite_sprite.change_to_previous_pants()
-		PlayerCompositeSprite.BodyPart.FACE:
+		PlayerCompositeSprite.BodyPart.SHOES:
 			player_composite_sprite.change_to_previous_shoes()
 
 func _on_change_next_button_pressed() -> void:
@@ -34,5 +34,5 @@ func _on_change_next_button_pressed() -> void:
 			player_composite_sprite.change_to_next_shirt()
 		PlayerCompositeSprite.BodyPart.PANTS:
 			player_composite_sprite.change_to_next_pants()
-		PlayerCompositeSprite.BodyPart.FACE:
+		PlayerCompositeSprite.BodyPart.SHOES:
 			player_composite_sprite.change_to_next_shoes()

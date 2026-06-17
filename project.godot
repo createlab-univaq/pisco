@@ -20,6 +20,11 @@ window/size/viewport_width=640
 window/size/viewport_height=480
 window/stretch/mode="canvas_items"
 
+[layer_names]
+
+2d_physics/layer_1="player"
+2d_physics/layer_2="world"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"
