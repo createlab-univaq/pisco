@@ -1,4 +1,6 @@
 id,it,en,es
-1,Ciao viandante! Benvenuto nel nostro villaggio.,Hello traveler! Welcome to our village.,¡Hola viajero! Bienvenido a nuestro pueblo.
-2,Le cose sono diventate pericolose da queste parti...,Things have become dangerous around here...,Las cosas se han puesto peligrosas por aquí...
-3,"Prendi questa spada, ti servirà per difenderti.","Take this sword, you will need it to defend yourself.","Toma esta espada, te ayudará a defenderte."
+INTRO_1,Ciao viandante! Benvenuto nel nostro villaggio.,Hello traveler! Welcome to our village.,¡Hola viajero! Bienvenido a nuestro pueblo.
+INTRO_2,Le cose sono diventate pericolose da queste parti...,Things have become dangerous around here...,Las cosas se han puesto peligrosas por aquí...
+INTRO_3,"SCELTA:Accetta la spada->ACCETTATA|Rifiuta la spada->RIFIUTATA","CHOICE:Accept the sword->ACCETTATA|Refuse the sword->RIFIUTATA","CHOICE:Aceptar la espada->ACCETTATA|Rechazar la espada->RIFIUTATA"
+ACCETTATA_1,"Grazie! Prendi questa spada, ti servirà per difenderti.","Thank you! Take this sword, you will need it to defend yourself.","¡Gracias! Toma esta espada, te ayudará a defenderte."
+RIFIUTATA_1,Sei un tipo coraggioso... o molto sciocco. Buona fortuna.,You are a brave soul... or very foolish. Good luck.,Eres un tipo valiente... o muy tonto. Buena suerte.
