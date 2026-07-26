@@ -34,8 +34,7 @@ services:
       "
 
   backend:
-    context: .
-    dockerfile: Dockerfile
+    build: .
     restart: always
     expose:
       - "5000"
