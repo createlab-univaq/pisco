@@ -30,6 +30,11 @@ exports.listaPercorsi = async (req, res) => {
     });
 
     if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      console.error(
+        `Polyglot ha risposto ${response.status} per ${POLYGLOT_API_URL}/api/flows/catalog:`,
+        body.slice(0, 500),
+      );
       return res.status(502).json({
         message: "Errore dal servizio Polyglot",
         status: response.status,
