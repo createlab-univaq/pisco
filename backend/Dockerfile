@@ -5,17 +5,19 @@ WORKDIR /backend
 
 COPY . .
 
-RUN npm ci
+RUN npm install --ignore-scripts
+
+RUN npm run postinstall
+
 
 FROM node:20-alpine AS runner
 
 WORKDIR /backend
-
 ENV NODE_ENV=production
 
 COPY package*.json ./
 
-RUN npm ci --omit=dev --ignore-scripts
+RUN npm install --omit=dev --ignore-scripts
 
 COPY --from=builder /backend/dist ./dist
 
