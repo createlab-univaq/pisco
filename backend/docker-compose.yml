@@ -1,49 +1,14 @@
 version: "3.8"
 
 services:
-  mongodb:
-    image: mongo:5.0
-    restart: always
-    volumes:
-      - mongodb_data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME:-admin}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-SECRET}
-
-  minio:
-    image: minio/minio
-    restart: always
-    volumes:
-      - minio_data:/data
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-admin}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-secure_password_here}
-    command: server /data --console-address ":9001"
-    expose:
-      - "9000"
-      - "9001"
-
-  createbucket:
-    image: minio/mc
-    depends_on:
-      - minio
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_ROOT_USER:-admin} ${MINIO_ROOT_PASSWORD:-secure_password_here};
-      /usr/bin/mc mb myminio/${S3_BUCKET:-polyglot-uploads-dev} --ignore-existing;
-      "
-
   backend:
     build: .
     restart: always
     expose:
       - "5000"
-    depends_on:
-      - mongodb
-      - minio
     environment:
-      # Database connection
-      - MONGODB_URI=mongodb://${MONGO_USERNAME:-prova}:${MONGO_PASSWORD:-SECRET}@mongodb:27017/polyglot?authSource=admin
+      # Database connection (Will be set to the Coolify Internal MongoDB URL)
+      - MONGODB_URI=${MONGODB_URI}
       
       # App configurations
       - CORS_ORIGINS=${CORS_ORIGINS}
@@ -56,13 +21,9 @@ services:
       - ISSUER_BASE_URL=${ISSUER_BASE_URL}
       - AUDIENCE=${AUDIENCE}
       
-      # S3 / MinIO configurations
-      - S3_BUCKET=${S3_BUCKET:-polyglot-uploads-dev}
+      # S3 / MinIO configurations (Will be set to the Coolify Internal MinIO details)
+      - S3_BUCKET=${S3_BUCKET}
       - S3_REGION=${S3_REGION:-us-east-1}
-      - S3_ACCESS_KEY=${MINIO_ROOT_USER:-admin}
-      - S3_SECRET_KEY=${MINIO_ROOT_PASSWORD:-secure_password_here}
-      - S3_ENDPOINT=http://minio:9000
-
-volumes:
-  mongodb_data:
-  minio_data:
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_ENDPOINT=${S3_ENDPOINT}
