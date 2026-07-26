@@ -21,8 +21,11 @@ RUN if [ -n "$API_URL" ]; then printf 'API_URL=%s\n' "$API_URL" > .env; fi; \
       exit 1; \
     fi
 
-# Compile the Dart script to native executable
-RUN flutter build web --release
+# Compile the Dart script to native executable.
+# --pwa-strategy=none: the generated service worker caches the whole app
+# offline-first and keeps serving it after a redeploy. This is an authenticated
+# dashboard, so offline support buys nothing and only hides new builds.
+RUN flutter build web --release --pwa-strategy=none
 
 # Use NGINX as web server, lightweight runtime image
 FROM ghcr.io/nginx/nginx-unprivileged:1.29.5-alpine AS runtime
@@ -32,6 +35,9 @@ WORKDIR /usr/share/nginx/html
 
 # Copy only the compiled web output from the build stage
 COPY --from=build /app/build/web .
+
+# Revalidation headers + SPA fallback (see comments in the file)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # nginx-unprivileged runs as UID 101; root-owned files are unreadable. Fix ownership.
 USER root
