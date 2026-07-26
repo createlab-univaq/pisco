@@ -2,3 +2,16 @@ Dockerfile
 .dockerignore
 .gitignore
 README.md
+
+# Build artifacts -- a stale local build/ would otherwise be copied into the
+# image and shadow the one produced by `flutter build web`
+build
+.dart_tool
+
+# Non-web platform targets: this image only ever builds the web output
+android
+ios
+linux
+macos
+windows
+test

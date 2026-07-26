@@ -9,11 +9,16 @@ services:
     environment:
       # Database connection (Will be set to the Coolify Internal MongoDB URL)
       - MONGODB_URI=${MONGODB_URI}
-      
+      # Optional: PEM contents of a Mongo TLS client certificate
+      - MONGODB_CERTIFICATE=${MONGODB_CERTIFICATE}
+
       # App configurations
       - CORS_ORIGINS=${CORS_ORIGINS}
-      - COOKIE_KEY=${COOKIE_KEY}
       - TEST_MODE=${TEST_MODE:-false}
+      # Public host of THIS backend. Embedded into the `--serverurl` of the
+      # generated notebooks, so it must be the externally reachable domain
+      # (falls back to localhost:5000, which breaks those links).
+      - DOMAIN_APP_DEPLOY=${DOMAIN_APP_DEPLOY}
       
       # Auth & AI Services
       - OPENAI_SECRET_KEY=${OPENAI_SECRET_KEY}
