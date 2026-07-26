@@ -17,7 +17,8 @@ WORKDIR /backend
 ENV NODE_ENV=production
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+# Added --ignore-scripts so 'postinstall' (tsc) is skipped in this stage
+RUN npm ci --omit=dev --ignore-scripts
 
 COPY --from=builder /backend/dist ./dist
 
