@@ -30,7 +30,9 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 
 // Shared secret for trusted server-to-server callers (see service.middleware).
 // Optional: when unset, the service-only routes simply reject every request.
-export const SERVICE_TOKEN = process.env.SERVICE_TOKEN as string;
+// NOT named SERVICE_TOKEN: Coolify reserves the SERVICE_* prefix for its own
+// magic variables and will not let you set one.
+export const APP_SERVICE_TOKEN = process.env.APP_SERVICE_TOKEN as string;
 
 export const OPENAI_SECRET_KEY = process.env.OPENAI_SECRET_KEY as string;
 export const OPENAI_ENDPOINT = process.env.OPENAI_ENDPOINT as string;

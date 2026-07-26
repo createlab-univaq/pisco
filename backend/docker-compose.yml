@@ -26,7 +26,8 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       # Shared secret for trusted server-to-server callers (game-api's
       # GET /percorsi). Must match game-api's POLYGLOT_SERVICE_TOKEN.
-      - SERVICE_TOKEN=${SERVICE_TOKEN}
+      # Deliberately not SERVICE_TOKEN: Coolify reserves the SERVICE_* prefix.
+      - APP_SERVICE_TOKEN=${APP_SERVICE_TOKEN}
       
       # S3 / MinIO configurations (Will be set to the Coolify Internal MinIO details)
       - S3_BUCKET=${S3_BUCKET}

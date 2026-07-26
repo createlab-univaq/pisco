@@ -17,7 +17,7 @@ services:
 
       # Polyglot backend, used server-side by GET /percorsi to fetch the flow
       # catalogue. No trailing slash. POLYGLOT_SERVICE_TOKEN must equal the
-      # backend's SERVICE_TOKEN.
+      # backend's APP_SERVICE_TOKEN.
       - POLYGLOT_API_URL=${POLYGLOT_API_URL}
       - POLYGLOT_SERVICE_TOKEN=${POLYGLOT_SERVICE_TOKEN}
 

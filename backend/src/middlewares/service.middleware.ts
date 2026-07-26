@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { NextFunction, Request, Response } from "express";
-import { SERVICE_TOKEN } from "../utils/secrets";
+import { APP_SERVICE_TOKEN } from "../utils/secrets";
 
 const safeEqual = (a: string, b: string) => {
   const ab = Buffer.from(a);
@@ -23,11 +23,21 @@ export const checkServiceToken = (
 ) => {
   const provided = req.headers["x-service-token"];
 
-  if (
-    !SERVICE_TOKEN ||
-    typeof provided !== "string" ||
-    !safeEqual(provided, SERVICE_TOKEN)
-  ) {
+  // Distinguish "not configured here" from "caller sent the wrong value":
+  // both reject, but they need entirely different fixes.
+  if (!APP_SERVICE_TOKEN) {
+    console.error(
+      "APP_SERVICE_TOKEN is not set: rejecting every service-to-service request",
+    );
+    return res.status(503).json({ error: "Service auth not configured" });
+  }
+
+  if (typeof provided !== "string" || !safeEqual(provided, APP_SERVICE_TOKEN)) {
+    console.error(
+      `Rejected service token (received ${
+        typeof provided === "string" ? `${provided.length} chars` : "no header"
+      }, expected ${APP_SERVICE_TOKEN.length})`,
+    );
     return res.status(401).json({ error: "Invalid service token" });
   }
 
