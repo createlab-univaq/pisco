@@ -1,0 +1,1 @@
+enum TipoTest { pre, post }
