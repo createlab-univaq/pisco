@@ -1,10 +1,11 @@
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button, Center, Heading, Stack } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Navbar from '../components/NavBars/NavBar';
 
 const Home = () => {
-  const { user } = useUser();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <>

@@ -4,8 +4,8 @@ import '../components/AppMain.css';
 import '../components/Card.css';
 import '../styles/globals.css';
 
-import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { SessionProvider } from 'next-auth/react';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { withProse } from '@nikolovlazar/chakra-ui-prose';
 import { Analytics } from '@vercel/analytics/react';
@@ -24,12 +24,12 @@ const theme = extendTheme(
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <UserProvider>
+    <SessionProvider session={pageProps.session}>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
         <Analytics />
       </ChakraProvider>
-    </UserProvider>
+    </SessionProvider>
   );
 }
 

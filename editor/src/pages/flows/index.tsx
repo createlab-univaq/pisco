@@ -1,4 +1,3 @@
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { AddIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -13,6 +12,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import FlowCard from '../../components/Card/FlowCard';
 import CreateFlowModal from '../../components/Modals/CreateFlowModal';
@@ -21,7 +22,7 @@ import Navbar from '../../components/NavBars/NavBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import { APIV2 } from '../../data/api';
 import { PolyglotFlow } from '../../types/polyglotElements';
-import auth0 from '../../utils/auth0';
+import { authOptions } from '../../utils/authOptions';
 
 type FlowIndexPageProps = {
   accessToken: string | undefined;
@@ -31,7 +32,11 @@ const FlowIndexPage = ({ accessToken }: FlowIndexPageProps) => {
   const [currentTab, setCurrentTab] = useState(0);
   const [flows, setFlows] = useState<PolyglotFlow[]>([]);
   const [selectedFlowId, setSelectedFlowId] = useState<string | undefined>();
-  const { user, isLoading, error } = useUser();
+  const { data: session, status } = useSession();
+  const user = session?.user;
+  const isLoading = status === 'loading';
+  // Surfaces a failed ID-token refresh so the user can be told to sign in again
+  const error = session?.error;
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const {
@@ -163,13 +168,13 @@ const FlowIndexPage = ({ accessToken }: FlowIndexPageProps) => {
 export default FlowIndexPage;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await auth0.getSession(ctx.req, ctx.res);
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
 
-  if (!session) return { props: {} };
+  if (!session?.idToken) return { props: {} };
 
   return {
     props: {
-      accessToken: session.accessToken,
+      accessToken: session.idToken,
     },
   };
 };

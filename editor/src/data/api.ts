@@ -1,4 +1,5 @@
 import axiosCreate, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { signIn, signOut } from 'next-auth/react';
 import Router from 'next/router';
 import { GeneralMetadata, Metadata } from '../types/metadata';
 import {
@@ -66,10 +67,10 @@ export class APIV2 {
       return resp;
     } catch (err) {
       if ((err as AxiosError)?.response?.status === 401) {
-        const BACK_URL = process.env.BACK_URL;
-        const LOGIN_URL =
-          BACK_URL + '/api/auth/google?returnUrl=' + Router.asPath;
-        if (this.redirect401) await Router.push(LOGIN_URL);
+        if (this.redirect401)
+          await signIn('google', {
+            callbackUrl: this.redirect401URL ?? Router.asPath,
+          });
         if (this.error401) throw err;
         return;
       }
@@ -82,8 +83,8 @@ export class APIV2 {
   getUserInfo(): Promise<AxiosResponse<User>> {
     return this.axios.get('/api/user/me');
   }
-  logout(): Promise<AxiosResponse> {
-    return this.axios.post('/api/auth/logout');
+  logout(): Promise<void> {
+    return signOut().then(() => undefined);
   }
   loadExampleFlowElementsAsync(flowId: string): any {
     const flow = exampleFlows.get(flowId);

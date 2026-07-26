@@ -13,13 +13,14 @@ import {
 } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth/next';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import FlowEditor from '../../../components/Editor/FlowEditor';
 import { APIV2 } from '../../../data/api';
 import useStore from '../../../store';
 import { PolyglotFlow } from '../../../types/polyglotElements';
-import auth0 from '../../../utils/auth0';
+import { authOptions } from '../../../utils/authOptions';
 import { clearFlowCaches } from '../../../utils/cache';
 
 type FlowIndexProps = {
@@ -221,13 +222,13 @@ const FlowIndex = ({ accessToken }: FlowIndexProps) => {
 export default FlowIndex;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await auth0.getSession(ctx.req, ctx.res);
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
 
-  if (!session) return { props: {} };
+  if (!session?.idToken) return { props: {} };
 
   return {
     props: {
-      accessToken: session.accessToken,
+      accessToken: session.idToken,
     },
   };
 };

@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { expressjwt as jwt } from "express-jwt";
-import jwks from "jwks-rsa";
+import { OAuth2Client } from "google-auth-library";
 import User from "../models/user.model";
-import {
-  AUTH0_AUDIENCE,
-  AUTH0_ISSUER_BASE_URL,
-  TEST_MODE,
-} from "../utils/secrets";
+import { GOOGLE_CLIENT_ID, TEST_MODE } from "../utils/secrets";
 
 let checkAuthTmp;
 
@@ -20,54 +15,45 @@ if (TEST_MODE) {
     }
   };
 } else {
-  checkAuthTmp = [
-    jwt({
-      secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: AUTH0_ISSUER_BASE_URL + ".well-known/jwks.json",
-      }) as any,
-      audience: AUTH0_AUDIENCE,
-      issuer: AUTH0_ISSUER_BASE_URL,
-      algorithms: ["RS256"],
-    }),
-    async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const sub = req?.auth?.sub;
-        const username = req?.auth?.["https://polyglot-edu.com/username"];
-        if (!sub) return res.status(400).json({ error: "Bad request!" });
+  // Fetches and caches Google's public keys on its own
+  const googleClient = new OAuth2Client();
 
-        let query;
-        switch (sub.split("|")[0]) {
-          case "google-oauth2":
-            query = { googleId: sub.split("|")[1] };
-            break;
-          default:
-            return res.status(400).json({ error: "Invalid user auth" });
-        }
+  checkAuthTmp = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization?.match(/^Bearer +(.+)$/i)?.[1];
+    if (!token) return res.status(401).json({ error: "Missing bearer token" });
 
-        let user = await User.findOne(query);
+    let payload;
+    try {
+      // Verifies signature, `iss`, `aud` and `exp`
+      const ticket = await googleClient.verifyIdToken({
+        idToken: token,
+        audience: GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
 
-        if (!user) {
-          user = await User.create({
-            ...query,
-            username: username,
-          });
-        }
+    if (!payload?.sub) return res.status(401).json({ error: "Invalid token" });
 
-        if (user.username !== username) {
-          user.username = username;
-          await user.save();
-        }
+    try {
+      let user = await User.findOne({ googleId: payload.sub });
 
-        req.user = user;
-        next();
-      } catch (error) {
-        next(error);
+      if (!user) {
+        user = await User.create({
+          googleId: payload.sub,
+          username: payload.name,
+          email: payload.email,
+          registrationDate: new Date(),
+        });
       }
-    },
-  ];
+
+      req.user = user;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const checkAuth = checkAuthTmp;
