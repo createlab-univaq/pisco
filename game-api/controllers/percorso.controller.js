@@ -23,6 +23,10 @@ exports.listaPercorsi = async (req, res) => {
   try {
     const response = await fetch(`${POLYGLOT_API_URL}/api/flows/catalog`, {
       headers: { "x-service-token": POLYGLOT_SERVICE_TOKEN },
+      // Without this, an unreachable-but-resolving host leaves the request
+      // hanging until the reverse proxy gives up -- which surfaces as a bare
+      // 502 with no CORS headers, hiding the real cause.
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!response.ok) {
@@ -37,6 +41,10 @@ exports.listaPercorsi = async (req, res) => {
     console.error("Errore nel recupero dei percorsi:", error);
     return res.status(502).json({
       message: "Servizio Polyglot non raggiungibile",
+      // TimeoutError vs. a connection/DNS failure -- distinguishes "wrong host
+      // that silently drops packets" from "wrong host that does not resolve"
+      reason: error.name,
+      target: POLYGLOT_API_URL,
     });
   }
 };
