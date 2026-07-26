@@ -4,9 +4,11 @@ FROM node:20-alpine AS builder
 WORKDIR /backend
 
 COPY package*.json tsconfig.json ./
-RUN npm ci
+# Add --ignore-scripts here so it waits for the src folder
+RUN npm ci --ignore-scripts
 
 COPY src ./src
+# Now explicitly run the compilation because the code is here
 RUN npm run postinstall
 
 # Step 2: Production runner stage
@@ -17,7 +19,7 @@ WORKDIR /backend
 ENV NODE_ENV=production
 
 COPY package*.json ./
-# Added --ignore-scripts so 'postinstall' (tsc) is skipped in this stage
+# Keep --ignore-scripts here so it skips compiling in the runner stage
 RUN npm ci --omit=dev --ignore-scripts
 
 COPY --from=builder /backend/dist ./dist
