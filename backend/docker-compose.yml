@@ -18,8 +18,8 @@ services:
       # Auth & AI Services
       - OPENAI_SECRET_KEY=${OPENAI_SECRET_KEY}
       - OPENAI_ENDPOINT=${OPENAI_ENDPOINT}
-      - ISSUER_BASE_URL=${ISSUER_BASE_URL}
-      - AUDIENCE=${AUDIENCE}
+      - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       
       # S3 / MinIO configurations (Will be set to the Coolify Internal MinIO details)
       - S3_BUCKET=${S3_BUCKET}

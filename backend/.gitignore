@@ -116,6 +116,3 @@ uploads/
 # Editor / IDE directories
 .vscode/
 .idea/
-
-# Environment files wildcard
-.env.*

@@ -12,4 +12,4 @@
 .idea/
 
 # Environment files wildcard
-.env.*
+.env
