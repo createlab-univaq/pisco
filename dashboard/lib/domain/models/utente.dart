@@ -47,7 +47,8 @@ class Utente {
       dataDiNascita: DateTime.parse(json['dataNascita']),
       sesso: Sesso.values.firstWhere((e) => e.name == json['sesso']),
       email: json['email'],
-      numTelefono: json['telefono'],
+      // The API field is numTelefono; 'telefono' was always null
+      numTelefono: json['numTelefono'],
       scuolaFrequentata: ScuolaExtension.fromApiValue(
         json['scuolaFrequentata'],
       ),
@@ -73,7 +74,8 @@ class Utente {
       'dataNascita': dataDiNascita.toIso8601String(),
       'sesso': sesso.name,
       'email': email,
-      'telefono': numTelefono,
+      // Must match the API field name, otherwise the number is never saved
+      'numTelefono': numTelefono,
       'scuolaFrequentata': scuolaFrequentata.name,
       'titoloStudio': titoloStudio.name,
     };

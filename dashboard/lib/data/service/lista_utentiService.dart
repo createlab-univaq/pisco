@@ -25,7 +25,24 @@ class ListaUtentiService {
     }
 
     final List data = jsonDecode(response.body);
-    return data.map((e) => Utente.fromJson(e)).toList();
+
+    // Parse per record: a single malformed document used to throw out of the
+    // whole .map(), which the viewmodel swallowed -- leaving the list empty
+    // with no visible error even though the API had returned every user.
+    final utenti = <Utente>[];
+    for (final raw in data) {
+      try {
+        utenti.add(Utente.fromJson(raw as Map<String, dynamic>));
+      } catch (e) {
+        print('Utente non parsabile (_id: ${raw is Map ? raw['_id'] : '?'}): $e');
+      }
+    }
+
+    if (utenti.length != data.length) {
+      print('Utenti scartati: ${data.length - utenti.length} su ${data.length}');
+    }
+
+    return utenti;
   }
 
   Future<void> deleteUtenti(List<String> userIds) async {
