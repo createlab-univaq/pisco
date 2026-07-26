@@ -28,6 +28,10 @@ export const CORS_ORIGINS = process.env.CORS_ORIGINS
 // OAuth client id that incoming Google ID tokens must be addressed to (`aud`)
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 
+// Shared secret for trusted server-to-server callers (see service.middleware).
+// Optional: when unset, the service-only routes simply reject every request.
+export const SERVICE_TOKEN = process.env.SERVICE_TOKEN as string;
+
 export const OPENAI_SECRET_KEY = process.env.OPENAI_SECRET_KEY as string;
 export const OPENAI_ENDPOINT = process.env.OPENAI_ENDPOINT as string;
 

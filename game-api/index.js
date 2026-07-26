@@ -27,6 +27,7 @@ connectDB();
 
 // Routes
 app.use(require("./routes/utente.routes"));
+app.use(require("./routes/percorso.routes"));
 app.use("/api/tentativi-test", require("./routes/tentativoTest.routes"));
 app.use(excelRoutes);
 app.use("/api/health", healthRoutes);

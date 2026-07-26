@@ -24,6 +24,9 @@ services:
       - OPENAI_SECRET_KEY=${OPENAI_SECRET_KEY}
       - OPENAI_ENDPOINT=${OPENAI_ENDPOINT}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      # Shared secret for trusted server-to-server callers (game-api's
+      # GET /percorsi). Must match game-api's POLYGLOT_SERVICE_TOKEN.
+      - SERVICE_TOKEN=${SERVICE_TOKEN}
       
       # S3 / MinIO configurations (Will be set to the Coolify Internal MinIO details)
       - S3_BUCKET=${S3_BUCKET}

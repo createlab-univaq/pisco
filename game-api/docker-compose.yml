@@ -15,6 +15,12 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1h}
 
+      # Polyglot backend, used server-side by GET /percorsi to fetch the flow
+      # catalogue. No trailing slash. POLYGLOT_SERVICE_TOKEN must equal the
+      # backend's SERVICE_TOKEN.
+      - POLYGLOT_API_URL=${POLYGLOT_API_URL}
+      - POLYGLOT_SERVICE_TOKEN=${POLYGLOT_SERVICE_TOKEN}
+
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
       interval: 30s

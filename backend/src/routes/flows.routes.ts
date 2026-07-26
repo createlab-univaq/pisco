@@ -1,5 +1,6 @@
 import express from "express";
 import { checkAuth } from "../middlewares/auth.middleware";
+import { checkServiceToken } from "../middlewares/service.middleware";
 import * as FlowController from "../controllers/flows.controllers";
 
 const router = express.Router();
@@ -10,6 +11,11 @@ router
   .post(checkAuth, FlowController.createFlow);
 
 router.route("/json").post(checkAuth, FlowController.createFlowJson);
+
+// Server-to-server only: the analyst dashboard reads the flow catalogue
+// through game-api, which has no Google identity to authenticate with.
+// MUST stay above "/:id", otherwise that route swallows "/catalog".
+router.route("/catalog").get(checkServiceToken, FlowController.getFlowList);
 
 router
   .route("/:id")
