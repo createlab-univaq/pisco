@@ -34,7 +34,7 @@ services:
       "
 
   backend:
-    context: ./backend
+    context: .
     dockerfile: Dockerfile
     restart: always
     expose:
