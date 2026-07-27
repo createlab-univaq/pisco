@@ -1,39 +1,31 @@
+class_name Player
 extends CharacterBody2D
 
-class_name Player
+@export var SPEED: int = MAX_DEFAULT_SPEED
 
-const MAX_SPEED: float = 200.0
-const ACCELERATION: float = 800.0
-const FRICTION: float = 1000.0
+const MAX_DEFAULT_SPEED: int = 500
 
-var facing_direction: Vector2 = Vector2.DOWN
+enum States {
+	WALK
+}
 
-func _physics_process(delta: float) -> void:
-	var direction: Vector2 = Input.get_vector(
-		"ui_left",
-		"ui_right",
-		"ui_up",
-		"ui_down"
-	)
+var state: States = States.WALK
 
-	if direction != Vector2.ZERO:
-		facing_direction = direction
-		_move(direction, delta)
+func _physics_process(_delta) -> void:
+	match state:
+		States.WALK:
+			walk_state()
+
+func walk_state() -> void:
+	var inputVector: Vector2 = Vector2.ZERO
+	
+	inputVector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+	inputVector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+	inputVector = inputVector.normalized()
+	
+	if inputVector != Vector2.ZERO:
+		velocity = velocity.move_toward(inputVector * SPEED, SPEED)
 	else:
-		_idle(delta)
+		velocity = Vector2.ZERO
 
 	move_and_slide()
-
-
-func _move(direction: Vector2, delta: float) -> void:
-	velocity = velocity.move_toward(
-		direction * MAX_SPEED,
-		ACCELERATION * delta
-	)
-
-
-func _idle(delta: float) -> void:
-	velocity = velocity.move_toward(
-		Vector2.ZERO,
-		FRICTION * delta
-	)
