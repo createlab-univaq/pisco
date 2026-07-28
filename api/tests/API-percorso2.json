@@ -1,0 +1,284 @@
+{
+  "id": "53e51eec-87d2-47bf-9e04-fa2a431b3d11",
+  "nodes": [
+    {
+      "id": "6c94077a-818e-4f88-82a3-f5331df9dc73",
+      "type": "FauxPasNode",
+      "data": {
+        "quiz": [
+          {
+            "qid": "5a2d8e8f-6b85-4e24-833b-2d59993c9db0",
+            "narration": "Giulia era a una festa a casa del suo amico Antonio. Stava parlando con Antonio quando un’altra donna si avvicinò a loro. Era una delle vicine di casa di Antonio. La donna disse “Ciao,” quindi rivolgendosi a Giulia aggiunse: “Non credo che ci siamo mai incontrate. Sono Maria, e tu come ti chiami?” “Giulia.” “Gradite qualcosa da bere?” chiese Antonio.",
+            "questions": [
+              {
+                "question": "Qualcuno ha detto qualcosa che non avrebbe dovuto dire, o comunque qualcuno ha detto qualcosa di sconveniente?",
+                "answers": [
+                  "Si",
+                  "No"
+                ],
+                "correctIndex": 1,
+                "skipIf": {
+                  "enabled": false,
+                  "questionIndex": null,
+                  "answerIndex": null
+                },
+                "_id": "6a3ed3b7ed931ce6a89ca6e1"
+              }
+            ],
+            "_id": "6a3ed3b7ed931ce6a89ca6e0"
+          },
+          {
+            "qid": "5eacd55d-2717-42a7-a2a2-332563d65e31",
+            "narration": "Il marito di Elena le stava organizzando una festa di compleanno a sorpresa. Il marito invitò Sara, un’amica di Elena e le disse: “Non parlarne con nessuno, soprattutto con Elena.” Il giorno prima della festa, Elena si trovava a casa di Sara quando rovesciò un po’ di caffè sul vestito nuovo appoggiato sulla sedia. “Oh!” esclamò Sara, “Volevo indossarlo per la tua festa!” “Quale festa?” domandò Elena. “Forza” disse Sara, “vediamo se riusciamo a lavare via la macchia.”",
+            "questions": [
+              {
+                "question": "Qualcuno ha detto qualcosa che non avrebbe dovuto dire, o comunque qualcuno ha detto qualcosa di sconveniente? ",
+                "answers": [
+                  "Si",
+                  "No"
+                ],
+                "correctIndex": 0,
+                "skipIf": {
+                  "enabled": false,
+                  "questionIndex": null,
+                  "answerIndex": null
+                },
+                "_id": "6a3ed3b7ed931ce6a89ca6e3"
+              },
+              {
+                "question": "Se sì, chi ha detto qualcosa che non avrebbe dovuto dire, o comunque qualcuno ha detto qualcosa di sconveniente?",
+                "answers": [
+                  "Si",
+                  "No"
+                ],
+                "correctIndex": 0,
+                "skipIf": {
+                  "enabled": true,
+                  "questionIndex": 0,
+                  "answerIndex": 1
+                },
+                "_id": "6a3ed3b7ed931ce6a89ca6e4"
+              }
+            ],
+            "_id": "6a3ed3b7ed931ce6a89ca6e2"
+          }
+        ]
+      },
+      "next": [
+        {
+          "id": "ec898e76-4b46-4926-bd64-b9da80364a7c",
+          "target": "c7af5e32-4689-4b62-8681-05e82689c38c",
+          "type": "conditionalEdge",
+          "operator": "\u003E",
+          "threshold": 1
+        },
+        {
+          "id": "5358b41c-3a7b-4767-9cd2-75b038cadd2a",
+          "target": "dd8892ac-0955-4710-a0c7-f7e5cc16eaad",
+          "type": "conditionalEdge",
+          "operator": "\u003C=",
+          "threshold": 1
+        }
+      ]
+    },
+    {
+      "id": "c7af5e32-4689-4b62-8681-05e82689c38c",
+      "type": "TeoriaDellaMenteNode",
+      "data": {
+        "quiz": [
+          {
+            "qid": "914bac87-e905-4d7b-b408-5beb813b9073",
+            "narration": "AAAAA",
+            "questions": [
+              {
+                "question": "AAAaaa",
+                "answers": [
+                  "Si",
+                  "No"
+                ],
+                "correctIndex": 1,
+                "_id": "6a3ed3b7ed931ce6a89ca6de"
+              }
+            ],
+            "_id": "6a3ed3b7ed931ce6a89ca6dd"
+          },
+          {
+            "qid": "ddf71a13-fa7b-4260-a1ce-695d92a07966",
+            "narration": "BBBBBBBBB",
+            "questions": [
+              {
+                "question": "AAAA",
+                "answers": [
+                  "Si",
+                  "No"
+                ],
+                "correctIndex": 1,
+                "_id": "6a6695425e358bbfcecd0bf2"
+              },
+              {
+                "question": "AAAAA",
+                "answers": [
+                  "Si",
+                  "No"
+                ],
+                "correctIndex": 1,
+                "_id": "6a6695425e358bbfcecd0bf3"
+              }
+            ],
+            "_id": "6a6695425e358bbfcecd0bf1"
+          }
+        ]
+      },
+      "next": [
+        {
+          "id": "a25db266-714b-4273-9d0d-23d05e4946d3",
+          "target": "ef046703-c3c4-4b23-894c-6376d0187458",
+          "type": "conditionalEdge",
+          "operator": "\u003E=",
+          "threshold": 1
+        },
+        {
+          "id": "3cdab389-fb93-4e6d-988d-e3fe06860e7c",
+          "target": "2d5d4d92-ed97-47ea-8018-fe4a0dc02b72",
+          "type": "conditionalEdge",
+          "operator": "\u003C",
+          "threshold": 1
+        }
+      ]
+    },
+    {
+      "id": "dd8892ac-0955-4710-a0c7-f7e5cc16eaad",
+      "type": "EyesTaskTestNode",
+      "data": {
+        "questions": [
+          {
+            "qid": "31a3ccaf-9509-4846-a395-25bae1ce1efe",
+            "imageId": "d61ec484-0170-49f7-beb4-443ab11a4015",
+            "answers": [
+              "Imbarazzato",
+              "Felice",
+              "Triste",
+              "Preoccupato"
+            ],
+            "correctIndex": 0,
+            "_id": "6a6695425e358bbfcecd0be7"
+          }
+        ]
+      },
+      "next": [
+        {
+          "id": "6e9a64bb-07c2-4845-8a56-152856fc6c5e",
+          "target": "2d5d4d92-ed97-47ea-8018-fe4a0dc02b72",
+          "type": "conditionalEdge",
+          "operator": "==",
+          "threshold": 1
+        }
+      ]
+    },
+    {
+      "id": "ef046703-c3c4-4b23-894c-6376d0187458",
+      "type": "socialSituationsNode",
+      "data": {
+        "items": [
+          {
+            "sid": "7ee84431-b32c-4c52-bef3-e27c55afc688",
+            "sections": [
+              {
+                "before": "AAAA",
+                "bold": "BBBB",
+                "after": "",
+                "answers": [
+                  {
+                    "text": "AAA",
+                    "score": 1
+                  },
+                  {
+                    "text": "BBBB",
+                    "score": 0
+                  },
+                  {
+                    "text": "CCCC",
+                    "score": 1
+                  }
+                ],
+                "correctIndexes": [0, 2],
+                "_id": "6a6695425e358bbfcecd0bea"
+              },
+              {
+                "before": "AAAA",
+                "bold": "BBBB",
+                "after": "CCCC",
+                "answers": [
+                  {
+                    "text": "AAAAA",
+                    "score": 1
+                  },
+                  {
+                    "text": "",
+                    "score": 0
+                  }
+                ],
+                "correctIndexes": [0],
+                "_id": "6a6695425e358bbfcecd0beb"
+              }
+            ],
+            "_id": "6a6695425e358bbfcecd0be9"
+          },
+          {
+            "sid": "cb62a8f3-15f7-41ae-9a34-a224a1adface",
+            "sections": [
+              {
+                "before": "",
+                "bold": "OOOO",
+                "after": "DDDDD",
+                "answers": [
+                  {
+                    "text": "A",
+                    "score": 0
+                  },
+                  {
+                    "text": "B",
+                    "score": 1
+                  }
+                ],
+                "correctIndexes": [1],
+                "_id": "6a6695425e358bbfcecd0bed"
+              }
+            ],
+            "_id": "6a6695425e358bbfcecd0bec"
+          }
+        ]
+      },
+      "next": []
+    },
+    {
+      "id": "2d5d4d92-ed97-47ea-8018-fe4a0dc02b72",
+      "type": "EmotionAttributionTestNode",
+      "data": {
+        "questions": [
+          {
+            "qid": "6232904d-09b5-4df0-9ea3-c2abe58d1363",
+            "narration": "AAA",
+            "question": "BBBBBB",
+            "correctAnswers": [
+              "AAA",
+              "BBBB"
+            ],
+            "_id": "6a6695425e358bbfcecd0be4"
+          },
+          {
+            "qid": "bbfbbf41-114e-4604-8a07-ae6d55bc1533",
+            "narration": "AAAA",
+            "question": "BBBB",
+            "correctAnswers": [
+              "AAAA",
+              "BBBBB"
+            ],
+            "_id": "6a6695425e358bbfcecd0be5"
+          }
+        ]
+      },
+      "next": []
+    }
+  ]
+}
