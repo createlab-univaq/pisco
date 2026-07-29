@@ -1,20 +1,19 @@
-extends RefCounted
 class_name TheoryOfMindTranslator
-
+extends RefCounted
 
 static func translate(node: Dictionary) -> Dictionary:
 	var translated_quizzes := []
-	var quizzes: Array = node.get("data", {}).get("quiz", [])
+	var data := node.get("data", {}) as Dictionary
+	var quizzes := data.get("quiz", []) as Array
 
 	for quiz in quizzes:
-		if not quiz is Dictionary:
+		var quiz_dict := quiz as Dictionary
+		if quiz_dict == null:
 			continue
 
 		translated_quizzes.append({
-			"narration": str(quiz.get("narration", "")),
-			"questions": QuestionTranslationHelper.translate_all(
-				quiz.get("questions", [])
-			)
+			"narration": str(quiz_dict.get("narration", "")),
+			"questions": QuestionTranslationHelper.translate_all(quiz_dict.get("questions", []) as Array)
 		})
 
 	return {

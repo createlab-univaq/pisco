@@ -1,35 +1,19 @@
-extends RefCounted
 class_name EmotionAttributionTranslator
-
+extends RefCounted
 
 static func translate(node: Dictionary) -> Dictionary:
-	var data: Dictionary = node.get("data", {})
+	var data := node.get("data", {}) as Dictionary
+	var source_questions := data.get("questions", []) as Array
 
 	return {
 		"type": "choice_input",
-		"questions": _translate_questions(
-			data.get("questions", [])
-		),
+		"questions": source_questions.filter(func(q): return q is Dictionary).map(_translate_question),
 		"next": []
 	}
 
-
-static func _translate_questions(questions: Array) -> Array:
-	var translated_questions: Array = []
-
-	for question in questions:
-		translated_questions.append(
-			_translate_question(question)
-		)
-
-	return translated_questions
-
-
 static func _translate_question(question: Dictionary) -> Dictionary:
 	return {
-		"narration": question.get("narration", ""),
-		"question": question.get("question", ""),
-		"correctAnswers": CorrectAnswersTranslationHelper.translate(
-			question.get("correctAnswers", [])
-		)
+		"narration": str(question.get("narration", "")),
+		"question": str(question.get("question", "")),
+		"correctAnswers": CorrectAnswersTranslationHelper.translate(question.get("correctAnswers", []) as Array)
 	}

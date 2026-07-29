@@ -1,11 +1,5 @@
-extends RefCounted
 class_name CorrectAnswersTranslationHelper
-
+extends RefCounted
 
 static func translate(answers: Array) -> Array:
-	var translated_answers: Array = []
-
-	for answer in answers:
-		translated_answers.append(str(answer))
-
-	return translated_answers
+	return answers.map(func(answer): return str(answer))

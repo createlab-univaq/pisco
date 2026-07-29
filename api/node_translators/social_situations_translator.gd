@@ -1,33 +1,28 @@
-extends RefCounted
 class_name SocialSituationsTranslator
-
+extends RefCounted
 
 static func translate(node: Dictionary) -> Dictionary:
 	var translated_sections := []
-	var items: Array = node.get("data", {}).get("items", [])
+	var data := node.get("data", {}) as Dictionary
+	var items := data.get("items", []) as Array
 
 	for item in items:
-		if not item is Dictionary:
+		var item_dict := item as Dictionary
+		if item_dict == null:
 			continue
 
-		var sections: Array = item.get("sections", [])
-
+		var sections := item_dict.get("sections", []) as Array
 		for section in sections:
-			if not section is Dictionary:
+			var section_dict := section as Dictionary
+			if section_dict == null:
 				continue
 
 			translated_sections.append({
-				"narration": _translate_narration(section),
-				"questions": [
-					{
-						"answers": AnswerTranslationHelper.translate(
-							section.get("answers", [])
-						),
-						"correctAnswers": _translate_correct_answers(
-							section.get("correctIndexes", [])
-						)
-					}
-				]
+				"narration": _translate_narration(section_dict),
+				"questions": [{
+					"answers": AnswerTranslationHelper.translate(section_dict.get("answers", []) as Array),
+					"correctAnswers": (section_dict.get("correctIndexes", []) as Array).map(func(idx): return int(idx))
+				}]
 			})
 
 	return {
@@ -36,21 +31,9 @@ static func translate(node: Dictionary) -> Dictionary:
 		"next": []
 	}
 
-
 static func _translate_narration(section: Dictionary) -> String:
-	return (
-		str(section.get("before", "")) +
-		"[b]" +
-		str(section.get("bold", "")) +
-		"[/b]" +
-		str(section.get("after", ""))
-	)
-
-
-static func _translate_correct_answers(indexes: Array) -> Array:
-	var translated_indexes := []
-
-	for index in indexes:
-		translated_indexes.append(int(index))
-
-	return translated_indexes
+	return "%s[b]%s[/b]%s" % [
+		section.get("before", ""),
+		section.get("bold", ""),
+		section.get("after", "")
+	]

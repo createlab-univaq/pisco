@@ -1,22 +1,13 @@
-extends RefCounted
 class_name AnswerTranslationHelper
-
+extends RefCounted
 
 static func translate(answers: Array) -> Array:
-	var translated_answers: Array = []
-
-	for answer in answers:
-		translated_answers.append(
-			_translate_answer(answer)
-		)
-
-	return translated_answers
-
+	return answers.map(_translate_answer)
 
 static func _translate_answer(answer: Variant) -> Dictionary:
 	if answer is Dictionary:
 		var translated_answer: Dictionary = {
-			"text": answer.get("text", "")
+			"text": str(answer.get("text", ""))
 		}
 
 		if answer.has("score"):

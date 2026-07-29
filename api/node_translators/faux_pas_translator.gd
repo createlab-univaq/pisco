@@ -1,54 +1,23 @@
-extends RefCounted
 class_name FauxPasTranslator
-
+extends RefCounted
 
 static func translate(node: Dictionary) -> Dictionary:
-	var data: Dictionary = node.get("data", {})
-	var translated_quiz: Array = []
-
-	for quiz_item in data.get("quiz", []):
-		translated_quiz.append(
-			_translate_quiz_item(quiz_item)
-		)
+	var data := node.get("data", {}) as Dictionary
+	var quizzes := data.get("quiz", []) as Array
 
 	return {
 		"type": "choice",
-		"questions": translated_quiz,
+		"questions": quizzes.map(_translate_quiz_item),
 		"next": node.get("next", [])
 	}
 
-
 static func _translate_quiz_item(quiz_item: Dictionary) -> Dictionary:
-	var translated_questions: Array = []
-
-	for question in quiz_item.get("questions", []):
-		translated_questions.append(
-			_translate_question(question)
-		)
-
+	var questions := quiz_item.get("questions", []) as Array
+	
 	return {
-		"narration": quiz_item.get("narration", ""),
-		"questions": translated_questions
+		"narration": str(quiz_item.get("narration", "")),
+		"questions": questions.map(_translate_question)
 	}
 
-
 static func _translate_question(question: Dictionary) -> Dictionary:
-	var translated_question: Dictionary = (
-		QuestionTranslationHelper.translate(question)
-	)
-
-	var skip_if: Dictionary = question.get("skipIf", {})
-
-	if skip_if.get("enabled", false):
-		translated_question["skip"] = [
-			{
-				"question": int(
-					skip_if.get("questionIndex", 0)
-				),
-				"answer": int(
-					skip_if.get("answerIndex", 0)
-				)
-			}
-		]
-
-	return translated_question
+	return SkipTranslationHelper.translate(question)
