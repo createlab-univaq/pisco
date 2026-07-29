@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvamdu2sjbnww"
-path="res://.godot/imported/neutral_famale.png-22d328903ffd0a0524dea6d9747eda55.ctex"
+uid="uid://4jawr7bk4cto"
+path="res://.godot/imported/blue_boots.png-f4dc41ecd8d65f38cf8bc0d656e9a331.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/chara/player_composite_spritesheet/female/face/neutral_famale.png"
-dest_files=["res://.godot/imported/neutral_famale.png-22d328903ffd0a0524dea6d9747eda55.ctex"]
+source_file="res://sprites/chara/player_composite_spritesheet/female/shoes/blue_boots.png"
+dest_files=["res://.godot/imported/blue_boots.png-f4dc41ecd8d65f38cf8bc0d656e9a331.ctex"]
 
 [params]
 

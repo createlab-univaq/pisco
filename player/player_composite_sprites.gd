@@ -15,36 +15,22 @@ extends Node
 const SPRITESHEET = {
 	Gender.MALE: {
 		BodyPart.BODY: [
-			preload("res://sprites/chara/player_composite_spritesheet/male/body/body2.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/male/body/body1.png"),
 		],
 		BodyPart.FACE: [
-			preload("res://sprites/chara/player_composite_spritesheet/male/face/Neutral_male.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/face/Angry_male.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/face/happy_male.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/face/sad_male.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/male/face/neutral_male.png"),
 		],
 		BodyPart.HAIR: [
-			preload("res://sprites/chara/player_composite_spritesheet/male/hair/spiked_blonde.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/hair/short_brown.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/hair/afro_black.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/hair/afro_blonde.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/male/hair/geostellar_hair.png"),
 		],
 		BodyPart.PANTS: [
-			preload("res://sprites/chara/player_composite_spritesheet/male/pants/pantaloons_brown.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/pants/pantaloons_teal.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/pants/shorts_brown.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/pants/shorts_red.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/male/pants/geostellar_pants.png"),
 		],
 		BodyPart.SHIRT: [
-			preload("res://sprites/chara/player_composite_spritesheet/male/shirt/longsleeve_red.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/shirt/longsleeve_teal.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/shirt/sleeveless_balck.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/shirt/sleeveless_white.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/male/shirt/geostellar_hoodie.png"),
 		],
 		BodyPart.SHOES: [
-			preload("res://sprites/chara/player_composite_spritesheet/male/shoes/shoes1.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/shoes/shoes2.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/male/shoes/shoes3.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/male/shoes/red_sneakers.png"),
 		]
 	},
 	Gender.FEMALE: {
@@ -53,32 +39,18 @@ const SPRITESHEET = {
 		],
 		BodyPart.FACE: [
 			preload("res://sprites/chara/player_composite_spritesheet/female/face/neutral_famale.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/face/angry_famale.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/face/happy_famale.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/face/sad_famale.png"),
 		],
 		BodyPart.HAIR: [
-			preload("res://sprites/chara/player_composite_spritesheet/female/hair/curly_long_ash.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/hair/curly_long_brown.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/hair/curly_short_blond.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/hair/curly_short_brown.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/female/hair/soniastrumm_purple.png"),
 		],
 		BodyPart.PANTS: [
-			preload("res://sprites/chara/player_composite_spritesheet/female/pants/leggings_pink.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/pants/leggings_white.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/pants/skirt_brown.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/pants/skirt_sky.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/female/pants/soniastrumm_skirt.png"),
 		],
 		BodyPart.SHIRT: [
-			preload("res://sprites/chara/player_composite_spritesheet/female/shirt/blouse_black.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/shirt/blouse_lavander.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/shirt/sleeveless_navy.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/shirt/sleeveless_white.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/female/shirt/soniastrumm_shirt.png"),
 		],
 		BodyPart.SHOES: [
-			preload("res://sprites/chara/player_composite_spritesheet/female/shoes/shoes_brown.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/shoes/reverside_blue.png"),
-			preload("res://sprites/chara/player_composite_spritesheet/female/shoes/ghillies_black.png"),
+			preload("res://sprites/chara/player_composite_spritesheet/female/shoes/blue_boots.png"),
 		]
 	}
 }
