@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cr44gy0ldtc3a"
-path="res://.godot/imported/Neutral_male.png-c23e07f20342dcce60923d67978b2d01.ctex"
+uid="uid://3pllipqiiakw"
+path="res://.godot/imported/neutral_male.png-518daa71de211608a652e00dec071fe4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/chara/player_composite_spritesheet/male/face/Neutral_male.png"
-dest_files=["res://.godot/imported/Neutral_male.png-c23e07f20342dcce60923d67978b2d01.ctex"]
+source_file="res://sprites/chara/player_composite_spritesheet/male/face/neutral_male.png"
+dest_files=["res://.godot/imported/neutral_male.png-518daa71de211608a652e00dec071fe4.ctex"]
 
 [params]
 

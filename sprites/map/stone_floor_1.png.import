@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvamdu2sjbnww"
-path="res://.godot/imported/neutral_famale.png-22d328903ffd0a0524dea6d9747eda55.ctex"
+uid="uid://2n0ndiwkcgd3"
+path="res://.godot/imported/stone_floor_1.png-103e67dc41f8e756a90cb37b3c78eb09.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/chara/player_composite_spritesheet/female/face/neutral_famale.png"
-dest_files=["res://.godot/imported/neutral_famale.png-22d328903ffd0a0524dea6d9747eda55.ctex"]
+source_file="res://sprites/map/stone_floor_1.png"
+dest_files=["res://.godot/imported/stone_floor_1.png-103e67dc41f8e756a90cb37b3c78eb09.ctex"]
 
 [params]
 

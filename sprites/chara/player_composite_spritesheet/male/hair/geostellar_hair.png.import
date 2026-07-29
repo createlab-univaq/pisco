@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvamdu2sjbnww"
-path="res://.godot/imported/neutral_famale.png-22d328903ffd0a0524dea6d9747eda55.ctex"
+uid="uid://bnsqvk5yo6cxu"
+path="res://.godot/imported/geostellar_hair.png-8db46da52f3ef0bf41c5d1ed52d07dde.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/chara/player_composite_spritesheet/female/face/neutral_famale.png"
-dest_files=["res://.godot/imported/neutral_famale.png-22d328903ffd0a0524dea6d9747eda55.ctex"]
+source_file="res://sprites/chara/player_composite_spritesheet/male/hair/geostellar_hair.png"
+dest_files=["res://.godot/imported/geostellar_hair.png-8db46da52f3ef0bf41c5d1ed52d07dde.ctex"]
 
 [params]
 

@@ -1,0 +1,149 @@
+[gd_scene format=4 uid="uid://n6i7wk8pbepe"]
+
+[ext_resource type="Texture2D" uid="uid://2n0ndiwkcgd3" path="res://sprites/map/stone_floor_1.png" id="1_85fs1"]
+[ext_resource type="PackedScene" uid="uid://ca8dw1tfherkd" path="res://system/game_camera.tscn" id="1_hsbbr"]
+[ext_resource type="Texture2D" uid="uid://bfskdv7n7w72i" path="res://sprites/map/wooden_floor_2.png" id="2_qts4b"]
+[ext_resource type="Texture2D" uid="uid://dnk00ddv1fkeh" path="res://sprites/map/wall_2.png" id="3_78vuk"]
+[ext_resource type="Texture2D" uid="uid://b37b3r8lbyp0a" path="res://sprites/map/ldk.png" id="4_qts4b"]
+[ext_resource type="PackedScene" uid="uid://vc0v2m18m6j1" path="res://player/player.tscn" id="5_78vuk"]
+[ext_resource type="Texture2D" uid="uid://d3bj7w7wu5c3a" path="res://sprites/map/stairs.png" id="6_het54"]
+[ext_resource type="Texture2D" uid="uid://dlgl6ydoi54vk" path="res://sprites/map/wooden_ceiling_2.png" id="7_j6dhp"]
+[ext_resource type="Texture2D" uid="uid://cyf2pkts1vkbs" path="res://sprites/chara/mom/chara_mom.png" id="9_q67wa"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hsbbr"]
+texture = ExtResource("1_85fs1")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_het54"]
+texture = ExtResource("2_qts4b")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_03kcl"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_hsbbr")
+sources/1 = SubResource("TileSetAtlasSource_het54")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_j6dhp"]
+texture = ExtResource("3_78vuk")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_q67wa"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_j6dhp")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_85fs1"]
+texture = ExtResource("3_78vuk")
+texture_region_size = Vector2i(32, 32)
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_qts4b"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_85fs1")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_78vuk"]
+texture = ExtResource("4_qts4b")
+texture_region_size = Vector2i(32, 32)
+0:0/size_in_atlas = Vector2i(3, 2)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(-34, 34)
+3:0/size_in_atlas = Vector2i(3, 2)
+3:0/0 = 0
+3:0/0/texture_origin = Vector2i(26, 4)
+6:0/size_in_atlas = Vector2i(1, 2)
+6:0/0 = 0
+6:0/0/texture_origin = Vector2i(-2, 16)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q67wa"]
+texture = ExtResource("6_het54")
+texture_region_size = Vector2i(32, 32)
+1:0/size_in_atlas = Vector2i(2, 3)
+1:0/0 = 0
+1:0/0/texture_origin = Vector2i(-28, 67)
+
+[sub_resource type="TileSet" id="TileSet_hsbbr"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_78vuk")
+sources/1 = SubResource("TileSetAtlasSource_q67wa")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_85v6i"]
+texture = ExtResource("7_j6dhp")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+2:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_3paw0"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_85v6i")
+
+[node name="LDK" type="Node2D" unique_id=848682945]
+y_sort_enabled = true
+
+[node name="GameCamera" parent="." unique_id=316698991 instance=ExtResource("1_hsbbr")]
+
+[node name="TileMaps" type="Node2D" parent="." unique_id=1164317809]
+position = Vector2(5, 76)
+
+[node name="FloorTileMapLayer" type="TileMapLayer" parent="TileMaps" unique_id=1791909408]
+tile_map_data = PackedByteArray("AAAGAAQAAAABAAAAAAAGAAUAAAABAAEAAAAGAAYAAAABAAIAAAAHAAQAAAACAAAAAAAHAAUAAAACAAEAAAAHAAYAAAACAAIAAAAGAAcAAAABAAAAAAAHAAcAAAACAAAAAAAIAAQAAAAAAAAAAAAIAAUAAAAAAAEAAAAIAAYAAAAAAAIAAAAJAAQAAAABAAAAAAAJAAUAAAABAAEAAAAJAAYAAAABAAIAAAAKAAQAAQAAAAAAAAAKAAUAAQAAAAEAAAAKAAYAAQAAAAIAAAAIAAcAAAAAAAAAAAAJAAcAAAABAAAAAAAKAAcAAQAAAAAAAAALAAUAAQABAAEAAAALAAYAAQABAAIAAAALAAcAAQABAAAAAAAMAAYAAQAAAAIAAAAMAAcAAQAAAAAAAAANAAYAAQAAAAAAAAANAAcAAQAAAAEAAAA=")
+tile_set = SubResource("TileSet_03kcl")
+
+[node name="WallsTileMapLayer" type="TileMapLayer" parent="TileMaps" unique_id=499119577]
+tile_map_data = PackedByteArray("AAAGAAMAAAABAAIAAAAHAAMAAAACAAIAAAAIAAMAAAAAAAIAAAAJAAMAAAABAAIAAAAKAAMAAAACAAIAAAANAAUAAAAAAAAAAAALAAQAAAAAAAAAAAAMAAUAAAAAAAAAAAAMAAQAAAAAAAAAAAANAAQAAAABAAAAAAA=")
+tile_set = SubResource("TileSet_q67wa")
+
+[node name="BaseboardTileMapLayer" type="TileMapLayer" parent="TileMaps" unique_id=597304932]
+tile_map_data = PackedByteArray("AAAGAAMAAAAEAAIAAAAHAAMAAAAFAAIAAAAIAAMAAAADAAIAAAAJAAMAAAAEAAIAAAAKAAMAAAAFAAIAAAANAAUAAAADAAIAAAALAAQAAAADAAIAAAAMAAUAAAADAAIAAAA=")
+tile_set = SubResource("TileSet_qts4b")
+
+[node name="ObjectsTileMapLayer" type="TileMapLayer" parent="TileMaps" unique_id=759289738]
+tile_map_data = PackedByteArray("AAAJAAUAAAADAAAAAAAGAAUAAAAAAAAAAAAGAAYAAAAGAAAAAAAMAAcAAQABAAAAAAA=")
+tile_set = SubResource("TileSet_hsbbr")
+
+[node name="CeilingTileMapLayer" type="TileMapLayer" parent="TileMaps" unique_id=1500097715]
+tile_map_data = PackedByteArray("AAAGAAQAAAAAAAEAAAAGAAUAAAAAAAEAAAAGAAYAAAAAAAEAAAAGAAcAAAAAAAIAAAAHAAcAAAABAAIAAAAIAAcAAAABAAIAAAAJAAcAAAABAAIAAAAKAAcAAAABAAIAAAALAAcAAAABAAIAAAAMAAcAAAABAAIAAAANAAcAAAACAAIAAAANAAYAAAACAAEAAAANAAUAAAACAAEAAAAGAAMAAAAAAAAAAAAHAAMAAAABAAAAAAAIAAMAAAABAAAAAAAJAAMAAAABAAAAAAAKAAMAAAABAAAAAAALAAQAAAABAAAAAAALAAMAAAAAAAEAAAAMAAQAAAABAAAAAAANAAQAAAACAAAAAAA=")
+tile_set = SubResource("TileSet_3paw0")
+
+[node name="Player" parent="." unique_id=56829661 instance=ExtResource("5_78vuk")]
+position = Vector2(379, 292)
+
+[node name="Mom" type="StaticBody2D" parent="." unique_id=927717971]
+position = Vector2(284, 294)
+
+[node name="Sprite2D" type="Sprite2D" parent="Mom" unique_id=443939502]
+texture = ExtResource("9_q67wa")
+offset = Vector2(0, -16)
