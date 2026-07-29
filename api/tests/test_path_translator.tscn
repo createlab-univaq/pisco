@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://csp36qxgpuww6"]
+
+[ext_resource type="Script" uid="uid://bgcxa47move1r" path="res://api/tests/test_path_translator.gd" id="1_y3l4q"]
+
+[node name="TestPathTranslator" type="Node2D" unique_id=383191689]
+script = ExtResource("1_y3l4q")
