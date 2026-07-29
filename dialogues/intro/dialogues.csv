@@ -2,3 +2,9 @@ keys,it,en,es
 DIALOGUE_1,Ciao viandante! Benvenuto nel nostro villaggio.,Hello traveler! Welcome to our village.,¡Hola viajero! Bienvenido a nuestro pueblo.
 DIALOGUE_2,Le cose sono diventate pericolose da queste parti...,Things have become dangerous around here...,Las cosas se han puesto peligrosas por aquí...
 DIALOGUE_3,"Prendi questa spada, ti servirà per difenderti.","Take this sword, you will need it to defend yourself.","Toma esta espada, te ayudará a defenderte."
+DIALOGUE_4_QUESTION,"Vuoi prendere la spada?",,
+CHOICE_YES,Si,,
+CHOICE_NO,No,,
+DIALOGUE_YES_1,"Grazie! Prendi questa spada, ti servirà per difenderti.","Thank you! Take this sword, you will need it to defend yourself.","¡Gracias! Toma esta espada, te ayudará a defenderte."
+DIALOGUE_YES_2,Good Luck my Brosky!,,
+DIALOGUE_NO_1,Sei un tipo coraggioso... o molto sciocco. Buona fortuna.,You are a brave soul... or very foolish. Good luck.,Eres un tipo valiente... o muy tonto. Buena suerte.
