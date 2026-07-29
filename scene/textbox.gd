@@ -1,114 +1,108 @@
-extends CanvasLayer
+class_name TextBox
+extends Control
 
-const CHAR_READ_RATE = 0.05
+@export var CHAR_READ_RATE: float = 0.05
+@export var END_SYMBOL: String = "v"
+@export var START_SYMBOL: String = "*"
 
-@onready var textbox_container = $TextBoxContainer
-@onready var start_symbol = $TextBoxContainer/MarginContainer/HBoxContainer/Start
-@onready var end_symbol = $TextBoxContainer/MarginContainer/HBoxContainer/End
-@onready var label = $TextBoxContainer/MarginContainer/HBoxContainer/Label2
+@onready var text_box_margin_container: MarginContainer = $TextBoxMarginContainer
+@onready var start_symbol_label: Label = $TextBoxMarginContainer/MarginContainer/HBoxContainer/StartSymbolLabel
+@onready var dialogue_text_label: Label = $TextBoxMarginContainer/MarginContainer/HBoxContainer/DialogueTextLabel
+@onready var end_symbol_label: Label = $TextBoxMarginContainer/MarginContainer/HBoxContainer/EndSymbolLabel
+
+signal dialogue_started
+signal line_finished
+signal dialogue_completed
 
 var tween: Tween
 
-enum State {
+enum States {
 	READY,
 	READING,
 	FINISHED
 }
 
-var current_state = State.READY
-var text_queue = []
+var current_state: States = States.READY
+var text_queue: Array[String] = []
 
-func _ready():
+func _ready() -> void:
+	# Note: In a full game, locale should ideally be set in an Autoload/Settings manager
 	TranslationServer.set_locale("it") 
-	print("Starting state: State.READY")
-	hide_textbox()
+	_reset_textbox()
 	
-	# Diciamo al codice di caricare il blocco "INTRO_VILLAGGIO" che ha 3 battute nel CSV
-	carica_dialogo_da_file("res://dialogs/intro/dialoghi.csv")
-	
-func carica_dialogo_da_file(percorso_csv: String):
-	text_queue.clear()
-	TranslationServer.clear() 
-	
-	var lingua_corrente = TranslationServer.get_locale()
-	var percorso_translation = percorso_csv.replace(".csv", "") + "." + lingua_corrente + ".translation"
-	
-	var traduzione_scena = load(percorso_translation)
-	if traduzione_scena:
-		TranslationServer.add_translation(traduzione_scena)
-	else:
-		print("ERRORE: Impossibile trovare il file di traduzione in: ", percorso_translation)
-		return
+	# Example usage
+	_load_dialogue([
+		"DIALOGUE_1",
+		"DIALOGUE_2",
+		"DIALOGUE_3"
+	])
 
-	if FileAccess.file_exists(percorso_csv):
-		var file = FileAccess.open(percorso_csv, FileAccess.READ)
-		
-		if not file.eof_reached():
-			file.get_line() 
-		
-		var contatore_battute = 0
-		while not file.eof_reached():
-			var riga = file.get_line().strip_edges()
-			if riga != "": 
-				contatore_battute += 1
-		
-		file.close() # Chiudiamo il file
-
-		for i in range(1, contatore_battute + 1):
-			queue_text(str(i))
-			
-		print("Dialogo caricato con successo! Battute trovate nel CSV: ", contatore_battute)
-	else:
-		print("ERRORE: Il file CSV non esiste in: ", percorso_csv)
-
-
-func _process(delta):
-	match current_state:
-		State.READY:
-			if !text_queue.is_empty():
-				display_text()
-		State.READING:
-			if Input.is_action_just_pressed("ui_accept"):
-				label.visible_ratio = 1.0
-				if tween != null and tween.is_valid():
+# Triggers when input is detected, replacing the need for _process checking every frame
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept"):
+		match current_state:
+			States.READING:
+				# Skip text animation
+				dialogue_text_label.visible_ratio = 1.0
+				if tween and tween.is_valid():
 					tween.kill()
-				end_symbol.text = "v"
-				change_state(State.FINISHED)
-		State.FINISHED:
-			if Input.is_action_just_pressed("ui_accept"):
-				change_state(State.READY)
-				hide_textbox()
+				_on_dialogue_complete()
+				
+			States.FINISHED:
+				# Move to next line or close textbox
+				if text_queue.is_empty():
+					_change_state(States.READY)
+					_reset_textbox()
+					dialogue_completed.emit() # Emitted only when ALL text is done
+				else:
+					_display_text()
 
-func queue_text(next_text):
+func _load_dialogue(keys: Array[String]) -> void:
+	text_queue.clear()
+	for key in keys:
+		queue_text(key)
+		
+	# Auto-start if we are ready and have text
+	if current_state == States.READY and not text_queue.is_empty():
+		dialogue_started.emit()
+		_display_text()
+
+func queue_text(next_text: String) -> void:
 	text_queue.push_back(next_text)
 
-func hide_textbox():
-	start_symbol.text = ""
-	end_symbol.text = ""
-	label.text = ""
-	textbox_container.hide()
+func _reset_textbox() -> void:
+	start_symbol_label.text = ""
+	end_symbol_label.text = ""
+	dialogue_text_label.text = ""
+	text_box_margin_container.hide()
 
-func show_textbox():
-	start_symbol.text = "*"
-	textbox_container.show()
+func _setup_textbox() -> void:
+	start_symbol_label.text = START_SYMBOL
+	text_box_margin_container.show()
 
-func display_text():
-	var chiave_dialogo = text_queue.pop_front()
-	var testo_tradotto = tr(chiave_dialogo)
-	print("Chiave generata dal codice: ", chiave_dialogo)
-	print("Testo che Godot riesce a trovare: ", testo_tradotto)
-	label.text = testo_tradotto
-	label.visible_ratio = 0.0
-	change_state(State.READING)
-	show_textbox()
+func _display_text() -> void:
+	var key: String = text_queue.pop_front()
+	var text: String = tr(key)
+	
+	dialogue_text_label.text = text
+	dialogue_text_label.visible_ratio = 0.0
+	
+	_change_state(States.READING)
+	_setup_textbox()
 	
 	tween = create_tween()
-	tween.tween_property(label, "visible_ratio", 1.0, len(testo_tradotto) * CHAR_READ_RATE).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_callback(on_tween_completed)
+	# TRANS_LINEAR does not need an ease setting.
+	# Using text.length() is the preferred Godot 4 method over len(text).
+	tween.tween_property(dialogue_text_label, "visible_ratio", 1.0, text.length() * CHAR_READ_RATE).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_callback(_on_tween_completed)
 
-func on_tween_completed():
-	end_symbol.text = "v"
-	change_state(State.FINISHED)
+func _on_tween_completed() -> void:
+	_on_dialogue_complete()
 
-func change_state(next_state):
+func _change_state(next_state: States) -> void:
 	current_state = next_state
+
+func _on_dialogue_complete() -> void:
+	end_symbol_label.text = END_SYMBOL
+	_change_state(States.FINISHED)
+	line_finished.emit()
