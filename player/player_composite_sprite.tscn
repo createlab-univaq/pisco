@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://dytodjoa44bgf"]
+
+[ext_resource type="Script" uid="uid://dxht0nl6awv3t" path="res://player/player_composite_sprites.gd" id="1_5gl3p"]
+[ext_resource type="Texture2D" uid="uid://cjv5ncyeo1f2p" path="res://sprites/chara/player_composite_spritesheet/male/body/body1.png" id="2_6q77e"]
+[ext_resource type="Texture2D" uid="uid://3pllipqiiakw" path="res://sprites/chara/player_composite_spritesheet/male/face/neutral_male.png" id="3_1dups"]
+[ext_resource type="Texture2D" uid="uid://7yrurs0fs615" path="res://sprites/chara/player_composite_spritesheet/male/pants/geostellar_pants.png" id="4_w2lni"]
+[ext_resource type="Texture2D" uid="uid://djdq8xisv0hi1" path="res://sprites/chara/player_composite_spritesheet/male/shirt/geostellar_hoodie.png" id="5_5wjou"]
+[ext_resource type="Texture2D" uid="uid://doevuyark0mtx" path="res://sprites/chara/player_composite_spritesheet/male/shoes/red_sneakers.png" id="6_ep0rd"]
+[ext_resource type="Texture2D" uid="uid://bnsqvk5yo6cxu" path="res://sprites/chara/player_composite_spritesheet/male/hair/geostellar_hair.png" id="7_hwab5"]
+
+[node name="PlayerCompositeSprite" type="Node2D" unique_id=1531669499]
+script = ExtResource("1_5gl3p")
+
+[node name="BodySprite2D" type="Sprite2D" parent="." unique_id=1430243011]
+texture = ExtResource("2_6q77e")
+offset = Vector2(0, -16)
+hframes = 4
+vframes = 4
+
+[node name="FaceSprite2D" type="Sprite2D" parent="." unique_id=1460828196]
+texture = ExtResource("3_1dups")
+offset = Vector2(0, -16)
+hframes = 4
+vframes = 3
+
+[node name="PantsSprite2D" type="Sprite2D" parent="." unique_id=741275824]
+texture = ExtResource("4_w2lni")
+offset = Vector2(0, -16)
+hframes = 4
+vframes = 4
+
+[node name="ShirtSprite2D" type="Sprite2D" parent="." unique_id=422071852]
+texture = ExtResource("5_5wjou")
+offset = Vector2(0, -16)
+hframes = 4
+vframes = 4
+
+[node name="ShoesSprite2D" type="Sprite2D" parent="." unique_id=70371441]
+texture = ExtResource("6_ep0rd")
+offset = Vector2(0, -16)
+hframes = 4
+vframes = 4
+
+[node name="HairSprite2D" type="Sprite2D" parent="." unique_id=2024547542]
+texture = ExtResource("7_hwab5")
+offset = Vector2(0, -16)
+hframes = 4
+vframes = 4

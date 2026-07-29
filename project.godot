@@ -11,14 +11,22 @@ config_version=5
 [application]
 
 config/name="PISCO"
+run/main_scene="uid://bmfxrm35oitpd"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=640
-window/size/viewport_height=480
 window/stretch/mode="canvas_items"
+
+[layer_names]
+
+2d_physics/layer_1="Player"
+2d_physics/layer_2="World"
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://dialogues/intro/dialogues.en.translation", "res://dialogues/intro/dialogues.es.translation", "res://dialogues/intro/dialogues.it.translation")
 
 [physics]
 

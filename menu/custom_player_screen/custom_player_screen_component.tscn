@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://du4axddra5bje"]
+
+[ext_resource type="Script" uid="uid://tuyqqaxj87ps" path="res://menu/custom_player_screen/custom_player_screen_component.gd" id="1_8mh26"]
+[ext_resource type="Texture2D" uid="uid://0tqvi53wlxjk" path="res://sprites/ui/arrow/arrow_decorative_w.png" id="1_i7rml"]
+[ext_resource type="Texture2D" uid="uid://d0qjnpmeytovw" path="res://sprites/ui/arrow/arrow_decorative_w_small.png" id="2_8mh26"]
+[ext_resource type="Texture2D" uid="uid://lvlgfyxkurab" path="res://sprites/ui/arrow/arrow_decorative_e.png" id="3_kn4tc"]
+[ext_resource type="Texture2D" uid="uid://bn4mfxotvrmxs" path="res://sprites/ui/arrow/arrow_decorative_e_small.png" id="4_ulmhb"]
+
+[node name="CustomPlayerScreenComponent" type="HBoxContainer" unique_id=529609280]
+alignment = 1
+script = ExtResource("1_8mh26")
+
+[node name="ChangePreviousButton" type="TextureButton" parent="." unique_id=81580288]
+layout_mode = 2
+texture_normal = ExtResource("1_i7rml")
+texture_pressed = ExtResource("2_8mh26")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="." unique_id=823304799]
+layout_mode = 2
+text = "Placeholder"
+horizontal_alignment = 1
+
+[node name="ChangeNextButton" type="TextureButton" parent="." unique_id=269919698]
+layout_mode = 2
+texture_normal = ExtResource("3_kn4tc")
+texture_pressed = ExtResource("4_ulmhb")
+stretch_mode = 5
+
+[connection signal="pressed" from="ChangePreviousButton" to="." method="_on_change_previous_button_pressed"]
+[connection signal="pressed" from="ChangeNextButton" to="." method="_on_change_next_button_pressed"]

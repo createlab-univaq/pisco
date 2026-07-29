@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://bmfxrm35oitpd"]
+
+[ext_resource type="FontFile" uid="uid://3omt7ys46b5a" path="res://fonts/Born2bSportyV2.ttf" id="1_0lrlq"]
+[ext_resource type="Script" uid="uid://c6kgb0qtqg7s4" path="res://dialogues/textbox.gd" id="1_m1w5b"]
+
+[sub_resource type="FontVariation" id="FontVariation_47n42"]
+resource_local_to_scene = true
+base_font = ExtResource("1_0lrlq")
+
+[node name="TextBox" type="Control" unique_id=241977233]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m1w5b")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=408287454]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ChoicesMarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=971901747]
+layout_mode = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 20
+
+[node name="ChoicesVBoxContainer" type="VBoxContainer" parent="VBoxContainer/ChoicesMarginContainer" unique_id=965240517]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1934579641]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="TextBoxPanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer" unique_id=797933212]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer" unique_id=581188538]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer" unique_id=602767416]
+layout_mode = 2
+
+[node name="StartSymbolLabel" type="Label" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer" unique_id=1502964963]
+custom_minimum_size = Vector2(23, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_fonts/font = SubResource("FontVariation_47n42")
+theme_override_font_sizes/font_size = 52
+
+[node name="DialogueTextLabel" type="Label" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer" unique_id=1365918181]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_fonts/font = SubResource("FontVariation_47n42")
+theme_override_font_sizes/font_size = 52
+autowrap_mode = 2
+
+[node name="EndSymbolLabel" type="Label" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer" unique_id=1300019785]
+custom_minimum_size = Vector2(23, 0)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_fonts/font = SubResource("FontVariation_47n42")
+theme_override_font_sizes/font_size = 52
+text = "v"
