@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bokqb8d6ldtxl"]
+
+[ext_resource type="Script" uid="uid://b0ldgv613wt7h" path="res://system/scene_changer_controller.gd" id="1_bwmab"]
+
+[node name="SceneChangerController" type="Node" unique_id=1713363774]
+script = ExtResource("1_bwmab")

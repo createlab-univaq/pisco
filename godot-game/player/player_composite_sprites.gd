@@ -187,6 +187,12 @@ func get_facing_direction() -> Vector2:
 func check_nearest_actionable():
 	actionable_detector.check_nearest_actionable(get_facing_direction())
 
+func disable_actionable_detector():
+	actionable_detector.disable()
+
+func enable_actionable_detector():
+	actionable_detector.enable()
+
 func _on_actionable_detector_actionable_detected() -> void:
 	exclamation_mark_sprite_2d.show()
 

@@ -13,15 +13,19 @@ enum States {
 
 var state: States = States.WALK
 var player_direction: Vector2 = Vector2.DOWN
+var is_player_in_cutscene: bool = false
 
 func _physics_process(_delta) -> void:
+	if is_player_in_cutscene:
+		return
+	
 	player_composite_sprite.check_nearest_actionable()
 	
 	match state:
 		States.WALK:
-			walk_state()
+			_walk_state()
 
-func walk_state() -> void:
+func _walk_state() -> void:
 	var input_vector: Vector2 = Vector2.ZERO
 	
 	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
@@ -38,3 +42,25 @@ func walk_state() -> void:
 		velocity = Vector2.ZERO
 
 	move_and_slide()
+
+func set_player_as_in_cutscene():
+	velocity = Vector2.ZERO
+	player_composite_sprite.change_animation(player_composite_sprite.IDLE_ANIMATION_KEY)
+	is_player_in_cutscene = true
+	player_composite_sprite.disable_actionable_detector()
+
+func set_player_as_not_in_cutscene():
+	is_player_in_cutscene = false
+	player_composite_sprite.enable_actionable_detector()
+
+func get_facing_direction() -> Vector2:
+	return player_composite_sprite.get_facing_direction()
+
+func face_direction(direction: Vector2) -> void:
+	player_composite_sprite.face_direction(direction)
+
+func enter_room():
+	set_player_as_not_in_cutscene()
+
+func exit_room():
+	set_player_as_in_cutscene()

@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://n6i7wk8pbepe"]
 
+[ext_resource type="Script" uid="uid://csav1q80544fe" path="res://levels/ldk/ldk.gd" id="1_3paw0"]
 [ext_resource type="Texture2D" uid="uid://2n0ndiwkcgd3" path="res://sprites/map/stone_floor_1.png" id="1_85fs1"]
 [ext_resource type="PackedScene" uid="uid://ca8dw1tfherkd" path="res://system/game_camera.tscn" id="1_hsbbr"]
 [ext_resource type="Texture2D" uid="uid://bfskdv7n7w72i" path="res://sprites/map/wooden_floor_2.png" id="2_qts4b"]
@@ -9,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://d3bj7w7wu5c3a" path="res://sprites/map/stairs.png" id="6_het54"]
 [ext_resource type="Texture2D" uid="uid://dlgl6ydoi54vk" path="res://sprites/map/wooden_ceiling_2.png" id="7_j6dhp"]
 [ext_resource type="Texture2D" uid="uid://cyf2pkts1vkbs" path="res://sprites/chara/mom/chara_mom.png" id="9_q67wa"]
+[ext_resource type="PackedScene" uid="uid://bkenj2h8fog3f" path="res://system/scene_transition.tscn" id="10_85v6i"]
+[ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hsbbr"]
 texture = ExtResource("1_85fs1")
@@ -110,10 +113,15 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_85v6i")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_04khg"]
+size = Vector2(16, 32)
+
 [node name="LDK" type="Node2D" unique_id=848682945]
 y_sort_enabled = true
+script = ExtResource("1_3paw0")
 
 [node name="GameCamera" parent="." unique_id=316698991 instance=ExtResource("1_hsbbr")]
+position = Vector2(318, 251)
 
 [node name="TileMaps" type="Node2D" parent="." unique_id=1164317809]
 position = Vector2(5, 76)
@@ -139,7 +147,7 @@ tile_map_data = PackedByteArray("AAAGAAQAAAAAAAEAAAAGAAUAAAAAAAEAAAAGAAYAAAAAAAE
 tile_set = SubResource("TileSet_3paw0")
 
 [node name="Player" parent="." unique_id=56829661 instance=ExtResource("5_78vuk")]
-position = Vector2(379, 292)
+position = Vector2(313, 223)
 
 [node name="Mom" type="StaticBody2D" parent="." unique_id=927717971]
 position = Vector2(284, 294)
@@ -147,3 +155,23 @@ position = Vector2(284, 294)
 [node name="Sprite2D" type="Sprite2D" parent="Mom" unique_id=443939502]
 texture = ExtResource("9_q67wa")
 offset = Vector2(0, -16)
+
+[node name="Actionables" type="Node" parent="." unique_id=461493670]
+
+[node name="Transitions" type="Node" parent="." unique_id=1849341956]
+
+[node name="SceneTransition" parent="Transitions" unique_id=1688190010 node_paths=PackedStringArray("player", "game_camera") instance=ExtResource("10_85v6i")]
+player = NodePath("../../Player")
+game_camera = NodePath("../../GameCamera")
+
+[node name="BedroomSceneChangerTile" parent="Transitions" unique_id=314211868 node_paths=PackedStringArray("scene_transition") instance=ExtResource("12_wo7pg")]
+position = Vector2(411, 279)
+scene_transition = NodePath("../SceneTransition")
+scene_to_change_into = "res://levels/bedroom/bedroom.tscn"
+player_next_room_spawn_position = Vector2(265, 218)
+direction = 3
+
+[node name="CollisionShape2D" parent="Transitions/BedroomSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
+shape = SubResource("RectangleShape2D_04khg")
+
+[editable path="Transitions/BedroomSceneChangerTile"]

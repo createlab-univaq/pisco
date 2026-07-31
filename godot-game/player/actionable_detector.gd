@@ -8,6 +8,10 @@ signal actionable_lost
 
 var nearest_actionable: Actionable = null
 
+func _reset() -> void:
+	nearest_actionable = null
+	actionable_lost.emit()
+
 func check_nearest_actionable(facing_direction: Vector2) -> void:
 	var areas: Array[Area2D] = actionable_finder_area_2d.get_overlapping_areas()
 	if nearest_actionable != null:
@@ -31,3 +35,11 @@ func check_nearest_actionable(facing_direction: Vector2) -> void:
 	else:
 		actionable_lost.emit()
 		nearest_actionable = null
+
+func enable() -> void:
+	_reset()
+	actionable_finder_area_2d.set_deferred("disabled", false)
+
+func disable() -> void:
+	_reset()
+	actionable_finder_area_2d.set_deferred("disabled", true)

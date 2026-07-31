@@ -1,5 +1,15 @@
 [gd_scene format=3 uid="uid://ca8dw1tfherkd"]
 
+[ext_resource type="Script" uid="uid://c03e1m3lg2e3r" path="res://system/game_camera.gd" id="1_pdava"]
+
 [node name="GameCamera" type="Camera2D" unique_id=316698991]
 position = Vector2(320, 240)
 zoom = Vector2(2, 2)
+script = ExtResource("1_pdava")
+
+[node name="Limits" type="Node" parent="." unique_id=483878334]
+
+[node name="TopLeft" type="Marker2D" parent="Limits" unique_id=496742003]
+
+[node name="BottomRight" type="Marker2D" parent="Limits" unique_id=1491469936]
+position = Vector2(640, 480)

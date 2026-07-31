@@ -2,11 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://ca8dw1tfherkd" path="res://system/game_camera.tscn" id="1_3xglk"]
 [ext_resource type="Texture2D" uid="uid://chtplsp3i186u" path="res://sprites/map/wall_1.png" id="1_c7cqy"]
+[ext_resource type="Script" uid="uid://3igubyvrepme" path="res://levels/bedroom/bedroom.gd" id="1_lhvc8"]
 [ext_resource type="Texture2D" uid="uid://5le3w1du42gi" path="res://sprites/map/wooden_floor_1.png" id="2_614nl"]
 [ext_resource type="Texture2D" uid="uid://cui2pamwi2bed" path="res://sprites/map/bedroom.png" id="3_614nl"]
 [ext_resource type="PackedScene" uid="uid://vc0v2m18m6j1" path="res://player/player.tscn" id="3_c7cqy"]
 [ext_resource type="Texture2D" uid="uid://d3bj7w7wu5c3a" path="res://sprites/map/stairs.png" id="3_rkq2c"]
 [ext_resource type="Texture2D" uid="uid://crp5jkpmtr5d2" path="res://sprites/map/wooden_ceiling_1.png" id="4_6k2mn"]
+[ext_resource type="PackedScene" uid="uid://4j88pw51ipmk" path="res://actionables/actionable.tscn" id="8_0etjl"]
+[ext_resource type="PackedScene" uid="uid://bkenj2h8fog3f" path="res://system/scene_transition.tscn" id="9_hobr5"]
+[ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="10_lhvc8"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0etjl"]
 texture = ExtResource("2_614nl")
@@ -131,11 +135,24 @@ physics_layer_0/collision_layer = 2
 physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_3xglk")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_buggl"]
+size = Vector2(32, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0etjl"]
+size = Vector2(16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hobr5"]
+size = Vector2(16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cqvla"]
+size = Vector2(16, 32)
+
 [node name="Bedroom" type="Node2D" unique_id=1968043701]
 y_sort_enabled = true
+script = ExtResource("1_lhvc8")
 
 [node name="GameCamera" parent="." unique_id=316698991 instance=ExtResource("1_3xglk")]
-position = Vector2(319, 220)
+position = Vector2(321, 232)
 
 [node name="TileMaps" type="Node2D" parent="." unique_id=1475726042]
 y_sort_enabled = true
@@ -165,3 +182,51 @@ tile_set = SubResource("TileSet_0etjl")
 
 [node name="Player" parent="." unique_id=56829661 instance=ExtResource("3_c7cqy")]
 position = Vector2(366, 249)
+
+[node name="Actionables" type="Node" parent="." unique_id=1198991442]
+
+[node name="WardrobeActionable" parent="Actionables" unique_id=707098243 node_paths=PackedStringArray("player") instance=ExtResource("8_0etjl")]
+position = Vector2(381, 203)
+player = NodePath("../../Player")
+exclamation_mark_facing_direction = 5
+
+[node name="CollisionShape2D" parent="Actionables/WardrobeActionable/Area2D" parent_id_path=PackedInt32Array(707098243, 1462430373) index="0" unique_id=279065323]
+shape = SubResource("RectangleShape2D_buggl")
+
+[node name="PethouseActionable" parent="Actionables" unique_id=48112515 node_paths=PackedStringArray("player") instance=ExtResource("8_0etjl")]
+position = Vector2(394, 244)
+player = NodePath("../../Player")
+exclamation_mark_facing_direction = 5
+
+[node name="CollisionShape2D" parent="Actionables/PethouseActionable/Area2D" parent_id_path=PackedInt32Array(48112515, 1462430373) index="0" unique_id=279065323]
+shape = SubResource("RectangleShape2D_0etjl")
+
+[node name="PCActionable" parent="Actionables" unique_id=2003744028 node_paths=PackedStringArray("player") instance=ExtResource("8_0etjl")]
+position = Vector2(310, 189)
+player = NodePath("../../Player")
+exclamation_mark_facing_direction = 5
+
+[node name="CollisionShape2D" parent="Actionables/PCActionable/Area2D" parent_id_path=PackedInt32Array(2003744028, 1462430373) index="0" unique_id=279065323]
+shape = SubResource("RectangleShape2D_hobr5")
+
+[node name="Transitions" type="Node" parent="." unique_id=752459822]
+
+[node name="SceneTransition" parent="Transitions" unique_id=1688190010 node_paths=PackedStringArray("player", "game_camera") instance=ExtResource("9_hobr5")]
+player = NodePath("../../Player")
+game_camera = NodePath("../../GameCamera")
+
+[node name="LDKSceneChangerTile" parent="Transitions" unique_id=314211868 node_paths=PackedStringArray("scene_transition", "game_camera") instance=ExtResource("10_lhvc8")]
+position = Vector2(249, 213)
+scene_transition = NodePath("../SceneTransition")
+scene_to_change_into = "res://levels/ldk/ldk.tscn"
+player_next_room_spawn_position = Vector2(393, 285)
+direction = 4
+game_camera = NodePath("../../GameCamera")
+
+[node name="CollisionShape2D" parent="Transitions/LDKSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
+shape = SubResource("RectangleShape2D_cqvla")
+
+[editable path="Actionables/WardrobeActionable"]
+[editable path="Actionables/PethouseActionable"]
+[editable path="Actionables/PCActionable"]
+[editable path="Transitions/LDKSceneChangerTile"]
