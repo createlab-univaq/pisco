@@ -53,6 +53,12 @@ func set_player_as_not_in_cutscene():
 	is_player_in_cutscene = false
 	player_composite_sprite.enable_actionable_detector()
 
+func set_player_as_in_dialogue():
+	set_player_as_in_cutscene()
+
+func set_player_as_not_in_dialogue():
+	set_player_as_not_in_cutscene()
+
 func get_facing_direction() -> Vector2:
 	return player_composite_sprite.get_facing_direction()
 

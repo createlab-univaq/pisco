@@ -3,6 +3,12 @@
 [ext_resource type="FontFile" uid="uid://3omt7ys46b5a" path="res://fonts/Born2bSportyV2.ttf" id="1_0lrlq"]
 [ext_resource type="Script" uid="uid://c6kgb0qtqg7s4" path="res://dialogues/textbox.gd" id="1_m1w5b"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s1ypb"]
+bg_color = Color(0.60032797, 0.5355304, 0.21848252, 1)
+
+[sub_resource type="Theme" id="Theme_as824"]
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_s1ypb")
+
 [sub_resource type="FontVariation" id="FontVariation_47n42"]
 resource_local_to_scene = true
 base_font = ExtResource("1_0lrlq")
@@ -37,6 +43,18 @@ theme_override_constants/margin_bottom = 20
 layout_mode = 2
 theme_override_constants/separation = 10
 
+[node name="TextInputMarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1673103578]
+layout_mode = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 20
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/TextInputMarginContainer" unique_id=1723210631]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_0lrlq")
+theme_override_font_sizes/font_size = 30
+
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1934579641]
 layout_mode = 2
 theme_override_constants/margin_left = 30
@@ -46,6 +64,7 @@ theme_override_constants/margin_bottom = 30
 [node name="TextBoxPanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer" unique_id=797933212]
 layout_mode = 2
 size_flags_vertical = 8
+theme = SubResource("Theme_as824")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer" unique_id=581188538]
 layout_mode = 2
@@ -63,15 +82,15 @@ custom_minimum_size = Vector2(23, 0)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_fonts/font = SubResource("FontVariation_47n42")
-theme_override_font_sizes/font_size = 52
+theme_override_font_sizes/font_size = 30
 
 [node name="DialogueTextLabel" type="Label" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer" unique_id=1365918181]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_fonts/font = SubResource("FontVariation_47n42")
-theme_override_font_sizes/font_size = 52
+theme_override_font_sizes/font_size = 30
 autowrap_mode = 2
 
 [node name="EndSymbolLabel" type="Label" parent="VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer" unique_id=1300019785]
@@ -79,5 +98,5 @@ custom_minimum_size = Vector2(23, 0)
 layout_mode = 2
 size_flags_vertical = 8
 theme_override_fonts/font = SubResource("FontVariation_47n42")
-theme_override_font_sizes/font_size = 52
+theme_override_font_sizes/font_size = 30
 text = "v"

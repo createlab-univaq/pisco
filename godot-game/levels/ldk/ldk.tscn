@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://bkenj2h8fog3f" path="res://system/scene_transition.tscn" id="10_85v6i"]
 [ext_resource type="PackedScene" uid="uid://1f8mdj7uxb8i" path="res://npcs/mom.tscn" id="10_wo7pg"]
 [ext_resource type="PackedScene" uid="uid://4j88pw51ipmk" path="res://actionables/actionable.tscn" id="11_04khg"]
+[ext_resource type="PackedScene" uid="uid://bmfxrm35oitpd" path="res://dialogues/textbox.tscn" id="11_08ey3"]
+[ext_resource type="PackedScene" uid="uid://uosa5c6owore" path="res://system/experiment_manager.tscn" id="11_kjq3q"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hsbbr"]
@@ -184,10 +186,19 @@ tile_map_data = PackedByteArray("AAAGAAQAAAAAAAEAAAAGAAUAAAAAAAEAAAAGAAYAAAAAAAE
 tile_set = SubResource("TileSet_3paw0")
 
 [node name="Player" parent="." unique_id=56829661 instance=ExtResource("5_78vuk")]
-position = Vector2(313, 223)
+position = Vector2(307, 294)
 
 [node name="Mom" parent="." unique_id=1965140163 instance=ExtResource("10_wo7pg")]
 position = Vector2(284, 294)
+
+[node name="Dialogues" type="CanvasLayer" parent="." unique_id=1728289888]
+
+[node name="TextBox" parent="Dialogues" unique_id=241977233 node_paths=PackedStringArray("player") instance=ExtResource("11_08ey3")]
+player = NodePath("../../Player")
+
+[node name="ExperimentManager" parent="." unique_id=1876397545 node_paths=PackedStringArray("actionable", "textbox") instance=ExtResource("11_kjq3q")]
+actionable = NodePath("../Actionables/MomActionable")
+textbox = NodePath("../Dialogues/TextBox")
 
 [node name="Actionables" type="Node" parent="." unique_id=461493670]
 
@@ -214,6 +225,8 @@ direction = 3
 
 [node name="CollisionShape2D" parent="Transitions/BedroomSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_04khg")
+
+[connection signal="actioned" from="Actionables/MomActionable" to="Actionables" method="_on_mom_actionable_actioned"]
 
 [editable path="Actionables/MomActionable"]
 [editable path="Transitions/BedroomSceneChangerTile"]
