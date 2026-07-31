@@ -28,8 +28,8 @@
 					"Spaventata",
 					"Spaventoso"
 				],
-				"narration": "Elisabetta sta guidando lungo una strada quando una donna le compare improvvisamente davanti a lei e la travolge in pieno.\n",
-				"question": "Cosa proverà Elisabetta in questa situazione?\n"
+				"narration": "Elisabetta sta guidando lungo una strada quando una donna le compare improvvisamente davanti a lei e la travolge in pieno.",
+				"question": "Cosa proverà Elisabetta in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -39,8 +39,8 @@
 					"Ridicola",
 					"Ridicolizzata"
 				],
-				"narration": "Maria deve fare un discorso al lavoro. È in piedi nella stanza di fronte a tutti. Non ricorda cosa deve dire. Tutti la fissano.\n",
-				"question": "Come si sentirà Maria in questa situazione?\n"
+				"narration": "Maria deve fare un discorso al lavoro. È in piedi nella stanza di fronte a tutti. Non ricorda cosa deve dire. Tutti la fissano.",
+				"question": "Come si sentirà Maria in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -52,8 +52,8 @@
 					"Disperato",
 					"Disperazione"
 				],
-				"narration": "Luca si è appena rivelato alla ragazza che desiderava da mesi. Lei gli dà uno schiaffo in faccia.\n",
-				"question": "Come si sentirà Luca in questa situazione?\n"
+				"narration": "Luca si è appena rivelato alla ragazza che desiderava da mesi. Lei gli dà uno schiaffo in faccia.",
+				"question": "Come si sentirà Luca in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -67,8 +67,8 @@
 					"Gioiosa",
 					"Piena di gioia"
 				],
-				"narration": "Katia ha ricevuto i risultati dei suoi esami: sono andati molto bene.\n",
-				"question": "Come si sentirà Katia in questa situazione?\n"
+				"narration": "Katia ha ricevuto i risultati dei suoi esami: sono andati molto bene.",
+				"question": "Come si sentirà Katia in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -83,8 +83,8 @@
 					"Inorridita",
 					"Orrore"
 				],
-				"narration": "Silvia si sveglia e vede che c'è un ragno velenoso nel suo letto.\n",
-				"question": "Cosa proverà Silvia in questa situazione?\n"
+				"narration": "Silvia si sveglia e vede che c'è un ragno velenoso nel suo letto.",
+				"question": "Cosa proverà Silvia in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -94,8 +94,8 @@
 					"Infastidito",
 					"Fastidio"
 				],
-				"narration": "Giacomo si è appena preparato una scodella di corn flakes e latte. Ne mangia una cucchiaiata e si rende conto che il latte è andato a male.\n",
-				"question": "Cosa proverà Giacomo in questa situazione?\n"
+				"narration": "Giacomo si è appena preparato una scodella di corn flakes e latte. Ne mangia una cucchiaiata e si rende conto che il latte è andato a male.",
+				"question": "Cosa proverà Giacomo in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -105,8 +105,8 @@
 					"Ridicola",
 					"Ridicolizzata"
 				],
-				"narration": "Sonia sta andando in bicicletta lungo la strada quando perde il controllo e finisce addosso ad un lampione. Alcune persone dall'altra parte della strada si fermano e fissano, qualcuno se la ride.\n",
-				"question": "Come si sentirà Sonia in questa situazione?\n"
+				"narration": "Sonia sta andando in bicicletta lungo la strada quando perde il controllo e finisce addosso ad un lampione. Alcune persone dall'altra parte della strada si fermano e fissano, qualcuno se la ride.",
+				"question": "Come si sentirà Sonia in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -120,8 +120,8 @@
 					"Piena di gioia",
 					"Contenta"
 				],
-				"narration": "La moglie di Daniele ha appena partorito il loro terzo figlio.\n",
-				"question": "Come si sentirà la moglie di Daniele in questa situazione?\n"
+				"narration": "La moglie di Daniele ha appena partorito il loro terzo figlio.",
+				"question": "Come si sentirà la moglie di Daniele in questa situazione?"
 			},
 			{
 				"correctAnswers": [
@@ -134,8 +134,8 @@
 					"Irata",
 					"Infastidita"
 				],
-				"narration": "Katia ha appena scoperto che le sono stati rubati 10 milioni e non può fare niente per averli indietro.\n",
-				"question": "Come si sentirà Katia in questa situazione?\n"
+				"narration": "Katia ha appena scoperto che le sono stati rubati 10 milioni e non può fare niente per averli indietro.",
+				"question": "Come si sentirà Katia in questa situazione?"
 			}
 		],
 		"type": "choice_input"
