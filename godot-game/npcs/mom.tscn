@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://1f8mdj7uxb8i"]
+
+[ext_resource type="Texture2D" uid="uid://cyf2pkts1vkbs" path="res://sprites/chara/mom/chara_mom.png" id="1_l0ssv"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l0ssv"]
+radius = 3.0
+height = 12.0
+
+[node name="Mom" type="CharacterBody2D" unique_id=1965140163]
+y_sort_enabled = true
+collision_layer = 2
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=73564905]
+texture = ExtResource("1_l0ssv")
+offset = Vector2(0, -16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=441459066]
+position = Vector2(0, -2)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_l0ssv")

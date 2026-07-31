@@ -9,8 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://vc0v2m18m6j1" path="res://player/player.tscn" id="5_78vuk"]
 [ext_resource type="Texture2D" uid="uid://d3bj7w7wu5c3a" path="res://sprites/map/stairs.png" id="6_het54"]
 [ext_resource type="Texture2D" uid="uid://dlgl6ydoi54vk" path="res://sprites/map/wooden_ceiling_2.png" id="7_j6dhp"]
-[ext_resource type="Texture2D" uid="uid://cyf2pkts1vkbs" path="res://sprites/chara/mom/chara_mom.png" id="9_q67wa"]
 [ext_resource type="PackedScene" uid="uid://bkenj2h8fog3f" path="res://system/scene_transition.tscn" id="10_85v6i"]
+[ext_resource type="PackedScene" uid="uid://1f8mdj7uxb8i" path="res://npcs/mom.tscn" id="10_wo7pg"]
+[ext_resource type="PackedScene" uid="uid://4j88pw51ipmk" path="res://actionables/actionable.tscn" id="11_04khg"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hsbbr"]
@@ -143,6 +144,9 @@ physics_layer_0/collision_layer = 2
 physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_85v6i")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kjq3q"]
+size = Vector2(8, 16)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_04khg"]
 size = Vector2(16, 32)
 
@@ -182,14 +186,18 @@ tile_set = SubResource("TileSet_3paw0")
 [node name="Player" parent="." unique_id=56829661 instance=ExtResource("5_78vuk")]
 position = Vector2(313, 223)
 
-[node name="Mom" type="StaticBody2D" parent="." unique_id=927717971]
+[node name="Mom" parent="." unique_id=1965140163 instance=ExtResource("10_wo7pg")]
 position = Vector2(284, 294)
 
-[node name="Sprite2D" type="Sprite2D" parent="Mom" unique_id=443939502]
-texture = ExtResource("9_q67wa")
-offset = Vector2(0, -16)
-
 [node name="Actionables" type="Node" parent="." unique_id=461493670]
+
+[node name="MomActionable" parent="Actionables" unique_id=707098243 node_paths=PackedStringArray("player") instance=ExtResource("11_04khg")]
+position = Vector2(284, 281)
+player = NodePath("../../Player")
+exclamation_mark_facing_direction = 5
+
+[node name="CollisionShape2D" parent="Actionables/MomActionable/Area2D" parent_id_path=PackedInt32Array(707098243, 1462430373) index="0" unique_id=279065323]
+shape = SubResource("RectangleShape2D_kjq3q")
 
 [node name="Transitions" type="Node" parent="." unique_id=1849341956]
 
@@ -207,4 +215,5 @@ direction = 3
 [node name="CollisionShape2D" parent="Transitions/BedroomSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_04khg")
 
+[editable path="Actionables/MomActionable"]
 [editable path="Transitions/BedroomSceneChangerTile"]
