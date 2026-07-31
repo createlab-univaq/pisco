@@ -12,6 +12,18 @@ extends Node
 
 @onready var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var animation_tree: AnimationTree = $AnimationTree
+@onready var animation_state: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
+
+const IDLE_ANIMATION_KEY: String = "Idle"
+const WALK_ANIMATION_KEY: String = "Walk"
+
+const ANIMATION_TREE_PARAMETERS: Array[String] = [
+	"parameters/Idle/blend_position",
+	"parameters/Walk/blend_position",
+]
+
 const SPRITESHEET = {
 	Gender.MALE: {
 		BodyPart.BODY: [
@@ -81,6 +93,8 @@ var current_sprites: Dictionary = {
 }
 
 func _ready() -> void:
+	animation_tree.active = true
+	
 	rng.randomize()
 	update_character()
 
@@ -150,3 +164,10 @@ func change_to_previous_pants():
 
 func change_to_previous_body():
 	change_part(BodyPart.BODY, -1)
+
+func face_direction(direction: Vector2) -> void:
+	for parameter in ANIMATION_TREE_PARAMETERS:
+		animation_tree.set(parameter, direction)
+
+func change_animation(animation_key: String) -> void:
+	animation_state.travel(animation_key)
