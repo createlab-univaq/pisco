@@ -15,6 +15,9 @@ extends Node
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var animation_state: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
+@onready var exclamation_mark_sprite_2d: Sprite2D = $ExclamationMarkSprite2D
+
+@onready var actionable_detector: ActionableDetector = $ActionableDetector
 
 const IDLE_ANIMATION_KEY: String = "Idle"
 const WALK_ANIMATION_KEY: String = "Walk"
@@ -94,9 +97,13 @@ var current_sprites: Dictionary = {
 
 func _ready() -> void:
 	animation_tree.active = true
+	_reset()
 	
 	rng.randomize()
 	update_character()
+
+func _reset() -> void:
+	exclamation_mark_sprite_2d.hide()
 
 func update_character() -> void:
 	for part_key in current_sprites.keys():
@@ -171,3 +178,17 @@ func face_direction(direction: Vector2) -> void:
 
 func change_animation(animation_key: String) -> void:
 	animation_state.travel(animation_key)
+
+func get_facing_direction() -> Vector2:
+	if ANIMATION_TREE_PARAMETERS.size() == 0:
+		return Vector2.ZERO
+	return animation_tree.get(ANIMATION_TREE_PARAMETERS[0])
+
+func check_nearest_actionable():
+	actionable_detector.check_nearest_actionable(get_facing_direction())
+
+func _on_actionable_detector_actionable_detected() -> void:
+	exclamation_mark_sprite_2d.show()
+
+func _on_actionable_detector_actionable_lost() -> void:
+	exclamation_mark_sprite_2d.hide()

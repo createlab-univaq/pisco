@@ -1,7 +1,7 @@
 class_name PathTranslator
 extends RefCounted
 
-const EXAMPLE_JSON_PATH := "res://api/tests/API-percorso2.json"
+const EXAMPLE_JSON_PATH := "res://api/tests/polyglot-test.json"
 
 static func print_translated_path(path: String = EXAMPLE_JSON_PATH) -> void:
 	var api_json := _load_json(path)

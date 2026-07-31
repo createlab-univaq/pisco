@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://4j88pw51ipmk"]
+
+[ext_resource type="Script" uid="uid://m3nperconn84" path="res://actionables/actionable.gd" id="1_222uh"]
+
+[node name="Actionable" type="Marker2D" unique_id=707098243]
+script = ExtResource("1_222uh")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1462430373]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=279065323]

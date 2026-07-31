@@ -15,6 +15,8 @@ var state: States = States.WALK
 var player_direction: Vector2 = Vector2.DOWN
 
 func _physics_process(_delta) -> void:
+	player_composite_sprite.check_nearest_actionable()
+	
 	match state:
 		States.WALK:
 			walk_state()

@@ -7,6 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://djdq8xisv0hi1" path="res://sprites/chara/player_composite_spritesheet/male/shirt/geostellar_hoodie.png" id="5_5wjou"]
 [ext_resource type="Texture2D" uid="uid://doevuyark0mtx" path="res://sprites/chara/player_composite_spritesheet/male/shoes/red_sneakers.png" id="6_ep0rd"]
 [ext_resource type="Texture2D" uid="uid://bnsqvk5yo6cxu" path="res://sprites/chara/player_composite_spritesheet/male/hair/geostellar_hair.png" id="7_hwab5"]
+[ext_resource type="Texture2D" uid="uid://b0sthw7whwux3" path="res://sprites/system/exclamation_mark.png" id="8_5wjou"]
+[ext_resource type="Script" uid="uid://8upvyyglkptd" path="res://player/actionable_detector.gd" id="8_w2lni"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1dups"]
+radius = 7.0
+height = 28.0
 
 [sub_resource type="Animation" id="Animation_1dups"]
 resource_name = "idle_down"
@@ -83,6 +89,18 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
 }
 
 [sub_resource type="Animation" id="Animation_pns5h"]
@@ -161,6 +179,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [4]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.5707964]
+}
 
 [sub_resource type="Animation" id="Animation_60vbm"]
 resource_name = "idle_right"
@@ -238,6 +268,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [8]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.712389]
+}
 
 [sub_resource type="Animation" id="Animation_hay1m"]
 resource_name = "idle_up"
@@ -314,6 +356,18 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [12]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [3.1415927]
 }
 
 [sub_resource type="Animation" id="Animation_w2lni"]
@@ -393,6 +447,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [1, 3]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_5wjou"]
 resource_name = "walk_left"
@@ -471,6 +537,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [5, 6, 7]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.5707964]
+}
 
 [sub_resource type="Animation" id="Animation_ep0rd"]
 resource_name = "walk_right"
@@ -548,6 +626,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [9, 10, 11]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.712389]
+}
 
 [sub_resource type="Animation" id="Animation_hwab5"]
 resource_name = "walk_up"
@@ -624,6 +714,18 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [13, 15]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ActionableDetector:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [3.1415927]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_pns5h"]
@@ -710,42 +812,60 @@ texture = ExtResource("2_6q77e")
 offset = Vector2(0, -16)
 hframes = 4
 vframes = 4
-frame = 4
+frame = 1
 
 [node name="FaceSprite2D" type="Sprite2D" parent="." unique_id=1460828196]
 texture = ExtResource("3_1dups")
 offset = Vector2(0, -16)
 hframes = 4
 vframes = 4
-frame = 4
+frame = 1
 
 [node name="PantsSprite2D" type="Sprite2D" parent="." unique_id=741275824]
 texture = ExtResource("4_w2lni")
 offset = Vector2(0, -16)
 hframes = 4
 vframes = 4
-frame = 4
+frame = 1
 
 [node name="ShirtSprite2D" type="Sprite2D" parent="." unique_id=422071852]
 texture = ExtResource("5_5wjou")
 offset = Vector2(0, -16)
 hframes = 4
 vframes = 4
-frame = 4
+frame = 1
 
 [node name="ShoesSprite2D" type="Sprite2D" parent="." unique_id=70371441]
 texture = ExtResource("6_ep0rd")
 offset = Vector2(0, -16)
 hframes = 4
 vframes = 4
-frame = 4
+frame = 1
 
 [node name="HairSprite2D" type="Sprite2D" parent="." unique_id=2024547542]
 texture = ExtResource("7_hwab5")
 offset = Vector2(0, -16)
 hframes = 4
 vframes = 4
-frame = 4
+frame = 1
+
+[node name="ExclamationMarkSprite2D" type="Sprite2D" parent="." unique_id=1024527630]
+position = Vector2(0, -36)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("8_5wjou")
+
+[node name="ActionableDetector" type="Marker2D" parent="." unique_id=588894167]
+position = Vector2(0, -17)
+script = ExtResource("8_w2lni")
+
+[node name="ActionableFinderArea2D" type="Area2D" parent="ActionableDetector" unique_id=160743298]
+position = Vector2(0, 11)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ActionableDetector/ActionableFinderArea2D" unique_id=191956797]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_1dups")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=282160442]
 libraries/ = SubResource("AnimationLibrary_pns5h")
@@ -756,3 +876,6 @@ tree_root = SubResource("AnimationNodeStateMachine_hwab5")
 anim_player = NodePath("../AnimationPlayer")
 parameters/Idle/blend_position = Vector2(0, -0.00999999)
 parameters/Walk/blend_position = Vector2(-0.08803612, -0.08000004)
+
+[connection signal="actionable_detected" from="ActionableDetector" to="." method="_on_actionable_detector_actionable_detected"]
+[connection signal="actionable_lost" from="ActionableDetector" to="." method="_on_actionable_detector_actionable_lost"]

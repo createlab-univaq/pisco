@@ -4,10 +4,11 @@
 [ext_resource type="PackedScene" uid="uid://dytodjoa44bgf" path="res://player/player_composite_sprite.tscn" id="2_q3lat"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rkbax"]
-radius = 1.0
-height = 8.0
+radius = 3.0
+height = 7.9999995
 
 [node name="Player" type="CharacterBody2D" unique_id=56829661]
+y_sort_enabled = true
 collision_mask = 2
 script = ExtResource("1_rkbax")
 SPEED = 50
@@ -15,6 +16,6 @@ SPEED = 50
 [node name="PlayerCompositeSprite" parent="." unique_id=1531669499 instance=ExtResource("2_q3lat")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1800676098]
-position = Vector2(0, -1)
+position = Vector2(0, -4)
 rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_rkbax")
