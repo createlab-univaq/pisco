@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="10_lhvc8"]
 [ext_resource type="Script" uid="uid://bql1rb1vxtfmo" path="res://levels/bedroom/bedroom_actionables.gd" id="10_xhnyy"]
 [ext_resource type="PackedScene" uid="uid://clqtj5oxcs0h3" path="res://menu/pet_shop_screen.tscn" id="11_17yto"]
+[ext_resource type="PackedScene" uid="uid://vx76gc5fc0ou" path="res://menu/companion_screen.tscn" id="12_oushh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0etjl"]
 texture = ExtResource("2_614nl")
@@ -197,6 +198,8 @@ player = NodePath("../../Player")
 [node name="PetShopScreen" parent="UI" unique_id=486196416 instance=ExtResource("11_17yto")]
 visible = false
 
+[node name="CompanionScreen" parent="UI" unique_id=1405001249 instance=ExtResource("12_oushh")]
+
 [node name="Actionables" type="Node" parent="." unique_id=1198991442]
 script = ExtResource("10_xhnyy")
 
@@ -240,9 +243,12 @@ direction = 4
 [node name="CollisionShape2D" parent="Transitions/LDKSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_cqvla")
 
+[connection signal="pethouse_open_requested" from="Actionables" to="UI" method="_on_actionables_pethouse_open_requested"]
+[connection signal="store_open_requested" from="Actionables" to="UI" method="_on_actionables_store_open_requested"]
 [connection signal="wardrobe_open_requested" from="Actionables" to="UI" method="_on_actionables_wardrobe_open_requested"]
 [connection signal="actioned" from="Actionables/WardrobeActionable" to="Actionables" method="_on_wardrobe_actionable_actioned"]
-[connection signal="actioned" from="Actionables/PCActionable" to="UI" method="_on_pc_actionable_actioned"]
+[connection signal="actioned" from="Actionables/PethouseActionable" to="Actionables" method="_on_pethouse_actionable_actioned"]
+[connection signal="actioned" from="Actionables/PCActionable" to="Actionables" method="_on_pc_actionable_actioned"]
 
 [editable path="Actionables/WardrobeActionable"]
 [editable path="Actionables/PethouseActionable"]

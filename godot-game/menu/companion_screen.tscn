@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://vx76gc5fc0ou"]
+
+[ext_resource type="Script" uid="uid://ch5ol2y1cdj20" path="res://menu/companion_screen.gd" id="1_s8fph"]
+[ext_resource type="PackedScene" uid="uid://cx3fcr5f64l60" path="res://menu/pet_preview.tscn" id="2_s8fph"]
+
+[node name="CompanionScreen" type="Control" unique_id=1405001249]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s8fph")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=420797690]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="PetPreview" parent="." unique_id=1862204275 instance=ExtResource("2_s8fph")]
+position = Vector2(321, 316)
+
+[node name="FollowButton" type="Button" parent="." unique_id=43956199]
+layout_mode = 0
+offset_left = 257.0
+offset_top = 361.0
+offset_right = 385.0
+offset_bottom = 430.0
+text = "Follow"
+
+[connection signal="pressed" from="FollowButton" to="." method="_on_follow_button_pressed"]

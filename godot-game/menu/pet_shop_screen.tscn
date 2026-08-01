@@ -1,83 +1,7 @@
 [gd_scene format=3 uid="uid://clqtj5oxcs0h3"]
 
 [ext_resource type="Script" uid="uid://ogrf3mlvify2" path="res://menu/pet_shop_screen.gd" id="1_dkkgf"]
-[ext_resource type="Texture2D" uid="uid://dujurtoaloho6" path="res://sprites/chara/pets/boba_the_cat.png" id="2_jkgm3"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vmvf1"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_imx0o"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lmca3"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_quv40"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kms2u"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5tghc"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(160, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_teccj"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(192, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_psxuo"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(224, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dkkgf"]
-atlas = ExtResource("2_jkgm3")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_rrjmj"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vmvf1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_imx0o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lmca3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_quv40")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kms2u")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5tghc")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_teccj")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_psxuo")
-}],
-"loop": false,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dkkgf")
-}],
-"loop": false,
-"name": &"still",
-"speed": 5.0
-}]
+[ext_resource type="PackedScene" uid="uid://cx3fcr5f64l60" path="res://menu/pet_preview.tscn" id="2_dkkgf"]
 
 [node name="PetShopScreen" type="Control" unique_id=486196416]
 layout_mode = 3
@@ -96,18 +20,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
-metadata/_edit_use_anchors_ = true
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1407147948]
+[node name="PetPreview" parent="." unique_id=1862204275 instance=ExtResource("2_dkkgf")]
 position = Vector2(321, 316)
-scale = Vector2(8, 8)
-sprite_frames = SubResource("SpriteFrames_rrjmj")
-animation = &"still"
-autoplay = "still"
-offset = Vector2(0, -13)
-
-[node name="Timer" type="Timer" parent="." unique_id=2141997446]
-one_shot = true
 
 [node name="BuyButton" type="Button" parent="." unique_id=855891604]
 layout_mode = 0
@@ -117,5 +32,4 @@ offset_right = 385.0
 offset_bottom = 430.0
 text = "Buy"
 
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="BuyButton" to="." method="_on_buy_button_pressed"]

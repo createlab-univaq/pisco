@@ -1,0 +1,126 @@
+[gd_scene format=3 uid="uid://cx3fcr5f64l60"]
+
+[ext_resource type="Texture2D" uid="uid://dujurtoaloho6" path="res://sprites/chara/pets/boba_the_cat.png" id="1_321s7"]
+[ext_resource type="Script" uid="uid://cbinpb6cfj2hp" path="res://menu/pet_preview.gd" id="2_s38is"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vmvf1"]
+atlas = ExtResource("1_321s7")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_imx0o"]
+atlas = ExtResource("1_321s7")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lmca3"]
+atlas = ExtResource("1_321s7")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quv40"]
+atlas = ExtResource("1_321s7")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kms2u"]
+atlas = ExtResource("1_321s7")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5tghc"]
+atlas = ExtResource("1_321s7")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_teccj"]
+atlas = ExtResource("1_321s7")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_psxuo"]
+atlas = ExtResource("1_321s7")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dkkgf"]
+atlas = ExtResource("1_321s7")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s38is"]
+atlas = ExtResource("1_321s7")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wobma"]
+atlas = ExtResource("1_321s7")
+region = Rect2(32, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ern2f"]
+atlas = ExtResource("1_321s7")
+region = Rect2(64, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq053"]
+atlas = ExtResource("1_321s7")
+region = Rect2(96, 128, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rrjmj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vmvf1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_imx0o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lmca3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_quv40")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kms2u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5tghc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_teccj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_psxuo")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dkkgf")
+}],
+"loop": false,
+"name": &"still",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s38is")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wobma")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ern2f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mq053")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="PetPreview" type="AnimatedSprite2D" unique_id=1862204275]
+scale = Vector2(8, 8)
+sprite_frames = SubResource("SpriteFrames_rrjmj")
+animation = &"idle"
+autoplay = "still"
+offset = Vector2(0, -13)
+script = ExtResource("2_s38is")
+
+[node name="Timer" type="Timer" parent="." unique_id=599030197]
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
