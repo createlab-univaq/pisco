@@ -1,6 +1,11 @@
 [
 	{
-		"next": [],
+		"next": {
+			"nodeOnPass": 1,
+			"nodeOnFail": 6,
+			"operator": "ge",
+			"threshold": 9       
+		},
 		"questions": [
 			{
 				"correctAnswers": [
@@ -141,7 +146,7 @@
 		"type": "choice_input"
 	},
 	{
-		"next": [],
+		"next": {},
 		"questions": [
 			{
 				"answers": [
@@ -161,7 +166,7 @@
 				"correctAnswers": [
 					0
 				],
-				"image": "73df847d-21ae-414e-9adc-529d39e5976d"
+				"image": "res://pictures/eyes_1.png"
 			},
 			{
 				"answers": [
@@ -181,7 +186,7 @@
 				"correctAnswers": [
 					2
 				],
-				"image": "7057cc9d-7167-4b1f-a5c9-a525c9eb773f"
+				"image": "res://pictures/eyes_2.png"
 			},
 			{
 				"answers": [
@@ -201,7 +206,7 @@
 				"correctAnswers": [
 					1
 				],
-				"image": "79f19fed-3eeb-40c1-921d-6948977d1cb0"
+				"image": "res://pictures/eyes_3.png"
 			},
 			{
 				"answers": [
@@ -221,7 +226,7 @@
 				"correctAnswers": [
 					3
 				],
-				"image": "2bc37af6-0b9b-4865-948d-f95db55f338d"
+				"image": "res://pictures/eyes_4.png"
 			},
 			{
 				"answers": [
@@ -241,13 +246,13 @@
 				"correctAnswers": [
 					3
 				],
-				"image": "aa45a7c0-5823-4a56-a236-0735d2b6774e"
+				"image": "res://pictures/eyes_5.png"
 			}
 		],
-		"type": "choice"
+		"type": "choice_image"
 	},
 	{
-		"next": [],
+		"next": {},
 		"questions": [
 			{
 				"narration": "Un giorno, mentre stava giocando a casa, Anna accidentalmente rovesciò e ruppe il vaso di cristallo preferito di sua madre. Anna sapeva che la madre si sarebbe molto arrabbiata. Così, quando la madre ritornò a casa e vide il vaso rotto e chiese ad Anna cosa fosse successo, Anna disse: “Il cane lo ha rovesciato, non è stata colpa mia!”\n",
@@ -334,7 +339,7 @@
 		"type": "choice"
 	},
 	{
-		"next": [],
+		"next": {},
 		"questions": [
 			{
 				"narration": "Emilia si sveglió in ritardo il giorno del suo viaggio in aereo. C’era appena il tempo per vestirsi e andare all’aereoporto, così saltò la sua colazione. A mezzogiorno la hostess venne con il pranzo, ma Emilia era così affamata che una porzione non l’aveva soddisfatta. Guardò una ragazzina attraverso il corridoio che giocherellava con il suo cibo, lamentandosi: ”Non riesco a mangiarlo.” Emilia si sporse dal corridoio e disse:[b]Se la sua piccola bambina non vuole il suo vassoio, lo può passare di qua per me?[/b]Secondo te, questo comportamento è A: Normale, B: Leggermente Strano, C: Abbastanza Strano, D: Estremamente Strano",
@@ -458,7 +463,7 @@
 		"type": "choice"
 	},
 	{
-		"next": [],
+		"next": {},
 		"questions": [
 			{
 				"narration": "Giulia era a una festa a casa del suo amico Antonio. Stava parlando con Antonio quando un’altra donna si avvicinò a loro. Era una delle vicine di casa di Antonio. La donna disse “Ciao,” quindi rivolgendosi a Giulia aggiunse: “Non credo che ci siamo mai incontrate. Sono Maria, e tu come ti chiami?” “Giulia.” “Gradite qualcosa da bere?” chiese Antonio.\n",
@@ -554,7 +559,7 @@
 		"type": "choice"
 	},
 	{
-		"next": [],
+		"next": {},
 		"questions": [
 			{
 				"answers": [
@@ -578,5 +583,29 @@
 			}
 		],
 		"type": "choice"
+	},
+	{
+		"next": {},
+		"activities": [
+			{
+				"questions": [
+					{
+						"correctAnswers": [
+							"Paura",
+							"Impaurito",
+							"Terrorizzato",
+							"Pietrificato"
+						],
+						"narration": "Paolo sente il suono che avvisa l'imminente caduta di una bomba atomica.",
+						"question": "Cosa proverà Paolo in questa situazione?",
+						"explainations": [
+							"Il suono che preavvisa la caduta di una bomba nucleare indica pericolo di morte.",
+							"La paura è un'emozione naturale, che serve per proteggerci da danni sia fisici che emotivi, sia reali che percepiti"
+						]
+					}
+				],
+				"type": "choice_input"
+			}
+		]
 	}
 ]

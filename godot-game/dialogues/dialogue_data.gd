@@ -8,7 +8,8 @@ extends Resource
 enum DialogueTypes {
 	TEXT_ONLY,
 	INPUT,
-	CHOICES
+	CHOICES,
+	IMAGES
 }
 
 func _init(p_text: String = "", p_dialogue_type: DialogueTypes = DialogueTypes.TEXT_ONLY, p_choices: Array[DialogueChoiceData] = []) -> void:
