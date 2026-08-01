@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://bmfxrm35oitpd" path="res://dialogues/textbox.tscn" id="11_08ey3"]
 [ext_resource type="PackedScene" uid="uid://uosa5c6owore" path="res://system/experiment_manager.tscn" id="11_kjq3q"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
+[ext_resource type="Script" uid="uid://br07gggew5dud" path="res://levels/ldk/ldk_transitions.gd" id="14_jovqs"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hsbbr"]
 texture = ExtResource("1_85fs1")
@@ -194,6 +195,7 @@ position = Vector2(284, 294)
 [node name="Dialogues" type="CanvasLayer" parent="." unique_id=1728289888]
 
 [node name="TextBox" parent="Dialogues" unique_id=241977233 node_paths=PackedStringArray("player") instance=ExtResource("11_08ey3")]
+visible = false
 player = NodePath("../../Player")
 
 [node name="ExperimentManager" parent="." unique_id=1876397545 node_paths=PackedStringArray("actionable", "textbox") instance=ExtResource("11_kjq3q")]
@@ -211,6 +213,7 @@ exclamation_mark_facing_direction = 5
 shape = SubResource("RectangleShape2D_kjq3q")
 
 [node name="Transitions" type="Node" parent="." unique_id=1849341956]
+script = ExtResource("14_jovqs")
 
 [node name="SceneTransition" parent="Transitions" unique_id=1688190010 node_paths=PackedStringArray("player", "game_camera") instance=ExtResource("10_85v6i")]
 player = NodePath("../../Player")
@@ -226,6 +229,7 @@ direction = 3
 [node name="CollisionShape2D" parent="Transitions/BedroomSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_04khg")
 
+[connection signal="experiment_completed" from="ExperimentManager" to="Transitions" method="_on_experiment_manager_experiment_completed"]
 [connection signal="actioned" from="Actionables/MomActionable" to="Actionables" method="_on_mom_actionable_actioned"]
 
 [editable path="Actionables/MomActionable"]

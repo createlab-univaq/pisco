@@ -1,6 +1,8 @@
 class_name ExperimentManager
 extends Node
 
+signal experiment_completed
+
 @export var actionable: Actionable
 @export var textbox: TextBox
 
@@ -105,6 +107,7 @@ func _next_step_question(step: Dictionary) -> void:
 
 func _on_experiment_completed() -> void:
 	actionable.disable_collision_shape()
+	experiment_completed.emit()
 
 func _on_experiment_step_completed(step: Dictionary) -> void:
 	var nextNode: Dictionary = step[NEXT_KEY]

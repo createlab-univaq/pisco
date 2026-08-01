@@ -1,7 +1,6 @@
 extends Node2D
 
 @onready var player: Player = $Player
-
 @onready var scene_transition: SceneTransition = $Transitions/SceneTransition
 
 var game_state_service = GameStateService
