@@ -104,7 +104,7 @@ func _next_step_question(step: Dictionary) -> void:
 			_on_experiment_activity_completed()
 
 func _on_experiment_completed() -> void:
-	pass
+	actionable.disable_collision_shape()
 
 func _on_experiment_step_completed(step: Dictionary) -> void:
 	var nextNode: Dictionary = step[NEXT_KEY]
