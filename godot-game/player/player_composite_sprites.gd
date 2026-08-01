@@ -134,6 +134,14 @@ func update_part(part: BodyPart) -> void:
 func get_spritesheet(part: BodyPart) -> Array:
 	return SPRITESHEET[current_gender][part]
 
+func get_gender() -> Gender:
+	return current_gender
+
+func set_gender(gender: Gender) -> void:
+	current_gender = gender
+	reset_parts()
+	update_character()
+
 # Utility functions
 
 func change_to_next_hair():

@@ -32,6 +32,7 @@ func _physics_process(_delta):
 		scene_changer_controller.player_state = player.state
 		scene_changer_controller.player_start_position = player_next_room_spawn_position
 		scene_changer_controller.player_direction_to_face = directions_array[direction]
+		scene_changer_controller.player_gender = player.get_gender()
 		
 		scene_transition.fade_out(scene_to_change_into)
 		changing_room = true

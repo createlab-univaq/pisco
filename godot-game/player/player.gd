@@ -70,3 +70,9 @@ func enter_room():
 
 func exit_room():
 	set_player_as_in_cutscene()
+
+func set_gender(gender: PlayerCompositeSprite.Gender) -> void:
+	player_composite_sprite.set_gender(gender)
+
+func get_gender() -> PlayerCompositeSprite.Gender:
+	return player_composite_sprite.get_gender()
