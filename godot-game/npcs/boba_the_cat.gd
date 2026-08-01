@@ -9,6 +9,7 @@ extends CharacterBody2D
 @onready var animation_state: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
 @onready var collision_shape_2D: CollisionShape2D = $CollisionShape2D
 @onready var pet_actionable: Actionable = $PetActionable
+@onready var pet_actionable_collision_shape_2d: CollisionShape2D = $PetActionable/Area2D/CollisionShape2D
 
 enum States {
 	IDLE,
@@ -105,6 +106,16 @@ func get_facing_direction() -> Vector2:
 	if ANIMATION_TREE_PARAMETERS.size() == 0:
 		return Vector2.ZERO
 	return animation_tree.get(ANIMATION_TREE_PARAMETERS[0])
+
+func set_pet_invisible() -> void:
+	hide()
+	collision_shape_2D.disabled = true
+	pet_actionable_collision_shape_2d.disabled = true
+
+func set_pet_visible() -> void:
+	show()
+	collision_shape_2D.disabled = false
+	pet_actionable_collision_shape_2d.disabled = false
 
 func _on_pet_actionable_actioned(_tile: Actionable, _player: Player) -> void:
 	_change_state(States.PET)

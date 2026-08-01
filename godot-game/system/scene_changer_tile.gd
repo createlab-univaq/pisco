@@ -13,6 +13,7 @@ enum Directions {
 @export var scene_to_change_into: String
 @export var player_next_room_spawn_position: Vector2
 @export var direction: Directions = Directions.NONE
+@export var boba_the_cat: BobaTheCat = null
 
 var player: Player = null
 var changing_room: bool = false
@@ -33,6 +34,9 @@ func _physics_process(_delta):
 		scene_changer_controller.player_start_position = player_next_room_spawn_position
 		scene_changer_controller.player_direction_to_face = directions_array[direction]
 		scene_changer_controller.player_gender = player.get_gender()
+		
+		if boba_the_cat:
+			scene_changer_controller.is_pet_following_player = boba_the_cat.state == boba_the_cat.States.FOLLOW_PLAYER
 		
 		scene_transition.fade_out(scene_to_change_into)
 		changing_room = true

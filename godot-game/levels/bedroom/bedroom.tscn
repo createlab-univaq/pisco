@@ -203,8 +203,9 @@ player = NodePath("../../Player")
 [node name="PetShopScreen" parent="UI" unique_id=486196416 instance=ExtResource("11_17yto")]
 visible = false
 
-[node name="CompanionScreen" parent="UI" unique_id=1405001249 instance=ExtResource("12_oushh")]
+[node name="CompanionScreen" parent="UI" unique_id=1405001249 node_paths=PackedStringArray("boba_the_cat") instance=ExtResource("12_oushh")]
 visible = false
+boba_the_cat = NodePath("../../BobaTheCat")
 
 [node name="Actionables" type="Node" parent="." unique_id=1198991442]
 script = ExtResource("10_xhnyy")
@@ -239,16 +240,19 @@ shape = SubResource("RectangleShape2D_hobr5")
 player = NodePath("../../Player")
 game_camera = NodePath("../../GameCamera")
 
-[node name="LDKSceneChangerTile" parent="Transitions" unique_id=314211868 node_paths=PackedStringArray("scene_transition") instance=ExtResource("10_lhvc8")]
+[node name="LDKSceneChangerTile" parent="Transitions" unique_id=314211868 node_paths=PackedStringArray("scene_transition", "boba_the_cat") instance=ExtResource("10_lhvc8")]
 position = Vector2(249, 213)
 scene_transition = NodePath("../SceneTransition")
 scene_to_change_into = "res://levels/ldk/ldk.tscn"
 player_next_room_spawn_position = Vector2(393, 285)
 direction = 4
+boba_the_cat = NodePath("../../BobaTheCat")
 
 [node name="CollisionShape2D" parent="Transitions/LDKSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_cqvla")
 
+[connection signal="pet_bought" from="UI/PetShopScreen" to="." method="_on_pet_shop_screen_pet_bought"]
+[connection signal="follow_player_changed" from="UI/CompanionScreen" to="." method="_on_companion_screen_follow_player_changed"]
 [connection signal="pethouse_open_requested" from="Actionables" to="UI" method="_on_actionables_pethouse_open_requested"]
 [connection signal="store_open_requested" from="Actionables" to="UI" method="_on_actionables_store_open_requested"]
 [connection signal="wardrobe_open_requested" from="Actionables" to="UI" method="_on_actionables_wardrobe_open_requested"]

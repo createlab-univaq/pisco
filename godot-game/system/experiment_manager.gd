@@ -15,6 +15,8 @@ var is_activity: bool = false
 var current_experiment_activity_step_index: int = 0
 var current_experiment_activity_step_current_question_index: int = 0
 
+var game_state_service = GameStateService
+
 const QUESTIONS_KEY: String = "questions"
 const CHOICE_TYPE_KEY: String = "type"
 const NARRATION_KEY: String = "narration"
@@ -108,6 +110,7 @@ func _next_step_question(step: Dictionary) -> void:
 func _on_experiment_completed() -> void:
 	actionable.disable_collision_shape()
 	experiment_completed.emit()
+	game_state_service.experiment_completed()
 
 func _on_experiment_step_completed(step: Dictionary) -> void:
 	var nextNode: Dictionary = step[NEXT_KEY]

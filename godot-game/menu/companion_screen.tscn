@@ -21,10 +21,19 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="PetPreview" parent="." unique_id=1862204275 instance=ExtResource("2_s8fph")]
+[node name="OwnedPetControl" type="Control" parent="." unique_id=826800572]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="PetPreview" parent="OwnedPetControl" unique_id=1862204275 instance=ExtResource("2_s8fph")]
 position = Vector2(321, 316)
 
-[node name="FollowButton" type="Button" parent="." unique_id=43956199]
+[node name="FollowButton" type="Button" parent="OwnedPetControl" unique_id=43956199]
 layout_mode = 0
 offset_left = 257.0
 offset_top = 361.0
@@ -32,4 +41,28 @@ offset_right = 385.0
 offset_bottom = 430.0
 text = "Follow"
 
-[connection signal="pressed" from="FollowButton" to="." method="_on_follow_button_pressed"]
+[node name="NoPetOwnedControl" type="Control" parent="." unique_id=1788794306]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="CenterContainer" type="CenterContainer" parent="NoPetOwnedControl" unique_id=1368096482]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="NoPetOwnedControl/CenterContainer" unique_id=295415802]
+layout_mode = 2
+text = "Non possiedi nessun pet! Comprane uno!"
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="pressed" from="OwnedPetControl/FollowButton" to="." method="_on_follow_button_pressed"]

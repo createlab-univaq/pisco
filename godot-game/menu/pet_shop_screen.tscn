@@ -21,15 +21,56 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="PetPreview" parent="." unique_id=1862204275 instance=ExtResource("2_dkkgf")]
-position = Vector2(321, 316)
+[node name="BuyInterfaceControl" type="Control" parent="." unique_id=283646792]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
-[node name="BuyButton" type="Button" parent="." unique_id=855891604]
+[node name="PetPreview" parent="BuyInterfaceControl" unique_id=1862204275 instance=ExtResource("2_dkkgf")]
+position = Vector2(324, 292)
+
+[node name="BuyButton" type="Button" parent="BuyInterfaceControl" unique_id=855891604]
 layout_mode = 0
-offset_left = 257.0
-offset_top = 361.0
-offset_right = 385.0
-offset_bottom = 430.0
+offset_left = 260.0
+offset_top = 331.0
+offset_right = 388.0
+offset_bottom = 400.0
 text = "Buy"
 
-[connection signal="pressed" from="BuyButton" to="." method="_on_buy_button_pressed"]
+[node name="CoinLabel" type="Label" parent="BuyInterfaceControl" unique_id=1437749479]
+layout_mode = 0
+offset_left = 233.0
+offset_top = 415.0
+offset_right = 419.0
+offset_bottom = 438.0
+text = "Monete disponibili: 0/50"
+
+[node name="EverythingBoughtControl" type="Control" parent="." unique_id=1899768794]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="CenterContainer" type="CenterContainer" parent="EverythingBoughtControl" unique_id=1425602284]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="EverythingBoughtControl/CenterContainer" unique_id=995396924]
+layout_mode = 2
+text = "Hai comprato tutti i pet!"
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="pressed" from="BuyInterfaceControl/BuyButton" to="." method="_on_buy_button_pressed"]
