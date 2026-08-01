@@ -32,5 +32,5 @@ func _on_change_gender_button_pressed() -> void:
 	player.player_composite_sprite.change_gender()
 
 func _on_visibility_changed() -> void:
-	if visible:
+	if visible and player and player.player_composite_sprite:
 		setup()
