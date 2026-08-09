@@ -12,6 +12,10 @@ services:
       context: .
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      # application.yaml reads server.port from PORT, defaulting to 8080. Without this
+      # the app listens on 8080 while everything below points at 8082, and the published
+      # port maps to nothing.
+      PORT: ${PORT:-8082}
       DB_URL: ${DB_URL}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -22,9 +26,9 @@ services:
       # Not SERVICE_* -- Coolify reserves that prefix for its own magic variables.
       POLYGLOT_SERVICE_TOKEN: ${POLYGLOT_SERVICE_TOKEN}
     ports:
-      - "8082:8082"
+      - "${PORT:-8082}:${PORT:-8082}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q UP"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:${PORT:-8082}/actuator/health | grep -q UP"]
       interval: 10s
       timeout: 5s
       retries: 12

@@ -15,6 +15,13 @@ RUN mvn -B -ntp clean package -DskipTests
 FROM eclipse-temurin:25-jre
 WORKDIR /app
 
+# The jre image ships no wget and no curl, so the compose healthcheck has nothing to run
+# with: it fails as "command not found", the container never leaves unhealthy, and
+# Coolify's proxy will not route to it.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN useradd --system --create-home --shell /usr/sbin/nologin app
 COPY --from=build /build/target/*.jar app.jar
 USER app
