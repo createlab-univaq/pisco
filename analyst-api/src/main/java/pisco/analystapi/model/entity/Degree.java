@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Lookup table for the "Titoli di Studio" of spec section 2.4. The set is fixed, so the
+ * Lookup table for the "Titoli di Studio" of spec section 2.5. The set is fixed, so the
  * code is the primary key -- a surrogate id would buy nothing and force a join to read
- * a patient's level.
+ * a patient's degree.
  */
 @Entity
-@Table(name = "education_levels")
+@Table(name = "degrees")
 @Getter
 @Setter
 @NoArgsConstructor
-public class EducationLevel {
+public class Degree {
 
     @Id
     @Column(length = 40)
@@ -28,12 +28,16 @@ public class EducationLevel {
     @Column(nullable = false, length = 100)
     private String label;
 
-    @Column(name = "sort_order", nullable = false)
-    private int sortOrder;
+    /**
+     * Rank of the qualification, 1 being the lowest. It is what the dropdown orders by,
+     * so the list reads by level of education rather than alphabetically.
+     */
+    @Column(name = "education_level", nullable = false)
+    private int educationLevel;
 
-    public EducationLevel(String code, String label, int sortOrder) {
+    public Degree(String code, String label, int educationLevel) {
         this.code = code;
         this.label = label;
-        this.sortOrder = sortOrder;
+        this.educationLevel = educationLevel;
     }
 }

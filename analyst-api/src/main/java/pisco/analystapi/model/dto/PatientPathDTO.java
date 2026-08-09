@@ -19,7 +19,7 @@ public class PatientPathDTO {
     private UUID id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private UUID patientId;
+    private PatientDTO patient;
 
     /** The only piece of the Polyglot path stored locally (spec section 3). */
     @NotBlank

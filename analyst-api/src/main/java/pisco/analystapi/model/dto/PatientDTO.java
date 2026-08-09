@@ -14,8 +14,9 @@ import lombok.Setter;
 import pisco.analystapi.model.entity.Gender;
 
 /**
- * No analyst field in either direction: the owner comes from the token, so a client can
- * neither file a patient under someone else's name nor learn who else is in the system.
+ * No analyst field in either direction: who follows this patient comes from the token, so
+ * a client can neither file a patient under someone else's name nor learn who else is in
+ * the system.
  */
 @Getter
 @Setter
@@ -42,13 +43,11 @@ public class PatientDTO {
     @Max(120)
     private Integer age;
 
-    /** Foreign key into the education_levels lookup. Optional. */
-    @Size(max = 40)
-    private String educationLevelCode;
-
-    /** Denormalized for display so the dashboard need not join the lookup itself. */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String educationLevelLabel;
+    /**
+     * Optional. Only the code is read on the way in -- the rest of the lookup is filled
+     * from the database, so a client cannot invent a label for a code it does not own.
+     */
+    private DegreeDTO degree;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Instant createdAt;

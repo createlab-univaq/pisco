@@ -8,9 +8,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EducationLevelDTO {
+public class DegreeDTO {
 
     private String code;
 
     private String label;
+
+    /**
+     * The rank, 1 being the lowest. The list already arrives ordered by it, so this is
+     * for clients that re-sort or group on their own rather than for reading in sequence.
+     */
+    private int educationLevel;
 }

@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         // Self-registration. Without it there is no way to bootstrap the first analyst.
                         .requestMatchers(HttpMethod.POST, "/api/analysts").permitAll()
                         // Swagger UI plus the document it fetches -- without api-docs the
@@ -50,10 +50,11 @@ public class SecurityConfig {
                         // Reached by the patient's client, which has no login (spec section 1).
                         // The unique code in the URL is the only credential.
                         .requestMatchers(HttpMethod.GET, "/api/paths/resolve/*").permitAll()
+                        // Recording a run: the unique code in the body is the credential
+                        // for POST, and the execution's own unguessable id for PUT.
+                        // Reading and deleting stay behind the token.
                         .requestMatchers(HttpMethod.POST, "/api/game-executions").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/game-executions/*/nodes").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/game-executions/*/nodes/batch").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/game-executions/*/finish").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/game-executions/*").permitAll()
 
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .anyRequest().authenticated())

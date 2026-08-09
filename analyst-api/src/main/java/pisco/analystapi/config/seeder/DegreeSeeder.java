@@ -7,8 +7,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pisco.analystapi.model.entity.EducationLevel;
-import pisco.analystapi.model.repository.EducationLevelRepository;
+import pisco.analystapi.model.entity.Degree;
+import pisco.analystapi.model.repository.DegreeRepository;
 
 /**
  * Populates the fixed lookup table on startup. Only missing codes are inserted, so a
@@ -17,23 +17,23 @@ import pisco.analystapi.model.repository.EducationLevelRepository;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class EducationLevelSeeder implements ApplicationRunner {
+public class DegreeSeeder implements ApplicationRunner {
 
-    private static final List<EducationLevel> LEVELS = List.of(
-            new EducationLevel("LICENZA_MEDIA", "Licenza media", 10),
-            new EducationLevel("DIPLOMA", "Diploma", 20),
-            new EducationLevel("LAUREA_TRIENNALE", "Laurea triennale", 30),
-            new EducationLevel("LAUREA_MAGISTRALE", "Laurea magistrale", 40),
-            new EducationLevel("DOTTORATO", "Dottorato", 50),
-            new EducationLevel("ALTRO", "Altro", 60));
+    private static final List<Degree> DEGREES = List.of(
+            new Degree("LICENZA_MEDIA", "Licenza media", 1),
+            new Degree("DIPLOMA", "Diploma", 2),
+            new Degree("LAUREA_TRIENNALE", "Laurea triennale", 3),
+            new Degree("LAUREA_MAGISTRALE", "Laurea magistrale", 4),
+            new Degree("DOTTORATO", "Dottorato", 5),
+            new Degree("ALTRO", "Altro", 6));
 
-    private final EducationLevelRepository repository;
+    private final DegreeRepository repository;
 
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        List<EducationLevel> missing = LEVELS.stream()
-                .filter(level -> !repository.existsById(level.getCode()))
+        List<Degree> missing = DEGREES.stream()
+                .filter(degree -> !repository.existsById(degree.getCode()))
                 .toList();
 
         if (!missing.isEmpty()) {

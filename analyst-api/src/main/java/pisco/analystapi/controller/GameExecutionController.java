@@ -1,82 +1,117 @@
 package pisco.analystapi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pisco.analystapi.common.LogUtils;
 import pisco.analystapi.model.dto.GameExecutionDTO;
-import pisco.analystapi.model.dto.GameExecutionNodeDTO;
-import pisco.analystapi.model.dto.StartExecutionDTO;
 import pisco.analystapi.service.GameExecutionService;
 
+/**
+ * An execution is an ordinary record: the game is played elsewhere and reports what
+ * happened, so there is no session to open or close here.
+ */
 @RestController
 @RequestMapping("/api/game-executions")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(
+        name = "Esecuzioni di gioco",
+        description = "Telemetria delle partite. La partita si svolge altrove: qui viene solo "
+                + "registrata, gia' conclusa e completa delle sue risposte.")
 public class GameExecutionController {
 
     private final GameExecutionService service;
 
-    // --- Unauthenticated: called by the patient's client ------------------------------
+    // --- Unauthenticated: written by the patient's client ------------------------------
 
-    /** Opens a run from a unique code and returns the id the telemetry posts against. */
+    /** The unique code in the body is the only credential. */
+    @Operation(
+            summary = "Registra un'esecuzione con le sue risposte",
+            description = "Endpoint pubblico: il client del paziente non ha login e il codice "
+                    + "univoco nel corpo e' l'unica credenziale. Le date sono quelle misurate "
+                    + "dal gioco, non quelle di arrivo della richiesta; finishedAt puo' mancare "
+                    + "se la sessione non e' mai stata chiusa.")
+    @SecurityRequirements
     @PostMapping
-    public ResponseEntity<GameExecutionDTO> start(@Valid @RequestBody StartExecutionDTO dto) {
-        log.info("POST /api/game-executions uniqueCode={}", LogUtils.maskCode(dto.getUniqueCode()));
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.start(dto));
+    public ResponseEntity<GameExecutionDTO> create(@Valid @RequestBody GameExecutionDTO dto) {
+        log.info("POST /api/game-executions uniqueCode={} risposte={}",
+                LogUtils.maskCode(dto.getUniqueCode()),
+                dto.getAnswers() == null ? 0 : dto.getAnswers().size());
+        GameExecutionDTO created = service.create(dto);
+        return ResponseEntity.created(URI.create("/api/game-executions/" + created.getId()))
+                .body(created);
     }
 
-    @PostMapping("/{executionId}/nodes")
-    public ResponseEntity<GameExecutionNodeDTO> addNode(
-            @PathVariable UUID executionId, @Valid @RequestBody GameExecutionNodeDTO dto) {
-        log.info("POST /api/game-executions/{}/nodes nodeType={} sequenza={}",
-                executionId, dto.getNodeType(), dto.getSequenceNumber());
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addNode(executionId, dto));
+    /** Re-records a run: the answers in the body replace the ones already stored. */
+    @Operation(
+            summary = "Ri-registra un'esecuzione",
+            description = "Endpoint pubblico: qui la credenziale e' l'id dell'esecuzione. "
+                    + "Le risposte inviate sostituiscono quelle gia' salvate, non si aggiungono.")
+    @SecurityRequirements
+    @PutMapping("/{id}")
+    public GameExecutionDTO update(
+            @PathVariable UUID id, @Valid @RequestBody GameExecutionDTO dto) {
+        log.info("PUT /api/game-executions/{} risposte={}",
+                id, dto.getAnswers() == null ? 0 : dto.getAnswers().size());
+        return service.update(id, dto);
     }
 
-    /** Whole-session variant, so a run is one request rather than one per node. */
-    @PostMapping("/{executionId}/nodes/batch")
-    public ResponseEntity<List<GameExecutionNodeDTO>> addNodes(
-            @PathVariable UUID executionId, @Valid @RequestBody List<GameExecutionNodeDTO> dtos) {
-        log.info("POST /api/game-executions/{}/nodes/batch nodi={}", executionId, dtos.size());
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addNodes(executionId, dtos));
-    }
+    // --- Analyst-only ------------------------------------------------------------------
 
-    @PostMapping("/{executionId}/finish")
-    public GameExecutionDTO finish(@PathVariable UUID executionId) {
-        log.info("POST /api/game-executions/{}/finish", executionId);
-        return service.finish(executionId);
-    }
-
-    // --- Analyst-only reads -----------------------------------------------------------
-
+    @Operation(
+            summary = "Elenca le esecuzioni",
+            description = "Solo quelle dei percorsi assegnati dal chiamante. Filtrabili per "
+                    + "paziente. Le risposte non sono incluse: usare il dettaglio.")
     @GetMapping
     public List<GameExecutionDTO> list(@RequestParam(required = false) UUID patientId) {
         log.info("GET /api/game-executions patientId={}", patientId);
         return service.findAll(patientId);
     }
 
-    /** Includes every node traversed, ordered by sequence number. */
+    /** Includes every answer recorded, ordered by sequence number. */
+    @Operation(
+            summary = "Recupera un'esecuzione con le sue risposte",
+            description = "Include tutte le risposte, ordinate per numero di sequenza.")
     @GetMapping("/{id}")
     public GameExecutionDTO get(@PathVariable UUID id) {
         log.info("GET /api/game-executions/{}", id);
         return service.findById(id);
     }
 
+    @Operation(
+            summary = "Elenca le esecuzioni di un codice univoco",
+            description = "Riservato all'analista, a differenza della scrittura: il client del "
+                    + "paziente registra la telemetria ma non ne rilegge lo storico.")
     @GetMapping("/by-code/{uniqueCode}")
     public List<GameExecutionDTO> listByCode(@PathVariable String uniqueCode) {
         log.info("GET /api/game-executions/by-code/{}", LogUtils.maskCode(uniqueCode));
         return service.findByUniqueCode(uniqueCode);
+    }
+
+    @Operation(
+            summary = "Elimina un'esecuzione",
+            description = "Le risposte associate vengono eliminate con essa.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        log.info("DELETE /api/game-executions/{}", id);
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

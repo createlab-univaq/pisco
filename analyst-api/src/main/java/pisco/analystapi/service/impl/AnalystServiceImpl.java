@@ -14,10 +14,11 @@ import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
 import pisco.analystapi.model.dto.AnalystDTO;
 import pisco.analystapi.model.entity.Analyst;
+import pisco.analystapi.model.entity.AnalystPatient;
 import pisco.analystapi.model.entity.Role;
 import pisco.analystapi.model.mapper.AnalystMapper;
+import pisco.analystapi.model.repository.AnalystPatientRepository;
 import pisco.analystapi.model.repository.AnalystRepository;
-import pisco.analystapi.model.repository.PatientRepository;
 import pisco.analystapi.service.AnalystService;
 
 @Service
@@ -26,7 +27,7 @@ import pisco.analystapi.service.AnalystService;
 public class AnalystServiceImpl implements AnalystService {
 
     private final AnalystRepository repository;
-    private final PatientRepository patientRepository;
+    private final AnalystPatientRepository analystPatientRepository;
     private final AnalystMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -57,6 +58,17 @@ public class AnalystServiceImpl implements AnalystService {
     public List<AnalystDTO> findAll() {
         List<Analyst> analysts = repository.findAllByOrderByLastNameAscFirstNameAsc();
         log.debug("Elenco analisti: {} risultati", analysts.size());
+        return mapper.toDto(analysts);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnalystDTO> findAllForPatient(UUID patientId) {
+        List<Analyst> analysts = analystPatientRepository
+                .findAllByPatientIdOrderByAnalystLastNameAscAnalystFirstNameAsc(patientId).stream()
+                .map(AnalystPatient::getAnalyst)
+                .toList();
+        log.info("Analisti del paziente {}: {} risultati", patientId, analysts.size());
         return mapper.toDto(analysts);
     }
 
@@ -97,9 +109,9 @@ public class AnalystServiceImpl implements AnalystService {
         assertSelfOrAdmin(id);
         Analyst analyst = require(id);
 
-        // Patients are not orphaned or silently destroyed: the caller has to deal with
+        // Assignments are not orphaned or silently destroyed: the caller has to deal with
         // them first. This is why that foreign key is restrict rather than cascade.
-        if (patientRepository.existsByAnalystId(id)) {
+        if (analystPatientRepository.existsByAnalystId(id)) {
             log.warn("Eliminazione analista {} rifiutata: ha ancora pazienti associati", id);
             throw new ConflictException(
                     "L'analista ha ancora pazienti associati: eliminarli o riassegnarli prima");

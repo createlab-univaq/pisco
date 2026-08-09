@@ -1,7 +1,8 @@
 package pisco.analystapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.util.UUID;
@@ -9,11 +10,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Telemetry for one node traversed during a run (spec section 4). */
+/** Telemetry for one node traversed during a run (spec section 4.2). */
 @Getter
 @Setter
 @NoArgsConstructor
-public class GameExecutionNodeDTO {
+public class GameAnswerDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
@@ -21,15 +22,18 @@ public class GameExecutionNodeDTO {
     @Size(max = 64)
     private String polyglotNodeId;
 
-    /** Free text: Polyglot's node type is an open string, so no local enum to violate. */
-    @NotBlank
-    @Size(max = 64)
-    private String nodeType;
+    /** Named by its label on the way in; the server resolves or registers the lookup row. */
+    @NotNull
+    @Valid
+    private NodeTypeDTO nodeType;
 
     @PositiveOrZero
     private Integer reactionTimeMs;
 
     private Double score;
+
+    /** The most this node was worth, so {@code score} can be read as a proportion. */
+    private Double maxScore;
 
     @PositiveOrZero
     private Integer mouseDistancePx;

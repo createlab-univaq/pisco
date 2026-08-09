@@ -6,16 +6,17 @@ import org.mapstruct.MappingTarget;
 import pisco.analystapi.model.dto.DiagnosisDTO;
 import pisco.analystapi.model.entity.Diagnosis;
 
-@Mapper
+@Mapper(uses = PatientMapper.class)
 public interface DiagnosisMapper extends BaseMapper<Diagnosis, DiagnosisDTO> {
 
+    /** The DTO still speaks in patients: the assignment is an internal detail. */
     @Override
-    @Mapping(target = "patientId", source = "patient.id")
+    @Mapping(target = "patient", source = "analystPatient.patient")
     DiagnosisDTO toDto(Diagnosis diagnosis);
 
-    /** The patient comes from the path variable, after the ownership check. */
+    /** The assignment is resolved from the path variable, after the ownership check. */
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "patient", ignore = true)
+    @Mapping(target = "analystPatient", ignore = true)
     void updateEntity(@MappingTarget Diagnosis diagnosis, DiagnosisDTO dto);
 }

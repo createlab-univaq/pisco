@@ -45,7 +45,8 @@ public class GameExecution extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PatientPath patientPath;
 
-    @Column(name = "started_at", nullable = false, updatable = false)
+    /** Updatable: a re-recorded run replaces what was stored, timestamps included. */
+    @Column(name = "started_at", nullable = false)
     private Instant startedAt;
 
     /** Null while the session is still open; the game may never close it. */
@@ -54,10 +55,10 @@ public class GameExecution extends BaseEntity {
 
     @OneToMany(mappedBy = "execution", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sequenceNumber asc")
-    private List<GameExecutionNode> nodes = new ArrayList<>();
+    private List<GameAnswer> answers = new ArrayList<>();
 
-    public void addNode(GameExecutionNode node) {
-        node.setExecution(this);
-        nodes.add(node);
+    public void addAnswer(GameAnswer answer) {
+        answer.setExecution(this);
+        answers.add(answer);
     }
 }

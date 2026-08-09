@@ -13,11 +13,10 @@ public interface PatientPathRepository extends JpaRepository<PatientPath, UUID> 
 
     boolean existsByUniqueCode(String uniqueCode);
 
-    List<PatientPath> findAllByPatientIdAndPatientAnalystIdOrderByAssignedAtDesc(
-            UUID patientId, UUID analystId);
+    List<PatientPath> findAllByAnalystPatientIdOrderByAssignedAtDesc(UUID analystPatientId);
 
-    Optional<PatientPath> findByIdAndPatientIdAndPatientAnalystId(
-            UUID id, UUID patientId, UUID analystId);
+    Optional<PatientPath> findByIdAndAnalystPatientId(UUID id, UUID analystPatientId);
 
-    boolean existsByPatientIdAndPolyglotPathId(UUID patientId, String polyglotPathId);
+    boolean existsByAnalystPatientIdAndPolyglotPathId(
+            UUID analystPatientId, String polyglotPathId);
 }

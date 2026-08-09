@@ -9,17 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pisco.analystapi.client.PolyglotClient;
 import pisco.analystapi.common.LogUtils;
-import pisco.analystapi.config.security.SecurityUtils;
 import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
 import pisco.analystapi.model.dto.PatientPathDTO;
 import pisco.analystapi.model.dto.ResolvedPathDTO;
-import pisco.analystapi.model.entity.Patient;
+import pisco.analystapi.model.entity.AnalystPatient;
 import pisco.analystapi.model.entity.PatientPath;
 import pisco.analystapi.model.mapper.PatientPathMapper;
 import pisco.analystapi.model.repository.PatientPathRepository;
+import pisco.analystapi.service.AnalystPatientService;
 import pisco.analystapi.service.PatientPathService;
-import pisco.analystapi.service.PatientService;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ import pisco.analystapi.service.PatientService;
 public class PatientPathServiceImpl implements PatientPathService {
 
     private final PatientPathRepository repository;
-    private final PatientService patientService;
+    private final AnalystPatientService analystPatientService;
     private final PatientPathMapper mapper;
     private final UniqueCodeGenerator codeGenerator;
     private final PolyglotClient polyglotClient;
@@ -35,11 +34,10 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Override
     @Transactional(readOnly = true)
     public List<PatientPathDTO> findAllForPatient(UUID patientId) {
-        patientService.requireOwned(patientId);
+        AnalystPatient link = analystPatientService.requireLink(patientId);
 
-        List<PatientPath> paths = repository
-                .findAllByPatientIdAndPatientAnalystIdOrderByAssignedAtDesc(
-                        patientId, SecurityUtils.currentAnalystId());
+        List<PatientPath> paths =
+                repository.findAllByAnalystPatientIdOrderByAssignedAtDesc(link.getId());
         log.info("Percorsi assegnati patientId={} risultati={}", patientId, paths.size());
         return mapper.toDto(paths);
     }
@@ -47,11 +45,12 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Override
     @Transactional
     public PatientPathDTO assign(UUID patientId, PatientPathDTO dto) {
-        Patient patient = patientService.requireOwned(patientId);
+        AnalystPatient link = analystPatientService.requireLink(patientId);
 
         // Re-assigning the same path is a conflict rather than a second code: two live
         // codes for one path would split that patient's telemetry across both.
-        if (repository.existsByPatientIdAndPolyglotPathId(patientId, dto.getPolyglotPathId())) {
+        if (repository.existsByAnalystPatientIdAndPolyglotPathId(
+                link.getId(), dto.getPolyglotPathId())) {
             log.warn("Assegnazione rifiutata: percorso {} gia' assegnato a patientId={}",
                     dto.getPolyglotPathId(), patientId);
             throw new ConflictException(
@@ -60,7 +59,7 @@ public class PatientPathServiceImpl implements PatientPathService {
 
         PatientPath patientPath = new PatientPath();
         mapper.updateEntity(patientPath, dto);
-        patientPath.setPatient(patient);
+        patientPath.setAnalystPatient(link);
         patientPath.setUniqueCode(codeGenerator.generate());
         patientPath.setAssignedAt(Instant.now());
 
@@ -74,12 +73,10 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Override
     @Transactional
     public void remove(UUID patientId, UUID pathId) {
-        UUID analystId = SecurityUtils.currentAnalystId();
-        PatientPath patientPath = repository
-                .findByIdAndPatientIdAndPatientAnalystId(pathId, patientId, analystId)
+        AnalystPatient link = analystPatientService.requireLink(patientId);
+        PatientPath patientPath = repository.findByIdAndAnalystPatientId(pathId, link.getId())
                 .orElseThrow(() -> {
-                    log.warn("Percorso {} non accessibile per patientId={} analystId={}",
-                            pathId, patientId, analystId);
+                    log.warn("Percorso {} non accessibile per patientId={}", pathId, patientId);
                     return NotFoundException.of("Percorso assegnato", pathId);
                 });
 
@@ -97,10 +94,12 @@ public class PatientPathServiceImpl implements PatientPathService {
                 patientPath.getId(), patientPath.getPolyglotPathId());
         Object path = polyglotClient.fetchPath(patientPath.getPolyglotPathId());
 
+        // Ids only, deliberately: this response is served without a token, so it carries
+        // nothing about who the patient is.
         return new ResolvedPathDTO(
                 patientPath.getUniqueCode(),
                 patientPath.getId(),
-                patientPath.getPatient().getId(),
+                patientPath.getAnalystPatient().getPatient().getId(),
                 patientPath.getPolyglotPathId(),
                 path);
     }

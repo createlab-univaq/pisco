@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pisco.analystapi.config.security.SecurityUtils;
 import pisco.analystapi.exception.NotFoundException;
 import pisco.analystapi.model.dto.DiagnosisDTO;
+import pisco.analystapi.model.entity.AnalystPatient;
 import pisco.analystapi.model.entity.Diagnosis;
-import pisco.analystapi.model.entity.Patient;
 import pisco.analystapi.model.mapper.DiagnosisMapper;
 import pisco.analystapi.model.repository.DiagnosisRepository;
+import pisco.analystapi.service.AnalystPatientService;
 import pisco.analystapi.service.DiagnosisService;
-import pisco.analystapi.service.PatientService;
 
 /** The diagnosis text, notes and medications are clinical data and are never logged. */
 @Service
@@ -23,19 +23,20 @@ import pisco.analystapi.service.PatientService;
 public class DiagnosisServiceImpl implements DiagnosisService {
 
     private final DiagnosisRepository repository;
-    private final PatientService patientService;
+    private final AnalystPatientService analystPatientService;
     private final DiagnosisMapper mapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<DiagnosisDTO> findAllForPatient(UUID patientId) {
-        // Resolve the patient first so an unknown or foreign id is a 404 rather than an
+        // Resolve the assignment first so an unknown or foreign id is a 404 rather than an
         // empty list, which would read as "this patient has no diagnoses".
-        patientService.requireOwned(patientId);
+        AnalystPatient link = analystPatientService.requireLink(patientId);
 
-        List<Diagnosis> diagnoses = repository
-                .findAllByPatientIdAndPatientAnalystIdOrderByDiagnosisDateDesc(
-                        patientId, SecurityUtils.currentAnalystId());
+        // Scoped to the caller's own assignment: a colleague following the same patient
+        // keeps a separate history, and neither sees the other's.
+        List<Diagnosis> diagnoses =
+                repository.findAllByAnalystPatientIdOrderByDiagnosisDateDesc(link.getId());
         log.info("Storico diagnosi patientId={} risultati={}", patientId, diagnoses.size());
         return mapper.toDto(diagnoses);
     }
@@ -49,10 +50,10 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Override
     @Transactional
     public DiagnosisDTO create(UUID patientId, DiagnosisDTO dto) {
-        Patient patient = patientService.requireOwned(patientId);
+        AnalystPatient link = analystPatientService.requireLink(patientId);
 
         Diagnosis diagnosis = new Diagnosis();
-        diagnosis.setPatient(patient);
+        diagnosis.setAnalystPatient(link);
         mapper.updateEntity(diagnosis, dto);
 
         Diagnosis saved = repository.saveAndFlush(diagnosis);
@@ -77,10 +78,10 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         log.info("Diagnosi eliminata id={}", id);
     }
 
-    /** Ownership travels through the patient -- a diagnosis has no analyst of its own. */
+    /** Ownership travels through the assignment -- a diagnosis has no analyst of its own. */
     private Diagnosis requireOwned(UUID id) {
         UUID analystId = SecurityUtils.currentAnalystId();
-        return repository.findByIdAndPatientAnalystId(id, analystId)
+        return repository.findByIdAndAnalystPatientAnalystId(id, analystId)
                 .orElseThrow(() -> {
                     log.warn("Diagnosi {} non accessibile per analystId={}", id, analystId);
                     return NotFoundException.of("Diagnosi", id);

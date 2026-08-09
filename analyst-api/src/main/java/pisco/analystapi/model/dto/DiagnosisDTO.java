@@ -19,7 +19,7 @@ public class DiagnosisDTO {
 
     /** Taken from the URL on write, echoed back on read. Never trusted from the body. */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private UUID patientId;
+    private PatientDTO patient;
 
     /** When the diagnosis was made, which is not when it was typed in. */
     @NotNull

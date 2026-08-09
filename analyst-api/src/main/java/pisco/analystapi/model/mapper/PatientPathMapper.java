@@ -6,11 +6,11 @@ import org.mapstruct.MappingTarget;
 import pisco.analystapi.model.dto.PatientPathDTO;
 import pisco.analystapi.model.entity.PatientPath;
 
-@Mapper
+@Mapper(uses = PatientMapper.class)
 public interface PatientPathMapper extends BaseMapper<PatientPath, PatientPathDTO> {
 
     @Override
-    @Mapping(target = "patientId", source = "patient.id")
+    @Mapping(target = "patient", source = "analystPatient.patient")
     PatientPathDTO toDto(PatientPath patientPath);
 
     /**
@@ -19,7 +19,7 @@ public interface PatientPathMapper extends BaseMapper<PatientPath, PatientPathDT
      */
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "patient", ignore = true)
+    @Mapping(target = "analystPatient", ignore = true)
     @Mapping(target = "uniqueCode", ignore = true)
     @Mapping(target = "assignedAt", ignore = true)
     void updateEntity(@MappingTarget PatientPath patientPath, PatientPathDTO dto);

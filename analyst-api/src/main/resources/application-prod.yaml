@@ -6,7 +6,6 @@ spring:
   jpa:
     hibernate:
       # Hibernate adds tables and columns but never drops or retypes them.
-      # See docs/: the partial unique index on game_execution_nodes is created by hand.
       ddl-auto: update
   datasource:
     url: ${DB_URL}

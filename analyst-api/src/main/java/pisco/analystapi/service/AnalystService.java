@@ -10,6 +10,9 @@ public interface AnalystService {
 
     List<AnalystDTO> findAll();
 
+    /** The analysts currently following one patient. */
+    List<AnalystDTO> findAllForPatient(UUID patientId);
+
     AnalystDTO findById(UUID id);
 
     AnalystDTO update(UUID id, AnalystDTO dto);

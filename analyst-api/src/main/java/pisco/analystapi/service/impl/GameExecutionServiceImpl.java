@@ -1,8 +1,5 @@
 package pisco.analystapi.service.impl;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -11,20 +8,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pisco.analystapi.common.LogUtils;
 import pisco.analystapi.config.security.SecurityUtils;
-import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
+import pisco.analystapi.model.dto.GameAnswerDTO;
 import pisco.analystapi.model.dto.GameExecutionDTO;
-import pisco.analystapi.model.dto.GameExecutionNodeDTO;
-import pisco.analystapi.model.dto.StartExecutionDTO;
+import pisco.analystapi.model.entity.GameAnswer;
 import pisco.analystapi.model.entity.GameExecution;
-import pisco.analystapi.model.entity.GameExecutionNode;
 import pisco.analystapi.model.entity.PatientPath;
+import pisco.analystapi.model.mapper.GameAnswerMapper;
 import pisco.analystapi.model.mapper.GameExecutionMapper;
-import pisco.analystapi.model.mapper.GameExecutionNodeMapper;
 import pisco.analystapi.model.repository.GameExecutionRepository;
 import pisco.analystapi.service.GameExecutionService;
+import pisco.analystapi.service.NodeTypeService;
 import pisco.analystapi.service.PatientPathService;
 
+/**
+ * The game runs elsewhere; this service only records what it reports. Nothing here is
+ * measured server-side, so there is no open/closed state to keep -- an execution is an
+ * ordinary record that arrives whole.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,73 +33,67 @@ public class GameExecutionServiceImpl implements GameExecutionService {
 
     private final GameExecutionRepository repository;
     private final PatientPathService patientPathService;
+    private final NodeTypeService nodeTypeService;
     private final GameExecutionMapper mapper;
-    private final GameExecutionNodeMapper nodeMapper;
+    private final GameAnswerMapper answerMapper;
 
     // --- Written by the patient's client, unauthenticated -----------------------------
 
     @Override
     @Transactional
-    public GameExecutionDTO start(StartExecutionDTO dto) {
+    public GameExecutionDTO create(GameExecutionDTO dto) {
         PatientPath patientPath = patientPathService.requireByCode(dto.getUniqueCode());
 
         GameExecution execution = new GameExecution();
+        mapper.updateEntity(execution, dto);
         execution.setPatientPath(patientPath);
-        execution.setStartedAt(Instant.now());
+        replaceAnswers(execution, dto.getAnswers());
 
         GameExecution saved = repository.saveAndFlush(execution);
-        log.info("Esecuzione avviata id={} patientPathId={} codice={}",
-                saved.getId(), patientPath.getId(), LogUtils.maskCode(dto.getUniqueCode()));
-        return mapper.toDto(saved);
+        log.info("Esecuzione registrata id={} patientPathId={} codice={} risposte={}",
+                saved.getId(), patientPath.getId(),
+                LogUtils.maskCode(dto.getUniqueCode()), saved.getAnswers().size());
+        return mapper.toDetailDto(saved);
     }
 
     @Override
     @Transactional
-    public GameExecutionNodeDTO addNode(UUID executionId, GameExecutionNodeDTO dto) {
-        return addNodes(executionId, List.of(dto)).getFirst();
+    public GameExecutionDTO update(UUID id, GameExecutionDTO dto) {
+        // Unauthenticated path: the execution id is an unguessable UUID handed back by
+        // create(), so it is what stands in for a credential here.
+        GameExecution execution = require(id);
+        mapper.updateEntity(execution, dto);
+        replaceAnswers(execution, dto.getAnswers());
+
+        // flush(), not save(): the execution was loaded in this transaction and is already
+        // managed, so save() would route to em.merge() and persist *copies* of the new
+        // answers, leaving these instances transient with null ids -- which is what the
+        // response would then carry. A plain flush cascades onto them and assigns ids in
+        // place, and drops the replaced rows via orphanRemoval.
+        repository.flush();
+
+        log.info("Esecuzione aggiornata id={} risposte={}", id, execution.getAnswers().size());
+        return mapper.toDetailDto(execution);
     }
 
     /**
-     * Batch insert. A session produces one row per node traversed, and the client has no
-     * reason to pay a round-trip for each one.
+     * A re-recorded run replaces its telemetry rather than adding to it: the client is
+     * reporting the whole session again, not a second half of it.
      */
-    @Override
-    @Transactional
-    public List<GameExecutionNodeDTO> addNodes(UUID executionId, List<GameExecutionNodeDTO> dtos) {
-        GameExecution execution = requireOpen(executionId);
-
-        List<GameExecutionNode> nodes = new ArrayList<>(dtos.size());
-        for (GameExecutionNodeDTO dto : dtos) {
-            GameExecutionNode node = new GameExecutionNode();
-            nodeMapper.updateEntity(node, dto);
-            execution.addNode(node);
-            nodes.add(node);
+    private void replaceAnswers(GameExecution execution, List<GameAnswerDTO> dtos) {
+        execution.getAnswers().clear();
+        if (dtos == null) {
+            return;
         }
-        // flush(), not save()/saveAndFlush(): the execution was loaded in this transaction
-        // and is already managed, so save() would route to em.merge(). Merge cascades by
-        // persisting *copies* of the new nodes, leaving the instances above transient with
-        // null ids -- which is exactly what the response would then carry. A plain flush
-        // cascades PERSIST onto these instances and assigns their ids in place.
-        repository.flush();
-
-        log.info("Telemetria salvata executionId={} nodi={} totaleSessione={}",
-                executionId, nodes.size(), execution.getNodes().size());
-        return nodeMapper.toDto(nodes);
+        for (GameAnswerDTO dto : dtos) {
+            GameAnswer answer = new GameAnswer();
+            answerMapper.updateEntity(answer, dto);
+            answer.setNodeType(nodeTypeService.resolveOrRegister(dto.getNodeType().getLabel()));
+            execution.addAnswer(answer);
+        }
     }
 
-    @Override
-    @Transactional
-    public GameExecutionDTO finish(UUID executionId) {
-        GameExecution execution = requireOpen(executionId);
-        execution.setFinishedAt(Instant.now());
-        log.info("Esecuzione conclusa id={} nodi={} durata={}",
-                executionId,
-                execution.getNodes().size(),
-                Duration.between(execution.getStartedAt(), execution.getFinishedAt()));
-        return mapper.toDto(execution);
-    }
-
-    // --- Read by the analyst -----------------------------------------------------------
+    // --- Read and managed by the analyst ------------------------------------------------
 
     @Override
     @Transactional(readOnly = true)
@@ -113,13 +108,8 @@ public class GameExecutionServiceImpl implements GameExecutionService {
     @Override
     @Transactional(readOnly = true)
     public GameExecutionDTO findById(UUID id) {
-        UUID analystId = SecurityUtils.currentAnalystId();
-        GameExecution execution = repository.findByIdForAnalyst(id, analystId)
-                .orElseThrow(() -> {
-                    log.warn("Esecuzione {} non accessibile per analystId={}", id, analystId);
-                    return NotFoundException.of("Esecuzione", id);
-                });
-        log.info("Dettaglio esecuzione id={} nodi={}", id, execution.getNodes().size());
+        GameExecution execution = requireOwned(id);
+        log.info("Dettaglio esecuzione id={} risposte={}", id, execution.getAnswers().size());
         return mapper.toDetailDto(execution);
     }
 
@@ -137,20 +127,28 @@ public class GameExecutionServiceImpl implements GameExecutionService {
         return mapper.toDto(executions);
     }
 
-    private GameExecution requireOpen(UUID executionId) {
-        // Unauthenticated path: the execution id is an unguessable UUID handed back by
-        // start(), so it is what stands in for a credential here.
-        GameExecution execution = repository.findById(executionId)
-                .orElseThrow(() -> {
-                    log.warn("Esecuzione {} inesistente", executionId);
-                    return NotFoundException.of("Esecuzione", executionId);
-                });
+    @Override
+    @Transactional
+    public void delete(UUID id) {
+        // Answers go with it -- the foreign key cascades.
+        repository.delete(requireOwned(id));
+        log.info("Esecuzione eliminata id={} (risposte in cascata)", id);
+    }
 
-        if (execution.getFinishedAt() != null) {
-            log.warn("Scrittura rifiutata: esecuzione {} conclusa il {}",
-                    executionId, execution.getFinishedAt());
-            throw new ConflictException("Esecuzione gia' conclusa: " + executionId);
-        }
-        return execution;
+    /** Unscoped: used by the write path, which has no analyst behind it. */
+    private GameExecution require(UUID id) {
+        return repository.findById(id).orElseThrow(() -> {
+            log.warn("Esecuzione {} inesistente", id);
+            return NotFoundException.of("Esecuzione", id);
+        });
+    }
+
+    private GameExecution requireOwned(UUID id) {
+        UUID analystId = SecurityUtils.currentAnalystId();
+        return repository.findByIdForAnalyst(id, analystId)
+                .orElseThrow(() -> {
+                    log.warn("Esecuzione {} non accessibile per analystId={}", id, analystId);
+                    return NotFoundException.of("Esecuzione", id);
+                });
     }
 }

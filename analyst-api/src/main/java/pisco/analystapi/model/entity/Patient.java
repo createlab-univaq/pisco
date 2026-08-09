@@ -8,7 +8,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -17,10 +16,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Pure anagraphic data. Which analysts follow this patient is not recorded here but in
+ * {@link AnalystPatient}: the relation is many-to-many (spec section 2.2), so there is no
+ * single owner to point at.
+ */
 @Entity
-@Table(
-        name = "patients",
-        indexes = @Index(name = "idx_patients_analyst", columnList = "analyst_id"))
+@Table(name = "patients")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,15 +31,6 @@ public class Patient extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    /**
-     * A patient belongs to exactly one analyst (spec section 2.2) and never moves.
-     * No ON DELETE CASCADE here on purpose: deleting an analyst must not silently take
-     * their patients with it.
-     */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "analyst_id", nullable = false, updatable = false)
-    private Analyst analyst;
 
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
@@ -57,6 +50,6 @@ public class Patient extends BaseEntity {
     private Integer age;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "education_level_code")
-    private EducationLevel educationLevel;
+    @JoinColumn(name = "degree_code")
+    private Degree degree;
 }

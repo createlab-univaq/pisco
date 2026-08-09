@@ -22,7 +22,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(
         name = "diagnoses",
-        indexes = @Index(name = "idx_diagnoses_patient", columnList = "patient_id"))
+        indexes = @Index(
+                name = "idx_diagnoses_analyst_patient", columnList = "analyst_patient_id"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,10 +33,15 @@ public class Diagnosis extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /**
+     * The assignment, not the patient (spec section 2.4): a diagnosis belongs to the
+     * analyst who made it as much as to the patient it is about, so two analysts
+     * following the same person keep separate histories.
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "patient_id", nullable = false, updatable = false)
+    @JoinColumn(name = "analyst_patient_id", nullable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Patient patient;
+    private AnalystPatient analystPatient;
 
     /** When the diagnosis was made, which is not the same as when it was recorded. */
     @Column(name = "diagnosis_date", nullable = false)

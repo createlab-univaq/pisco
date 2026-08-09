@@ -8,9 +8,12 @@ import pisco.analystapi.model.entity.Diagnosis;
 
 public interface DiagnosisRepository extends JpaRepository<Diagnosis, UUID> {
 
-    /** Ownership travels through the patient: the analyst never appears on the diagnosis. */
-    Optional<Diagnosis> findByIdAndPatientAnalystId(UUID id, UUID analystId);
+    /** Ownership travels through the assignment: the analyst is one hop away, not two. */
+    Optional<Diagnosis> findByIdAndAnalystPatientAnalystId(UUID id, UUID analystId);
 
-    List<Diagnosis> findAllByPatientIdAndPatientAnalystIdOrderByDiagnosisDateDesc(
-            UUID patientId, UUID analystId);
+    /**
+     * Takes the assignment id, which the caller has already had checked, so the analyst
+     * does not need repeating here.
+     */
+    List<Diagnosis> findAllByAnalystPatientIdOrderByDiagnosisDateDesc(UUID analystPatientId);
 }

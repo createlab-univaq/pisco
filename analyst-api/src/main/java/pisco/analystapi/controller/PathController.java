@@ -1,5 +1,8 @@
 package pisco.analystapi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,10 @@ import pisco.analystapi.service.PatientPathService;
 @RequestMapping("/api/paths")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(
+        name = "Percorsi",
+        description = "Riscatto del codice univoco da parte del client del paziente. "
+                + "Assegnazione e rimozione stanno sotto il paziente.")
 public class PathController {
 
     private final PatientPathService service;
@@ -26,6 +33,12 @@ public class PathController {
      * Unauthenticated by design (spec section 1): the patient has no login and redeems
      * the code they were given. The code is masked in the log -- here it is a credential.
      */
+    @Operation(
+            summary = "Risolve un codice univoco nel percorso Polyglot completo",
+            description = "Endpoint pubblico (spec sezione 1): il paziente non ha login e "
+                    + "riscatta il codice ricevuto. Recupera il percorso da Polyglot in tempo "
+                    + "reale e non espone alcun dato anagrafico del paziente.")
+    @SecurityRequirements
     @GetMapping("/resolve/{uniqueCode}")
     public ResolvedPathDTO resolve(@PathVariable String uniqueCode) {
         log.info("GET /api/paths/resolve/{}", LogUtils.maskCode(uniqueCode));

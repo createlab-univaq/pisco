@@ -20,17 +20,18 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * The association between a patient and a Polyglot path. Per spec section 3 the local
- * database stores only the external id -- no title, no nodes, nothing that would go
- * stale the moment the path is edited in Polyglot.
+ * The association between an assignment and a Polyglot path (spec section 3). Per that
+ * section the local database stores only the external id -- no title, no nodes, nothing
+ * that would go stale the moment the path is edited in Polyglot.
  */
 @Entity
 @Table(
         name = "patient_paths",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_patient_paths_patient_path",
-                columnNames = {"patient_id", "polyglot_path_id"}),
-        indexes = @Index(name = "idx_patient_paths_patient", columnList = "patient_id"))
+                name = "uk_patient_paths_assignment_path",
+                columnNames = {"analyst_patient_id", "polyglot_path_id"}),
+        indexes = @Index(
+                name = "idx_patient_paths_analyst_patient", columnList = "analyst_patient_id"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,10 +41,14 @@ public class PatientPath extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /**
+     * Hangs off the assignment rather than the patient: the path was prescribed by one
+     * analyst, and the telemetry it collects answers to that analyst's view of the case.
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "patient_id", nullable = false, updatable = false)
+    @JoinColumn(name = "analyst_patient_id", nullable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Patient patient;
+    private AnalystPatient analystPatient;
 
     /** The flow id as Polyglot knows it (a Mongo id), opaque to this service. */
     @Column(name = "polyglot_path_id", nullable = false, updatable = false, length = 64)
