@@ -19,5 +19,4 @@ RUN useradd --system --create-home --shell /usr/sbin/nologin app
 COPY --from=build /build/target/*.jar app.jar
 USER app
 
-EXPOSE 8080
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "/app/app.jar"]

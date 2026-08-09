@@ -21,7 +21,7 @@ services:
       POLYGLOT_API_URL: ${POLYGLOT_API_URL}
       # Not SERVICE_* -- Coolify reserves that prefix for its own magic variables.
       POLYGLOT_SERVICE_TOKEN: ${POLYGLOT_SERVICE_TOKEN}
-    expose:
+    ports:
       - "8081:8081"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q UP"]
