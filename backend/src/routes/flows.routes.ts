@@ -17,6 +17,18 @@ router.route("/json").post(checkAuth, FlowController.createFlowJson);
 // MUST stay above "/:id", otherwise that route swallows "/catalog".
 router.route("/catalog").get(checkServiceToken, FlowController.getFlowList);
 
+// Same caller, single flow. The analyst dashboard resolves a patient's unique code
+// into the full path (nodes + edges) and has no Google identity to present, so
+// "/:id" below is unreachable for it.
+//
+// Both this and "/catalog" MUST return every flow regardless of author: the analyst
+// assigns paths authored by other Polyglot users. If the privacy filtering noted in
+// the getFlowList FIXME is ever added, it has to skip these two service routes or
+// path resolution breaks for the dashboard.
+//
+// MUST stay above "/:id", same reason as "/catalog".
+router.route("/catalog/:id").get(checkServiceToken, FlowController.getFlowById);
+
 router
   .route("/:id")
   .get(checkAuth, FlowController.getFlowById)
