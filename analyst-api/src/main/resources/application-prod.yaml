@@ -1,0 +1,30 @@
+# Production. Every value comes from the environment, which docker-compose loads
+# from an untracked .env (see .env.example). No defaults on the secrets: a missing
+# JWT_SECRET or DB_PASSWORD must stop startup, not silently fall back to something weak.
+
+spring:
+  jpa:
+    hibernate:
+      # Hibernate adds tables and columns but never drops or retypes them.
+      # See docs/: the partial unique index on game_execution_nodes is created by hand.
+      ddl-auto: update
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS}
+  jwt:
+    secret: ${JWT_SECRET}
+    expires-in: ${JWT_EXPIRES_IN:PT8H}
+
+polyglot:
+  base-url: ${POLYGLOT_API_URL}
+  # Not SERVICE_* -- Coolify reserves that prefix for its own magic variables.
+  service-token: ${POLYGLOT_SERVICE_TOKEN}
+
+logging:
+  level:
+    pisco.analystapi: INFO

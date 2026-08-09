@@ -1,0 +1,31 @@
+# Deployment. One service: the API image, built from the Dockerfile in this repo.
+# There is no database here on purpose -- Postgres is a separate Coolify resource,
+# and its connection string arrives as DB_URL. For a local Postgres to develop
+# against, use docker-compose.dev.yml.
+#
+# Every variable below must be set in the Coolify environment for this app.
+# See .env.example for the full list and what each one means.
+
+services:
+  app:
+    build:
+      context: .
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-PT8H}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      POLYGLOT_API_URL: ${POLYGLOT_API_URL}
+      # Not SERVICE_* -- Coolify reserves that prefix for its own magic variables.
+      POLYGLOT_SERVICE_TOKEN: ${POLYGLOT_SERVICE_TOKEN}
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s

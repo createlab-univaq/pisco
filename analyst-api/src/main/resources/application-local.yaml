@@ -1,0 +1,33 @@
+# Local development. Every value here is a working default against the Postgres
+# container in docker-compose.dev.yml --
+# `docker compose -f docker-compose.dev.yml up -d`, then run the app.
+# Nothing secret belongs in this file: it is checked into VCS.
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/analyst_dashboard
+    username: analyst
+    password: analyst
+
+app:
+  cors:
+    # Flutter dashboard, Vite editor, and the Godot client's dev origins.
+    # Update this if you are working on a client that uses a different port.
+    allowed-origins: http://localhost:3000,http://localhost:5173,http://localhost:8081
+  jwt:
+    # Fixed development key, base64, 64 bytes for HS512. Committed on purpose: tokens
+    # survive a restart, and this value is never used anywhere but a local machine.
+    # Production reads JWT_SECRET from the environment -- see application-prod.yaml.
+    secret: ZIIXpgEfc9uZmDAGWc/LMccS7UL4J2+H0LjfoAw6dQonoySkmqvQEwKBl9l0q7or5LMPEHrc02SnzFUcm+Kgfg==
+    expires-in: PT8H
+
+polyglot:
+  # Point at a locally running Polyglot backend, or leave blank to get a clean
+  # 503 "integration not configured" from the path endpoints.
+  base-url: ${POLYGLOT_API_URL:http://localhost:5000}
+  service-token: ${POLYGLOT_SERVICE_TOKEN:}
+
+logging:
+  level:
+    pisco.analystapi: DEBUG
+    org.hibernate.SQL: DEBUG

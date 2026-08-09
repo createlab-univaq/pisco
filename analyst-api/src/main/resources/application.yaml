@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: analyst-dashboard
+  profiles:
+    # Local development is the default; the deployed app sets SPRING_PROFILES_ACTIVE=prod.
+    default: local
+
+  jpa:
+    hibernate:
+      # Hibernate adds tables and columns but never drops or retypes them.
+      # See docs/: the partial unique index on game_execution_nodes is created by hand.
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  jwt:
+    # Stamped into `iss` and required back on every token. Changing it invalidates every
+    # token already out there, so it is deliberately not per-profile.
+    issuer: analyst-dashboard
+
+polyglot:
+  # Only the timeouts here -- the routes are part of Polyglot's contract and live in
+  # PolyglotClientImpl. base-url and service-token come from the active profile.
+  connect-timeout: PT5S
+  read-timeout: PT10S

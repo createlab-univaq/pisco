@@ -1,0 +1,30 @@
+# Local development database only.
+#
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# then run the app from the IDE with the default `local` profile, which points at
+# localhost:5432 with the credentials below (see application-local.yaml).
+#
+# The deployable app service lives in docker-compose.yml -- that file is what
+# Coolify builds, and it does not carry a database.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: analyst-dashboard-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-analyst_dashboard}
+      POSTGRES_USER: ${POSTGRES_USER:-analyst}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-analyst}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-analyst} -d ${POSTGRES_DB:-analyst_dashboard}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
