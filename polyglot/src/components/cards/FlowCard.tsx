@@ -1,0 +1,146 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import cardImage from '@public/test_card.png';
+import styles from './FlowCard.module.css';
+import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
+
+// Reusing the color map so the tags have the correct hex backgrounds
+const colorMap: Record<string, string> = {
+  gray: '#e2e8f0',
+  yellow: '#fef08a',
+  orange: '#fbd38d',
+  red: '#feb2b2',
+  pink: '#fbb6ce',
+  purple: '#d6bcfa',
+  blue: '#90cdf4',
+  cyan: '#9decf9',
+  teal: '#81e6d9',
+  green: '#9ae6b4',
+};
+
+type FlowCardProps = {
+  canDelete?: boolean;
+  setSelected?: (flowId: string) => void;
+  flow: PolyglotFlow;
+};
+
+const FlowCard = ({ flow, canDelete, setSelected }: FlowCardProps) => {
+  return (
+    <div className={styles.card}>
+      
+      <div className={styles.imageContainer}>
+        <Image
+          src={cardImage}
+          alt="Flow card"
+          fill
+          className={styles.image}
+        />
+      </div>
+
+      <div className={styles.content}>
+        <div className={styles.cardBody}>
+          
+          {canDelete && (
+            <button
+              className={styles.deleteButton}
+              title="Delete"
+              aria-label="Delete Flow"
+              onClick={(e) => {
+                // Prevent the click from triggering the Link underneath
+                e.preventDefault(); 
+                e.stopPropagation();
+                setSelected?.(flow._id!);
+              }}
+            >
+              {/* Delete Icon SVG */}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          )}
+
+          <h2 className={styles.title}>
+            {/* The ::after element on this link makes the whole card clickable */}
+            <Link href={`/flows/${flow._id}`} className={styles.cardLink}>
+              {flow.title}
+            </Link>
+          </h2>
+
+          <div className={styles.tagsContainer}>
+            {flow.tags?.map((tag, id) => (
+              <span 
+                key={id} 
+                className={styles.badge} 
+                style={{ backgroundColor: colorMap[tag.color] || colorMap.gray }}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+
+          <p className={styles.description}>{flow.description}</p>
+          
+          <p className={styles.metaText}>
+            In this Learning Path there are: <strong>{flow.nodes?.length || 0}</strong> learning activities
+          </p>
+        </div>
+
+        <div className={styles.cardFooter}>
+          
+          {/* Left side of footer (Author) */}
+          <div className={styles.authorSection}>
+            {!canDelete && flow.author?.username && (
+              <>
+                <span className={styles.authorName}>{flow.author.username}</span>
+                <div className={styles.avatar}>
+                  {flow.author.username.charAt(0).toUpperCase()}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Right side of footer (Publish Status) */}
+          <div className={styles.publishStatus}>
+            <span className={styles.publishText}>
+              {flow.publish ? 'Published' : 'Not published'}:
+            </span>
+            <div className={`${styles.statusIcon} ${flow.publish ? styles.statusGreen : styles.statusRed}`}>
+              {flow.publish ? (
+                /* Check Icon SVG */
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" width="12" height="12">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ) : (
+                /* Close Icon SVG */
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" width="12" height="12">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FlowCard;
+
+// Refactored Skeleton Loader removing Tailwind dependency
+export function SkeletonFlowCards() {
+  return (
+    <div className={styles.skeletonContainer}>
+      <div className={styles.skeletonImage}></div>
+      <div className={styles.skeletonBody}>
+        <div className={styles.skeletonTitle}></div>
+        <div className={styles.skeletonText}></div>
+        <div className={styles.skeletonTextShort}></div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,90 @@
+.container {
+    padding: 0.5rem;
+}
+
+.controlWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    font-size: 1rem;
+    outline: none;
+    color: #2d3748;
+    transition: border-color 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.input:focus {
+    border-color: #3182ce;
+}
+
+.inputInvalid {
+    border-color: #e53e3e;
+}
+
+.inputInvalid:focus {
+    border-color: #e53e3e;
+}
+
+.input:disabled {
+    background-color: #edf2f7;
+    cursor: not-allowed;
+    color: #a0aec0;
+}
+
+.input:read-only {
+    background-color: #f7fafc;
+}
+
+/* Base Label Styling */
+.label {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background-color: white;
+    padding: 0 0.25rem;
+    font-size: 1rem;
+    color: #718096;
+    z-index: 1;
+    transition: transform 0.2s ease, color 0.2s ease;
+    pointer-events: none;
+    /* Allows clicking "through" the label to focus the input */
+    transform-origin: left top;
+}
+
+/* 
+  Floating Label Magic:
+  When the input is focused OR the placeholder is NOT shown (meaning the user typed something),
+  we float the label up. 
+  (Note: this relies on the input having at least a blank space " " as a placeholder)
+*/
+.input:focus~.label,
+.input:not(:placeholder-shown)~.label {
+    transform: translateY(-1.4rem) scale(0.85);
+    color: #3182ce;
+}
+
+.inputInvalid:focus~.label,
+.inputInvalid:not(:placeholder-shown)~.label,
+.labelInvalid {
+    color: #e53e3e !important;
+}
+
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+}

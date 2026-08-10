@@ -1,0 +1,35 @@
+/* Navigation Bar Container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0; /* Light gray border under the nav */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Brand Logos */
+.brandContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandLogo {
+  width: 40px;
+  height: auto;
+}
+
+.brandWrite {
+  width: 110px;
+  height: auto;
+  align-self: center;
+}
+
+/* Hide the text logo on very small screens (mobile responsive) */
+@media (max-width: 480px) {
+  .brandWrite {
+    display: none;
+  }
+}
