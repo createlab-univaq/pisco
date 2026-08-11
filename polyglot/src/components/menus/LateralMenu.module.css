@@ -1,0 +1,99 @@
+.container {
+    width: 300px;
+    background-color: rgba(217, 217, 217, 0.6);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.label {
+    padding: 1rem 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 15%;
+}
+
+.accordionItem {
+    border: none;
+}
+
+.accordionButton {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2d3748;
+    text-align: left;
+    transition: background-color 0.2s ease;
+}
+
+.accordionButton:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+.accordionPanel {
+    padding: 6px 8px 10px 8px;
+}
+
+.nodeItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    margin-bottom: 6px;
+    cursor: grab;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    color: #1a202c;
+
+    /* Responsive font sizes translated from Chakra */
+    font-size: 10px;
+}
+
+.nodeItem:active {
+    cursor: grabbing;
+}
+
+/* We use !important here because the base colors are applied via inline styles for alternating rows */
+.nodeItem:hover {
+    background-color: #e6b83f !important;
+}
+
+.emptyMessage {
+    padding: 8px;
+    opacity: 0.7;
+    font-size: 10px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Media Queries translated from Chakra's { base: '10px', md: '12px', xl: '14px' } */
+@media (min-width: 768px) {
+
+    .nodeItem,
+    .emptyMessage {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .nodeItem {
+        font-size: 14px;
+    }
+}

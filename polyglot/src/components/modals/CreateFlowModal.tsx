@@ -2,11 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FlowsAPI } from '../../data/api'; // Adjust path if needed based on your folder structure
 import styles from './CreateFlowModal.module.css';
 import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
 import { PolyglotFlowInfo } from '@/types/polyglot-elements/PolyglotFlowInfo';
 import { Editor } from '@monaco-editor/react';
+import { FlowsAPI } from '@/data/api';
 
 // We removed the API prop since we import FlowsAPI directly now!
 type CreateFlowModalProps = {

@@ -1,0 +1,31 @@
+.panelWrapper {
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    /* Smooth animation for opening and closing */
+    transition: min-width 0.3s ease, width 0.3s ease, opacity 0.3s ease;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* Closed State */
+    opacity: 0;
+    width: 0;
+    min-width: 0;
+    visibility: hidden;
+}
+
+.panelOpen {
+    /* Open State */
+    opacity: 1;
+    width: 40%;
+    min-width: 40%;
+    visibility: visible;
+}
+
+.panelContent {
+    /* Replaces Chakra's p="5" (usually 1.25rem or 20px) */
+    padding: 1.25rem;
+    height: 100%;
+}

@@ -12,10 +12,6 @@ import { createNewDefaultPolyglotFlow } from '@/utils/utils';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '@/components/ElementMapping';
 import exampleFlows from './exampleData';
 
-// ============================================================================
-// 1. GLOBAL FETCH HELPERS
-// ============================================================================
-
 export const fetcher = async (url: string) => {
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json' },
@@ -52,10 +48,6 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
   return res.json();
 }
 
-// ============================================================================
-// 2. CUSTOM HOOKS (Data Fetching / Queries)
-// ============================================================================
-
 export function useFlows(queryString: string = '') {
   const { data, error, isLoading, mutate } = useSWR<PolyglotFlow[]>(
     `/api/flows${queryString}`,
@@ -69,10 +61,6 @@ export function useFlows(queryString: string = '') {
     mutateFlows: mutate,
   };
 }
-
-// ============================================================================
-// 3. API MUTATION MODULES
-// ============================================================================
 
 export const UserAPI = {
   getUserInfo: () => fetchMutate<User>('/api/user/me'),
