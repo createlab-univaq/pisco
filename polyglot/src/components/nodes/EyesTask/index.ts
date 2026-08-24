@@ -1,7 +1,10 @@
 // Replace these with the actual local components once you refactor them
-import icon from '@public/icona_occhi.png';
+import icon from '@public/eyes_icon.png';
 import EyesTaskNodeProperties from './EyesTaskNodeProperties';
 import ReactFlowEyesTaskNode from './ReactFlowEyesTaskNode';
+
+export * from './types';
+export { EyesTaskNodeProperties, ReactFlowEyesTaskNode };
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??

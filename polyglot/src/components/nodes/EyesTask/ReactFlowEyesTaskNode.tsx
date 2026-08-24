@@ -2,7 +2,7 @@
 
 import { Handle, Position, NodeProps } from 'reactflow';
 // Using standard alias for public assets
-import icon from '@public/icona_occhi.png';
+import icon from '@public/eyes_icon.png';
 import styles from './ReactFlowEyesTaskNode.module.css';
 import { EyesTaskNodeData } from './types'; // Import the type defined in your types.ts file
 

@@ -2,7 +2,7 @@
 
 import { Handle, Position, NodeProps } from 'reactflow';
 // Use Next.js standard absolute import for public assets if configured, or relative.
-import icon from '@public/icona_emozioni.png';
+import icon from '@public/emotion_icon.png';
 import styles from './ReactFlowEmotionAttributionANode.module.css';
 
 // NOTE: Import your specific node data type from your types.ts file once created.

@@ -3,9 +3,9 @@
 import { useEffect, useRef } from 'react';
 import TextField from '@/components/forms/TextField';
 import StringArrayField from '@/components/forms/StringArrayField'; // Assuming this was refactored in a previous step
-import styles from './EmotionAttributionTestNodeProperties.module.css';
+import styles from './EmotionAttributionNodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
-import { EmotionAttributionTestNode, EmotionAttributionQuestion } from './types';
+import { EmotionAttributionNode, EmotionAttributionQuestion } from './types';
 import NodeProperties from '../NodeProperties';
 
 // Genera un id (preferibilmente UUID se disponibile)
@@ -26,17 +26,17 @@ const CloseIcon = () => (
     </svg>
 );
 
-const EmotionAttributionTestNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
-    const node = element as EmotionAttributionTestNode;
+const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
+    const node = element as EmotionAttributionNode;
     const data = node.data || {};
     const hasMigrated = useRef(false);
 
     // Helpers to update node state cleanly
-    const handleBaseChange = (updatedBase: Partial<EmotionAttributionTestNode>) => {
+    const handleBaseChange = (updatedBase: Partial<EmotionAttributionNode>) => {
         onUpdateElement({ ...node, ...updatedBase });
     };
 
-    const handleDataChange = (updatedData: Partial<EmotionAttributionTestNode['data']>) => {
+    const handleDataChange = (updatedData: Partial<EmotionAttributionNode['data']>) => {
         onUpdateElement({
             ...node,
             data: { ...node.data, ...updatedData },
@@ -217,4 +217,4 @@ const EmotionAttributionTestNodeProperties = ({ element, onUpdateElement }: Poly
     );
 };
 
-export default EmotionAttributionTestNodeProperties;
+export default EmotionAttributionNodeProperties;

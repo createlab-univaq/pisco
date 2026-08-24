@@ -1,3 +1,4 @@
+import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
 import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
 
 export type EmotionAttributionQuestion = {
@@ -7,12 +8,12 @@ export type EmotionAttributionQuestion = {
     correctAnswers: string[]; // lista
 };
 
-export type EmotionAttributionTestNodeData = {
+export type EmotionAttributionNodeData = {
     nodeData: Record<string, any>;
     questions: EmotionAttributionQuestion[];
 };
 
-export type EmotionAttributionTestNode = PolyglotNodeBase & {
-    type: 'EmotionAttributionTestNode';
-    data: EmotionAttributionTestNodeData;
+export type EmotionAttributionNode = PolyglotNodeBase & {
+    type: typeof NODE_TYPE.EMOTION_ATTRIBUTION;
+    data: EmotionAttributionNodeData;
 };

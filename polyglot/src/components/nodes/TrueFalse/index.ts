@@ -2,6 +2,9 @@ import TrueFalseNodeProperties from './TrueFalseNodeProperties';
 import ReactFlowTrueFalseNode from './ReactFlowTrueFalseNode';
 import icon from '@public/trueFalse_icon.png';
 
+export * from './types';
+export { TrueFalseNodeProperties, ReactFlowTrueFalseNode };
+
 export const trueFalseNodeConfig = {
     elementType: 'TrueFalseNode',
     name: 'True False',

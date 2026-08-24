@@ -1,6 +1,9 @@
-import icon from '@public/icona_emozioni.png';
+import icon from '@public/emotion_icon.png';
 import EmotionAttributionBNodeProperties from './EmotionAttributionBNodeProperties';
 import ReactFlowEmotionAttributionBNode from './ReactFlowEmotionAttributionBNode';
+
+export * from './types';
+export { EmotionAttributionBNodeProperties, ReactFlowEmotionAttributionBNode };
 
 export const emotionAttributionBNodeConfig = {
     elementType: 'EmotionAttributionBNode',

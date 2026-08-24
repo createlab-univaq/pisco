@@ -5,7 +5,7 @@ import { FilesAPI } from '@/data/api';
 import styles from './QuestionImageUploadField.module.css';
 
 export type QuestionImageUploadFieldProps = {
-    parentNodeId: string;
+    parentNodeId?: string;
     parentItemId?: string;
     imageId?: string;
     onImageIdChange: (newImageId: string | undefined) => void;

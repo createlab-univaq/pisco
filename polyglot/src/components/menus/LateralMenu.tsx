@@ -26,7 +26,7 @@ const MENU_SECTIONS: Array<{
         {
             label: 'Test',
             nodes: [
-                'EmotionAttributionTestNode',
+                'EmotionAttributionNode',
                 'EyesTaskNode',
                 'FauxPasNode',
                 'SocialSituationsNode',
@@ -41,7 +41,7 @@ const MENU_SECTIONS: Array<{
                 'EmotionAttributionBNode',
                 'ContainerNode',
                 'SocialSituationExerciseANode',
-                'RiconoscimentoEmozioniNode',
+                'EmotionRecognitionNode',
             ],
         },
     ];

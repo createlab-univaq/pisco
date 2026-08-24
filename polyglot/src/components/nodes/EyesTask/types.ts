@@ -1,3 +1,4 @@
+import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
 import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
 
 export type EyesTaskQuestion = {
@@ -14,6 +15,6 @@ export type EyesTaskNodeData = {
 };
 
 export type EyesTaskNode = PolyglotNodeBase & {
-    type: 'EyesTaskTestNode';
+    type: typeof NODE_TYPE.EYES_TASK;
     data: EyesTaskNodeData;
 };

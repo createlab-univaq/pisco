@@ -2,7 +2,7 @@
 
 import { Handle, Position, NodeProps } from 'reactflow';
 // Using standard alias for public assets
-import icon from '@public/icona_passo.png';
+import icon from '@public/step_icon.png';
 import styles from './ReactFlowFauxPasNode.module.css';
 import { FauxPasNodeData } from './types'; // Import the type defined in your types.ts file
 

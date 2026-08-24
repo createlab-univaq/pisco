@@ -11,6 +11,6 @@ export type TrueFalseNodeData = {
 };
 
 export type TrueFalseNode = PolyglotNodeBase & {
-  type: typeof NODE_TYPE.TRUE_FALSE | 'TrueFalseNode';
+  type: typeof NODE_TYPE.TRUE_FALSE;
   data: TrueFalseNodeData;
 };

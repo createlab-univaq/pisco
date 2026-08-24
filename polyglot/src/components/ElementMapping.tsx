@@ -143,20 +143,26 @@ export const polyglotEdgeComponentMapping = new PolyglotComponentMapping<
 import { trueFalseNodeConfig } from '@/components/nodes/TrueFalse';
 import { emotionAttributionANodeConfig } from './nodes/EmotionAttributionA';
 import { emotionAttributionBNodeConfig } from './nodes/EmotionAttributionB';
-import { emotionAttributionTestNodeConfig } from './nodes/EmotionAttributionTest';
+import { emotionAttributionNodeConfig } from './nodes/EmotionAttribution';
 import { eyesTaskNodeConfig } from './nodes/EyesTask';
 import { fauxPasNodeConfig } from './nodes/FauxPas';
 import { socialSituationsNodeConfig } from './nodes/SocialSituations';
+import { theoryOfMindNodeConfig } from './nodes/TheoryOfMind';
+import { containerNodeConfig } from './nodes/Container';
+import { emotionRecognitionNodeConfig } from './nodes/EmotionRecognition';
 // import { multipleChoiceConfig } from '@/components/nodes/MultipleChoice';
 // import { customEdgeConfig } from '@/components/edges/CustomEdge';
 
 polyglotNodeComponentMapping.registerMapping(trueFalseNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(emotionAttributionANodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(emotionAttributionBNodeConfig as any);
-polyglotNodeComponentMapping.registerMapping(emotionAttributionTestNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(emotionAttributionNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(eyesTaskNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(fauxPasNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(socialSituationsNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(theoryOfMindNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(containerNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(emotionRecognitionNodeConfig as any);
 
 // polyglotNodeComponentMapping.registerMapping(multipleChoiceConfig as any);
 // polyglotEdgeComponentMapping.registerMapping(customEdgeConfig as any);

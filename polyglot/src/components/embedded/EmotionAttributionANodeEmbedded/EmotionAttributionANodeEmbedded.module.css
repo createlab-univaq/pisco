@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* Replaces the need for mb={...} on every component */
+    width: 100%;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.heading {
+    font-size: 0.75rem;
+    /* size="xs" */
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 0.5rem 0;
+    /* Equivalent to my={3} given the flex gap */
+    width: 100%;
+}

@@ -1,3 +1,4 @@
+import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
 import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
 
 export type FauxPasSkipIf = {
@@ -25,6 +26,6 @@ export type FauxPasNodeData = {
 };
 
 export type FauxPasNode = PolyglotNodeBase & {
-    type: 'FauxPasNode';
+    type: typeof NODE_TYPE.FAUX_PAS;
     data: FauxPasNodeData;
 };

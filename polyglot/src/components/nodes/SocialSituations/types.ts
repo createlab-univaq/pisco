@@ -1,3 +1,4 @@
+import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
 import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
 
 export type SocialSituationAnswer = {
@@ -24,6 +25,6 @@ export type SocialSituationsNodeData = {
 };
 
 export type SocialSituationsNode = PolyglotNodeBase & {
-    type: 'socialSituationsNode';
+    type: typeof NODE_TYPE.SOCIAL_SITUATIONS;
     data: SocialSituationsNodeData;
 };

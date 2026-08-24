@@ -2,7 +2,7 @@
 
 import { Handle, Position, NodeProps } from 'reactflow';
 // Using standard alias for public assets
-import icon from '@public/icona_emozioni.png';
+import icon from '@public/emotion_icon.png';
 import styles from './ReactFlowEmotionAttributionBNode.module.css';
 import { EmotionAttributionBNodeData } from './types'; // Import the type we defined earlier
 

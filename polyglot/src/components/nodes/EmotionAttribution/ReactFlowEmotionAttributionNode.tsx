@@ -2,18 +2,18 @@
 
 import { Handle, Position, NodeProps } from 'reactflow';
 // Using standard alias for public assets
-import icon from '@public/icona_emozioni.png';
-import styles from './ReactFlowEmotionAttributionTestNode.module.css';
-import { EmotionAttributionTestNodeData } from './types'; // Import the type we defined for the Test node
+import icon from '@public/emotion_icon.png';
+import styles from './ReactFlowEmotionAttributionNode.module.css';
+import { EmotionAttributionNodeData } from './types'; // Import the type we defined for the  node
 
-export type ReactFlowEmotionAttributionTestNodeProps = NodeProps<
-    EmotionAttributionTestNodeData & { label?: string; title?: string }
+export type ReactFlowEmotionAttributionNodeProps = NodeProps<
+    EmotionAttributionNodeData & { label?: string; title?: string }
 >;
 
-const ReactFlowEmotionAttributionTestNode = ({
+const ReactFlowEmotionAttributionNode = ({
     data,
     isConnectable,
-}: ReactFlowEmotionAttributionTestNodeProps) => {
+}: ReactFlowEmotionAttributionNodeProps) => {
     // Read the label directly from React Flow's injected data instead of a global store
     const nodeLabel = data?.label || data?.title || 'Attribuzione delle Emozioni';
 
@@ -46,4 +46,4 @@ const ReactFlowEmotionAttributionTestNode = ({
     );
 };
 
-export default ReactFlowEmotionAttributionTestNode;
+export default ReactFlowEmotionAttributionNode;
