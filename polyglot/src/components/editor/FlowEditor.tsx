@@ -12,6 +12,7 @@ import ReactFlow, {
     applyNodeChanges,
     Background,
     BackgroundVariant,
+    Connection,
     Controls,
     EdgeMouseHandler,
     NodeMouseHandler,
@@ -37,6 +38,7 @@ import LateralMenu from '../menus/LateralMenu';
 import ElementProperties from './ElementProperties';
 import EditorNav from '../navbars/EditorNav';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../ElementMapping';
+import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
@@ -178,6 +180,28 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         setPolyglotNodes((prev) => [...prev, nodeToAdd]);
     };
 
+    const onConnect = useCallback((connection: Connection) => {
+        const id = UUIDv4();
+        const newEdge: PolyglotEdge = {
+            _id: id,
+            type: typeof EDGE_TYPE.PASS_FAIL, // Or your default edge type string
+            title: '',
+            description: '',
+            data: {
+                edgeData: {}, // Required by the PolyglotEdge type definition
+            },
+            reactFlow: {
+                id: id,
+                source: connection.source!,
+                target: connection.target!,
+                sourceHandle: connection.sourceHandle,
+                targetHandle: connection.targetHandle,
+            },
+        };
+
+        setPolyglotEdges((prev) => [...prev, newEdge]);
+    }, []);
+
     // ============================================================================
     // EVENT HANDLERS
     // ============================================================================
@@ -264,6 +288,8 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onEdgesChange={onEdgesChange}
                     onEdgeContextMenu={onEdgeContextMenu}
                     onEdgeDoubleClick={onOpenPanel}
+
+                    onConnect={onConnect}
 
                     onDrop={onDrop}
                     onDragOver={onDragOver}

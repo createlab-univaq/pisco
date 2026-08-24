@@ -1,5 +1,5 @@
 export const EDGE_TYPE = {
-  CONDITIONAL: 'conditionalEdge',
-  PASS_FAIL: 'passFailEdge',
-  UNCONDITIONAL: 'unconditionalEdge',
+  CONDITIONAL: 'ConditionalEdge',
+  PASS_FAIL: 'PassFailEdge',
+  UNCONDITIONAL: 'UnconditionalEdge',
 } as const;
