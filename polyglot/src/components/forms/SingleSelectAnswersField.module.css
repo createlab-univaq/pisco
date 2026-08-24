@@ -1,0 +1,144 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+    /* Equivalent to Chakra mt={3} */
+    width: 100%;
+}
+
+.label {
+    font-size: 0.75rem;
+    /* Equivalent to Chakra Heading size="xs" */
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    /* Equivalent to Chakra mb={1} */
+    color: #2d3748;
+}
+
+.radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* Equivalent to Chakra Stack spacing={2} */
+    margin-bottom: 0.5rem;
+}
+
+/* Row for the "Nessuna corretta" radio */
+.radioRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+/* Row for standard answers */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.radioInput {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #3182ce;
+    /* Chakra blue.500 feel */
+    flex-shrink: 0;
+}
+
+.radioInput:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.radioLabel {
+    user-select: none;
+}
+
+.textInput {
+    flex: 1;
+    font-size: 0.875rem;
+    color: #1a202c;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    /* Standard input padding */
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 0;
+    /* Prevents flex blowout */
+}
+
+.textInput:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 1px #3182ce;
+}
+
+.textInput:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f7fafc;
+}
+
+/* Remove button mimicking Chakra IconButton size="sm" colorScheme="gray" */
+.removeBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #718096;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.removeBtn:hover:not(:disabled) {
+    background-color: #edf2f7;
+    color: #1a202c;
+}
+
+.removeBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Add button mimicking Chakra Button size="xs" */
+.addBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background-color: #edf2f7;
+    color: #1a202c;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: fit-content;
+    transition: background-color 0.2s;
+}
+
+.addBtn:hover:not(:disabled) {
+    background-color: #e2e8f0;
+}
+
+.addBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.icon {
+    width: 12px;
+    height: 12px;
+}

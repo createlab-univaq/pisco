@@ -1,0 +1,17 @@
+import icon from '@public/icona_persone.png';
+import SocialSituationsNodeProperties from './SocialSituationsNodeProperties';
+import ReactFlowSocialSituationsNode from './ReactFlowSocialSituationsNode';
+
+export const socialSituationsNodeConfig = {
+    elementType: 'SocialSituationsNode',
+    name: 'Situazioni sociali',
+    icon: icon.src,
+    group: 'remember_assessment',
+    platform: 'WebApp',
+    propertiesComponent: SocialSituationsNodeProperties,
+    elementComponent: ReactFlowSocialSituationsNode,
+    defaultData: {
+        nodeData: {},
+        items: [],
+    },
+};

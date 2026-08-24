@@ -1,0 +1,33 @@
+.nodeCard {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    /* Replaces the old float and margin logic */
+    object-fit: contain;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a202c;
+}
+
+/* Identical handle styling matching your original inline styles */
+.handle {
+    background: #3B1D5C;
+    height: 25px;
+    width: 5px;
+    border-radius: 0px;
+    border: 0px;
+}

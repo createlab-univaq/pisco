@@ -1,0 +1,125 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.heading {
+    font-size: 0.875rem;
+    /* Equivalent to Chakra size="xs" */
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    /* Equivalent to mb={2} */
+    color: #2d3748;
+}
+
+.description {
+    font-size: 0.875rem;
+    /* Equivalent to Chakra fontSize="sm" */
+    color: #4a5568;
+    /* Equivalent to Chakra color="gray.600" */
+    margin: 0 0 0.75rem 0;
+    /* Equivalent to mb={3} */
+    line-height: 1.4;
+}
+
+/* Button mimicking Chakra's default button (size="sm") */
+.addBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #edf2f7;
+    color: #1a202c;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    /* Equivalent to mb={3} */
+}
+
+.addBtn:hover:not(:disabled) {
+    background-color: #e2e8f0;
+}
+
+.addBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 0.75rem 0;
+    /* Equivalent to my={3} */
+}
+
+.emptyText {
+    font-size: 0.875rem;
+    /* fontSize="sm" */
+    color: #718096;
+    /* color="gray.500" */
+    margin: 0;
+}
+
+.itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* Equivalent to mb={3} on children */
+}
+
+/* Equivalent to borderWidth="1px" borderRadius="md" p={3} */
+.itemCard {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* Adds spacing between the text fields */
+}
+
+/* Equivalent to HStack justify="space-between" align="center" mb={2} */
+.itemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.itemTitle {
+    font-size: 0.875rem;
+    /* size="xs" */
+    font-weight: 600;
+    margin: 0;
+    color: #2d3748;
+}
+
+/* Equivalent to Button variant="outline" size="xs" */
+.removeBtn {
+    background-color: transparent;
+    color: #e53e3e;
+    border: 1px solid #fc8181;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.removeBtn:hover:not(:disabled) {
+    background-color: #fff5f5;
+}
+
+.removeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+    color: #a0aec0;
+}

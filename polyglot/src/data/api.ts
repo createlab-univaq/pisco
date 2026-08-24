@@ -12,7 +12,42 @@ import { createNewDefaultPolyglotFlow } from '@/utils/utils';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '@/components/ElementMapping';
 import exampleFlows from './exampleData';
 
+// --- MOCK CONFIGURATION ---
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
+const MOCK_STORAGE_KEY = 'debug_mock_flows';
+
+const getMockFlows = (): PolyglotFlow[] => {
+  if (typeof window === 'undefined') return [];
+  const data = localStorage.getItem(MOCK_STORAGE_KEY);
+  if (!data) {
+    return [];
+  }
+  return JSON.parse(data);
+};
+
+const saveMockFlows = (flows: PolyglotFlow[]) => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(flows));
+};
+// --------------------------
+
 export const fetcher = async (url: string) => {
+  // Mock interception for GET requests starting with /api/flows
+  if (USE_MOCK && url.startsWith('/api/flows')) {
+    const parts = url.split('?')[0].split('/');
+    if (parts.length === 3) {
+      // GET /api/flows
+      return getMockFlows();
+    } else if (parts.length === 4) {
+      // GET /api/flows/[id]
+      const id = parts[3];
+      const flows = getMockFlows();
+      const flow = flows.find((f) => f._id === id);
+      if (!flow) throw new Error('API Error 404: Flow not found');
+      return flow;
+    }
+  }
+
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json' },
   });
@@ -20,8 +55,102 @@ export const fetcher = async (url: string) => {
   return res.json();
 };
 
-// Generic internal fetch wrapper for mutations (POST, PUT, DELETE)
+// Generic internal fetch wrapper for mutations (and direct single GETs)
 async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T> {
+  // --- DEBUG MOCK INTERCEPTIONS ---
+  if (USE_MOCK) {
+    const urlParts = url.split('?')[0].split('/');
+    const method = options.method || 'GET';
+    // Safely parse body if it's a string, ignore FormData
+    const body = options.body && typeof options.body === 'string' ? JSON.parse(options.body) : null;
+
+    // 1. MOCK FLOWS API
+    if (url.startsWith('/api/flows')) {
+      if (urlParts.length === 4 && method === 'GET') {
+        const id = urlParts[3];
+        const flows = getMockFlows();
+        const flow = flows.find((f) => f._id === id);
+        if (!flow) throw new Error('API Error 404: Flow not found');
+        return flow as unknown as T;
+      }
+
+      if (urlParts.length === 3 && method === 'POST') {
+        const flows = getMockFlows();
+        const newFlow: PolyglotFlow = {
+          _id: `mock-flow-${Date.now()}`,
+          title: body?.title || 'New Flow',
+          description: body?.description || '',
+          tags: body?.tags || [],
+          publish: body?.publish || false,
+          nodes: body?.nodes || [],
+          edges: body?.edges || [],
+          ...(body || {}),
+        };
+        flows.push(newFlow);
+        saveMockFlows(flows);
+        return newFlow as unknown as T;
+      }
+
+      if (urlParts.length === 4 && urlParts[3] === 'json' && method === 'POST') {
+        const flows = getMockFlows();
+        const newFlow: PolyglotFlow = {
+          ...body,
+          _id: body?._id || `mock-flow-${Date.now()}`,
+        };
+        const index = flows.findIndex((f) => f._id === newFlow._id);
+        if (index >= 0) {
+          flows[index] = newFlow;
+        } else {
+          flows.push(newFlow);
+        }
+        saveMockFlows(flows);
+        return newFlow as unknown as T;
+      }
+
+      if (urlParts.length === 4 && method === 'PUT') {
+        const id = urlParts[3];
+        const flows = getMockFlows();
+        const index = flows.findIndex((f) => f._id === id);
+        const updatedFlow: PolyglotFlow = { ...body, _id: id };
+        if (index >= 0) {
+          flows[index] = updatedFlow;
+        } else {
+          flows.push(updatedFlow);
+        }
+        saveMockFlows(flows);
+        return updatedFlow as unknown as T;
+      }
+
+      if (urlParts.length === 4 && method === 'DELETE') {
+        const id = urlParts[3];
+        let flows = getMockFlows();
+        flows = flows.filter((f) => f._id !== id);
+        saveMockFlows(flows);
+        return {} as T;
+      }
+    }
+
+    // 2. MOCK METADATA API (Required for the properties panel to load without crashing)
+    if (url.startsWith('/api/metadata')) {
+      return {} as unknown as T;
+    }
+
+    // 3. MOCK FILES API (Required for the Image Upload property fields to work)
+    if (url.startsWith('/api/file')) {
+      if (method === 'POST') {
+        // Return a dummy image ID immediately so the property panel registers an upload
+        return { imageId: `dummy-img-${Date.now()}` } as unknown as T;
+      }
+      return {} as unknown as T;
+    }
+
+    // 4. MOCK USER API
+    if (url.startsWith('/api/user')) {
+      return { _id: 'debug-user', username: 'Debug Developer' } as unknown as T;
+    }
+  }
+  // --------------------------------
+
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -35,12 +164,10 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
     throw new Error(`API Error ${res.status}: ${errText}`);
   }
 
-  // If the response is empty (like a 204 No Content delete), don't try to parse JSON
   if (res.status === 204 || res.headers.get('content-length') === '0') {
     return {} as T;
   }
-  
-  // If it's a blob (for file downloads)
+
   if (options.headers && (options.headers as Record<string, string>)['Accept'] === 'application/octet-stream') {
     return res.blob() as unknown as T;
   }
@@ -48,6 +175,7 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
   return res.json();
 }
 
+// ... Rest of the file (useFlows, UserAPI, MetadataAPI, FlowsAPI, CoursesAPI, ExecutionAPI, FilesAPI) remains exactly the same!
 export function useFlows(queryString: string = '') {
   const { data, error, isLoading, mutate } = useSWR<PolyglotFlow[]>(
     `/api/flows${queryString}`,
@@ -77,19 +205,19 @@ export const MetadataAPI = {
 
 export const FlowsAPI = {
   getById: (flowId: string) => fetchMutate<PolyglotFlow>(`/api/flows/${flowId}`),
-  
+
   createDefault: () =>
     fetchMutate<PolyglotFlow>(`/api/flows`, {
       method: 'POST',
       body: JSON.stringify(createNewDefaultPolyglotFlow()),
     }),
-  
+
   create: (flow: PolyglotFlowInfo) =>
     fetchMutate<PolyglotFlow>(`/api/flows`, {
       method: 'POST',
       body: JSON.stringify(flow),
     }),
-  
+
   createFromJson: (flow: PolyglotFlow) =>
     fetchMutate<PolyglotFlow>(`/api/flows/json`, {
       method: 'POST',
@@ -128,13 +256,13 @@ export const FlowsAPI = {
 export const CoursesAPI = {
   list: (queryString: string = '') =>
     fetchMutate<PolyglotCourse[]>(`/api/course${queryString}`),
-  
+
   create: (course: PolyglotCourseInfo) =>
     fetchMutate<PolyglotCourse>('/api/course', {
       method: 'POST',
       body: JSON.stringify(course),
     }),
-  
+
   delete: (courseId: string) =>
     fetchMutate(`/api/course/${courseId}`, { method: 'DELETE' }),
 };
@@ -142,13 +270,13 @@ export const CoursesAPI = {
 export const ExecutionAPI = {
   progressInfo: (body: ProgressInfo) =>
     fetchMutate('/api/execution/progressInfo', { method: 'POST', body: JSON.stringify(body) }),
-  
+
   manualProgress: (body: ManualProgressInfo) =>
     fetchMutate('/api/execution/progressAction', { method: 'POST', body: JSON.stringify(body) }),
-  
+
   resetProgress: (body: ManualProgressInfo) =>
     fetchMutate('/api/execution/resetProgress', { method: 'POST', body: JSON.stringify(body) }),
-  
+
   getActualNodeInfo: (ctxId: string) =>
     fetchMutate('/api/execution/actual', { method: 'POST', body: JSON.stringify({ ctxId }) }),
 };

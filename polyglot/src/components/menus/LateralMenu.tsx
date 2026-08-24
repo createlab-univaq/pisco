@@ -27,18 +27,19 @@ const MENU_SECTIONS: Array<{
             label: 'Test',
             nodes: [
                 'EmotionAttributionTestNode',
-                'EyesTaskTestNode',
-                'socialSituationsNode',
-                'TeoriaDellaMenteNode',
+                'EyesTaskNode',
                 'FauxPasNode',
+                'SocialSituationsNode',
+                'TheoryOfMindNode',
+                'TrueFalseNode',
             ],
         },
         {
             label: 'Esercitazioni',
             nodes: [
-                'ContainerNode',
                 'EmotionAttributionANode',
                 'EmotionAttributionBNode',
+                'ContainerNode',
                 'SocialSituationExerciseANode',
                 'RiconoscimentoEmozioniNode',
             ],

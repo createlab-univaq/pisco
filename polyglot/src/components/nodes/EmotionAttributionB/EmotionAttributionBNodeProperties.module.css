@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.embeddedContainer {
+    /* Equivalent to Chakra's px={2} (padding-x: 0.5rem) and pt={2} (padding-top: 0.5rem) */
+    padding: 0.5rem 0.5rem 0 0.5rem;
+}

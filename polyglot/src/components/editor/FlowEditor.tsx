@@ -4,6 +4,7 @@ import {
     DragEventHandler,
     MouseEventHandler,
     useCallback,
+    useMemo,
     useState,
 } from 'react';
 import ReactFlow, {
@@ -47,8 +48,13 @@ type FlowEditorProps = {
 const deleteKeyCodes = ['Backspace', 'Delete'];
 
 const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProps) => {
-    const { project } = useReactFlow();
+    // FIXED: Use screenToFlowPosition instead of deprecated project
+    const { screenToFlowPosition } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
+
+    // FIXED: Memoize nodeTypes and edgeTypes to prevent React Flow re-creation warnings
+    const nodeTypes = useMemo(() => polyglotNodeComponentMapping.componentMapping, []);
+    const edgeTypes = useMemo(() => polyglotEdgeComponentMapping.componentMapping, []);
 
     const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(initialFlow.nodes || []);
     const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(initialFlow.edges || []);
@@ -79,7 +85,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const onNodesChange: OnNodesChange = (changes) => {
         setPolyglotNodes((prev) => {
-            // FIXED: Safely extract reactFlow nodes, ignoring undefined
             const validNodes = prev.filter((p) => p.reactFlow !== undefined);
             const rfNodes = validNodes.map((p) => p.reactFlow!);
 
@@ -100,7 +105,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const onEdgesChange: OnEdgesChange = (changes) => {
         setPolyglotEdges((prev) => {
-            // FIXED: Safely extract reactFlow edges, ignoring undefined
             const validEdges = prev.filter((p) => p.reactFlow !== undefined);
             const rfEdges = validEdges.map((p) => p.reactFlow!);
 
@@ -121,7 +125,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const onNodesDelete: OnNodesDelete = (nodesToRemove) => {
         const idsToRemove = nodesToRemove.map((n) => n.id);
-        // FIXED: Added safe optional chaining
         setPolyglotNodes((prev) => prev.filter((n) => n.reactFlow && !idsToRemove.includes(n.reactFlow.id)));
     };
 
@@ -141,10 +144,10 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         const type = event.dataTransfer.getData('application/reactflow');
         if (!type) return;
 
-        const rect = event.currentTarget.getBoundingClientRect();
-        const pos = project({
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
+        // FIXED: screenToFlowPosition doesn't require manual client rect subtraction
+        const pos = screenToFlowPosition({
+            x: event.clientX,
+            y: event.clientY,
         });
 
         if (type === 'abstractNode') {
@@ -236,7 +239,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         });
     };
 
-    // FIXED: Added safe optional chaining to find functions
     const activeElement = selectedElement?.type === 'Node'
         ? polyglotNodes.find(n => n.reactFlow?.id === selectedElement.id)
         : selectedElement?.type === 'Edge'
@@ -249,18 +251,16 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
             <div className={styles.editorArea}>
                 <ReactFlow
-                    // FIXED: Filter out undefined elements safely before giving them to React Flow
                     nodes={polyglotNodes.filter((n) => n.reactFlow !== undefined).map((n) => n.reactFlow!)}
-                    nodeTypes={polyglotNodeComponentMapping.componentMapping}
+                    nodeTypes={nodeTypes}
                     onNodesChange={onNodesChange}
                     onNodesDelete={onNodesDelete}
                     onNodeContextMenu={onNodeContextMenu}
                     onNodeDoubleClick={onOpenPanel}
                     onNodeDrag={onClosePanel}
 
-                    // FIXED: Filter out undefined elements safely before giving them to React Flow
                     edges={polyglotEdges.filter((e) => e.reactFlow !== undefined).map((e) => e.reactFlow!)}
-                    edgeTypes={polyglotEdgeComponentMapping.componentMapping}
+                    edgeTypes={edgeTypes}
                     onEdgesChange={onEdgesChange}
                     onEdgeContextMenu={onEdgeContextMenu}
                     onEdgeDoubleClick={onOpenPanel}
@@ -276,14 +276,13 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onMoveStart={onMoveStart}
                     onPaneContextMenu={(e) => {
                         e.preventDefault();
-                        const rect = e.currentTarget.getBoundingClientRect();
                         setContextMenu({
                             type: ContextMenuTypes.DEFAULT,
                             show: true,
                             pos: { x: e.clientX, y: e.clientY },
-                            relativePos: project({
-                                x: e.clientX - rect.left,
-                                y: e.clientY - rect.top,
+                            relativePos: screenToFlowPosition({
+                                x: e.clientX,
+                                y: e.clientY,
                             }),
                         });
                     }}
@@ -312,7 +311,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     isOpen={isOpenPanel}
                     onClose={onClosePanel}
                     onUpdateElement={(updatedElement: any) => {
-                        // FIXED: Added safe optional chaining
                         if (selectedElement?.type === 'Node') {
                             setPolyglotNodes(prev => prev.map(n => n.reactFlow?.id === selectedElement.id ? updatedElement : n));
                         } else if (selectedElement?.type === 'Edge') {

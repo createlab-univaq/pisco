@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'; // Updated for Next.js App Router
+import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import brandLogo from '@public/solo_logo.png';
 import styles from './EditorNav.module.css';
@@ -11,9 +11,7 @@ import ExportJsonModal from '../modals/ExportJsonModal';
 import EditFlowModal from '../modals/EditFlowModal';
 import SaveFlowModal from '../modals/SaveFlowModal';
 
-// ---------------------------------------------------------------------------
-// INLINE SVGS (Replacing Chakra Icons)
-// ---------------------------------------------------------------------------
+// Inline SVGs
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
 const ArrowForwardIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
 const CopyIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
@@ -22,11 +20,8 @@ const EditIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fi
 const CheckIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>;
 const CloseIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>;
 
-// ---------------------------------------------------------------------------
-// COMPONENT PROPS (Replaces global store)
-// ---------------------------------------------------------------------------
 export type EditorNavProps = {
-    flow?: any; // Pass the active flow object from FlowEditor
+    flow?: any;
     saveFunc: () => Promise<void>;
     onUpdateFlowInfo?: (updates: any) => void;
     hasUnsavedChanges?: boolean;
@@ -55,7 +50,6 @@ export default function EditorNav({
     const [publishLoading, setPublishLoading] = useState(false);
     const [publish, setPublish] = useState(false);
 
-    // Modals state
     const [isOpenExport, setIsOpenExport] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false);
     const [isOpenSave, setIsOpenSave] = useState(false);
@@ -150,12 +144,16 @@ export default function EditorNav({
 
     return (
         <nav className={styles.nav}>
-            <Image
-                src={brandLogo}
-                alt="Polyglot Logo"
-                className={styles.logo}
-                onClick={() => router.push('/flows')}
-            />
+            <div className={styles.logoWrapper} onClick={() => router.push('/flows')}>
+                <Image
+                    src={brandLogo}
+                    alt="Polyglot Logo"
+                    className={styles.logo}
+                    width={30}
+                    height={30}
+                    priority
+                />
+            </div>
 
             <button className={styles.actionBtn} disabled={hydrated ? !canUndo : true} onClick={onUndo} title="Undo">
                 <ArrowBackIcon />
@@ -229,7 +227,6 @@ export default function EditorNav({
                 Leave editor
             </button>
 
-            {/* Modals (assuming they've been refactored or accept standard isOpen/onClose props) */}
             <ExportJsonModal isOpen={isOpenExport} onClose={() => setIsOpenExport(false)} flow={flow} />
             {flow && (
                 <EditFlowModal
@@ -248,9 +245,6 @@ export default function EditorNav({
     );
 }
 
-// ---------------------------------------------------------------------------
-// CUSTOM DROPDOWN COMPONENT
-// ---------------------------------------------------------------------------
 const DropDown = ({
     name,
     options,

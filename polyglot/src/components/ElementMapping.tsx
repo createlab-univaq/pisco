@@ -1,10 +1,24 @@
 import React from 'react';
-import { NodePropertiesProps } from './properties/nodes/NodeProperties';
-import { EdgePropertiesProps } from './properties/edges/EdgeProperties';
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
 import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 import { ReactFlowNodeProps } from './reactFlowNode/ReactFlowNode';
 import { ReactFlowEdgeProps } from './reactFlowEdge/ReactFlowEdge';
+
+// ---------------------------------------------------------------------------
+// 1. UNIVERSAL PROPERTY PANEL PROPS
+// Every property panel component must accept these standard props.
+// Inside the specific panel (e.g., TrueFalseNodeProperties), you can cast 
+// 'element' to the specific type (e.g., const node = element as TrueFalseNode;)
+// ---------------------------------------------------------------------------
+export type PolyglotNodePropertiesProps = {
+  element: PolyglotNode;
+  onUpdateElement: (updatedElement: PolyglotNode) => void;
+};
+
+export type PolyglotEdgePropertiesProps = {
+  element: PolyglotEdge;
+  onUpdateElement: (updatedElement: PolyglotEdge) => void;
+};
 
 // Golden Standard: Use React's native ComponentType instead of the old "bivariance hack"
 type PropertiesComponent<T> = React.ComponentType<T>;
@@ -25,7 +39,6 @@ type MappingType<T, U, K extends TypeWithData, V extends TypeWithData> = {
 };
 
 class PolyglotComponentMapping<T, U, K extends TypeWithData> {
-  // Golden Standard: Use Record<string, Type> for dictionaries
   private _propertiesMapping: Record<string, PropertiesComponent<T>> = {};
   private _elementMapping: Record<string, ReactFlowComponent<U>> = {};
   private _nameMapping: Record<string, string> = {};
@@ -105,15 +118,45 @@ class PolyglotComponentMapping<T, U, K extends TypeWithData> {
   }
 }
 
-// FIXED: Exported individually after instantiation to prevent Temporal Dead Zone crashes
+// ---------------------------------------------------------------------------
+// 2. INSTANTIATE THE MAPPINGS (Using the new Universal Props)
+// ---------------------------------------------------------------------------
 export const polyglotNodeComponentMapping = new PolyglotComponentMapping<
-  NodePropertiesProps,
+  PolyglotNodePropertiesProps,
   ReactFlowNodeProps,
   PolyglotNode
 >();
 
 export const polyglotEdgeComponentMapping = new PolyglotComponentMapping<
-  EdgePropertiesProps,
+  PolyglotEdgePropertiesProps,
   ReactFlowEdgeProps,
   PolyglotEdge
 >();
+
+// ---------------------------------------------------------------------------
+// 3. CENTRAL REGISTRY: IMPORT & REGISTER ALL CONFIGS
+// By importing the configs here, Next.js guarantees they are loaded and 
+// registered *before* the LateralMenu renders, fixing the empty state bug!
+// ---------------------------------------------------------------------------
+
+// UPDATED: Now importing directly from the folder thanks to index.ts
+import { trueFalseNodeConfig } from '@/components/nodes/TrueFalse';
+import { emotionAttributionANodeConfig } from './nodes/EmotionAttributionA';
+import { emotionAttributionBNodeConfig } from './nodes/EmotionAttributionB';
+import { emotionAttributionTestNodeConfig } from './nodes/EmotionAttributionTest';
+import { eyesTaskNodeConfig } from './nodes/EyesTask';
+import { fauxPasNodeConfig } from './nodes/FauxPas';
+import { socialSituationsNodeConfig } from './nodes/SocialSituations';
+// import { multipleChoiceConfig } from '@/components/nodes/MultipleChoice';
+// import { customEdgeConfig } from '@/components/edges/CustomEdge';
+
+polyglotNodeComponentMapping.registerMapping(trueFalseNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(emotionAttributionANodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(emotionAttributionBNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(emotionAttributionTestNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(eyesTaskNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(fauxPasNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(socialSituationsNodeConfig as any);
+
+// polyglotNodeComponentMapping.registerMapping(multipleChoiceConfig as any);
+// polyglotEdgeComponentMapping.registerMapping(customEdgeConfig as any);

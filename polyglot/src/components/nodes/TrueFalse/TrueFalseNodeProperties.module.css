@@ -1,0 +1,79 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* Replaces manual margins */
+    width: 100%;
+}
+
+.aiButton {
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background-color 0.2s;
+    margin-bottom: 0.25rem;
+}
+
+.aiButton:hover:not(:disabled) {
+    background-color: #2b6cb0;
+}
+
+.aiButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Replaces float: right */
+.pointsRow {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.pointsRow>* {
+    flex: 1;
+}
+
+.questionsContainer {
+    margin-top: 0.25rem;
+    min-height: 80px;
+}
+
+/* Skeleton Loading Animation */
+.skeletonBox {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0.5rem;
+}
+
+.skeletonLine {
+    height: 1.25rem;
+    background-color: #e2e8f0;
+    border-radius: 0.25rem;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonLine:last-child {
+    width: 75%;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

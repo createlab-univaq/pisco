@@ -1,0 +1,41 @@
+.nodeCard {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    min-width: 150px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    font-family: inherit;
+    color: #1a202c;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* React Flow adds a "selected" class to the wrapper, but you can also use CSS focus-within or custom selected props if needed */
+.nodeCard:hover {
+    border-color: #a0aec0;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.label {
+    flex-grow: 1;
+    text-align: left;
+}
+
+/* Handle overrides */
+.handle {
+    background-color: #3B1D5C !important;
+    height: 25px !important;
+    width: 5px !important;
+    border-radius: 0px !important;
+    border: 0px !important;
+}
