@@ -76,7 +76,7 @@ const ElementProperties = ({
                         <ElementProperty
                             // Pass standard injected props
                             element={selectedElement}
-                            onUpdate={onUpdateElement}
+                            onUpdateElement={onUpdateElement}
 
                             // Also pass the flattened props we refactored earlier (like EdgeProperties expects)
                             title={selectedElement.title}
