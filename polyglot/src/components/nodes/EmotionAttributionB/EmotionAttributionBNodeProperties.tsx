@@ -5,30 +5,14 @@ import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import { EmotionAttributionBNode } from './types';
 import NodeProperties from '../NodeProperties';
 import EmotionAttributionBEmbedded from './EmotionAttributionBEmbedded';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const EmotionAttributionBNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
     // 1. Cast the generic PolyglotNode to your specific EmotionAttributionBNode
     const node = element as EmotionAttributionBNode;
     const data = node.data;
 
-    // 2. Helper to update the base node properties (title, description)
-    const handleBaseChange = (updatedBase: Partial<EmotionAttributionBNode>) => {
-        onUpdateElement({
-            ...node,
-            ...updatedBase,
-        });
-    };
-
-    // 3. Helper to update the specific data portion of the node
-    const handleDataChange = (updatedData: Partial<EmotionAttributionBNode['data']>) => {
-        onUpdateElement({
-            ...node,
-            data: {
-                ...node.data,
-                ...updatedData,
-            },
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     return (
         <div className={styles.container}>

@@ -15,7 +15,7 @@ const ReactFlowTheoryOfMindNode = ({
   isConnectable,
 }: ReactFlowTheoryOfMindNodeProps) => {
   // Read the label directly from React Flow's injected data instead of a global store
-  const nodeLabel = data?.label || data?.title || 'Teoria Della Mente';
+  const nodeLabel = data?.title || data?.label || 'Teoria Della Mente';
 
   return (
     <div className={styles.nodeCard}>

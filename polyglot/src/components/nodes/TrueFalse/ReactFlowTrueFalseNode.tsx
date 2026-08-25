@@ -5,12 +5,11 @@ import icon from '@public/trueFalse_icon.png';
 import styles from './ReactFlowTrueFalseNode.module.css';
 import { TrueFalseNodeData } from './types';
 
-// Extend the standard React Flow NodeProps with your data type[cite: 5].
 export type ReactFlowTrueFalseNodeProps = NodeProps<TrueFalseNodeData & { label?: string; title?: string }>;
 
 const ReactFlowTrueFalseNode = ({ data, isConnectable }: ReactFlowTrueFalseNodeProps) => {
-    // Read the title/label directly from the React Flow data prop[cite: 5].
-    const nodeLabel = data?.label || data?.title || 'True False';
+    // Reads data.title first to reflect live edits from the properties panel
+    const nodeLabel = data?.title || data?.label || 'True False';
 
     return (
         <div className={styles.nodeCard}>
@@ -22,7 +21,6 @@ const ReactFlowTrueFalseNode = ({ data, isConnectable }: ReactFlowTrueFalseNodeP
 
             <span className={styles.label}>{nodeLabel}</span>
 
-            {/* Target Handle (Incoming connections)[cite: 5] */}
             <Handle
                 type="target"
                 position={Position.Left}
@@ -30,7 +28,6 @@ const ReactFlowTrueFalseNode = ({ data, isConnectable }: ReactFlowTrueFalseNodeP
                 isConnectable={isConnectable}
             />
 
-            {/* Source Handle (Outgoing connections)[cite: 5] */}
             <Handle
                 type="source"
                 position={Position.Right}

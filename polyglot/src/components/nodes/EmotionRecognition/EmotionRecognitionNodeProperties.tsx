@@ -5,25 +5,14 @@ import NodeProperties from '../NodeProperties';
 import { EmotionRecognitionNode } from './types';
 import styles from './EmotionRecognitionNodeProperties.module.css';
 import EmotionRecognitionNodeEmbedded, { EmotionRecognitionData } from '@/components/embedded/EmotionRecognitionNodeEmbedded/EmotionRecognitionNodeEmbedded';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const EmotionRecognitionNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
     const node = element as EmotionRecognitionNode;
     const data = node.data || {};
     const parentNodeId = node._id;
 
-    const handleBaseChange = (updatedBase: Partial<EmotionRecognitionNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
-
-    const handleDataChange = (newData: EmotionRecognitionData) => {
-        onUpdateElement({
-            ...node,
-            data: {
-                ...node.data,
-                ...newData,
-            },
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     return (
         <div className={styles.container}>

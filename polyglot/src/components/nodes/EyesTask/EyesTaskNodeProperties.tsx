@@ -8,6 +8,7 @@ import { EyesTaskNode, EyesTaskQuestion } from './types';
 import NodeProperties from '../NodeProperties';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
 import QuestionImageUploadField from '@/components/forms/QuestionImageUploadField';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -35,17 +36,7 @@ const EyesTaskNodeProperties = ({ element, onUpdateElement }: PolyglotNodeProper
     const questions = data.questions || [];
     const nodeId = node._id;
 
-    // State updaters
-    const handleBaseChange = (updatedBase: Partial<EyesTaskNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
-
-    const handleDataChange = (updatedData: Partial<EyesTaskNode['data']>) => {
-        onUpdateElement({
-            ...node,
-            data: { ...node.data, ...updatedData },
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     const handleAddQuestion = () => {
         handleDataChange({

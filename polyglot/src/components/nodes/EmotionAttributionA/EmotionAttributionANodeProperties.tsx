@@ -4,6 +4,7 @@ import styles from './EmotionAttributionANodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import NodeProperties from '../NodeProperties';
 import EmotionAttributionAEmbedded from './EmotionAttributionAEmbedded';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 // NOTE: Import your specific node type here once it is defined in your types.ts file
 // import { EmotionAttributionANode } from './types'; 
@@ -14,24 +15,7 @@ const EmotionAttributionANodeProperties = ({ element, onUpdateElement }: Polyglo
     const node = element as any;
     const data = node.data;
 
-    // 2. Helper to cleanly update the "base" portion of the node (title, description)
-    const handleBaseChange = (updatedBase: Partial<typeof node>) => {
-        onUpdateElement({
-            ...node,
-            ...updatedBase,
-        });
-    };
-
-    // 3. Helper to cleanly update the "data" portion
-    const handleDataChange = (updatedData: Partial<typeof data>) => {
-        onUpdateElement({
-            ...node,
-            data: {
-                ...node.data,
-                ...updatedData,
-            },
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     return (
         <div className={styles.container}>

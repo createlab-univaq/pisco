@@ -7,6 +7,7 @@ import styles from './EmotionAttributionNodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import { EmotionAttributionNode, EmotionAttributionQuestion } from './types';
 import NodeProperties from '../NodeProperties';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 // Genera un id (preferibilmente UUID se disponibile)
 const newId = (prefix: string) =>
@@ -31,17 +32,7 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
     const data = node.data || {};
     const hasMigrated = useRef(false);
 
-    // Helpers to update node state cleanly
-    const handleBaseChange = (updatedBase: Partial<EmotionAttributionNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
-
-    const handleDataChange = (updatedData: Partial<EmotionAttributionNode['data']>) => {
-        onUpdateElement({
-            ...node,
-            data: { ...node.data, ...updatedData },
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     /**
      * Migrazione retro-compat (legacy):

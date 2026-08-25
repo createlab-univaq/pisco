@@ -5,25 +5,13 @@ import NodeProperties from '../NodeProperties';
 import styles from './SocialSituationsExerciseANodeProperties.module.css';
 import { SocialSituationsExerciseANode } from './types';
 import SocialSituationsExerciseANodeEmbedded, { SocialSituationsExerciseAData } from '@/components/embedded/SocialSituationsExerciseANodeEmbedded/SocialSituationsExerciseANodeEmbedded';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const SocialSituationsExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
     const node = element as SocialSituationsExerciseANode;
     const data = node.data || {};
 
-    const handleBaseChange = (updatedBase: Partial<SocialSituationsExerciseANode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
-
-    // Fix: Type newData with the inner payload type, not the full node data type
-    const handleDataChange = (newData: SocialSituationsExerciseAData) => {
-        onUpdateElement({
-            ...node,
-            data: {
-                ...node.data,
-                ...newData, // Keeps nodeData safe while updating scenario, items, and correctIndex
-            },
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     return (
         <div className={styles.container}>

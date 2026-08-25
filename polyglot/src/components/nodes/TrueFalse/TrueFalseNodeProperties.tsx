@@ -7,31 +7,17 @@ import { TrueFalseNode } from './types';
 import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import NodeProperties from '../NodeProperties';
 import TrueFalseArrayField from './TrueFalseArrayField';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const TrueFalseNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
     const [isOpenAITool, setIsOpenAITool] = useState(false);
     const [generatingLoading, setGeneratingLoading] = useState(false);
 
-    // Safely cast the generic PolyglotNode to your specific TrueFalseNode[cite: 4]
     const node = element as TrueFalseNode;
     const data = node.data;
 
-    const handleDataChange = (updatedData: Partial<TrueFalseNode['data']>) => {
-        onUpdateElement({
-            ...node,
-            data: {
-                ...node.data,
-                ...updatedData,
-            },
-        });
-    };
-
-    const handleBaseChange = (updatedBase: Partial<TrueFalseNode>) => {
-        onUpdateElement({
-            ...node,
-            ...updatedBase,
-        });
-    };
+    // Golden standard: using the shared hook instead of rewriting sync logic
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     const handleOpenAITool = () => {
         setGeneratingLoading(true);

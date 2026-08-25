@@ -4,12 +4,9 @@ import TextField from '@/components/forms/TextField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
 import styles from './TheoryOfMindNodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
-import {
-    TeoriaDellaMenteNode,
-    TeoriaDellaMenteQuizItem,
-    TeoriaDellaMenteQuestion
-} from './types';
 import NodeProperties from '../NodeProperties';
+import { TheoryOfMindNode, TheoryOfMindQuestion, TheoryOfMindQuizItem } from './types';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -29,9 +26,9 @@ const CloseIcon = () => (
 
 /* ---------------- Question Editor ---------------- */
 type QuestionEditorProps = {
-    question: TeoriaDellaMenteQuestion;
+    question: TheoryOfMindQuestion;
     index: number;
-    onChange: (updated: TeoriaDellaMenteQuestion) => void;
+    onChange: (updated: TheoryOfMindQuestion) => void;
     onRemove: () => void;
 };
 
@@ -69,16 +66,16 @@ const QuestionEditor = ({ question, index, onChange, onRemove }: QuestionEditorP
 
 /* ---------------- Story Editor ---------------- */
 type StoryEditorProps = {
-    story: TeoriaDellaMenteQuizItem;
+    story: TheoryOfMindQuizItem;
     index: number;
-    onChange: (updated: TeoriaDellaMenteQuizItem) => void;
+    onChange: (updated: TheoryOfMindQuizItem) => void;
     onRemove: () => void;
 };
 
 const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorProps) => {
     const questions = story.questions || [];
 
-    const handleUpdateQuestion = (qIndex: number, updatedQuestion: TeoriaDellaMenteQuestion) => {
+    const handleUpdateQuestion = (qIndex: number, updatedQuestion: TheoryOfMindQuestion) => {
         const newQuestions = [...questions];
         newQuestions[qIndex] = updatedQuestion;
         onChange({ ...story, questions: newQuestions });
@@ -148,15 +145,13 @@ const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorProps) => 
 
 /* ---------------- Root Component ---------------- */
 const TheoryOfMindNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
-    const node = element as TeoriaDellaMenteNode;
+    const node = element as TheoryOfMindNode;
     const data = node.data || {};
     const quizItems = data.quiz || [];
 
-    const handleBaseChange = (updatedBase: Partial<TeoriaDellaMenteNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
+    const { handleBaseChange } = useNodeSync(node, onUpdateElement);
 
-    const handleQuizChange = (newQuiz: TeoriaDellaMenteQuizItem[]) => {
+    const handleQuizChange = (newQuiz: TheoryOfMindQuizItem[]) => {
         onUpdateElement({ ...node, data: { ...node.data, quiz: newQuiz } });
     };
 
@@ -167,7 +162,7 @@ const TheoryOfMindNodeProperties = ({ element, onUpdateElement }: PolyglotNodePr
         ]);
     };
 
-    const handleUpdateStory = (index: number, updatedStory: TeoriaDellaMenteQuizItem) => {
+    const handleUpdateStory = (index: number, updatedStory: TheoryOfMindQuizItem) => {
         const updatedQuiz = [...quizItems];
         updatedQuiz[index] = updatedStory;
         handleQuizChange(updatedQuiz);

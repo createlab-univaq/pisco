@@ -10,6 +10,7 @@ import {
 } from './types';
 import NodeProperties from '../NodeProperties';
 import MultiSelectAnswersField from '@/components/forms/MultiSelectAnswersField';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 // Genera un id con fallback (compatibile)
 const newId = (prefix: string) =>
@@ -162,16 +163,7 @@ const SocialSituationsNodeProperties = ({ element, onUpdateElement }: PolyglotNo
     const data = node.data || {};
     const items = data.items || [];
 
-    const handleBaseChange = (updatedBase: Partial<SocialSituationsNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
-
-    const handleDataChange = (updatedData: Partial<SocialSituationsNode['data']>) => {
-        onUpdateElement({
-            ...node,
-            data: { ...node.data, ...updatedData }
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     const handleAddItem = () => {
         handleDataChange({

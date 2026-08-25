@@ -10,38 +10,15 @@ export type ReactFlowEmotionAttributionNodeProps = NodeProps<
     EmotionAttributionNodeData & { label?: string; title?: string }
 >;
 
-const ReactFlowEmotionAttributionNode = ({
-    data,
-    isConnectable,
-}: ReactFlowEmotionAttributionNodeProps) => {
-    // Read the label directly from React Flow's injected data instead of a global store
-    const nodeLabel = data?.label || data?.title || 'Attribuzione delle Emozioni';
+const ReactFlowEmotionAttributionNode = ({ data, isConnectable }: ReactFlowEmotionAttributionNodeProps) => {
+    const nodeLabel = data?.title || data?.label || 'Attribuzione delle Emozioni';
 
     return (
         <div className={styles.nodeCard}>
-            <img
-                src={icon.src}
-                alt="Attribuzione delle Emozioni"
-                className={styles.icon}
-            />
-
+            <img src={icon.src} alt="Attribuzione delle Emozioni" className={styles.icon} />
             <span className={styles.label}>{nodeLabel}</span>
-
-            {/* Target Handle (Incoming connections) */}
-            <Handle
-                type="target"
-                position={Position.Left}
-                className={styles.handle}
-                isConnectable={isConnectable}
-            />
-
-            {/* Source Handle (Outgoing connections) */}
-            <Handle
-                type="source"
-                position={Position.Right}
-                className={styles.handle}
-                isConnectable={isConnectable}
-            />
+            <Handle type="target" position={Position.Left} className={styles.handle} isConnectable={isConnectable} />
+            <Handle type="source" position={Position.Right} className={styles.handle} isConnectable={isConnectable} />
         </div>
     );
 };

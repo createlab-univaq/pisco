@@ -15,7 +15,7 @@ const ReactFlowFauxPasNode = ({
     isConnectable,
 }: ReactFlowFauxPasNodeProps) => {
     // Read the label directly from React Flow's injected data instead of a global store
-    const nodeLabel = data?.label || data?.title || 'Faux Pas';
+    const nodeLabel = data?.title || data?.label || 'Faux Pas';
 
     return (
         <div className={styles.nodeCard}>

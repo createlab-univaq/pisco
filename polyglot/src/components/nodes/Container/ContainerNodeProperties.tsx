@@ -8,6 +8,7 @@ import { CONTAINER_NODE_ALLOWED_TYPES, ContainerNode, ContainerSection, Containe
 import styles from './ContainerNodeProperties.module.css';
 import NodeProperties from '../NodeProperties';
 import { embeddedByType } from '@/components/embedded/EmbeddedRegistry';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const newId = () =>
     globalThis.crypto?.randomUUID?.() ??
@@ -181,16 +182,8 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
     const sections = data.sections || [];
     const containerNodeId = node._id;
 
-    const handleBaseChange = (updatedBase: Partial<ContainerNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
-
-    const handleDataChange = (updatedData: Partial<ContainerNode['data']>) => {
-        onUpdateElement({
-            ...node,
-            data: { ...node.data, ...updatedData }
-        });
-    };
+    // Use the shared hook
+    const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
     const addSection = () => {
         handleDataChange({

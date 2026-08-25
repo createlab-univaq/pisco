@@ -12,7 +12,7 @@ type SocialSituationNodeData = {
 };
 
 const ReactFlowSocialSituationsExerciseANode = ({ data }: NodeProps<SocialSituationNodeData>) => {
-    const title = data?.title || 'Situazione Sociale';
+    const nodeLabel = data?.title || data?.label || 'Esercizio A Situazioni sociali';
 
     return (
         <Card className={styles.card}>
@@ -23,7 +23,7 @@ const ReactFlowSocialSituationsExerciseANode = ({ data }: NodeProps<SocialSituat
                 alt="Social situation exercise"
                 className={styles.icon}
             />
-            <span className={styles.label}>{title}</span>
+            <span className={styles.label}>{nodeLabel}</span>
 
             <Handle
                 type="target"

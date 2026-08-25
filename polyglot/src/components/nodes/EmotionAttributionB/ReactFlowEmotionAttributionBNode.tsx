@@ -15,7 +15,7 @@ const ReactFlowEmotionAttributionBNode = ({
     isConnectable,
 }: ReactFlowEmotionAttributionBNodeProps) => {
     // Read the label directly from React Flow's injected data instead of a global store
-    const nodeLabel = data?.label || data?.title || 'Emotion Attribution B';
+    const nodeLabel = data?.title || data?.label || 'Emotion Attribution B';
 
     return (
         <div className={styles.nodeCard}>

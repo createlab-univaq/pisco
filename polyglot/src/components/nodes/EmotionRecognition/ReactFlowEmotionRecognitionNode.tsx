@@ -12,7 +12,7 @@ type EmotionRecognitionNodeData = {
 };
 
 const ReactFlowEmotionRecognitionNode = ({ data }: NodeProps<EmotionRecognitionNodeData>) => {
-    const title = data?.title || 'Riconoscimento emozioni';
+    const title = data?.title || data?.label || 'Riconoscimento emozioni';
 
     return (
         <Card className={styles.card}>

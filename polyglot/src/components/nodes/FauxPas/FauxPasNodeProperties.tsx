@@ -6,6 +6,7 @@ import styles from './FauxPasNodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import { FauxPasNode, FauxPasQuizItem, FauxPasQuestion, FauxPasSkipIf } from './types';
 import NodeProperties from '../NodeProperties';
+import { useNodeSync } from '@/hooks/useNodeSync';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -214,9 +215,7 @@ const FauxPasNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropert
     const data = node.data || {};
     const quizItems = data.quiz || [];
 
-    const handleBaseChange = (updatedBase: Partial<FauxPasNode>) => {
-        onUpdateElement({ ...node, ...updatedBase });
-    };
+    const { handleBaseChange } = useNodeSync(node, onUpdateElement);
 
     const handleQuizChange = (newQuiz: FauxPasQuizItem[]) => {
         onUpdateElement({ ...node, data: { ...node.data, quiz: newQuiz } });
