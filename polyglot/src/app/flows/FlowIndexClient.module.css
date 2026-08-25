@@ -1,70 +1,24 @@
-/* Container spacing matching Chakra's px="10%" */
+/* Removed max-width and margin: 0 auto to allow full width */
 .container {
-  padding: 0 10%;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 0 4%;
+  /* Gives breathing room on the edges while taking full width */
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Heading styling matching py="5%" */
 .pageTitle {
   font-size: 2rem;
   font-weight: 700;
-  padding: 5% 0;
+  padding: 3% 0;
+  /* Slightly reduced top padding for full-width view */
   margin: 0;
-  color: #1a202c; /* Next.js/Tailwind default dark gray */
+  color: #1a202c;
 }
 
-/* Tabs System */
-.tabsContainer {
-  padding-top: 3%;
+.contentArea {
+  padding-top: 24px;
 }
 
-.tabList {
-  display: flex;
-  border-bottom: 2px solid #e2e8f0;
-  margin-bottom: 20px;
-}
-
-.tab {
-  padding: 12px 24px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px; /* Pull down over the container's border */
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #718096;
-  transition: all 0.2s ease-in-out;
-}
-
-.tab:hover {
-  color: #2b6cb0;
-}
-
-.activeTab {
-  padding: 12px 24px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid #3182ce; /* Blue active indicator */
-  margin-bottom: -2px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #3182ce;
-}
-
-.tabPanels {
-  padding-top: 20px;
-}
-
-.tabPanel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Optional: if you want flows to be in a grid instead of a single column */
 .flowGrid {
   display: flex;
   flex-direction: column;

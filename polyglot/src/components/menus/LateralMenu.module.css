@@ -1,18 +1,109 @@
 .container {
-    width: 300px;
-    background-color: rgba(217, 217, 217, 0.6);
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    position: relative;
+    flex-shrink: 0;
+    border-left: 1px solid #e2e8f0;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.03);
+    /* Removed width transition so dragging is instant and 1:1 with the mouse */
+    z-index: 10;
+}
+
+/* --- THE RESIZER BAR (On the Left) --- */
+.resizer {
+    width: 6px;
+    cursor: ew-resize;
+    background-color: transparent;
+    z-index: 20;
+    transition: background-color 0.2s;
+    margin-left: -3px;
+}
+
+.resizer:hover,
+.resizerActive {
+    background-color: #3182ce;
+}
+
+/* Inner wrapper for the actual menu content */
+.content {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1;
+    overflow: hidden;
+    background-color: #f8fafc;
+}
+
+/* --- HEADER & CLOSE BUTTON --- */
+.header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .label {
-    padding: 1rem 12px;
-    font-weight: bold;
-    font-size: 1rem;
-    color: #2d3748;
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #4a5568;
+    letter-spacing: 0.05em;
 }
 
+.closeButton {
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s;
+}
+
+.closeButton:hover {
+    background-color: #edf2f7;
+    color: #e53e3e;
+    /* Turns slightly red on hover */
+}
+
+/* --- FLOATING ACTION BUTTON (When Collapsed) --- */
+.fab {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+    z-index: 100;
+    /* Stays above the canvas */
+}
+
+.fab:hover {
+    background-color: #2b6cb0;
+    transform: scale(1.05);
+}
+
+.fabIcon {
+    width: 24px;
+    height: 24px;
+}
+
+/* --- ACCORDION & CARDS --- */
 .scrollArea {
     flex: 1;
     overflow-y: auto;
@@ -20,7 +111,8 @@
 }
 
 .accordionItem {
-    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #ffffff;
 }
 
 .accordionButton {
@@ -28,72 +120,83 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
+    padding: 12px 16px;
     background: transparent;
     border: none;
     cursor: pointer;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #2d3748;
     text-align: left;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .accordionButton:hover {
-    background-color: rgba(0, 0, 0, 0.06);
+    background-color: #f7fafc;
+    color: #3182ce;
+}
+
+.accordionButtonExpanded {
+    background-color: #f7fafc;
 }
 
 .accordionPanel {
-    padding: 6px 8px 10px 8px;
+    padding: 12px 16px 16px 16px;
+    background-color: #f8fafc;
 }
 
 .nodeItem {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px;
-    margin-bottom: 6px;
+    gap: 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
     cursor: grab;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
-    color: #1a202c;
 
-    /* Responsive font sizes translated from Chakra */
-    font-size: 10px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left-width: 4px;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    transition: all 0.2s ease;
 }
 
 .nodeItem:active {
     cursor: grabbing;
 }
 
-/* We use !important here because the base colors are applied via inline styles for alternating rows */
 .nodeItem:hover {
-    background-color: #e6b83f !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-right-color: #cbd5e0;
+    border-top-color: #cbd5e0;
+    border-bottom-color: #cbd5e0;
+}
+
+.nodeIcon {
+    pointer-events: none;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
+.nodeText {
+    color: #2d3748;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.2;
 }
 
 .emptyMessage {
-    padding: 8px;
-    opacity: 0.7;
-    font-size: 10px;
+    padding: 12px;
+    opacity: 0.6;
+    font-size: 12px;
+    text-align: center;
+    font-style: italic;
 }
 
 .icon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
-}
-
-/* Media Queries translated from Chakra's { base: '10px', md: '12px', xl: '14px' } */
-@media (min-width: 768px) {
-
-    .nodeItem,
-    .emptyMessage {
-        font-size: 12px;
-    }
-}
-
-@media (min-width: 1280px) {
-    .nodeItem {
-        font-size: 14px;
-    }
+    color: #a0aec0;
 }

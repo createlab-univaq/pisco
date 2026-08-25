@@ -2,23 +2,22 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import brandLogo from '@public/solo_logo.png';
 import styles from './EditorNav.module.css';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
 import { useHasHydrated } from '@/utils/utils';
 import ExportJsonModal from '../modals/ExportJsonModal';
-import EditFlowModal from '../modals/EditFlowModal';
 import SaveFlowModal from '../modals/SaveFlowModal';
 
-// Inline SVGs
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
 const ArrowForwardIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
 const CopyIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
 const ExternalLinkIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>;
-const EditIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>;
 const CheckIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>;
 const CloseIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>;
+// Added Pen Icon for the Title
+const EditPenIcon = () => <svg className={styles.editPenIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>;
 
 export type EditorNavProps = {
     flow?: any;
@@ -50,12 +49,17 @@ export default function EditorNav({
     const [publishLoading, setPublishLoading] = useState(false);
     const [publish, setPublish] = useState(false);
 
+    // --- Title State ---
+    const [localTitle, setLocalTitle] = useState('');
+
     const [isOpenExport, setIsOpenExport] = useState(false);
-    const [isOpenEdit, setIsOpenEdit] = useState(false);
     const [isOpenSave, setIsOpenSave] = useState(false);
 
     useEffect(() => {
-        if (flow != null) setPublish(flow.publish);
+        if (flow != null) {
+            setPublish(flow.publish);
+            setLocalTitle(flow.title || 'Untitled Flow');
+        }
     }, [flow]);
 
     useEffect(() => {
@@ -75,6 +79,18 @@ export default function EditorNav({
     const notify = (title: string, desc: string, status: 'warning' | 'error' | 'success') => {
         if (onShowMessage) onShowMessage(title, desc, status);
         else alert(`${title}: ${desc}`);
+    };
+
+    // Submits the title to the parent component when you click away or press Enter
+    const handleTitleSubmit = () => {
+        if (localTitle.trim() !== '' && localTitle !== flow?.title) {
+            if (onUpdateFlowInfo) {
+                onUpdateFlowInfo({ title: localTitle.trim() });
+            }
+        } else {
+            // Revert back if left empty
+            setLocalTitle(flow?.title || 'Untitled Flow');
+        }
     };
 
     const checkPublish = (): boolean => {
@@ -163,79 +179,62 @@ export default function EditorNav({
                 <ArrowForwardIcon />
             </button>
 
+            {/* --- Flow Title Input --- */}
+            <div className={styles.titleContainer}>
+                <input
+                    className={styles.titleInput}
+                    value={localTitle}
+                    onChange={(e) => setLocalTitle(e.target.value)}
+                    onBlur={handleTitleSubmit}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.currentTarget.blur();
+                        }
+                    }}
+                    title="Rename flow"
+                    placeholder="Untitled Flow"
+                />
+                <EditPenIcon />
+            </div>
+
+            <div className={styles.spacer} />
+
             <button
-                className={styles.actionBtn}
-                disabled={hydrated ? !hasUnsavedChanges : true}
+                className={styles.textBtn}
+                disabled={hydrated ? (!hasUnsavedChanges || saveLoading) : true}
                 onClick={async () => {
                     setSaveLoading(true);
                     await saveFunc();
                     setSaveLoading(false);
                 }}
-                title="Save"
+                title="Save Flow (Ctrl+S)"
             >
-                <CopyIcon />
+                <CopyIcon /> Save
             </button>
 
-            <DropDown
-                name="File"
-                options={[
-                    {
-                        name: 'Save',
-                        shortcut: 'Ctrl+S',
-                        icon: <CopyIcon />,
-                        onClick: async () => {
-                            setSaveLoading(true);
-                            await saveFunc();
-                            setSaveLoading(false);
-                        },
-                    },
-                    {
-                        name: 'Export JSON',
-                        icon: <ExternalLinkIcon />,
-                        onClick: () => setIsOpenExport(true),
-                    },
-                ]}
-            />
+            <button
+                className={styles.textBtn}
+                onClick={() => setIsOpenExport(true)}
+            >
+                <ExternalLinkIcon /> Export JSON
+            </button>
 
-            <DropDown
-                name="Project"
-                options={[
-                    {
-                        name: 'Edit Flow',
-                        icon: <EditIcon />,
-                        onClick: () => setIsOpenEdit(true),
-                    },
-                ]}
-            />
+            <button
+                className={`${styles.publishBtn} ${publish ? styles.publishBtnOn : styles.publishBtnOff}`}
+                onClick={handlePublishToggle}
+                disabled={publishLoading}
+                aria-label="Toggle publish status"
+            >
+                {publish ? <CheckIcon /> : <CloseIcon />}
+                {publish ? 'Published' : 'Publish'}
+            </button>
 
-            <div className={styles.publishBadge}>
-                <strong>{publish ? 'Published' : 'Not published'}</strong>
-                <button
-                    className={`${styles.publishBtn} ${publish ? styles.publishBtnOn : styles.publishBtnOff}`}
-                    onClick={handlePublishToggle}
-                    disabled={publishLoading}
-                    aria-label="Toggle publish status"
-                >
-                    {publish ? <CheckIcon /> : <CloseIcon />}
-                </button>
-            </div>
-
-            <div className={styles.spacer} />
-
-            <button className={styles.leaveBtn} onClick={handleLeaveEditor}>
+            <button className={styles.leaveBtn} onClick={handleLeaveEditor} style={{ marginLeft: '1rem' }}>
                 <CloseIcon />
                 Leave editor
             </button>
 
             <ExportJsonModal isOpen={isOpenExport} onClose={() => setIsOpenExport(false)} flow={flow} />
-            {flow && (
-                <EditFlowModal
-                    isOpen={isOpenEdit}
-                    onClose={() => setIsOpenEdit(false)}
-                    flow={flow}
-                    updateInfo={onUpdateFlowInfo ?? (() => { })}
-                />
-            )}
             <SaveFlowModal
                 isOpen={isOpenSave}
                 onClose={() => setIsOpenSave(false)}
@@ -244,51 +243,3 @@ export default function EditorNav({
         </nav>
     );
 }
-
-const DropDown = ({
-    name,
-    options,
-}: {
-    name: string;
-    options: {
-        name: string;
-        shortcut?: string;
-        icon?: ReactNode;
-        onClick?: () => void;
-    }[];
-}) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-        <div className={styles.dropdownWrapper}>
-            {isOpen && (
-                <div className={styles.dropdownBackdrop} onClick={() => setIsOpen(false)} />
-            )}
-            <button
-                className={`${styles.dropdownBtn} ${isOpen ? styles.dropdownBtnActive : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                {name}
-            </button>
-
-            {isOpen && (
-                <div className={styles.dropdownMenu}>
-                    {options.map((val, id) => (
-                        <button
-                            key={id}
-                            className={styles.dropdownItem}
-                            onClick={() => {
-                                val.onClick?.();
-                                setIsOpen(false);
-                            }}
-                        >
-                            {val.icon}
-                            <span className={styles.dropdownItemText}>{val.name}</span>
-                            {val.shortcut && <span className={styles.dropdownItemShortcut}>{val.shortcut}</span>}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};

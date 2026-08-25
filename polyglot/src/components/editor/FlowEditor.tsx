@@ -50,13 +50,15 @@ type FlowEditorProps = {
 const deleteKeyCodes = ['Backspace', 'Delete'];
 
 const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProps) => {
-    // FIXED: Use screenToFlowPosition instead of deprecated project
     const { screenToFlowPosition } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
 
-    // FIXED: Memoize nodeTypes and edgeTypes to prevent React Flow re-creation warnings
     const nodeTypes = useMemo(() => polyglotNodeComponentMapping.componentMapping, []);
     const edgeTypes = useMemo(() => polyglotEdgeComponentMapping.componentMapping, []);
+
+    // --- NEW: Track flow metadata changes directly ---
+    const [flowTitle, setFlowTitle] = useState(initialFlow.title || 'Untitled Flow');
+    const [flowPublish, setFlowPublish] = useState(initialFlow.publish || false);
 
     const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(initialFlow.nodes || []);
     const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(initialFlow.edges || []);
@@ -184,11 +186,11 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         const id = UUIDv4();
         const newEdge: PolyglotEdge = {
             _id: id,
-            type: EDGE_TYPE.UNCONDITIONAL, 
+            type: EDGE_TYPE.UNCONDITIONAL,
             title: 'New Connection',
             description: '',
             data: {
-                edgeData: {}, 
+                edgeData: {},
             },
             reactFlow: {
                 id: id,
@@ -259,6 +261,8 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     const handleSave = async () => {
         await saveFlow({
             ...initialFlow,
+            title: flowTitle,     // Ensure title is saved
+            publish: flowPublish, // Ensure publish state is saved
             nodes: polyglotNodes,
             edges: polyglotEdges,
         });
@@ -272,7 +276,21 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     return (
         <div className={styles.container}>
-            <EditorNav saveFunc={handleSave} />
+            <EditorNav
+                flow={{
+                    ...initialFlow,
+                    title: flowTitle,
+                    publish: flowPublish,
+                    nodes: polyglotNodes,
+                    edges: polyglotEdges
+                }}
+                saveFunc={handleSave}
+                hasUnsavedChanges={true}
+                onUpdateFlowInfo={(updates) => {
+                    if (updates.title !== undefined) setFlowTitle(updates.title);
+                    if (updates.publish !== undefined) setFlowPublish(updates.publish);
+                }}
+            />
 
             <div className={styles.editorArea}>
                 <ReactFlow
