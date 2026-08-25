@@ -25,6 +25,7 @@ import ReactFlow, {
     useOnSelectionChange,
     useReactFlow,
     useStoreApi,
+    MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { v4 as UUIDv4 } from 'uuid';
@@ -326,6 +327,13 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
                     onConnect={onConnect}
 
+                    defaultEdgeOptions={{
+                        markerEnd: {
+                            type: MarkerType.ArrowClosed,
+                            color: '#b1b1b7', // Match your edge line color, or customize it
+                        },
+                    }}
+
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     deleteKeyCode={deleteKeyCodes}
@@ -358,7 +366,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onDismiss={hideContextMenu}
                     onRemoveElement={(type, id) => {
                         setHasUnsavedChanges(true);
-                        
+
                         if (type === 'Node') {
                             setPolyglotNodes((prev) => prev.filter(n => n._id !== id));
                         } else if (type === 'Edge') {

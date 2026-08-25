@@ -12,17 +12,14 @@ export default function ReactFlowPassFailEdge(props: EdgeProps<PassFailEdgeData 
         targetX, targetY, targetPosition,
     });
 
-    // Read the synced condition (default to 'pass')
     const condition = data?.conditionKind || 'pass';
-
-    // Reproduce the old styling logic: red for fail, green for pass
     const strokeColor = condition === 'fail' ? '#e53e3e' : '#38a169';
 
     return (
         <>
             <BaseEdge
                 path={edgePath}
-                markerEnd={markerEnd}
+                markerEnd={markerEnd} // 2. Pass React Flow's native marker string here
                 style={{ ...style, stroke: strokeColor, strokeWidth: 2 }}
             />
 
@@ -31,7 +28,6 @@ export default function ReactFlowPassFailEdge(props: EdgeProps<PassFailEdgeData 
                     className={styles.labelContainer}
                     style={{ left: labelX, top: labelY, color: strokeColor }}
                 >
-                    {/* Shows PASS or FAIL in uppercase, and append the title if it exists */}
                     {condition.toUpperCase()} {data?.title ? `- ${data.title}` : ''}
                 </div>
             </EdgeLabelRenderer>

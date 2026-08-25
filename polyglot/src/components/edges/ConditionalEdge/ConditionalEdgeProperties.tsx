@@ -5,6 +5,7 @@ import TextField from '@/components/forms/TextField';
 import EdgeProperties from '../EdgeProperties';
 import { ConditionalEdge } from './types';
 import { PolyglotEdgePropertiesProps } from '@/components/ElementMapping'; // Adjust path if needed
+import { useEdgeSync } from '@/hooks/useEdgeSync';
 
 // FIXED: Accept the universal props
 const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: PolyglotEdgePropertiesProps) => {
@@ -12,19 +13,7 @@ const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: Po
     // FIXED: Cast it safely inside the component, just like you did for TrueFalseNode!
     const element = baseElement as ConditionalEdge;
 
-    const handleDataChange = (updatedData: Partial<ConditionalEdge['data']>) => {
-        const mergedData = { ...element.data, ...updatedData };
-
-        onUpdateElement({
-            ...element,
-            data: mergedData,
-            // FIXED: Only spread and update reactFlow if it exists!
-            reactFlow: element.reactFlow ? {
-                ...element.reactFlow,
-                data: mergedData,
-            } : undefined
-        });
-    };
+    const { handleBaseChange, handleDataChange } = useEdgeSync(element, onUpdateElement);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
