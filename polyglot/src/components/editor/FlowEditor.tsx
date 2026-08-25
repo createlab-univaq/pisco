@@ -35,11 +35,10 @@ import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
 import ContextMenu, { ContextMenuProps, ContextMenuTypes } from '../menus/ContextMenu';
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
 import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
-import LateralMenu from '../menus/LateralMenu';
-import ElementProperties from './ElementProperties';
 import EditorNav from '../navbars/EditorNav';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../ElementMapping';
 import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import ContextualSidebar from '../menus/ContextualSidebar';
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
@@ -375,14 +374,9 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     }}
                 />
 
-                <LateralMenu isOpen={!isOpenPanel} />
-
-                <ElementProperties
+                <ContextualSidebar
                     selectedElement={activeElement}
-                    isOpen={isOpenPanel}
-                    onClose={onClosePanel}
                     onUpdateElement={(updatedElement: any) => {
-                        // Flag that the user edited something in the properties panel!
                         setHasUnsavedChanges(true);
 
                         if (selectedElement?.type === 'Node') {
@@ -391,6 +385,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                             setPolyglotEdges(prev => prev.map(e => e.reactFlow?.id === selectedElement.id ? updatedElement : e));
                         }
                     }}
+                    onClearSelection={compoundClearSelection}
                 />
             </div>
         </div>

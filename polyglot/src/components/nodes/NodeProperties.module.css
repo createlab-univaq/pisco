@@ -1,0 +1,40 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.activityBox {
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+}
+
+.activityTitle {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.activityText {
+    margin: 0;
+    color: #718096;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.fieldWrapper {
+    flex: 1;
+}

@@ -2,11 +2,11 @@
 
 import EnumField from '@/components/forms/EnumField';
 import TextField from '@/components/forms/TextField';
+import styles from './NodeProperties.module.css';
 
 export type NodePropertiesProps = {
     platform?: string[];
     activityDescription?: string;
-    // FIXED: Added controlled props so the parent can manage the state
     title?: string;
     description?: string;
     onUpdateTitle?: (val: string) => void;
@@ -22,14 +22,13 @@ const NodeProperties = ({
     onUpdateDescription,
 }: NodePropertiesProps) => {
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-
+        <div className={styles.container}>
             {activityDescription && (
-                <div>
-                    <strong style={{ display: 'block', marginBottom: '0.25rem' }}>
+                <div className={styles.activityBox}>
+                    <strong className={styles.activityTitle}>
                         Activity description
                     </strong>
-                    <p style={{ margin: 0, color: '#4a5568' }}>{activityDescription}</p>
+                    <p className={styles.activityText}>{activityDescription}</p>
                 </div>
             )}
 
@@ -49,9 +48,8 @@ const NodeProperties = ({
                 isTextArea
             />
 
-            <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
-                {/* Note: EnumField will also eventually need value/onChange props! */}
-                <div style={{ flex: 1 }}>
+            <div className={styles.row}>
+                <div className={styles.fieldWrapper}>
                     <EnumField
                         label="Difficulty"
                         name="difficulty"
@@ -68,7 +66,7 @@ const NodeProperties = ({
                     />
                 </div>
 
-                <div style={{ flex: 1 }}>
+                <div className={styles.fieldWrapper}>
                     <EnumField
                         label="Platform"
                         name="platform"
@@ -83,7 +81,6 @@ const NodeProperties = ({
                         }
                     />
                 </div>
-
             </div>
         </div>
     );

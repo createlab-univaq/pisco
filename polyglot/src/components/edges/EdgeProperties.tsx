@@ -3,6 +3,7 @@
 import TextField from '@/components/forms/TextField';
 import EnumField from '@/components/forms/EnumField';
 import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import styles from './EdgeProperties.module.css';
 
 export type EdgePropertiesProps = {
     element: any;
@@ -28,8 +29,8 @@ const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {/* THE TYPE DROPDOWN (Option A) */}
+        <div className={styles.container}>
+            {/* THE TYPE DROPDOWN */}
             <EnumField
                 label="Edge Type"
                 name="edgeType"
