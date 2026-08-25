@@ -1,0 +1,11 @@
+.labelContainer {
+    position: absolute;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
+    pointer-events: all;
+    transform: translate(-50%, -50%);
+}

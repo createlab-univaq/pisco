@@ -184,14 +184,15 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         const id = UUIDv4();
         const newEdge: PolyglotEdge = {
             _id: id,
-            type: typeof EDGE_TYPE.PASS_FAIL, // Or your default edge type string
-            title: '',
+            type: EDGE_TYPE.UNCONDITIONAL, 
+            title: 'New Connection',
             description: '',
             data: {
-                edgeData: {}, // Required by the PolyglotEdge type definition
+                edgeData: {}, 
             },
             reactFlow: {
                 id: id,
+                type: EDGE_TYPE.UNCONDITIONAL,
                 source: connection.source!,
                 target: connection.target!,
                 sourceHandle: connection.sourceHandle,

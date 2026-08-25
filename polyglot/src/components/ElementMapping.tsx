@@ -2,7 +2,7 @@ import React from 'react';
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
 import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 import { ReactFlowNodeProps } from './reactFlowNode/ReactFlowNode';
-import { ReactFlowEdgeProps } from './reactFlowEdge/ReactFlowEdge';
+import ReactFlowEdge, { ReactFlowEdgeProps } from './reactFlowEdge/ReactFlowEdge';
 
 // ---------------------------------------------------------------------------
 // 1. UNIVERSAL PROPERTY PANEL PROPS
@@ -166,3 +166,12 @@ polyglotNodeComponentMapping.registerMapping(emotionRecognitionNodeConfig as any
 
 // polyglotNodeComponentMapping.registerMapping(multipleChoiceConfig as any);
 // polyglotEdgeComponentMapping.registerMapping(customEdgeConfig as any);
+
+import { unconditionalEdgeConfig } from './edges/UnconditionalEdge';
+import { conditionalEdgeConfig } from './edges/ConditionalEdge';
+import { passFailEdgeConfig } from './edges/PassFailEdge';
+
+// Register all edges dynamically
+polyglotEdgeComponentMapping.registerMapping(unconditionalEdgeConfig);
+polyglotEdgeComponentMapping.registerMapping(conditionalEdgeConfig);
+polyglotEdgeComponentMapping.registerMapping(passFailEdgeConfig);
