@@ -55,6 +55,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const nodeTypes = useMemo(() => polyglotNodeComponentMapping.componentMapping, []);
     const edgeTypes = useMemo(() => polyglotEdgeComponentMapping.componentMapping, []);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     // --- NEW: Track flow metadata changes directly ---
     const [flowTitle, setFlowTitle] = useState(initialFlow.title || 'Untitled Flow');
@@ -88,6 +89,10 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     // ============================================================================
 
     const onNodesChange: OnNodesChange = (changes) => {
+        if (changes.some((c) => c.type === 'position' || c.type === 'remove' || c.type === 'add')) {
+            setHasUnsavedChanges(true);
+        }
+
         setPolyglotNodes((prev) => {
             const validNodes = prev.filter((p) => p.reactFlow !== undefined);
             const rfNodes = validNodes.map((p) => p.reactFlow!);
@@ -108,6 +113,10 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     };
 
     const onEdgesChange: OnEdgesChange = (changes) => {
+        if (changes.some((c) => c.type === 'remove' || c.type === 'add')) {
+            setHasUnsavedChanges(true);
+        }
+
         setPolyglotEdges((prev) => {
             const validEdges = prev.filter((p) => p.reactFlow !== undefined);
             const rfEdges = validEdges.map((p) => p.reactFlow!);
@@ -174,6 +183,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     data: { label: 'Abstract Node' },
                 },
             };
+            setHasUnsavedChanges(true);
             setPolyglotNodes((prev) => [...prev, nodeToAdd]);
             return;
         }
@@ -202,6 +212,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
             },
         };
 
+        setHasUnsavedChanges(true);
         setPolyglotEdges((prev) => [...prev, newEdge]);
     }, []);
 
@@ -258,14 +269,18 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     // HELPERS
     // ============================================================================
 
-    const handleSave = async () => {
+    const handleSave = async (overrides?: Partial<PolyglotFlow>) => {
         await saveFlow({
             ...initialFlow,
-            title: flowTitle,     // Ensure title is saved
-            publish: flowPublish, // Ensure publish state is saved
+            title: flowTitle,
+            publish: flowPublish,
             nodes: polyglotNodes,
             edges: polyglotEdges,
+            ...overrides,
         });
+
+        // FIXED: Clear the unsaved changes flag once the save is complete!
+        setHasUnsavedChanges(false);
     };
 
     const activeElement = selectedElement?.type === 'Node'
@@ -284,11 +299,12 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     nodes: polyglotNodes,
                     edges: polyglotEdges
                 }}
-                saveFunc={handleSave}
-                hasUnsavedChanges={true}
-                onUpdateFlowInfo={(updates) => {
+                saveFunc={() => handleSave()}
+                hasUnsavedChanges={hasUnsavedChanges}
+                onUpdateFlowInfo={async (updates) => {
                     if (updates.title !== undefined) setFlowTitle(updates.title);
                     if (updates.publish !== undefined) setFlowPublish(updates.publish);
+                    await handleSave(updates);
                 }}
             />
 
@@ -341,6 +357,8 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     elementId={activeElement?._id}
                     onDismiss={hideContextMenu}
                     onRemoveElement={(type, id) => {
+                        setHasUnsavedChanges(true);
+                        
                         if (type === 'Node') {
                             setPolyglotNodes((prev) => prev.filter(n => n._id !== id));
                         } else if (type === 'Edge') {
@@ -356,6 +374,9 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     isOpen={isOpenPanel}
                     onClose={onClosePanel}
                     onUpdateElement={(updatedElement: any) => {
+                        // Flag that the user edited something in the properties panel!
+                        setHasUnsavedChanges(true);
+
                         if (selectedElement?.type === 'Node') {
                             setPolyglotNodes(prev => prev.map(n => n.reactFlow?.id === selectedElement.id ? updatedElement : n));
                         } else if (selectedElement?.type === 'Edge') {
