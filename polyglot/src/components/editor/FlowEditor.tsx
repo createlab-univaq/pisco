@@ -222,7 +222,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const onMoveStart: OnMoveStart = () => {
         hideContextMenu();
-        compoundClearSelection();
     };
 
     const onClick: MouseEventHandler = (e) => {
@@ -316,7 +315,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onNodesDelete={onNodesDelete}
                     onNodeContextMenu={onNodeContextMenu}
                     onNodeDoubleClick={onOpenPanel}
-                    onNodeDrag={onClosePanel}
 
                     edges={polyglotEdges.filter((e) => e.reactFlow !== undefined).map((e) => e.reactFlow!)}
                     edgeTypes={edgeTypes}
