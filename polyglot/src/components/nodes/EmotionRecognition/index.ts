@@ -11,7 +11,6 @@ export const emotionRecognitionNodeConfig = {
     name: 'Riconoscimento Emozioni',
     icon: icon.src,
     group: 'remember_assessment',
-    platform: 'WebApp',
     propertiesComponent: EmotionRecognitionNodeProperties,
     elementComponent: ReactFlowEmotionRecognitionNode,
     defaultData: {

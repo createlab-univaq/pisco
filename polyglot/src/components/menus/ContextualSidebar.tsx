@@ -37,7 +37,7 @@ const MENU_SECTIONS: Array<{
                 'EmotionAttributionANode',
                 'EmotionAttributionBNode',
                 'ContainerNode',
-                'SocialSituationExerciseANode',
+                'SocialSituationsExerciseANode',
                 'EmotionRecognitionNode',
             ],
         },

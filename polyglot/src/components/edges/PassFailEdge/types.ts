@@ -1,12 +1,14 @@
 import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotEdgeBase } from '@/types/polyglot-elements/PolyglotEdgeBase';
+
+export type PassFailConditionKind = 'pass' | 'fail';
 
 export type PassFailEdgeData = {
     edgeData: Record<string, any>;
-    conditionKind: 'pass' | 'fail';
+    conditionKind: PassFailConditionKind;
 };
 
-export type PassFailEdge = PolyglotEdge & {
+export type PassFailEdge = PolyglotEdgeBase & {
     type: typeof EDGE_TYPE.PASS_FAIL;
     data: PassFailEdgeData;
 };

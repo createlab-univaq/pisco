@@ -22,7 +22,7 @@ const ids = Array.from({ length: 8 }, () => UUIDv4());
 const multipleChoiceNodes: MultipleChoiceQuestionNode[] = [
     {
         _id: ids[0],
-        platform: 'WebApp',
+        
         type: 'multipleChoiceQuestionNode',
         title: 'Multiple Choice Question',
         description: 'Some description',
@@ -47,7 +47,7 @@ const closeEndedQuestionNodes: CloseEndedQuestionNode[] = [
         _id: UUIDv4(),
         type: 'closeEndedQuestionNode',
         title: 'Close Ended Question',
-        platform: 'WebApp',
+        
         description: 'Some description',
         difficulty: 1,
         data: {
@@ -68,7 +68,7 @@ const closeEndedQuestionNodes: CloseEndedQuestionNode[] = [
         _id: id,
         type: 'closeEndedQuestionNode' as const,
         title: index % 2 ? 'To' : 'From',
-        platform: 'WebApp',
+        
         description: 'Some description',
         difficulty: 5,
         data: {
@@ -93,7 +93,7 @@ const lessonNodes: LessonTextNode[] = [
     {
         _id: UUIDv4(),
         type: 'lessonTextNode',
-        platform: 'WebApp',
+        
         title: 'Lesson',
         description: 'Some description',
         difficulty: 1,

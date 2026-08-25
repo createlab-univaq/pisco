@@ -28,22 +28,13 @@ const TrueFalseNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
     return (
         <div className={styles.container}>
             <NodeProperties
-                platform={['WebApp']}
+                
                 activityDescription="In this activity learners will have to provide answers to true and false questions"
                 title={node.title}
                 description={node.description}
                 onUpdateTitle={(val) => handleBaseChange({ title: val })}
                 onUpdateDescription={(val) => handleBaseChange({ description: val })}
             />
-
-            <button
-                className={styles.aiButton}
-                id="buttonAI"
-                onClick={handleOpenAITool}
-                disabled={generatingLoading}
-            >
-                {generatingLoading ? 'Generating...' : 'Create with AI'}
-            </button>
 
             <TextField
                 name="instructions"

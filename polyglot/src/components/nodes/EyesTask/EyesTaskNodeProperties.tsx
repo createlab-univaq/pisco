@@ -92,7 +92,6 @@ const EyesTaskNodeProperties = ({ element, onUpdateElement }: PolyglotNodeProper
     return (
         <div className={styles.container}>
             <NodeProperties
-                platform={['WebApp']}
                 activityDescription="Crea una lista di quesiti con un’immagine per ciascuno. Ogni quesito ha più risposte: seleziona quella corretta."
                 title={node.title}
                 description={node.description}

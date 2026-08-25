@@ -17,7 +17,6 @@ const EmotionAttributionBNodeProperties = ({ element, onUpdateElement }: Polyglo
     return (
         <div className={styles.container}>
             <NodeProperties
-                platform={['WebApp']}
                 activityDescription="Esercitazione di attribuzione delle emozioni (Tipo B): inserisci una lista di elementi, ciascuno con emozione, scenario e spiegazione dello scenario."
                 title={node.title}
                 description={node.description}

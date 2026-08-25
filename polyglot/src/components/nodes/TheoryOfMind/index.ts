@@ -12,7 +12,7 @@ export const theoryOfMindNodeConfig = {
     name: 'Teoria Della Mente',
     icon: icon.src,
     group: 'remember_assessment',
-    platform: 'WebApp',
+    
     propertiesComponent: TheoryOfMindNodeProperties,
     elementComponent: ReactFlowTheoryOfMindNode,
     defaultData: {

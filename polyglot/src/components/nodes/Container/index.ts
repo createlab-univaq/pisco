@@ -12,7 +12,6 @@ export const containerNodeConfig = {
     name: 'Container',
     icon: icon.src,
     group: 'concept',
-    platform: 'WebApp',
     propertiesComponent: ContainerNodeProperties,
     elementComponent: ReactFlowContainerNode,
     defaultData: {

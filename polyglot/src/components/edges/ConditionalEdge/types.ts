@@ -1,5 +1,5 @@
 import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotEdgeBase } from '@/types/polyglot-elements/PolyglotEdgeBase';
 
 export type ConditionalOperator = '>' | '>=' | '<' | '<=' | '==';
 
@@ -9,7 +9,7 @@ export type ConditionalEdgeData = {
     threshold: number;
 };
 
-export type ConditionalEdge = PolyglotEdge & {
+export type ConditionalEdge = PolyglotEdgeBase & {
     type: typeof EDGE_TYPE.CONDITIONAL;
     data: ConditionalEdgeData;
 };

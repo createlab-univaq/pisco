@@ -5,6 +5,10 @@ import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
 import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 import { polyglotNodeComponentMapping } from '@/components/ElementMapping';
+import { ConditionalOperator } from '@/components/edges/ConditionalEdge';
+import { PassFailConditionKind } from '@/components/edges/PassFailEdge';
+import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
 
 // ============================================================================
 // 1. REACT HOOKS
@@ -82,7 +86,6 @@ export const createNewDefaultPolyglotFlow = (): PolyglotFlow => {
         description: '',
         publish: false,
         tags: [],
-        // topicsAI: [], <-- Removed since we stripped out AI types
         nodes: [],
         edges: [],
     };
@@ -99,8 +102,6 @@ export const createNewDefaultPolyglotNode = (
         type: nodeType,
         title: 'New Node',
         description: '',
-        difficulty: 1,
-        platform: polyglotNodeComponentMapping.defaultPlatformMapping[nodeType] || 'WebApp',
         data: polyglotNodeComponentMapping.defaultDataMapping[nodeType] || {},
         reactFlow: {
             id: id,
@@ -108,32 +109,14 @@ export const createNewDefaultPolyglotNode = (
             position: pos,
         },
     } as PolyglotNode;
-    // We use `as PolyglotNode` here because we are dynamically generating 
-    // the type string at runtime based on the component mapping.
 };
 
-
-const configUnconditionalEdge = [
-    'lessonTextNode',
-    'WatchVideoNode',
-    'ScanningNode',
-    'MindMapNode',
-    'SummaryNode',
-    'ProblemSolvingNode',
-    'FindSolutionNode',
-    'CreateKeywordsListNode',
-    'MemoriseKeywordsListNode',
-    'PromptEngineeringNode',
-    'CodingQuestionNode',
-    'ContainerNode',
+const configUnconditionalEdge: string[] = [
+    NODE_TYPE.CONTAINER,
 ];
 
-const configConditionalDefaultTrueEdge = [
-    'EmotionAttributionTestNode',
-    'EyesTaskTestNode',
-    'socialSituationsNode',
-    'TeoriaDellaMenteNode',
-    'FauxPasNode',
+const configConditionalDefaultTrueEdge: string[] = [
+    NODE_TYPE.FAUX_PAS,
 ];
 
 export const createNewDefaultPolyglotEdge = (
@@ -147,15 +130,15 @@ export const createNewDefaultPolyglotEdge = (
     const isConditional = configConditionalDefaultTrueEdge.includes(sourceType || '');
 
     const type = isUnconditional
-        ? 'unconditionalEdge'
+        ? EDGE_TYPE.UNCONDITIONAL
         : isConditional
-            ? 'conditionalEdge'
-            : 'passFailEdge';
+            ? EDGE_TYPE.CONDITIONAL
+            : EDGE_TYPE.PASS_FAIL;
 
     const styleColor =
-        type === 'unconditionalEdge'
+        type === EDGE_TYPE.UNCONDITIONAL
             ? 'grey'
-            : type === 'conditionalEdge'
+            : type === EDGE_TYPE.CONDITIONAL
                 ? 'blue'
                 : 'green';
 
@@ -173,44 +156,43 @@ export const createNewDefaultPolyglotEdge = (
         },
     };
 
-    // We return them explicitly so TypeScript's discriminated union works perfectly
-    if (type === 'unconditionalEdge') {
+    if (type === EDGE_TYPE.UNCONDITIONAL) {
         return {
             _id: id,
-            type: 'unconditionalEdge',
+            type: EDGE_TYPE.UNCONDITIONAL,
             title: '',
             code: '',
             data: {
                 edgeData: {}
             },
             reactFlow: baseReactFlowEdge,
-        };
+        } as PolyglotEdge;
     }
 
-    if (type === 'conditionalEdge') {
+    if (type === EDGE_TYPE.CONDITIONAL) {
         return {
             _id: id,
-            type: 'conditionalEdge',
+            type: EDGE_TYPE.CONDITIONAL,
             title: '',
             code: '',
             data: {
                 edgeData: {},
-                operator: '>=',
+                operator: '>=' as ConditionalOperator,
                 threshold: 0
             },
             reactFlow: baseReactFlowEdge,
-        };
+        } as PolyglotEdge;
     }
 
     return {
         _id: id,
-        type: 'passFailEdge',
+        type: EDGE_TYPE.PASS_FAIL,
         title: '',
         code: '',
         data: {
             edgeData: {},
-            conditionKind: 'pass'
+            conditionKind: 'pass' as PassFailConditionKind
         },
         reactFlow: baseReactFlowEdge,
-    };
+    } as PolyglotEdge;
 };

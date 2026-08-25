@@ -10,7 +10,6 @@ export const emotionAttributionBNodeConfig = {
     name: 'Attribuzione delle emozioni (B)',
     icon: icon.src,
     group: 'remember_assessment',
-    platform: 'WebApp',
     propertiesComponent: EmotionAttributionBNodeProperties,
     elementComponent: ReactFlowEmotionAttributionBNode,
     defaultData: {

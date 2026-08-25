@@ -31,7 +31,6 @@ type MappingType<T, U, K extends TypeWithData, V extends TypeWithData> = {
   name: string;
   icon?: string;
   group?: string;
-  platform?: string;
   propertiesComponent: PropertiesComponent<T>;
   elementComponent: ReactFlowComponent<U>;
   defaultData: K['data'] & V['data'];
@@ -53,7 +52,6 @@ class PolyglotComponentMapping<T, U, K extends TypeWithData> {
     name,
     icon,
     group,
-    platform,
     propertiesComponent,
     elementComponent,
     defaultData,
@@ -67,7 +65,6 @@ class PolyglotComponentMapping<T, U, K extends TypeWithData> {
     this._elementMapping[elementType] = elementComponent;
     this._nameMapping[elementType] = name;
     this._iconMapping[elementType] = icon;
-    this._defaulPlatformMapping[elementType] = platform;
     this._groupMapping[elementType] = group;
     this._defaultDataMapping[elementType] = defaultData;
     this._transformMapping[elementType] = transformData;
@@ -150,6 +147,7 @@ import { socialSituationsNodeConfig } from './nodes/SocialSituations';
 import { theoryOfMindNodeConfig } from './nodes/TheoryOfMind';
 import { containerNodeConfig } from './nodes/Container';
 import { emotionRecognitionNodeConfig } from './nodes/EmotionRecognition';
+import { socialSituationsExerciseANodeConfig } from './nodes/SocialSituationsExerciseA';
 // import { multipleChoiceConfig } from '@/components/nodes/MultipleChoice';
 // import { customEdgeConfig } from '@/components/edges/CustomEdge';
 
@@ -163,6 +161,7 @@ polyglotNodeComponentMapping.registerMapping(socialSituationsNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(theoryOfMindNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(containerNodeConfig as any);
 polyglotNodeComponentMapping.registerMapping(emotionRecognitionNodeConfig as any);
+polyglotNodeComponentMapping.registerMapping(socialSituationsExerciseANodeConfig as any);
 
 // polyglotNodeComponentMapping.registerMapping(multipleChoiceConfig as any);
 // polyglotEdgeComponentMapping.registerMapping(customEdgeConfig as any);

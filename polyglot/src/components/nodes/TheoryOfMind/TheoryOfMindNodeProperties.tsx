@@ -175,7 +175,7 @@ const TheoryOfMindNodeProperties = ({ element, onUpdateElement }: PolyglotNodePr
     return (
         <div className={styles.container}>
             <NodeProperties
-                platform={['WebApp']}
+                
                 title={node.title}
                 description={node.description}
                 onUpdateTitle={(val) => handleBaseChange({ title: val })}

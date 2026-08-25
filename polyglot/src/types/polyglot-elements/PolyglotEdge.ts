@@ -1,7 +1,7 @@
-import { ConditionalEdge } from "./ConditionalEdge";
-import { PassFailEdge } from "./PassFailEdge";
+import { ConditionalEdge } from "@/components/edges/ConditionalEdge";
+import { PassFailEdge } from "@/components/edges/PassFailEdge";
+import { UnconditionalEdge } from "@/components/edges/UnconditionalEdge";
 import { PolyglotEdgeBase } from "./PolyglotEdgeBase";
-import { UnconditionalEdge } from "./UnconditionalEdge";
 
 export type PolyglotEdge =
     | ConditionalEdge

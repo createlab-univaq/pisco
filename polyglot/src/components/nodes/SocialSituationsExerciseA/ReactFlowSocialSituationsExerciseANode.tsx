@@ -3,7 +3,7 @@
 import { Handle, Position, NodeProps } from 'reactflow';
 import styles from './ReactFlowSocialSituationsExerciseANode.module.css';
 import Card from '@/components/cards/Card';
-import icon from '@public/person_icon.png';
+import icon from '@public/people_icon.png';
 
 type SocialSituationNodeData = {
     title?: string;
@@ -15,7 +15,7 @@ const ReactFlowSocialSituationsExerciseANode = ({ data }: NodeProps<SocialSituat
     const nodeLabel = data?.title || data?.label || 'Esercizio A Situazioni sociali';
 
     return (
-        <Card className={styles.card}>
+        <Card className={styles.nodeCard}>
             <img
                 src={icon.src}
                 width="20"

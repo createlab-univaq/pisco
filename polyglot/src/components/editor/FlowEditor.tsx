@@ -170,8 +170,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 type: type,
                 title: 'New Node',
                 description: '',
-                difficulty: 1,
-                platform: 'Library',
                 data: {
                     useFlowData: initialFlow?.sourceMaterial != null,
                     sourceMaterial: initialFlow?.sourceMaterial,

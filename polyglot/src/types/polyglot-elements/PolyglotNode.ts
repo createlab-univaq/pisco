@@ -1,43 +1,31 @@
-import { CircuitNode } from "./CircuitNode";
-import { CloseEndedQuestionNode } from "./CloseEndedQuestionNode";
-import { ContainerNode } from "./ContainerNode";
-import { EmotionAttributionANode } from "./EmotionAttributionANode";
-import { EmotionAttributionBNode } from "./EmotionAttributionBNode";
-import { EmotionAttributionTestNode } from "./EmotionAttributionTestNode";
-import { EyesTaskTestNode } from "./EyesTaskTestNode";
-import { FauxPasNode } from "./FauxPasNode";
-import { LessonTextNode } from "./LessonTextNode";
-import { MultipleChoiceQuestionNode } from "./MultipleChoiceQuestionNode";
-import { OpenQuestionNode } from "./OpenQuestionNode";
+import { ContainerNode } from "@/components/nodes/Container";
+import { EmotionAttributionNode } from "@/components/nodes/EmotionAttribution";
+import { EmotionAttributionANode } from "@/components/nodes/EmotionAttributionA";
+import { EmotionAttributionBNode } from "@/components/nodes/EmotionAttributionB";
+import { EmotionRecognitionNode } from "@/components/nodes/EmotionRecognition";
+import { EyesTaskNode } from "@/components/nodes/EyesTask";
+import { FauxPasNode } from "@/components/nodes/FauxPas";
+import { SocialSituationsNode } from "@/components/nodes/SocialSituations";
+import { SocialSituationsExerciseANode } from "@/components/nodes/SocialSituationsExerciseA";
+import { TheoryOfMindNode } from "@/components/nodes/TheoryOfMind";
+import { TrueFalseNode } from "@/components/nodes/TrueFalse";
 import { PolyglotNodeBase } from "./PolyglotNodeBase";
-import { RiconoscimentoEmozioniNode } from "./RiconoscimentoEmozioniNode";
-import { SocialSituationExerciseANode } from "./SocialSituationExerciseANode";
-import { SocialSituationsNode } from "./SocialSituationsNode";
-import { TeoriaDellaMenteNode } from "./TeoriaDellaMenteNode";
-import { TrueFalseNode } from "./TrueFalseNode";
-import { WatchVideoNode } from "./WatchVideoNode";
 
-export type PolyglotNode = 
-  | CircuitNode
-  | EmotionAttributionBNode
-  | EmotionAttributionANode
-  | FauxPasNode
+export type PolyglotNode =
   | ContainerNode
-  | EyesTaskTestNode
-  | CloseEndedQuestionNode
-  | EmotionAttributionTestNode
-  | LessonTextNode
-  | MultipleChoiceQuestionNode
-  | RiconoscimentoEmozioniNode
-  | TrueFalseNode
+  | EmotionAttributionNode
+  | EmotionAttributionANode
+  | EmotionAttributionBNode
+  | EyesTaskNode
+  | FauxPasNode
+  | EmotionRecognitionNode
   | SocialSituationsNode
-  | SocialSituationExerciseANode
-  | TeoriaDellaMenteNode
-  | OpenQuestionNode
-  | WatchVideoNode
-  | (PolyglotNodeBase & { 
-    type: string; 
+  | SocialSituationsExerciseANode
+  | TheoryOfMindNode
+  | TrueFalseNode
+  | (PolyglotNodeBase & {
+    type: string;
     data: {
-        nodeData: Record<string, any>;
+      nodeData: Record<string, any>;
     }
-});
+  });

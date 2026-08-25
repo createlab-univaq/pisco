@@ -277,7 +277,6 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
     return (
         <div className={styles.container}>
             <NodeProperties
-                platform={['WebApp']}
                 title={node.title}
                 description={node.description}
                 onUpdateTitle={(val) => handleBaseChange({ title: val })}

@@ -5,7 +5,6 @@ import TextField from '@/components/forms/TextField';
 import styles from './NodeProperties.module.css';
 
 export type NodePropertiesProps = {
-    platform?: string[];
     activityDescription?: string;
     title?: string;
     description?: string;
@@ -14,7 +13,6 @@ export type NodePropertiesProps = {
 };
 
 const NodeProperties = ({
-    platform = [''],
     activityDescription,
     title,
     description,
@@ -66,21 +64,6 @@ const NodeProperties = ({
                     />
                 </div>
 
-                <div className={styles.fieldWrapper}>
-                    <EnumField
-                        label="Platform"
-                        name="platform"
-                        options={
-                            <>
-                                {platform.map((p) => (
-                                    <option key={p} value={p}>
-                                        {p}
-                                    </option>
-                                ))}
-                            </>
-                        }
-                    />
-                </div>
             </div>
         </div>
     );

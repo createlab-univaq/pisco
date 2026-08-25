@@ -1,4 +1,4 @@
-.card {
+.nodeCard {
     display: flex;
     align-items: center;
     padding: 8px 12px;
@@ -9,6 +9,7 @@
     font-weight: 600;
     color: #1a202c;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
 .icon {

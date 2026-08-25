@@ -15,7 +15,6 @@ export const emotionAttributionNodeConfig = {
     name: 'Attribuzione delle Emozioni',
     icon: icon.src,
     group: 'remember_assessment',
-    platform: 'WebApp',
     propertiesComponent: EmotionAttributionNodeProperties,
     elementComponent: ReactFlowEmotionAttributionNode,
     defaultData: {
