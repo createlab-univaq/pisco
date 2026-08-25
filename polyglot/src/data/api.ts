@@ -15,31 +15,37 @@ import exampleFlows from './exampleData';
 // --- MOCK CONFIGURATION ---
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
 const MOCK_STORAGE_KEY = 'debug_mock_flows';
+const MOCK_COURSES_KEY = 'debug_mock_courses'; // Added for CoursesAPI
 
 const getMockFlows = (): PolyglotFlow[] => {
   if (typeof window === 'undefined') return [];
   const data = localStorage.getItem(MOCK_STORAGE_KEY);
-  if (!data) {
-    return [];
-  }
-  return JSON.parse(data);
+  return data ? JSON.parse(data) : [];
 };
 
 const saveMockFlows = (flows: PolyglotFlow[]) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(flows));
 };
+
+const getMockCourses = (): PolyglotCourse[] => {
+  if (typeof window === 'undefined') return [];
+  const data = localStorage.getItem(MOCK_COURSES_KEY);
+  return data ? JSON.parse(data) : [];
+};
+
+const saveMockCourses = (courses: PolyglotCourse[]) => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(MOCK_COURSES_KEY, JSON.stringify(courses));
+};
 // --------------------------
 
 export const fetcher = async (url: string) => {
-  // Mock interception for GET requests starting with /api/flows
   if (USE_MOCK && url.startsWith('/api/flows')) {
     const parts = url.split('?')[0].split('/');
     if (parts.length === 3) {
-      // GET /api/flows
       return getMockFlows();
     } else if (parts.length === 4) {
-      // GET /api/flows/[id]
       const id = parts[3];
       const flows = getMockFlows();
       const flow = flows.find((f) => f._id === id);
@@ -55,13 +61,11 @@ export const fetcher = async (url: string) => {
   return res.json();
 };
 
-// Generic internal fetch wrapper for mutations (and direct single GETs)
 async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T> {
   // --- DEBUG MOCK INTERCEPTIONS ---
   if (USE_MOCK) {
     const urlParts = url.split('?')[0].split('/');
     const method = options.method || 'GET';
-    // Safely parse body if it's a string, ignore FormData
     const body = options.body && typeof options.body === 'string' ? JSON.parse(options.body) : null;
 
     // 1. MOCK FLOWS API
@@ -130,23 +134,64 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
       }
     }
 
-    // 2. MOCK METADATA API (Required for the properties panel to load without crashing)
+    // 2. MOCK METADATA API
     if (url.startsWith('/api/metadata')) {
       return {} as unknown as T;
     }
 
-    // 3. MOCK FILES API (Required for the Image Upload property fields to work)
+    // 3. MOCK FILES API
     if (url.startsWith('/api/file')) {
       if (method === 'POST') {
-        // Return a dummy image ID immediately so the property panel registers an upload
         return { imageId: `dummy-img-${Date.now()}` } as unknown as T;
       }
-      return {} as unknown as T;
+      if (method === 'GET') {
+        // Return a dummy 1x1 transparent PNG blob for image downloads
+        const dummyBlob = new Blob(
+          [new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 11, 73, 68, 65, 84, 120, 156, 99, 250, 255, 255, 63, 0, 5, 254, 2, 254, 166, 41, 202, 185, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130])],
+          { type: 'image/png' }
+        );
+        return dummyBlob as unknown as T;
+      }
+      if (method === 'DELETE') {
+        return {} as unknown as T;
+      }
     }
 
-    // 4. MOCK USER API
+    // 4. MOCK USER & SEARCH API
     if (url.startsWith('/api/user')) {
       return { _id: 'debug-user', username: 'Debug Developer' } as unknown as T;
+    }
+    if (url.startsWith('/api/search/autocomplete')) {
+      return ['MockUser1', 'MockUser2', 'Debug Developer'] as unknown as T;
+    }
+
+    // 5. MOCK COURSES API
+    if (url.startsWith('/api/course')) {
+      if (method === 'GET') {
+        return getMockCourses() as unknown as T;
+      }
+      if (method === 'POST') {
+        const courses = getMockCourses();
+        const newCourse = { ...body, _id: `mock-course-${Date.now()}` };
+        courses.push(newCourse);
+        saveMockCourses(courses);
+        return newCourse as unknown as T;
+      }
+      if (method === 'DELETE' && urlParts.length === 4) {
+        const id = urlParts[3];
+        let courses = getMockCourses();
+        courses = courses.filter((c) => c._id !== id);
+        saveMockCourses(courses);
+        return {} as T;
+      }
+    }
+
+    // 6. MOCK EXECUTION API
+    if (url.startsWith('/api/execution')) {
+      if (url.includes('/progressInfo')) return { status: 'mock_progress' } as unknown as T;
+      if (url.includes('/progressAction')) return { status: 'mock_action_success' } as unknown as T;
+      if (url.includes('/resetProgress')) return { status: 'mock_reset_success' } as unknown as T;
+      if (url.includes('/actual')) return { status: 'mock_actual_node', actualNodeId: 'node-1' } as unknown as T;
     }
   }
   // --------------------------------
@@ -175,7 +220,6 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
   return res.json();
 }
 
-// ... Rest of the file (useFlows, UserAPI, MetadataAPI, FlowsAPI, CoursesAPI, ExecutionAPI, FilesAPI) remains exactly the same!
 export function useFlows(queryString: string = '') {
   const { data, error, isLoading, mutate } = useSWR<PolyglotFlow[]>(
     `/api/flows${queryString}`,
