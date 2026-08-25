@@ -15,7 +15,7 @@ const ReactFlowEmotionRecognitionNode = ({ data }: NodeProps<EmotionRecognitionN
     const title = data?.title || data?.label || 'Riconoscimento emozioni';
 
     return (
-        <Card className={styles.card}>
+        <Card className={styles.nodeCard}>
             <img
                 src={icon.src}
                 width="20"

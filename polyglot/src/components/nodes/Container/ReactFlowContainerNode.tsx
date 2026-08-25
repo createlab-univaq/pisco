@@ -15,7 +15,7 @@ const ReactFlowContainerNode = ({ data }: NodeProps<ContainerNodeData>) => {
     const title = data?.title || data?.label || 'Container Node';
 
     return (
-        <Card className={styles.card}>
+        <Card className={styles.nodeCard}>
             <img src={icon.src} width="20" height="20" alt="Container" className={styles.icon} />
             <span className={styles.label}>{title}</span>
             <Handle type="target" position={Position.Left} className={styles.handle} />
