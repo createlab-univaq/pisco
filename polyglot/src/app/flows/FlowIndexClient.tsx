@@ -6,6 +6,7 @@ import CreateFlowModal from '@/components/modals/CreateFlowModal';
 import DeleteFlowModal from '@/components/modals/DeleteFlowModal';
 import Navbar from '@/components/navbars/NavBar';
 import SearchBar from '@/components/searchbars/SearchBar';
+import createIcon from '@public/plus-solid-full.svg';
 
 import { FlowsAPI, useFlows } from '@/data/api';
 import styles from './FlowIndexClient.module.css';
@@ -72,29 +73,21 @@ export default function FlowIndexClient() {
           ) : (
             <div className={styles.emptyState}>
               <h2>You have 0 Learning paths available!</h2>
-              <p>Create one with the + button ;)</p>
+              <p>Create one with the + button</p>
             </div>
           )}
 
-          {/* Floating Action Button (FAB) */}
           <button
             className={styles.fab}
             onClick={onCreateOpen}
             title="Create Flow"
             aria-label="Create Flow"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <img
+              src={createIcon.src}
+              alt="Create Flow icon"
               className={styles.fabIcon}
-            >
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
+            />
           </button>
         </div>
 
