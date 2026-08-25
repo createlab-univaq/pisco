@@ -11,6 +11,7 @@
     color: #1a202c;
     font-size: 0.875rem;
     font-weight: 500;
+    cursor: pointer;
 }
 
 /* React Flow adds a "selected" class to the wrapper, but you can also use CSS focus-within or custom selected props if needed */

@@ -47,3 +47,20 @@ a {
     color-scheme: dark;
   }
 }
+
+/* --- SELECTED NODES: Matches your exact node card shape --- */
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px #3182ce !important;
+  border-radius: 8px !important;
+}
+
+/* --- SELECTED EDGES: Highlights the path and label border in blue --- */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #3182ce !important;
+  stroke-width: 3px !important;
+}
+
+/* Colors the edge label container border blue when selected */
+.react-flow__edge.selected div[class*="labelContainer"] {
+  border-color: #3182ce !important;
+}
