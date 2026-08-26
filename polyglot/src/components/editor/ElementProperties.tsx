@@ -33,11 +33,13 @@ const ElementProperties = ({
         }
     };
 
+    // Safely check if 'title' exists on the selected element (Nodes have it, Edges don't)
+    const displayTitle = 'title' in selectedElement ? selectedElement.title : 'Edge Properties';
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                {/* Dynamically show the title of the selected element */}
-                <h2 className={styles.heading}>{selectedElement.title || 'Properties'}</h2>
+                <h2 className={styles.heading}>{displayTitle}</h2>
             </div>
 
             {isEditorOpen ? (
@@ -59,7 +61,6 @@ const ElementProperties = ({
                         <ElementProperty
                             element={selectedElement}
                             onUpdateElement={onUpdateElement}
-                            title={selectedElement.title}
                             type={selectedElement.type}
                             onChange={handleFieldChange}
                         />

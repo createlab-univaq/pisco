@@ -157,7 +157,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         const type = event.dataTransfer.getData('application/reactflow');
         if (!type) return;
 
-        // FIXED: screenToFlowPosition doesn't require manual client rect subtraction
         const pos = screenToFlowPosition({
             x: event.clientX,
             y: event.clientY,
@@ -195,8 +194,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         const newEdge: PolyglotEdge = {
             _id: id,
             type: EDGE_TYPE.UNCONDITIONAL,
-            title: 'New Connection',
-            description: '',
             data: {
                 edgeData: {},
             },
@@ -205,8 +202,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 type: EDGE_TYPE.UNCONDITIONAL,
                 source: connection.source!,
                 target: connection.target!,
-                sourceHandle: connection.sourceHandle,
-                targetHandle: connection.targetHandle,
             },
         };
 
@@ -266,17 +261,43 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     // HELPERS
     // ============================================================================
 
-    const handleSave = async (overrides?: Partial<PolyglotFlow>) => {
-        await saveFlow({
+    const getCleanFlow = (): PolyglotFlow => {
+        const cleanNodes = polyglotNodes.map((node) => {
+            if (!node.reactFlow) return node;
+            const {
+                width, height, selected, dragging, positionAbsolute, resizing, ...cleanReactFlow
+            } = node.reactFlow as any;
+            return { ...node, reactFlow: cleanReactFlow };
+        });
+
+        const cleanEdges = polyglotEdges.map((edge) => {
+            const { code, description, data, ...restEdge } = edge as any;
+            if (!restEdge.reactFlow) return restEdge;
+
+            const { selected, ...cleanReactFlow } = restEdge.reactFlow as any;
+            if (cleanReactFlow.sourceHandle === null) delete cleanReactFlow.sourceHandle;
+            if (cleanReactFlow.targetHandle === null) delete cleanReactFlow.targetHandle;
+
+            return { ...restEdge, reactFlow: cleanReactFlow };
+        });
+
+        return {
             ...initialFlow,
             title: flowTitle,
             publish: flowPublish,
-            nodes: polyglotNodes,
-            edges: polyglotEdges,
+            nodes: cleanNodes,
+            edges: cleanEdges,
+        };
+    };
+
+    const handleSave = async (overrides?: Partial<PolyglotFlow>) => {
+        const cleanFlow = getCleanFlow();
+
+        await saveFlow({
+            ...cleanFlow,
             ...overrides,
         });
 
-        // FIXED: Clear the unsaved changes flag once the save is complete!
         setHasUnsavedChanges(false);
     };
 
@@ -289,13 +310,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     return (
         <div className={styles.container}>
             <EditorNav
-                flow={{
-                    ...initialFlow,
-                    title: flowTitle,
-                    publish: flowPublish,
-                    nodes: polyglotNodes,
-                    edges: polyglotEdges
-                }}
+                flow={getCleanFlow()}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
                 onUpdateFlowInfo={async (updates) => {
@@ -325,7 +340,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     defaultEdgeOptions={{
                         markerEnd: {
                             type: MarkerType.ArrowClosed,
-                            color: '#b1b1b7', // Match your edge line color, or customize it
+                            color: '#b1b1b7',
                         },
                     }}
 

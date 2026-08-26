@@ -1,16 +1,19 @@
 'use client';
 
-import TextField from '@/components/forms/TextField';
 import EnumField from '@/components/forms/EnumField';
 import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
 import styles from './EdgeProperties.module.css';
+import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 
 export type EdgePropertiesProps = {
-    element: any;
+    element: PolyglotEdge;
     onUpdateElement: (updatedElement: any) => void;
 };
 
 const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
+    // Safely read current data from reactFlow, NOT the root
+    const currentData = element.reactFlow?.data || {};
+
     const handleTypeChange = (newType: string) => {
         let newData: any = { edgeData: {} };
         if (newType === EDGE_TYPE.PASS_FAIL) newData = { edgeData: {}, conditionKind: 'pass' };
@@ -19,18 +22,17 @@ const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
         onUpdateElement({
             ...element,
             type: newType,
-            data: newData,
+            // REMOVED root data writing
             reactFlow: element.reactFlow ? {
                 ...element.reactFlow,
                 type: newType,
-                data: newData
+                data: newData // Only write to reactFlow.data
             } : undefined
         });
     };
 
     return (
         <div className={styles.container}>
-            {/* THE TYPE DROPDOWN */}
             <EnumField
                 label="Edge Type"
                 name="edgeType"
@@ -45,26 +47,10 @@ const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
                 }
             />
 
-            <TextField
-                label="Title"
-                name="title"
-                value={element.title || ''}
-                onChange={(e) => {
-                    const newTitle = e.target.value;
-                    onUpdateElement({
-                        ...element,
-                        title: newTitle,
-                        // Sync the title to the canvas data so the edge can render it
-                        reactFlow: element.reactFlow ? {
-                            ...element.reactFlow,
-                            data: {
-                                ...element.reactFlow.data,
-                                title: newTitle
-                            }
-                        } : undefined
-                    });
-                }}
-            />
+            {/* Example of how to read the data correctly now: */}
+            {/* {element.type === EDGE_TYPE.CONDITIONAL && (
+                 <p>Current Operator is: {currentData.operator}</p> 
+            )} */}
         </div>
     );
 };

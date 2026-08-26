@@ -154,17 +154,18 @@ export const createNewDefaultPolyglotEdge = (
             width: 25,
             height: 25,
         },
+
+        data: type === EDGE_TYPE.CONDITIONAL 
+            ? { edgeData: {}, operator: '>=', threshold: 0 }
+            : type === EDGE_TYPE.PASS_FAIL
+                ? { edgeData: {}, conditionKind: 'pass' }
+                : { edgeData: {} }
     };
 
     if (type === EDGE_TYPE.UNCONDITIONAL) {
         return {
             _id: id,
             type: EDGE_TYPE.UNCONDITIONAL,
-            title: '',
-            code: '',
-            data: {
-                edgeData: {}
-            },
             reactFlow: baseReactFlowEdge,
         } as PolyglotEdge;
     }
@@ -173,13 +174,6 @@ export const createNewDefaultPolyglotEdge = (
         return {
             _id: id,
             type: EDGE_TYPE.CONDITIONAL,
-            title: '',
-            code: '',
-            data: {
-                edgeData: {},
-                operator: '>=' as ConditionalOperator,
-                threshold: 0
-            },
             reactFlow: baseReactFlowEdge,
         } as PolyglotEdge;
     }
@@ -187,12 +181,6 @@ export const createNewDefaultPolyglotEdge = (
     return {
         _id: id,
         type: EDGE_TYPE.PASS_FAIL,
-        title: '',
-        code: '',
-        data: {
-            edgeData: {},
-            conditionKind: 'pass' as PassFailConditionKind
-        },
         reactFlow: baseReactFlowEdge,
     } as PolyglotEdge;
 };
