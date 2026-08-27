@@ -25,6 +25,7 @@ import { unconditionalEdgeConfig } from './edges/UnconditionalEdge';
 import { conditionalEdgeConfig } from './edges/ConditionalEdge';
 import { passFailEdgeConfig } from './edges/PassFailEdge';
 import { fauxPasExerciseANodeConfig } from './nodes/FauxPasExerciseA';
+import { theoryOfMindExerciseANodeConfig } from './nodes/TheoryOfMindExerciseA';
 
 // 1. METADATA REGISTRY (For sidebars, icons, and validation)
 export const polyglotNodeComponentMapping = new PolyglotComponentMapping<
@@ -49,6 +50,7 @@ polyglotNodeComponentMapping.registerMany([
   fauxPasExerciseANodeConfig,
   socialSituationsNodeConfig,
   theoryOfMindNodeConfig,
+  theoryOfMindExerciseANodeConfig,
   containerNodeConfig,
   emotionRecognitionNodeConfig,
   socialSituationsExerciseANodeConfig,
@@ -72,6 +74,7 @@ export const nodeTypes = {
   [NODE_TYPE.FAUX_PAS_EXERCISE_A]: fauxPasExerciseANodeConfig.elementComponent,
   [NODE_TYPE.SOCIAL_SITUATIONS]: socialSituationsNodeConfig.elementComponent,
   [NODE_TYPE.THEORY_OF_MIND]: theoryOfMindNodeConfig.elementComponent,
+  [NODE_TYPE.THEORY_OF_MIND_EXERCISE_A]: theoryOfMindExerciseANodeConfig.elementComponent,
   [NODE_TYPE.CONTAINER]: containerNodeConfig.elementComponent,
   [NODE_TYPE.EMOTION_RECOGNITION]: emotionRecognitionNodeConfig.elementComponent,
   [NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A]: socialSituationsExerciseANodeConfig.elementComponent,

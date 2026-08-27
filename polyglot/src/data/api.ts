@@ -8,6 +8,9 @@ import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '@/co
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
 const MOCK_STORAGE_KEY = 'debug_mock_flows';
 
+// --- IN-MEMORY MOCK FILE REGISTRY FOR URL.createObjectURL ---
+const mockFileStore = new Map<string, Blob>();
+
 const getMockFlows = (): PolyglotFlow[] => {
   if (typeof window === 'undefined') return [];
   const data = localStorage.getItem(MOCK_STORAGE_KEY);
@@ -113,18 +116,41 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
       }
     }
 
+    // 2. MOCK FILE API (With In-Memory Blob Store for URL.createObjectURL support)
     if (url.startsWith('/api/file')) {
       if (method === 'POST') {
-        return { imageId: `dummy-img-${Date.now()}` } as unknown as T;
+        const formData = options.body as FormData;
+        const fileObj = formData instanceof FormData ? formData.get('file') : null;
+        const imageId = `dummy-img-${Date.now()}`;
+
+        if (fileObj instanceof Blob) {
+          mockFileStore.set(imageId, fileObj);
+        } else {
+          const dummyBlob = new Blob(
+            [new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 11, 73, 68, 65, 84, 120, 156, 99, 250, 255, 255, 63, 0, 5, 254, 2, 254, 166, 41, 202, 185, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130])],
+            { type: 'image/png' }
+          );
+          mockFileStore.set(imageId, dummyBlob);
+        }
+        return { imageId } as unknown as T;
       }
+
       if (method === 'GET') {
+        const fileId = url.split('/').pop() || '';
+        const storedBlob = mockFileStore.get(fileId);
+        if (storedBlob) {
+          return storedBlob as unknown as T;
+        }
         const dummyBlob = new Blob(
           [new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 11, 73, 68, 65, 84, 120, 156, 99, 250, 255, 255, 63, 0, 5, 254, 2, 254, 166, 41, 202, 185, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130])],
           { type: 'image/png' }
         );
         return dummyBlob as unknown as T;
       }
+
       if (method === 'DELETE') {
+        const fileId = url.split('/').pop() || '';
+        mockFileStore.delete(fileId);
         return {} as unknown as T;
       }
     }
@@ -211,7 +237,6 @@ export const FlowsAPI = {
       body: JSON.stringify({ ...flow, nodes: processedNodes, edges: processedEdges }),
     });
   },
-
 };
 
 export const FilesAPI = {

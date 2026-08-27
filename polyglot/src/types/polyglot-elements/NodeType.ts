@@ -10,5 +10,6 @@ export const NODE_TYPE = {
   SOCIAL_SITUATIONS: 'SocialSituationsNode',
   SOCIAL_SITUATIONS_EXERCISE_A: 'SocialSituationsExerciseANode',
   THEORY_OF_MIND: 'TheoryOfMindNode',
+  THEORY_OF_MIND_EXERCISE_A: 'TheoryOfMindExerciseANode',
   TRUE_FALSE: 'TrueFalseNode',
 } as const;

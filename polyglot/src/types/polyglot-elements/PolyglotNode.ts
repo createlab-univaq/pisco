@@ -11,6 +11,7 @@ import { TheoryOfMindNode } from "@/components/nodes/TheoryOfMind";
 import { TrueFalseNode } from "@/components/nodes/TrueFalse";
 import { PolyglotNodeBase } from "./PolyglotNodeBase";
 import { FauxPasExerciseANode } from "@/components/nodes/FauxPasExerciseA";
+import { TheoryOfMindExerciseANode } from "@/components/nodes/TheoryOfMindExerciseA";
 
 export type PolyglotNode =
   | ContainerNode
@@ -24,6 +25,7 @@ export type PolyglotNode =
   | SocialSituationsNode
   | SocialSituationsExerciseANode
   | TheoryOfMindNode
+  | TheoryOfMindExerciseANode
   | TrueFalseNode
   | (PolyglotNodeBase & {
     type: string;

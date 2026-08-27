@@ -1,0 +1,210 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.innerDivider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 0.75rem 0;
+}
+
+/* Base Flex Headers */
+.headerFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subHeaderFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Titles */
+.sectionTitle {
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1a202c;
+}
+
+.cardTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2d3748;
+}
+
+.subTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2d3748;
+}
+
+/* Buttons */
+.addBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #38a169;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.addBtn:hover {
+    background-color: #2f855a;
+}
+
+.addBtnSmall {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background-color: #edf2f7;
+    color: #1a202c;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.addBtnSmall:hover {
+    background-color: #e2e8f0;
+}
+
+.removeBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    background-color: #fee2e2;
+    color: #e53e3e;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.removeBtn:hover {
+    background-color: #fecaca;
+}
+
+.removeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.removeBtnSmall {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background-color: #fee2e2;
+    color: #e53e3e;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.removeBtnSmall:hover {
+    background-color: #fecaca;
+}
+
+/* Lists and Cards */
+.storiesList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 0.5rem;
+}
+
+.storyCard {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.questionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.questionCard {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    background-color: #f8fafc;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+/* States & Hints */
+.emptyState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    border: 2px dashed #e2e8f0;
+    border-radius: 0.375rem;
+    margin: 0 0.5rem;
+    background-color: #f8fafc;
+}
+
+.emptyText {
+    font-size: 0.875rem;
+    color: #718096;
+    margin: 0;
+    text-align: center;
+}
+
+.hintText {
+    font-size: 0.8rem;
+    color: #718096;
+    font-style: italic;
+    margin: 0.5rem 0;
+}
+
+/* Utility */
+.icon {
+    width: 12px;
+    height: 12px;
+}
