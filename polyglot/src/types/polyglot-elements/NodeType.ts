@@ -5,6 +5,7 @@ export const NODE_TYPE = {
   EMOTION_ATTRIBUTION_B: 'EmotionAttributionBNode',
   EYES_TASK: 'EyesTaskNode',
   FAUX_PAS: 'FauxPasNode',
+  FAUX_PAS_EXERCISE_A: 'FauxPasExerciseANode',
   EMOTION_RECOGNITION: 'EmotionRecognitionNode',
   SOCIAL_SITUATIONS: 'SocialSituationsNode',
   SOCIAL_SITUATIONS_EXERCISE_A: 'SocialSituationsExerciseANode',

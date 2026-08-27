@@ -10,6 +10,7 @@ import { SocialSituationsExerciseANode } from "@/components/nodes/SocialSituatio
 import { TheoryOfMindNode } from "@/components/nodes/TheoryOfMind";
 import { TrueFalseNode } from "@/components/nodes/TrueFalse";
 import { PolyglotNodeBase } from "./PolyglotNodeBase";
+import { FauxPasExerciseANode } from "@/components/nodes/FauxPasExerciseA";
 
 export type PolyglotNode =
   | ContainerNode
@@ -18,6 +19,7 @@ export type PolyglotNode =
   | EmotionAttributionBNode
   | EyesTaskNode
   | FauxPasNode
+  | FauxPasExerciseANode
   | EmotionRecognitionNode
   | SocialSituationsNode
   | SocialSituationsExerciseANode

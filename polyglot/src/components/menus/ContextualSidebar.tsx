@@ -5,8 +5,9 @@ import { DragEvent, useEffect, useRef, useState } from 'react';
 import styles from './ContextualSidebar.module.css';
 import { polyglotNodeComponentMapping } from '../ElementMapping';
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 import ElementProperties from '../editor/ElementProperties';
+import { NODE_TYPE } from '@/types/polyglot-elements/NodeType'; // <-- IMPORT NODE TYPES
+import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 
 export type ContextualSidebarProps = {
     selectedElement?: PolyglotNode | PolyglotEdge | null;
@@ -16,6 +17,7 @@ export type ContextualSidebarProps = {
 
 const ITEM_COLORS = ['#FFCC49', '#FFF0C8'];
 
+// USE NODE_TYPE CONSTANTS INSTEAD OF HARDCODED STRINGS
 const MENU_SECTIONS: Array<{
     label: string;
     nodes: string[];
@@ -23,22 +25,23 @@ const MENU_SECTIONS: Array<{
         {
             label: 'Assessments',
             nodes: [
-                'EmotionAttributionNode',
-                'EyesTaskNode',
-                'FauxPasNode',
-                'SocialSituationsNode',
-                'TheoryOfMindNode',
-                'TrueFalseNode',
+                NODE_TYPE.EMOTION_ATTRIBUTION,
+                NODE_TYPE.EYES_TASK,
+                NODE_TYPE.FAUX_PAS,
+                NODE_TYPE.SOCIAL_SITUATIONS,
+                NODE_TYPE.THEORY_OF_MIND,
+                NODE_TYPE.TRUE_FALSE,
             ],
         },
         {
             label: 'Exercises',
             nodes: [
-                'EmotionAttributionANode',
-                'EmotionAttributionBNode',
-                'ContainerNode',
-                'SocialSituationsExerciseANode',
-                'EmotionRecognitionNode',
+                NODE_TYPE.EMOTION_ATTRIBUTION_A,
+                NODE_TYPE.EMOTION_ATTRIBUTION_B,
+                NODE_TYPE.CONTAINER,
+                NODE_TYPE.FAUX_PAS_EXERCISE_A,
+                NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
+                NODE_TYPE.EMOTION_RECOGNITION,
             ],
         },
     ];
@@ -116,8 +119,7 @@ const ContextualSidebar = ({
         e.dataTransfer.effectAllowed = 'move';
     };
 
-    const allNodes = Object.keys(polyglotNodeComponentMapping.nameMapping).map((index, id) => ({
-        key: id.toString(),
+    const allNodes = Object.keys(polyglotNodeComponentMapping.nameMapping).map((index) => ({
         text: polyglotNodeComponentMapping.nameMapping[index],
         icon: polyglotNodeComponentMapping.iconMapping[index] ?? '',
         index,
