@@ -1,17 +1,27 @@
 import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
 import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
 
+export type SocialSituationsExerciseAAnswer = {
+    text: string;
+    explanation: string; // Independent explanation for this specific answer option[cite: 28]
+};
+
+export type SocialSituationsExerciseASection = {
+    before: string;
+    bold: string;
+    after: string;
+    answers: SocialSituationsExerciseAAnswer[]; // Strictly holds 4 answers[cite: 22, 28]
+    correctIndex: number; // Single correct choice (0 to 3 index)[cite: 28]
+};
+
 export type SocialSituationsExerciseAItem = {
-    answer: string;
-    explanation: string;
+    sid: string;
+    sections: SocialSituationsExerciseASection[];
 };
 
 export type SocialSituationsExerciseANodeData = {
     nodeData: Record<string, any>;
-    scenario: string;
     items: SocialSituationsExerciseAItem[];
-    /** 0-based index in `items` */
-    correctIndex: number;
 };
 
 export type SocialSituationsExerciseANode = PolyglotNodeBase & {

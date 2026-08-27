@@ -11,13 +11,11 @@ export const socialSituationsExerciseANodeConfig = {
     name: 'Situazione Sociale (A)',
     icon: icon.src,
     group: 'apply_assessment',
-    
+
     propertiesComponent: SocialSituationsExerciseANodeProperties,
     elementComponent: ReactFlowSocialSituationsExerciseANode,
     defaultData: {
         nodeData: {},
-        scenario: '',
         items: [],
-        correctIndex: 0,
     },
 };
