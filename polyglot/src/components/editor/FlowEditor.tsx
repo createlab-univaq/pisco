@@ -47,7 +47,7 @@ type FlowEditorProps = {
     onSelectionChange?: (selection: OnSelectionChangeParams) => void;
 };
 
-const deleteKeyCodes = ['Backspace', 'Delete'];
+const deleteKeyCodes = ['Delete'];
 
 const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     const { screenToFlowPosition } = useReactFlow();
