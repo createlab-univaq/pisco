@@ -4,10 +4,10 @@ import { useEffect, useRef } from 'react';
 import TextField from '@/components/forms/TextField';
 import StringArrayField from '@/components/forms/StringArrayField'; // Assuming this was refactored in a previous step
 import styles from './EmotionAttributionNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import { EmotionAttributionNode, EmotionAttributionQuestion } from './types';
 import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 
 // Genera un id (preferibilmente UUID se disponibile)
 const newId = (prefix: string) =>

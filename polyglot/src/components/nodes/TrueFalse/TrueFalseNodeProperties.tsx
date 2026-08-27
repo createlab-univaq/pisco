@@ -4,7 +4,7 @@ import { useState } from 'react';
 import styles from './TrueFalseNodeProperties.module.css';
 import TextField from '@/components/forms/TextField';
 import { TrueFalseNode } from './types';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import TrueFalseArrayField from './TrueFalseArrayField';
 import { useNodeSync } from '@/hooks/useNodeSync';

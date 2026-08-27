@@ -4,8 +4,8 @@ import { MarkerType } from 'reactflow';
 import EnumField from '@/components/forms/EnumField';
 import EdgeProperties from '../EdgeProperties';
 import { PassFailEdge } from './types';
-import { PolyglotEdgePropertiesProps } from '@/components/ElementMapping';
 import { useEdgeSync } from '@/hooks/useEdgeSync';
+import { PolyglotEdgePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 
 const PassFailEdgeProperties = ({ element: baseElement, onUpdateElement }: PolyglotEdgePropertiesProps) => {
     const element = baseElement as PassFailEdge;

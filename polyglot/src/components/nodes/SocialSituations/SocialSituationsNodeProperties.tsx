@@ -2,7 +2,7 @@
 
 import TextField from '@/components/forms/TextField';
 import styles from './SocialSituationsNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import {
     SocialSituationsNode,
     SocialSituationItem,

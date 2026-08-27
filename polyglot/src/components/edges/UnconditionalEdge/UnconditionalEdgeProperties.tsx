@@ -1,7 +1,7 @@
 'use client';
 
+import { PolyglotEdgePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import EdgeProperties from '../EdgeProperties';
-import { PolyglotEdgePropertiesProps } from '@/components/ElementMapping';
 
 const UnconditionalEdgeProperties = ({ element, onUpdateElement }: PolyglotEdgePropertiesProps) => {
     return (

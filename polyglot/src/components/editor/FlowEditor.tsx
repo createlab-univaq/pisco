@@ -56,8 +56,17 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
 
-    const nodeTypes = useMemo(() => polyglotNodeComponentMapping.componentMapping, []);
-    const edgeTypes = useMemo(() => polyglotEdgeComponentMapping.componentMapping, []);
+    const [nodeTypes] = useState(() => polyglotNodeComponentMapping.componentMapping);
+    const [edgeTypes] = useState(() => polyglotEdgeComponentMapping.componentMapping);
+
+    // MEMORIZE DEFAULT EDGE OPTIONS
+    const defaultEdgeOptions = useMemo(() => ({
+        markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: '#b1b1b7',
+        },
+    }), []);
+
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     // --- NEW: Track flow metadata changes directly ---
@@ -460,12 +469,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
                     onConnect={onConnect}
 
-                    defaultEdgeOptions={{
-                        markerEnd: {
-                            type: MarkerType.ArrowClosed,
-                            color: '#b1b1b7',
-                        },
-                    }}
+                    defaultEdgeOptions={defaultEdgeOptions}
 
                     onDrop={onDrop}
                     onDragOver={onDragOver}

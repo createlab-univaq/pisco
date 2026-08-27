@@ -3,12 +3,12 @@
 import { useMemo, useState } from 'react';
 import { FilesAPI } from '@/data/api';
 import TextField from '@/components/forms/TextField';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
 import { CONTAINER_NODE_ALLOWED_TYPES, ContainerNode, ContainerSection, ContainerItem, AllowedContainerNodeType } from './types';
 import styles from './ContainerNodeProperties.module.css';
 import NodeProperties from '../NodeProperties';
 import { embeddedByType } from '@/components/embedded/EmbeddedRegistry';
 import { useNodeSync } from '@/hooks/useNodeSync';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 
 const newId = () =>
     globalThis.crypto?.randomUUID?.() ??

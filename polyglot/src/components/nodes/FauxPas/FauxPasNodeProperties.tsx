@@ -3,7 +3,7 @@
 import TextField from '@/components/forms/TextField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
 import styles from './FauxPasNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import { FauxPasNode, FauxPasQuizItem, FauxPasQuestion, FauxPasSkipIf } from './types';
 import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';

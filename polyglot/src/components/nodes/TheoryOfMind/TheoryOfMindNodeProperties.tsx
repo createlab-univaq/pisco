@@ -3,7 +3,7 @@
 import TextField from '@/components/forms/TextField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
 import styles from './TheoryOfMindNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import { TheoryOfMindNode, TheoryOfMindQuestion, TheoryOfMindQuizItem } from './types';
 import { useNodeSync } from '@/hooks/useNodeSync';

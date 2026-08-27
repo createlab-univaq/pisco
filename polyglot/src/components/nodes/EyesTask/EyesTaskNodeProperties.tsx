@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FilesAPI } from '@/data/api';
 import styles from './EyesTaskNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/components/ElementMapping';
+import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import { EyesTaskNode, EyesTaskQuestion } from './types';
 import NodeProperties from '../NodeProperties';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
