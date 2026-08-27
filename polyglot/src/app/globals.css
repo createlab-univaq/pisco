@@ -48,19 +48,41 @@ a {
   }
 }
 
-/* --- SELECTED NODES: Matches your exact node card shape --- */
+/* =========================================
+   REACT FLOW OVERRIDES
+   ========================================= */
+
+/* --- SELECTED NODES: Standard Focus Blue --- */
 .react-flow__node.selected {
-  box-shadow: 0 0 0 2px #3182ce !important;
+  box-shadow: 0 0 0 2px #0D99FF !important;
   border-radius: 8px !important;
 }
 
-/* --- SELECTED EDGES: Highlights the path and label border in blue --- */
+/* --- SELECTED EDGES: Standard Focus Blue --- */
 .react-flow__edge.selected .react-flow__edge-path {
-  stroke: #3182ce !important;
+  stroke: #0D99FF !important;
   stroke-width: 3px !important;
 }
 
-/* Colors the edge label container border blue when selected */
+/* --- SELECTED EDGE LABELS: Colors the label border --- */
 .react-flow__edge.selected div[class*="labelContainer"] {
-  border-color: #3182ce !important;
+  border-color: #0D99FF !important;
+}
+
+/* --- AREA SELECTION (Lasso Tool): Figma-style transparent blue --- */
+.react-flow__selection {
+  background: rgba(13, 153, 255, 0.08) !important;
+  /* 8% opacity of the standard blue */
+  border: 1px dashed #0D99FF !important;
+  /* Dashed standard blue border */
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+/* --- GROUP SELECTION BOUNDING BOX --- */
+/* Hides the SVG bounding box that stays on the screen after selecting multiple nodes */
+.react-flow__nodesselection-rect {
+  fill: transparent !important;
+  stroke: transparent !important;
+  opacity: 0 !important;
 }

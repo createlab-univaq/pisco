@@ -4,6 +4,7 @@ import {
     DragEventHandler,
     MouseEventHandler,
     useCallback,
+    useEffect,
     useMemo,
     useState,
 } from 'react';
@@ -26,6 +27,7 @@ import ReactFlow, {
     useReactFlow,
     useStoreApi,
     MarkerType,
+    SelectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { v4 as UUIDv4 } from 'uuid';
@@ -48,9 +50,10 @@ type FlowEditorProps = {
 };
 
 const deleteKeyCodes = ['Delete'];
+const multiSelectionKeyCodes = ['Control', 'Meta']
 
 const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProps) => {
-    const { screenToFlowPosition } = useReactFlow();
+    const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
 
     const nodeTypes = useMemo(() => polyglotNodeComponentMapping.componentMapping, []);
@@ -74,6 +77,108 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         type: ContextMenuTypes.DEFAULT,
         pos: { x: 0, y: 0 },
     });
+
+    useEffect(() => {
+        const handleKeyDown = async (e: KeyboardEvent) => {
+            // Prevent copy/paste triggers when typing inside inputs (like the sidebar)
+            if (
+                e.target instanceof HTMLInputElement ||
+                e.target instanceof HTMLTextAreaElement ||
+                (e.target as HTMLElement).isContentEditable
+            ) return;
+
+            // ==========================================
+            // COPY: CTRL+C or CMD+C
+            // ==========================================
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                const rfNodes = getNodes();
+                const rfEdges = getEdges();
+
+                // Get IDs of currently selected React Flow elements
+                const selectedNodeIds = rfNodes.filter(n => n.selected).map(n => n.id);
+                const selectedEdgeIds = rfEdges.filter(e => e.selected).map(e => e.id);
+
+                // Find matching Polyglot elements
+                const nodesToCopy = polyglotNodes.filter(n => n.reactFlow && selectedNodeIds.includes(n.reactFlow.id));
+
+                // CRITICAL RULE: Only copy edges if BOTH source and target nodes are in the copied set
+                const edgesToCopy = polyglotEdges.filter(e =>
+                    e.reactFlow &&
+                    selectedEdgeIds.includes(e.reactFlow.id) &&
+                    selectedNodeIds.includes(e.reactFlow.source) &&
+                    selectedNodeIds.includes(e.reactFlow.target)
+                );
+
+                if (nodesToCopy.length === 0 && edgesToCopy.length === 0) return;
+
+                // Write to the native system clipboard as a JSON string
+                const clipboardData = { type: 'polyglot-flow', nodes: nodesToCopy, edges: edgesToCopy };
+                await navigator.clipboard.writeText(JSON.stringify(clipboardData));
+            }
+
+            // ==========================================
+            // PASTE: CTRL+V or CMD+V
+            // ==========================================
+            if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    const parsed = JSON.parse(text);
+
+                    // Validate this is our specific JSON payload, not random text
+                    if (parsed.type !== 'polyglot-flow') return;
+
+                    resetSelectedElements(); // Clear current canvas selection
+
+                    const idMap = new Map<string, string>();
+
+                    // Generate new IDs and slightly offset positions so they don't perfectly overlap
+                    const newNodes = parsed.nodes.map((oldNode: PolyglotNode) => {
+                        const newId = UUIDv4();
+                        idMap.set(oldNode._id, newId);
+
+                        return {
+                            ...oldNode,
+                            _id: newId,
+                            reactFlow: {
+                                ...oldNode.reactFlow,
+                                id: newId,
+                                position: {
+                                    x: oldNode.reactFlow!.position.x + 30,
+                                    y: oldNode.reactFlow!.position.y + 30,
+                                },
+                                selected: true, // Select them instantly
+                            },
+                        };
+                    });
+
+                    // Remap edges to connect to the newly generated Node IDs
+                    const newEdges = parsed.edges.map((oldEdge: PolyglotEdge) => {
+                        const newId = UUIDv4();
+                        return {
+                            ...oldEdge,
+                            _id: newId,
+                            reactFlow: {
+                                ...oldEdge.reactFlow,
+                                id: newId,
+                                source: idMap.get(oldEdge.reactFlow!.source) || oldEdge.reactFlow!.source,
+                                target: idMap.get(oldEdge.reactFlow!.target) || oldEdge.reactFlow!.target,
+                                selected: true,
+                            },
+                        };
+                    });
+
+                    setPolyglotNodes(prev => [...prev, ...newNodes]);
+                    setPolyglotEdges(prev => [...prev, ...newEdges]);
+                    setHasUnsavedChanges(true);
+                } catch (err) {
+                    // Ignore errors (happens if the clipboard contains normal text instead of JSON)
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [polyglotNodes, polyglotEdges, getNodes, getEdges, resetSelectedElements]);
 
     const hideContextMenu = () => {
         setContextMenu((prev) => ({ ...prev, show: false }));
@@ -347,7 +452,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     deleteKeyCode={deleteKeyCodes}
-                    multiSelectionKeyCode={null}
+                    multiSelectionKeyCode={multiSelectionKeyCodes}
                     snapToGrid={true}
                     fitView={true}
                     fitViewOptions={{ padding: 0.2 }}
@@ -365,6 +470,15 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                             }),
                         });
                     }}
+
+                    // PANNING CONTROLS
+                    panOnDrag={[1]}        // [1] strictly maps panning to the Middle Mouse Button
+                    panActivationKeyCode="Space" // Allows the user to hold Spacebar + Left Click to pan
+
+                    // AREA SELECTION (LASSO) CONTROLS
+                    selectionOnDrag={true}   // Makes Left Click + Drag on the background draw the lasso
+                    selectionKeyCode={null} // CRITICAL: Removes the need to hold Shift to lasso, preventing input cross-talk
+                    selectionMode={SelectionMode.Partial} // Selects elements even if the box only touches them partially (requires importing SelectionMode from 'reactflow')
                 >
                     <Background variant={BackgroundVariant.Dots} />
                     <Controls />
