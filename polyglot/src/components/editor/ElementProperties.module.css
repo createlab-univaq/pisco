@@ -6,16 +6,33 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1.25rem;
-    /* <--- Adds clean padding on all sides so content never touches the border */
     gap: 1rem;
+    position: relative;
+    /* Required for sticky children */
+    background-color: white;
+    /* Ensures the sticky header covers scrolling content */
 }
 
 .header {
     display: flex;
+    justify-content: space-between;
+    /* Title on left, button on right */
     align-items: center;
     margin-bottom: 0.5rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #e2e8f0;
+
+    /* STICKY PROPERTIES */
+    position: sticky;
+    top: -1.25rem;
+    /* Negates the container's 1.25rem padding to stick perfectly to the top */
+    background-color: white;
+    /* Covers content scrolling behind it */
+    z-index: 10;
+    margin-top: -1.25rem;
+    /* Pulls it up flush with the container */
+    padding-top: 1.25rem;
+    /* Restores the visual padding */
 }
 
 .heading {
@@ -43,18 +60,28 @@
 }
 
 .toggleButton {
-    background-color: #edf2f7;
-    color: #4a5568;
-    border: 1px solid #cbd5e0;
+    background-color: #0D99FF;
+    /* Using the standard Blue */
+    color: white;
+    border: none;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     font-weight: 600;
     cursor: pointer;
-    align-self: flex-start;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 .toggleButton:hover {
-    background-color: #e2e8f0;
-    color: #2d3748;
+    background-color: #0b87e0;
+}
+
+/* Added Error Banner for JSON Validation */
+.errorBanner {
+    background-color: #fed7d7;
+    color: #c53030;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+    word-break: break-all;
 }

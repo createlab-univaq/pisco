@@ -418,10 +418,28 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 flow={getCleanFlow()}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
+
+                // 1. Keeps auto-save for Title blur and Publish toggle (if desired)
                 onUpdateFlowInfo={async (updates) => {
                     if (updates.title !== undefined) setFlowTitle(updates.title);
                     if (updates.publish !== undefined) setFlowPublish(updates.publish);
                     await handleSave(updates);
+                }}
+
+                // 2. NEW: Applies code changes locally WITHOUT saving to the database
+                onApplyLocalFlow={(updates) => {
+                    if (updates.title !== undefined) setFlowTitle(updates.title);
+                    if (updates.publish !== undefined) setFlowPublish(updates.publish);
+
+                    if (updates.nodes !== undefined) {
+                        setPolyglotNodes(updates.nodes);
+                    }
+                    if (updates.edges !== undefined) {
+                        setPolyglotEdges(updates.edges);
+                    }
+
+                    // This lights up your main "Save" button in the Navbar!
+                    setHasUnsavedChanges(true);
                 }}
             />
 
@@ -505,9 +523,34 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                         setHasUnsavedChanges(true);
 
                         if (selectedElement?.type === 'Node') {
-                            setPolyglotNodes(prev => prev.map(n => n.reactFlow?.id === selectedElement.id ? updatedElement : n));
+                            setPolyglotNodes(prev => prev.map(n => {
+                                if (n.reactFlow?.id === selectedElement.id) {
+                                    // 1. Sync the root title to the React Flow visual label
+                                    // 2. Create a deep clone of reactFlow to force the canvas to re-render
+                                    return {
+                                        ...updatedElement,
+                                        reactFlow: {
+                                            ...updatedElement.reactFlow,
+                                            data: {
+                                                ...updatedElement.reactFlow?.data,
+                                                label: updatedElement.title || updatedElement.reactFlow?.data?.label
+                                            }
+                                        }
+                                    };
+                                }
+                                return n;
+                            }));
                         } else if (selectedElement?.type === 'Edge') {
-                            setPolyglotEdges(prev => prev.map(e => e.reactFlow?.id === selectedElement.id ? updatedElement : e));
+                            setPolyglotEdges(prev => prev.map(e => {
+                                if (e.reactFlow?.id === selectedElement.id) {
+                                    // Force a React Flow re-render for edge changes
+                                    return {
+                                        ...updatedElement,
+                                        reactFlow: { ...updatedElement.reactFlow }
+                                    };
+                                }
+                                return e;
+                            }));
                         }
                     }}
                     onClearSelection={compoundClearSelection}

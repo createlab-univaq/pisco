@@ -9,6 +9,7 @@ import { validateNodeData } from '@/lib/validation/nodeValidator';
 import { useHasHydrated } from '@/utils/utils';
 import ExportJsonModal from '../modals/ExportJsonModal';
 import SaveFlowModal from '../modals/SaveFlowModal';
+import ViewCodeModal from '../modals/ViewCodeModal';
 
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
 const ArrowForwardIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
@@ -16,6 +17,7 @@ const CopyIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fi
 const ExternalLinkIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>;
 const CheckIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>;
 const CloseIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>;
+const CodeIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
 // Added Pen Icon for the Title
 const EditPenIcon = () => <svg className={styles.editPenIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>;
 
@@ -23,6 +25,7 @@ export type EditorNavProps = {
     flow?: any;
     saveFunc: () => Promise<void>;
     onUpdateFlowInfo?: (updates: any) => void;
+    onApplyLocalFlow?: (updates: any) => void;
     hasUnsavedChanges?: boolean;
     canUndo?: boolean;
     canRedo?: boolean;
@@ -35,6 +38,7 @@ export default function EditorNav({
     flow,
     saveFunc,
     onUpdateFlowInfo,
+    onApplyLocalFlow,
     hasUnsavedChanges = false,
     canUndo = false,
     canRedo = false,
@@ -54,6 +58,7 @@ export default function EditorNav({
 
     const [isOpenExport, setIsOpenExport] = useState(false);
     const [isOpenSave, setIsOpenSave] = useState(false);
+    const [isOpenCode, setIsOpenCode] = useState(false);
 
     useEffect(() => {
         if (flow != null) {
@@ -214,6 +219,13 @@ export default function EditorNav({
 
             <button
                 className={styles.textBtn}
+                onClick={() => setIsOpenCode(true)}
+            >
+                <CodeIcon /> View Code
+            </button>
+
+            <button
+                className={styles.textBtn}
                 onClick={() => setIsOpenExport(true)}
             >
                 <ExternalLinkIcon /> Export JSON
@@ -239,6 +251,15 @@ export default function EditorNav({
                 isOpen={isOpenSave}
                 onClose={() => setIsOpenSave(false)}
                 saveFunc={saveFunc}
+            />
+            <ViewCodeModal
+                isOpen={isOpenCode}
+                onClose={() => setIsOpenCode(false)}
+                flow={flow}
+                onApplyChanges={(updatedFlow) => {
+                    // Triggers the local-only update instead of the auto-saving update
+                    if (onApplyLocalFlow) onApplyLocalFlow(updatedFlow);
+                }}
             />
         </nav>
     );

@@ -1,7 +1,7 @@
 'use client';
 
 import Editor from '@monaco-editor/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './ElementProperties.module.css';
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
 import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
@@ -9,7 +9,6 @@ import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../E
 import { useHasHydrated } from '@/utils/utils';
 
 export type ElementPropertiesProps = {
-    // We enforce that this component only mounts when an element is selected
     selectedElement: PolyglotNode | PolyglotEdge;
     children?: React.ReactNode;
     onUpdateElement?: (updatedElement: any) => void;
@@ -23,6 +22,10 @@ const ElementProperties = ({
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const hydrated = useHasHydrated();
 
+    // State to hold the active text in the Monaco Editor
+    const [editorValue, setEditorValue] = useState('');
+    const [jsonError, setJsonError] = useState<string | null>(null);
+
     const ElementProperty = (selectedElement.type.includes('Node')
         ? polyglotNodeComponentMapping.getElementPropertiesComponent(selectedElement.type)
         : polyglotEdgeComponentMapping.getElementPropertiesComponent(selectedElement.type)) as React.ElementType<any>;
@@ -33,26 +36,70 @@ const ElementProperties = ({
         }
     };
 
-    // Safely check if 'title' exists on the selected element (Nodes have it, Edges don't)
+    // When the user switches elements OR opens the code view, refresh the JSON string
+    useEffect(() => {
+        if (isEditorOpen) {
+            setEditorValue(JSON.stringify(selectedElement, null, 4));
+            setJsonError(null);
+        }
+        // We strictly depend on the element ID so typing in the editor doesn't cause a re-render loop
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedElement._id, isEditorOpen]);
+
+    // Handle typing inside the Monaco Editor
+    const handleEditorChange = (value: string | undefined) => {
+        const text = value || '';
+        setEditorValue(text);
+
+        try {
+            const parsedElement = JSON.parse(text);
+            setJsonError(null); // Clear error if valid
+
+            // Push the valid JSON to the main flow editor instantly
+            if (onUpdateElement) {
+                onUpdateElement(parsedElement);
+            }
+        } catch (err: any) {
+            // Catch JSON syntax errors and display them without crashing the app
+            setJsonError(err.message);
+        }
+    };
+
     const displayTitle = 'title' in selectedElement ? selectedElement.title : 'Edge Properties';
 
     return (
         <div className={styles.container}>
+            {/* STICKY HEADER */}
             <div className={styles.header}>
                 <h2 className={styles.heading}>{displayTitle}</h2>
+                <button
+                    className={styles.toggleButton}
+                    onClick={() => setIsEditorOpen(!isEditorOpen)}
+                >
+                    {isEditorOpen ? 'Return to Form' : 'View Code'}
+                </button>
             </div>
 
             {isEditorOpen ? (
                 <div className={styles.editorContainer}>
-                    <button className={styles.toggleButton} onClick={() => setIsEditorOpen(false)}>
-                        Return to Form
-                    </button>
+                    {/* Display JSON validation errors */}
+                    {jsonError && (
+                        <div className={styles.errorBanner}>
+                            Invalid JSON: {jsonError}
+                        </div>
+                    )}
 
                     <Editor
-                        options={{ readOnly: true, minimap: { enabled: false } }}
-                        height="60vh"
+                        options={{
+                            readOnly: false, // Unlock the editor!
+                            minimap: { enabled: false },
+                            formatOnPaste: true,
+                            tabSize: 4
+                        }}
+                        height="calc(100vh - 120px)" // Fill the sidebar height
                         language="json"
-                        value={JSON.stringify(selectedElement, null, 4) ?? ''}
+                        value={editorValue}
+                        onChange={handleEditorChange}
                     />
                 </div>
             ) : (
@@ -65,12 +112,7 @@ const ElementProperties = ({
                             onChange={handleFieldChange}
                         />
                     )}
-
                     {children}
-
-                    <button className={styles.toggleButton} onClick={() => setIsEditorOpen(true)}>
-                        View Code
-                    </button>
                 </div>
             )}
         </div>
