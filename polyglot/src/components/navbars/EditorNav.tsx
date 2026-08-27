@@ -154,15 +154,6 @@ export default function EditorNav({
         setPublishLoading(false);
     };
 
-    const handleLeaveEditor = async () => {
-        if (hasUnsavedChanges) {
-            setIsOpenSave(true);
-        } else {
-            localStorage.removeItem('flow');
-            router.push('/flows');
-        }
-    };
-
     return (
         <nav className={styles.nav}>
             <div className={styles.logoWrapper} onClick={() => router.push('/flows')}>
@@ -239,11 +230,6 @@ export default function EditorNav({
             >
                 {publish ? <CheckIcon /> : <CloseIcon />}
                 {publish ? 'Published' : 'Publish'}
-            </button>
-
-            <button className={styles.leaveBtn} onClick={handleLeaveEditor} style={{ marginLeft: '1rem' }}>
-                <CloseIcon />
-                Leave editor
             </button>
 
             <ExportJsonModal isOpen={isOpenExport} onClose={() => setIsOpenExport(false)} flow={flow} />

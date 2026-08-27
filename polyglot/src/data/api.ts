@@ -3,7 +3,6 @@ import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
 import { PolyglotFlowInfo } from '@/types/polyglot-elements/PolyglotFlowInfo';
 import { createNewDefaultPolyglotFlow } from '@/utils/utils';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '@/components/ElementMapping';
-import exampleFlows from './exampleData';
 
 // --- MOCK CONFIGURATION ---
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
@@ -65,7 +64,6 @@ async function fetchMutate<T>(url: string, options: RequestInit = {}): Promise<T
           _id: `mock-flow-${Date.now()}`,
           title: body?.title || 'New Flow',
           description: body?.description || '',
-          tags: body?.tags || [],
           publish: body?.publish || false,
           nodes: body?.nodes || [],
           edges: body?.edges || [],
@@ -214,11 +212,6 @@ export const FlowsAPI = {
     });
   },
 
-  loadExample: (flowId: string): Promise<PolyglotFlow> => {
-    const flow = exampleFlows.get(flowId);
-    if (!flow) return Promise.reject(new Error('Not Found'));
-    return Promise.resolve(flow);
-  },
 };
 
 export const FilesAPI = {

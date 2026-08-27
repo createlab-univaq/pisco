@@ -6,20 +6,6 @@ import cardImage from '@public/test_card.png';
 import styles from './FlowCard.module.css';
 import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
 
-// Reusing the color map so the tags have the correct hex backgrounds
-const colorMap: Record<string, string> = {
-  gray: '#e2e8f0',
-  yellow: '#fef08a',
-  orange: '#fbd38d',
-  red: '#feb2b2',
-  pink: '#fbb6ce',
-  purple: '#d6bcfa',
-  blue: '#90cdf4',
-  cyan: '#9decf9',
-  teal: '#81e6d9',
-  green: '#9ae6b4',
-};
-
 type FlowCardProps = {
   canDelete?: boolean;
   setSelected?: (flowId: string) => void;
@@ -66,18 +52,6 @@ const FlowCard = ({ flow, canDelete, setSelected }: FlowCardProps) => {
               {flow.title}
             </Link>
           </h2>
-
-          <div className={styles.tagsContainer}>
-            {flow.tags?.map((tag, id) => (
-              <span 
-                key={id} 
-                className={styles.badge} 
-                style={{ backgroundColor: colorMap[tag.color] || colorMap.gray }}
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
 
           <p className={styles.description}>{flow.description}</p>
           

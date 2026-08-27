@@ -12,18 +12,6 @@ type EditFlowModalProps = {
     updateInfo: (flowInfo: PolyglotFlowInfo) => void;
 };
 
-// Replaces Chakra's colorScheme logic with raw hex codes
-const COLORS = [
-    '#3182ce', // blue
-    '#38a169', // green
-    '#e53e3e', // red
-    '#d69e2e', // yellow
-    '#805ad5', // purple
-    '#319795', // teal
-    '#dd6b20', // orange
-    '#718096', // gray
-];
-
 // SVGs replacing Chakra Icons
 const CloseIcon = ({ className }: { className?: string }) => (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,51 +42,16 @@ const EditFlowModal = ({
     const [tagName, setTagName] = useState('');
     const [publish, setPublish] = useState(false);
 
-    const [colorTag, setColorTag] = useState(COLORS[0]);
-    const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
-
-    // Replaces Chakra useDisclosure for the color popover
-    const [isPickerOpen, setIsPickerOpen] = useState(false);
 
     useEffect(() => {
         if (!flow || !isOpen) return;
         setTitle(flow.title ?? '');
         setDescription(flow.description ?? '');
-        setColorTag(COLORS[0]);
-        // Note: If old flow tags used Chakra strings like "blue", they might look unstyled 
-        // unless migrated, but new tags will use these hex codes properly.
-        setTags([...(flow.tags ?? [])]);
         setPublish(!!flow.publish);
         setTagName('');
-        setIsPickerOpen(false);
     }, [flow, isOpen]);
 
     if (!isOpen) return null;
-
-    const normalizedTagName = tagName.trim().toUpperCase();
-
-    const addTag = () => {
-        if (!normalizedTagName) return;
-
-        setTags((prev) => {
-            const exists = prev.some((t) => t.name === normalizedTagName);
-            if (exists) return prev;
-
-            return [
-                ...prev,
-                {
-                    name: normalizedTagName,
-                    color: colorTag, // Now saving actual hex codes
-                },
-            ];
-        });
-
-        setTagName('');
-    };
-
-    const removeTagAt = (index: number) => {
-        setTags((prev) => prev.filter((_, i) => i !== index));
-    };
 
     const handleSubmit = () => {
         if (!title.trim() || !description.trim()) return;
@@ -106,7 +59,6 @@ const EditFlowModal = ({
         updateInfo({
             title: title.trim(),
             description: description.trim(),
-            tags,
             publish,
         });
 
@@ -114,10 +66,7 @@ const EditFlowModal = ({
     };
 
     return (
-        <div className={styles.overlay} onMouseDown={(e) => {
-            // Close popover if clicking outside of it
-            if (isPickerOpen) setIsPickerOpen(false);
-        }}>
+        <div className={styles.overlay}>
             <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
 
                 <div className={styles.header}>
@@ -148,85 +97,6 @@ const EditFlowModal = ({
                         />
                     </div>
 
-                    <label className={styles.label}>
-                        Click on the tags to remove them (add using the input below):
-                    </label>
-
-                    <div className={styles.tagInputRow}>
-                        {/* Color Picker Popover */}
-                        <div className={styles.colorPickerWrapper}>
-                            <button
-                                type="button"
-                                className={styles.colorBtn}
-                                style={{ backgroundColor: colorTag }}
-                                onClick={() => setIsPickerOpen(!isPickerOpen)}
-                            />
-
-                            {isPickerOpen && (
-                                <div className={styles.colorDropdown}>
-                                    <div className={styles.dropdownHeader}>Select Color</div>
-                                    {COLORS.map((colorVal, id) => (
-                                        <button
-                                            key={id}
-                                            type="button"
-                                            className={styles.colorOption}
-                                            style={{ backgroundColor: colorVal }}
-                                            onClick={() => {
-                                                setColorTag(colorVal);
-                                                setIsPickerOpen(false);
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Tag Input */}
-                        <input
-                            className={styles.input}
-                            style={{ width: '40%' }}
-                            placeholder="Insert tag name..."
-                            title="Press Enter↵ in the input box to add a tag"
-                            value={tagName}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    addTag();
-                                }
-                            }}
-                            onChange={(e) => setTagName(e.currentTarget.value)}
-                        />
-
-                        {/* Add Tag Button */}
-                        <button
-                            type="button"
-                            className={styles.addBtn}
-                            disabled={!normalizedTagName}
-                            onClick={addTag}
-                            title="Add Tag"
-                        >
-                            <AddIcon className={styles.iconSmall} />
-                        </button>
-                    </div>
-
-                    {/* Tags List */}
-                    <div className={styles.tagsContainer}>
-                        {tags.map((tag, id) => (
-                            <button
-                                key={`${tag.name}-${id}`}
-                                className={styles.tagBtn}
-                                onClick={() => removeTagAt(id)}
-                                title="Remove tag"
-                                type="button"
-                            >
-                                {/* Fallback to gray if the color is an old Chakra string instead of hex */}
-                                <span className={styles.tag} style={{ backgroundColor: tag.color.includes('#') ? tag.color : '#718096' }}>
-                                    <CloseIcon className={styles.iconSmall} />
-                                    <span>{tag.name}</span>
-                                </span>
-                            </button>
-                        ))}
-                    </div>
                 </div>
 
                 <div className={styles.footer}>

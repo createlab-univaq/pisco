@@ -6,7 +6,6 @@ export type PolyglotFlowInfo = {
         username?: string;
     };
     description: string;
-    tags: { name: string; color: string }[];
     publish: boolean;
     sourceMaterial?: string;
     language?: string;

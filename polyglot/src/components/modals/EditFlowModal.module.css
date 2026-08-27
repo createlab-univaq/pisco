@@ -178,36 +178,6 @@
     cursor: not-allowed;
 }
 
-/* Tags Container */
-.tagsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.tagBtn {
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.tag {
-    display: inline-flex;
-    align-items: center;
-    color: white;
-    font-weight: 700;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    gap: 0.25rem;
-    transition: opacity 0.2s;
-}
-
-.tag:hover {
-    opacity: 0.8;
-}
-
 /* Footer & Publish Status */
 .footer {
     padding: 1.25rem 1.5rem;

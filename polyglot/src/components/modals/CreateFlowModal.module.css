@@ -189,31 +189,6 @@
   transform: scale(1.1);
 }
 
-/* Rendered Tags */
-.tagsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.tagBadge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: none;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #1a202c;
-  cursor: pointer;
-}
-
-.tagBadge:hover {
-  opacity: 0.8;
-}
-
 /* Editor Container */
 .editorContainer {
   border: 1px solid #e2e8f0;

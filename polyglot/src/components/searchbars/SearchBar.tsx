@@ -27,7 +27,6 @@ export default function SearchBar({
   removeSearchButton,
 }: SearchBarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // Filter items based on user input (case-insensitive)
@@ -48,60 +47,20 @@ export default function SearchBar({
 
   const handleSelect = (value: string) => {
     onSelectOption?.(value);
-    
+
     if (multiple) {
-      if (!selectedTags.includes(value)) {
-        setSelectedTags((prev) => [...prev, value]);
-      }
       setInputValue(''); // Clear input text after adding a tag
     } else {
       setInputValue(clearAfterSearch ? '' : value);
     }
-    
-    setIsOpen(false);
-  };
 
-  const removeTag = (tagToRemove: string) => {
-    setSelectedTags((prev) => prev.filter((tag) => tag !== tagToRemove));
+    setIsOpen(false);
   };
 
   return (
     <div className={styles.container}>
-      
-      <div className={styles.autocompleteWrapper} ref={wrapperRef}>
-        
-        {/* Fake Input Container (Holds Tags + Actual Input) */}
-        <div 
-          className={`${styles.inputBox} ${isOpen ? styles.inputBoxFocused : ''}`}
-          onClick={() => setIsOpen(true)}
-        >
-          {multiple && selectedTags.map((tag, id) => (
-            <span key={id} className={styles.tag}>
-              {tag}
-              <button 
-                className={styles.tagRemoveBtn} 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeTag(tag);
-                }}
-              >
-                &times;
-              </button>
-            </span>
-          ))}
 
-          <input
-            className={styles.input}
-            type="text"
-            placeholder={multiple && selectedTags.length > 0 ? '' : placeholder}
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-              setIsOpen(true);
-            }}
-            onFocus={() => setIsOpen(true)}
-          />
-        </div>
+      <div className={styles.autocompleteWrapper} ref={wrapperRef}>
 
         {/* Dropdown Menu */}
         {isOpen && filteredItems.length > 0 && (
@@ -144,7 +103,7 @@ export default function SearchBar({
           </svg>
         </button>
       )}
-      
+
     </div>
   );
 }

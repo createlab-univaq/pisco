@@ -42,7 +42,6 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
   const [tagName, setTagName] = useState('');
   const [colorTag, setColorTag] = useState(colors[0]);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
-  const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
   // Reset on reopen
   useEffect(() => {
@@ -54,7 +53,6 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
     setTitle('');
     setDescription('');
     setColorTag(colors[0]);
-    setTags([]);
     setTagName('');
     setIsColorPickerOpen(false);
   }, [isOpen]);
@@ -63,25 +61,11 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
 
   const normalizedTagName = tagName.trim().toUpperCase();
 
-  const addTag = () => {
-    if (!normalizedTagName) return;
-    setTags((prev) => {
-      const exists = prev.some((t) => t.name === normalizedTagName);
-      if (exists) return prev;
-      return [...prev, { name: normalizedTagName, color: colorTag }];
-    });
-    setTagName('');
-  };
-
-  const removeTagAt = (index: number) => {
-    setTags((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const createFlow = async () => {
     try {
       setErrorMessage(null);
       setLoading(true);
-      
+
       let createdFlow: PolyglotFlow;
 
       switch (currentTab) {
@@ -89,7 +73,6 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
           const base_Flow: PolyglotFlowInfo = {
             title: title.trim(),
             description: description.trim(),
-            tags,
             publish: false,
           };
           // Call our new native fetch API
@@ -117,7 +100,7 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
 
       // Native fetch returns the direct object, so we access _id directly!
       router.push('/flows/' + createdFlow._id);
-      
+
     } catch (error: any) {
       if (error instanceof SyntaxError) {
         setErrorMessage(`Invalid JSON syntax: ${error.message}`);
@@ -135,7 +118,7 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        
+
         <div className={styles.modalHeader}>
           <h2>Create Flow</h2>
           <button className={styles.closeButton} onClick={onClose}>&times;</button>
@@ -143,14 +126,14 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
 
         <div className={styles.modalBody}>
           <div className={styles.tabList}>
-            <button 
-              className={currentTab === 0 ? styles.activeTab : styles.tab} 
+            <button
+              className={currentTab === 0 ? styles.activeTab : styles.tab}
               onClick={() => setCurrentTab(0)}
             >
               Custom
             </button>
-            <button 
-              className={currentTab === 1 ? styles.activeTab : styles.tab} 
+            <button
+              className={currentTab === 1 ? styles.activeTab : styles.tab}
               onClick={() => setCurrentTab(1)}
             >
               Import JSON
@@ -177,72 +160,6 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
                   onChange={(e) => setDescription(e.target.value)}
                 />
 
-                <label className={styles.label}>Tags:</label>
-                <div className={styles.tagInputRow}>
-                  
-                  {/* Custom Color Picker Popover */}
-                  <div className={styles.colorPickerContainer}>
-                    <button
-                      className={styles.colorTrigger}
-                      style={{ backgroundColor: colorMap[colorTag] }}
-                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-                      title="Select Color"
-                    />
-                    {isColorPickerOpen && (
-                      <div className={styles.colorPopover}>
-                        <div className={styles.colorGrid}>
-                          {colors.map((c) => (
-                            <button
-                              key={c}
-                              className={styles.colorOption}
-                              style={{ backgroundColor: colorMap[c] }}
-                              onClick={() => {
-                                setColorTag(c);
-                                setIsColorPickerOpen(false);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <input
-                    className={styles.input}
-                    placeholder="Insert tag name (Press Enter↵)..."
-                    value={tagName}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addTag();
-                      }
-                    }}
-                    onChange={(e) => setTagName(e.target.value)}
-                  />
-
-                  <button 
-                    className={styles.iconButton} 
-                    disabled={!normalizedTagName} 
-                    onClick={addTag}
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Render Selected Tags */}
-                <div className={styles.tagsContainer}>
-                  {tags.map((tag, id) => (
-                    <button
-                      key={`${tag.name}-${id}`}
-                      className={styles.tagBadge}
-                      style={{ backgroundColor: colorMap[tag.color] }}
-                      onClick={() => removeTagAt(id)}
-                      title="Click to remove"
-                    >
-                      <span>&times;</span> {tag.name}
-                    </button>
-                  ))}
-                </div>
               </div>
             )}
 
