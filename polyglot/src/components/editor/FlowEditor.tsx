@@ -38,7 +38,7 @@ import ContextMenu, { ContextMenuProps, ContextMenuTypes } from '../menus/Contex
 import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
 import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
 import EditorNav from '../navbars/EditorNav';
-import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../ElementMapping';
+import { edgeTypes, nodeTypes } from '../ElementMapping'; // <-- Imported directly
 import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
 import ContextualSidebar from '../menus/ContextualSidebar';
 
@@ -50,16 +50,14 @@ type FlowEditorProps = {
 };
 
 const deleteKeyCodes = ['Delete'];
-const multiSelectionKeyCodes = ['Control', 'Meta']
+const multiSelectionKeyCodes = ['Control', 'Meta'];
+const panOnDragButton = [1];
 
 const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
 
-    const [nodeTypes] = useState(() => polyglotNodeComponentMapping.componentMapping);
-    const [edgeTypes] = useState(() => polyglotEdgeComponentMapping.componentMapping);
-
-    // MEMORIZE DEFAULT EDGE OPTIONS
+    // MEMOIZE ONLY TRUE OBJECT PROPS (Margins, Options)
     const defaultEdgeOptions = useMemo(() => ({
         markerEnd: {
             type: MarkerType.ArrowClosed,
@@ -67,9 +65,11 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         },
     }), []);
 
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const fitViewOptions = useMemo(() => ({
+        padding: 0.2
+    }), []);
 
-    // --- NEW: Track flow metadata changes directly ---
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [flowTitle, setFlowTitle] = useState(initialFlow.title || 'Untitled Flow');
     const [flowPublish, setFlowPublish] = useState(initialFlow.publish || false);
 
@@ -89,7 +89,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     useEffect(() => {
         const handleKeyDown = async (e: KeyboardEvent) => {
-            // Prevent copy/paste triggers when typing inside inputs (like the sidebar)
             if (
                 e.target instanceof HTMLInputElement ||
                 e.target instanceof HTMLTextAreaElement ||
@@ -103,11 +102,9 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 const rfNodes = getNodes();
                 const rfEdges = getEdges();
 
-                // Get IDs of currently selected React Flow elements
                 const selectedNodeIds = rfNodes.filter(n => n.selected).map(n => n.id);
                 const selectedEdgeIds = rfEdges.filter(e => e.selected).map(e => e.id);
 
-                // Find matching Polyglot elements
                 const nodesToCopy = polyglotNodes.filter(n => n.reactFlow && selectedNodeIds.includes(n.reactFlow.id));
 
                 // CRITICAL RULE: Only copy edges if BOTH source and target nodes are in the copied set
@@ -120,7 +117,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
                 if (nodesToCopy.length === 0 && edgesToCopy.length === 0) return;
 
-                // Write to the native system clipboard as a JSON string
                 const clipboardData = { type: 'polyglot-flow', nodes: nodesToCopy, edges: edgesToCopy };
                 await navigator.clipboard.writeText(JSON.stringify(clipboardData));
             }
@@ -136,11 +132,9 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     // Validate this is our specific JSON payload, not random text
                     if (parsed.type !== 'polyglot-flow') return;
 
-                    resetSelectedElements(); // Clear current canvas selection
-
+                    resetSelectedElements();
                     const idMap = new Map<string, string>();
 
-                    // Generate new IDs and slightly offset positions so they don't perfectly overlap
                     const newNodes = parsed.nodes.map((oldNode: PolyglotNode) => {
                         const newId = UUIDv4();
                         idMap.set(oldNode._id, newId);
@@ -155,12 +149,11 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                                     x: oldNode.reactFlow!.position.x + 30,
                                     y: oldNode.reactFlow!.position.y + 30,
                                 },
-                                selected: true, // Select them instantly
+                                selected: true,
                             },
                         };
                     });
 
-                    // Remap edges to connect to the newly generated Node IDs
                     const newEdges = parsed.edges.map((oldEdge: PolyglotEdge) => {
                         const newId = UUIDv4();
                         return {
@@ -210,7 +203,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         setPolyglotNodes((prev) => {
             const validNodes = prev.filter((p) => p.reactFlow !== undefined);
             const rfNodes = validNodes.map((p) => p.reactFlow!);
-
             const updatedRfNodes = applyNodeChanges(changes, rfNodes);
 
             return prev
@@ -234,7 +226,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         setPolyglotEdges((prev) => {
             const validEdges = prev.filter((p) => p.reactFlow !== undefined);
             const rfEdges = validEdges.map((p) => p.reactFlow!);
-
             const updatedRfEdges = applyEdgeChanges(changes, rfEdges);
 
             return prev
@@ -378,20 +369,16 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     const getCleanFlow = (): PolyglotFlow => {
         const cleanNodes = polyglotNodes.map((node) => {
             if (!node.reactFlow) return node;
-            const {
-                width, height, selected, dragging, positionAbsolute, resizing, ...cleanReactFlow
-            } = node.reactFlow as any;
+            const { width, height, selected, dragging, positionAbsolute, resizing, ...cleanReactFlow } = node.reactFlow as any;
             return { ...node, reactFlow: cleanReactFlow };
         });
 
         const cleanEdges = polyglotEdges.map((edge) => {
             const { code, description, data, ...restEdge } = edge as any;
             if (!restEdge.reactFlow) return restEdge;
-
             const { selected, ...cleanReactFlow } = restEdge.reactFlow as any;
             if (cleanReactFlow.sourceHandle === null) delete cleanReactFlow.sourceHandle;
             if (cleanReactFlow.targetHandle === null) delete cleanReactFlow.targetHandle;
-
             return { ...restEdge, reactFlow: cleanReactFlow };
         });
 
@@ -427,27 +414,16 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 flow={getCleanFlow()}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
-
-                // 1. Keeps auto-save for Title blur and Publish toggle (if desired)
                 onUpdateFlowInfo={async (updates) => {
                     if (updates.title !== undefined) setFlowTitle(updates.title);
                     if (updates.publish !== undefined) setFlowPublish(updates.publish);
                     await handleSave(updates);
                 }}
-
-                // 2. NEW: Applies code changes locally WITHOUT saving to the database
                 onApplyLocalFlow={(updates) => {
                     if (updates.title !== undefined) setFlowTitle(updates.title);
                     if (updates.publish !== undefined) setFlowPublish(updates.publish);
-
-                    if (updates.nodes !== undefined) {
-                        setPolyglotNodes(updates.nodes);
-                    }
-                    if (updates.edges !== undefined) {
-                        setPolyglotEdges(updates.edges);
-                    }
-
-                    // This lights up your main "Save" button in the Navbar!
+                    if (updates.nodes !== undefined) setPolyglotNodes(updates.nodes);
+                    if (updates.edges !== undefined) setPolyglotEdges(updates.edges);
                     setHasUnsavedChanges(true);
                 }}
             />
@@ -468,7 +444,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onEdgeDoubleClick={onOpenPanel}
 
                     onConnect={onConnect}
-
                     defaultEdgeOptions={defaultEdgeOptions}
 
                     onDrop={onDrop}
@@ -477,7 +452,8 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     multiSelectionKeyCode={multiSelectionKeyCodes}
                     snapToGrid={true}
                     fitView={true}
-                    fitViewOptions={{ padding: 0.2 }}
+                    fitViewOptions={fitViewOptions}
+
                     onClick={onClick}
                     onMoveStart={onMoveStart}
                     onPaneContextMenu={(e) => {
@@ -493,8 +469,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                         });
                     }}
 
-                    // PANNING CONTROLS
-                    panOnDrag={[1]}        // [1] strictly maps panning to the Middle Mouse Button
+                    panOnDrag={panOnDragButton}
                     panActivationKeyCode="Space" // Allows the user to hold Spacebar + Left Click to pan
 
                     // AREA SELECTION (LASSO) CONTROLS
@@ -512,7 +487,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onDismiss={hideContextMenu}
                     onRemoveElement={(type, id) => {
                         setHasUnsavedChanges(true);
-
                         if (type === 'Node') {
                             setPolyglotNodes((prev) => prev.filter(n => n._id !== id));
                         } else if (type === 'Edge') {
@@ -525,12 +499,9 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     selectedElement={activeElement}
                     onUpdateElement={(updatedElement: any) => {
                         setHasUnsavedChanges(true);
-
                         if (selectedElement?.type === 'Node') {
                             setPolyglotNodes(prev => prev.map(n => {
                                 if (n.reactFlow?.id === selectedElement.id) {
-                                    // 1. Sync the root title to the React Flow visual label
-                                    // 2. Create a deep clone of reactFlow to force the canvas to re-render
                                     return {
                                         ...updatedElement,
                                         reactFlow: {
@@ -547,7 +518,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                         } else if (selectedElement?.type === 'Edge') {
                             setPolyglotEdges(prev => prev.map(e => {
                                 if (e.reactFlow?.id === selectedElement.id) {
-                                    // Force a React Flow re-render for edge changes
                                     return {
                                         ...updatedElement,
                                         reactFlow: { ...updatedElement.reactFlow }
