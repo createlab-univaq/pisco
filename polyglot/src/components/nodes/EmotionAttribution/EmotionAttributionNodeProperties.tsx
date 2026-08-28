@@ -7,6 +7,7 @@ import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';
 import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import { QuestionEditor } from '@/components/nodes/EmotionAttribution/components/QuestionEditor';
+import { validateEmotionAttributionNode } from './validate';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -24,6 +25,8 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
     const hasMigrated = useRef(false);
 
     const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
+
+    const validationResultErrors = validateEmotionAttributionNode(data);
 
     useEffect(() => {
         if (hasMigrated.current) return;
@@ -116,6 +119,17 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
             />
 
             <hr className={styles.divider} />
+
+            {validationResultErrors.length > 0 && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    <strong>Validation Errors:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        {validationResultErrors.map((err, idx) => (
+                            <li key={idx}>[{err.path}]: {err.message}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             {/* Top Action Button */}
             <div className={styles.headerFlex}>

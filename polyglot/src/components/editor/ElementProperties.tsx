@@ -7,6 +7,7 @@ import { PolyglotNode } from '@/types/PolyglotNode';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../ElementMapping';
 import { useHasHydrated } from '@/hooks/useHasHydrated';
+import { validateNodeData } from '@/lib/validation/nodeValidator';
 
 export type ElementPropertiesProps = {
     selectedElement: PolyglotNode | PolyglotEdge;
@@ -22,9 +23,9 @@ const ElementProperties = ({
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const hydrated = useHasHydrated();
 
-    // State to hold the active text in the Monaco Editor
     const [editorValue, setEditorValue] = useState('');
     const [jsonError, setJsonError] = useState<string | null>(null);
+    const [schemaErrors, setSchemaErrors] = useState<string[]>([]);
 
     const ElementProperty = (selectedElement.type.includes('Node')
         ? polyglotNodeComponentMapping.getElementPropertiesComponent(selectedElement.type)
@@ -36,32 +37,41 @@ const ElementProperties = ({
         }
     };
 
-    // When the user switches elements OR opens the code view, refresh the JSON string
     useEffect(() => {
         if (isEditorOpen) {
             setEditorValue(JSON.stringify(selectedElement, null, 4));
             setJsonError(null);
-        }
-        // We strictly depend on the element ID so typing in the editor doesn't cause a re-render loop
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedElement._id, isEditorOpen]);
 
-    // Handle typing inside the Monaco Editor
+            let currentSchemaErrors: string[] = [];
+            if (selectedElement.type && !selectedElement.type.includes('Edge') && 'data' in selectedElement) {
+                const validationResult = validateNodeData(selectedElement.type, (selectedElement as PolyglotNode).data);
+                currentSchemaErrors = validationResult.errors.map(e => `[${e.path}]: ${e.message}`);
+            }
+            setSchemaErrors(currentSchemaErrors);
+        }
+    }, [selectedElement, isEditorOpen]);
+
     const handleEditorChange = (value: string | undefined) => {
         const text = value || '';
         setEditorValue(text);
 
         try {
             const parsedElement = JSON.parse(text);
-            setJsonError(null); // Clear error if valid
+            setJsonError(null);
 
-            // Push the valid JSON to the main flow editor instantly
+            let currentSchemaErrors: string[] = [];
+            if (parsedElement.type && !parsedElement.type.includes('Edge')) {
+                const validationResult = validateNodeData(parsedElement.type, parsedElement.data);
+                currentSchemaErrors = validationResult.errors.map(e => `[${e.path}]: ${e.message}`);
+            }
+            setSchemaErrors(currentSchemaErrors);
+
             if (onUpdateElement) {
                 onUpdateElement(parsedElement);
             }
         } catch (err: any) {
-            // Catch JSON syntax errors and display them without crashing the app
             setJsonError(err.message);
+            setSchemaErrors([]);
         }
     };
 
@@ -69,7 +79,6 @@ const ElementProperties = ({
 
     return (
         <div className={styles.container}>
-            {/* STICKY HEADER */}
             <div className={styles.header}>
                 <h2 className={styles.heading}>{displayTitle}</h2>
                 <button
@@ -82,21 +91,31 @@ const ElementProperties = ({
 
             {isEditorOpen ? (
                 <div className={styles.editorContainer}>
-                    {/* Display JSON validation errors */}
                     {jsonError && (
                         <div className={styles.errorBanner}>
                             Invalid JSON: {jsonError}
                         </div>
                     )}
 
+                    {!jsonError && schemaErrors.length > 0 && (
+                        <div className={styles.errorBanner} style={{ backgroundColor: '#fffaf0', borderColor: '#eebc1d', color: '#744210' }}>
+                            <strong>Schema Validation Errors:</strong>
+                            <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                                {schemaErrors.map((err, idx) => (
+                                    <li key={idx}>{err}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     <Editor
                         options={{
-                            readOnly: false, // Unlock the editor!
+                            readOnly: false,
                             minimap: { enabled: false },
                             formatOnPaste: true,
                             tabSize: 4
                         }}
-                        height="calc(100vh - 120px)" // Fill the sidebar height
+                        height="calc(100vh - 120px)"
                         language="json"
                         value={editorValue}
                         onChange={handleEditorChange}

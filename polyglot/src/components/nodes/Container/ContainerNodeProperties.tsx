@@ -9,6 +9,8 @@ import { embeddedByType } from '@/components/nodes/Container/components/Embedded
 import { useNodeSync } from '@/hooks/useNodeSync';
 import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import { SectionBlock } from './components/SectionBlock';
+import { validateContainerNode } from './validate';
+import { nodeValidators } from '@/lib/validation/nodeValidator';
 
 const newId = () =>
     globalThis.crypto?.randomUUID?.() ??
@@ -38,6 +40,16 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
     const containerNodeId = node._id;
 
     const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
+
+    const validationResultErrors = validateContainerNode((childType, childData) => {
+        const validator = nodeValidators[childType];
+        if (!validator) return { ok: true, errors: [] };
+        const errors = validator(childData);
+        return { ok: errors.length === 0, errors };
+    })(data);
+
+    const getFieldError = (path: string) =>
+        validationResultErrors.find((e) => e.path === path)?.message;
 
     const addSection = () => {
         handleDataChange({
@@ -82,6 +94,8 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
             handleDataChange({ sections: newSections });
         };
 
+        const itemTitleError = getFieldError(`data.sections.${sectionIndex}.items.${itemIndex}.title`);
+
         return (
             <div className={styles.container}>
                 <button className={styles.backBtn} onClick={() => setDrill({ mode: 'list' })}>
@@ -97,6 +111,7 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
                         name="title-field"
                         value={item.title || ''}
                         onChange={(e) => handleItemChange({ ...item, title: e.target.value })}
+                        error={itemTitleError}
                     />
 
                     <hr className={styles.divider} />
@@ -127,6 +142,8 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
     // -------------------
     // LIST VIEW (Parent Sections)
     // -------------------
+    const sectionsError = getFieldError('data.sections');
+
     return (
         <div className={styles.container}>
             <NodeProperties
@@ -146,6 +163,12 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
                     <span>Aggiungi sezione</span>
                 </button>
             </div>
+
+            {sectionsError && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    {sectionsError}
+                </div>
+            )}
 
             {sections.length === 0 && (
                 <div className={styles.emptyState}>

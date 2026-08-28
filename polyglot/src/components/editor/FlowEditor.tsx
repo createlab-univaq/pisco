@@ -37,9 +37,10 @@ import ContextMenu, { ContextMenuProps, ContextMenuTypes } from '../menus/Contex
 import { PolyglotNode } from '@/types/PolyglotNode';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
 import EditorNav from '../navbars/EditorNav';
-import { edgeTypes, nodeTypes } from '../ElementMapping'; // <-- Imported directly
+import { edgeTypes, nodeTypes } from '../ElementMapping';
 import ContextualSidebar from '../menus/ContextualSidebar';
 import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/lib/factories/polyglotGenerators';
+import { validateNodeData } from '@/lib/validation/nodeValidator';
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
@@ -56,7 +57,6 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
 
-    // MEMOIZE ONLY TRUE OBJECT PROPS (Margins, Options)
     const defaultEdgeOptions = useMemo(() => ({
         markerEnd: {
             type: MarkerType.ArrowClosed,
@@ -392,6 +392,16 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const handleSave = async (overrides?: Partial<PolyglotFlow>) => {
         const cleanFlow = getCleanFlow();
+
+        const invalidNodes = cleanFlow.nodes.filter((node) => {
+            const result = validateNodeData(node.type, node.data);
+            return !result.ok;
+        });
+
+        if (invalidNodes.length > 0) {
+            window.alert(`Cannot save flow: ${invalidNodes.length} node(s) have validation errors.`);
+            return;
+        }
 
         await saveFlow({
             ...cleanFlow,

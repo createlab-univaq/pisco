@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import styles from './ViewCodeModal.module.css';
+import { validateNodeData } from '@/lib/validation/nodeValidator';
 
 type ViewCodeModalProps = {
     isOpen: boolean;
@@ -14,30 +15,69 @@ type ViewCodeModalProps = {
 export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }: ViewCodeModalProps) {
     const [editorValue, setEditorValue] = useState('');
     const [jsonError, setJsonError] = useState<string | null>(null);
+    const [schemaErrors, setSchemaErrors] = useState<string[]>([]);
 
     useEffect(() => {
         if (isOpen && flow) {
             setEditorValue(JSON.stringify(flow, null, 4));
             setJsonError(null);
+            setSchemaErrors([]);
         }
     }, [isOpen, flow]);
 
     if (!isOpen) return null;
 
     const handleEditorChange = (value: string | undefined) => {
-        setEditorValue(value || '');
+        const text = value || '';
+        setEditorValue(text);
         try {
-            JSON.parse(value || '');
+            const parsedFlow = JSON.parse(text);
             setJsonError(null);
+
+            let currentSchemaErrors: string[] = [];
+            if (parsedFlow?.nodes && Array.isArray(parsedFlow.nodes)) {
+                parsedFlow.nodes.forEach((node: any, idx: number) => {
+                    if (node.type && node.data) {
+                        const result = validateNodeData(node.type, node.data);
+                        if (!result.ok) {
+                            result.errors.forEach(e => {
+                                currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
+                            });
+                        }
+                    }
+                });
+            }
+            setSchemaErrors(currentSchemaErrors);
         } catch (err: any) {
             setJsonError(err.message);
+            setSchemaErrors([]);
         }
     };
 
     const handleSave = () => {
         try {
             const parsedFlow = JSON.parse(editorValue);
-            onApplyChanges(parsedFlow); // <-- Use it here
+
+            let currentSchemaErrors: string[] = [];
+            if (parsedFlow?.nodes && Array.isArray(parsedFlow.nodes)) {
+                parsedFlow.nodes.forEach((node: any, idx: number) => {
+                    if (node.type && node.data) {
+                        const result = validateNodeData(node.type, node.data);
+                        if (!result.ok) {
+                            result.errors.forEach(e => {
+                                currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
+                            });
+                        }
+                    }
+                });
+            }
+
+            if (currentSchemaErrors.length > 0) {
+                setSchemaErrors(currentSchemaErrors);
+                return;
+            }
+
+            onApplyChanges(parsedFlow);
             onClose();
         } catch (err) {
             // Error is already caught and displayed by handleEditorChange
@@ -56,6 +96,17 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
                     <div className={styles.errorBanner}>Invalid JSON: {jsonError}</div>
                 )}
 
+                {!jsonError && schemaErrors.length > 0 && (
+                    <div className={styles.errorBanner} style={{ backgroundColor: '#fffaf0', borderColor: '#eebc1d', color: '#744210', maxHeight: '120px', overflowY: 'auto' }}>
+                        <strong>Schema Validation Errors:</strong>
+                        <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                            {schemaErrors.map((err, idx) => (
+                                <li key={idx}>{err}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 <div className={styles.editorContainer}>
                     <Editor
                         options={{ minimap: { enabled: false }, formatOnPaste: true, tabSize: 4 }}
@@ -71,7 +122,7 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
                     </button>
                     <button
                         className={styles.saveBtn}
-                        disabled={!!jsonError}
+                        disabled={!!jsonError || schemaErrors.length > 0}
                         onClick={handleSave}
                     >
                         Apply Changes

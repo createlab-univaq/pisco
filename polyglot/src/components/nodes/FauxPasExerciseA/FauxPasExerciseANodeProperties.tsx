@@ -6,6 +6,7 @@ import { FauxPasExerciseANode, FauxPasExerciseAQuizItem } from './types';
 import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';
 import { StoryEditor } from './components/StoryEditor';
+import { validateFauxPasExerciseANode } from './validate';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -24,8 +25,10 @@ const FauxPasExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNo
 
     const { handleBaseChange } = useNodeSync(node, onUpdateElement);
 
+    const validationErrors = validateFauxPasExerciseANode(data);
+
     const handleQuizChange = (newQuiz: FauxPasExerciseAQuizItem[]) => {
-        onUpdateElement({ ...node, data: { ...node.data, quiz: newQuiz } });
+        onUpdateElement({ ...node, data: { ...(node.data || {}), quiz: newQuiz } });
     };
 
     const handleAddStory = () => {
@@ -55,6 +58,17 @@ const FauxPasExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNo
             />
 
             <hr className={styles.divider} />
+
+            {validationErrors.length > 0 && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    <strong>Validation Errors:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        {validationErrors.map((err, idx) => (
+                            <li key={idx}>[{err.path}]: {err.message}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             <div className={styles.headerFlex}>
                 <h3 className={styles.sectionTitle}>Stories</h3>
