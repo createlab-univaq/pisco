@@ -5,6 +5,7 @@ import { FilesAPI } from '@/data/api';
 import { CONTAINER_NODE_ALLOWED_TYPES, ContainerSection, ContainerItem, AllowedContainerNodeType } from '../types';
 import styles from './SectionBlock.module.css';
 import { embeddedByType } from '@/components/embedded/EmbeddedRegistry';
+import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 const newId = () =>
     globalThis.crypto?.randomUUID?.() ??
@@ -78,16 +79,11 @@ export const SectionBlock = ({
     };
 
     return (
-        <div className={styles.sectionCard}>
-            <div className={styles.sectionHeader}>
-                <h4 className={styles.sectionTitle}>Sezione {sectionIndex + 1}</h4>
-                <button type="button" className={styles.iconBtnRed} onClick={onRemoveSection} title="Rimuovi sezione">
-                    <DeleteIcon />
-                </button>
-            </div>
-
-            <hr className={styles.divider} />
-
+        <EditorCardWrapper
+            title={`Sezione ${sectionIndex + 1}`}
+            onRemove={onRemoveSection}
+            removeLabel="Rimuovi sezione"
+        >
             <div className={styles.sectionSubHeader}>
                 <h5 className={styles.subTitle}>Nodi</h5>
                 <select
@@ -108,7 +104,9 @@ export const SectionBlock = ({
             </div>
 
             {section.items.length === 0 ? (
-                <p className={styles.emptyText}>Nessun nodo in questa sezione.</p>
+                <div className={styles.emptyState}>
+                    <p className={styles.emptyText}>Nessun nodo in questa sezione.</p>
+                </div>
             ) : (
                 <div className={styles.itemsList}>
                     {section.items.map((item, itemIndex) => {
@@ -143,6 +141,6 @@ export const SectionBlock = ({
                     })}
                 </div>
             )}
-        </div>
+        </EditorCardWrapper>
     );
 };

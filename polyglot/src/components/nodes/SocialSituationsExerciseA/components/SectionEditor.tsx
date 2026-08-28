@@ -3,12 +3,7 @@
 import TextField from '@/components/forms/TextField';
 import styles from './SectionEditor.module.css';
 import { SocialSituationsExerciseASection, SocialSituationsExerciseAAnswer } from '../types';
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
+import { EditorCardWrapper, EditorCardDivider } from '@/components/layouts/EditorCardWrapper';
 
 export type SectionEditorProps = {
     section: SocialSituationsExerciseASection;
@@ -38,15 +33,11 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
     };
 
     return (
-        <div className={styles.sectionCard}>
-            <div className={styles.cardHeader}>
-                <h5 className={styles.cardTitle}>Sezione #{sectionIndex + 1}</h5>
-                <button type="button" className={styles.removeBtnSmall} onClick={onRemoveSection}>
-                    <CloseIcon />
-                    <span>Rimuovi sezione</span>
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Sezione #${sectionIndex + 1}`}
+            onRemove={onRemoveSection}
+            removeLabel="Rimuovi sezione"
+        >
             <TextField
                 label="Testo iniziale"
                 name={`section-${sectionIndex}-before`}
@@ -68,7 +59,7 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 isTextArea
             />
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <div>
                 <label className={styles.sectionLabel} style={{ display: 'block', marginBottom: '8px' }}>
@@ -103,6 +94,6 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                     </div>
                 ))}
             </div>
-        </div>
+        </EditorCardWrapper>
     );
 };

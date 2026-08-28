@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import styles from './TrueFalseArrayField.module.css';
 
-// Reusable SVG Icons
 const CheckIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -32,12 +31,11 @@ type TrueFalseArrayFieldProps = {
 
 const TrueFalseArrayField = ({
     label,
-    optionLabel = 'Option',
+    optionLabel = 'Question',
     questions = [],
     isCorrect = [],
     onChange,
 }: TrueFalseArrayFieldProps) => {
-    // State for the "Add New" row at the bottom
     const [newInput, setNewInput] = useState('');
     const [newChecked, setNewChecked] = useState(false);
 
@@ -63,20 +61,18 @@ const TrueFalseArrayField = ({
         if (!newInput.trim()) return;
         onChange([...questions, newInput], [...isCorrect, newChecked]);
         setNewInput('');
-        setNewChecked(false); // Reset to default (false)
+        setNewChecked(false);
     };
 
     return (
         <div className={styles.container}>
             <label className={styles.mainLabel}>{label}</label>
 
-            {/* Render existing rows */}
             {questions.map((question, index) => (
                 <div key={index} className={styles.row}>
                     <button
                         type="button"
-                        className={`${styles.toggleBtn} ${isCorrect[index] ? styles.toggleTrue : `${styles.toggleFalse} ${styles.filled}`
-                            }`}
+                        className={`${styles.toggleBtn} ${isCorrect[index] ? styles.toggleTrue : `${styles.toggleFalse} ${styles.filled}`}`}
                         onClick={() => handleToggleCorrect(index)}
                         title={isCorrect[index] ? 'Mark as False' : 'Mark as True'}
                     >
@@ -106,12 +102,10 @@ const TrueFalseArrayField = ({
                 </div>
             ))}
 
-            {/* Add New Row */}
             <div className={styles.row}>
                 <button
                     type="button"
-                    className={`${styles.toggleBtn} ${newChecked ? styles.toggleTrue : `${styles.toggleFalse} ${styles.filled}`
-                        }`}
+                    className={`${styles.toggleBtn} ${newChecked ? styles.toggleTrue : `${styles.toggleFalse} ${styles.filled}`}`}
                     onClick={() => setNewChecked(!newChecked)}
                     title={newChecked ? 'Mark as False' : 'Mark as True'}
                 >
