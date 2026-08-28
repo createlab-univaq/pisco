@@ -9,6 +9,7 @@ import { validateNodeData } from '@/lib/validation/nodeValidator';
 import ExportJsonModal from '../modals/ExportJsonModal';
 import SaveFlowModal from '../modals/SaveFlowModal';
 import ViewCodeModal from '../modals/ViewCodeModal';
+import FlowSettingsModal from '../modals/FlowSettingsModal';
 import { useHasHydrated } from '@/hooks/useHasHydrated';
 
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
@@ -18,8 +19,9 @@ const ExternalLinkIcon = () => <svg className={`${styles.icon} ${styles.iconMarg
 const CheckIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>;
 const CloseIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>;
 const CodeIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
-// Added Pen Icon for the Title
 const EditPenIcon = () => <svg className={styles.editPenIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>;
+// Added Settings Icon
+const SettingsIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 
 export type EditorNavProps = {
     flow?: any;
@@ -53,12 +55,12 @@ export default function EditorNav({
     const [publishLoading, setPublishLoading] = useState(false);
     const [publish, setPublish] = useState(false);
 
-    // --- Title State ---
     const [localTitle, setLocalTitle] = useState('');
 
     const [isOpenExport, setIsOpenExport] = useState(false);
     const [isOpenSave, setIsOpenSave] = useState(false);
     const [isOpenCode, setIsOpenCode] = useState(false);
+    const [isOpenSettings, setIsOpenSettings] = useState(false); // <-- Settings state
 
     useEffect(() => {
         if (flow != null) {
@@ -86,14 +88,12 @@ export default function EditorNav({
         else alert(`${title}: ${desc}`);
     };
 
-    // Submits the title to the parent component when you click away or press Enter
     const handleTitleSubmit = () => {
         if (localTitle.trim() !== '' && localTitle !== flow?.title) {
             if (onUpdateFlowInfo) {
                 onUpdateFlowInfo({ title: localTitle.trim() });
             }
         } else {
-            // Revert back if left empty
             setLocalTitle(flow?.title || 'Untitled Flow');
         }
     };
@@ -113,7 +113,6 @@ export default function EditorNav({
 
         for (const node of flow.nodes) {
             let infoCheck = true;
-
             if (!node.description) infoCheck = false;
 
             const res = validateNodeData(node.type, node.data);
@@ -175,7 +174,6 @@ export default function EditorNav({
                 <ArrowForwardIcon />
             </button>
 
-            {/* --- Flow Title Input --- */}
             <div className={styles.titleContainer}>
                 <input
                     className={styles.titleInput}
@@ -194,6 +192,13 @@ export default function EditorNav({
             </div>
 
             <div className={styles.spacer} />
+
+            <button
+                className={styles.textBtn}
+                onClick={() => setIsOpenSettings(true)}
+            >
+                <SettingsIcon /> Settings
+            </button>
 
             <button
                 className={styles.textBtn}
@@ -243,9 +248,14 @@ export default function EditorNav({
                 onClose={() => setIsOpenCode(false)}
                 flow={flow}
                 onApplyChanges={(updatedFlow) => {
-                    // Triggers the local-only update instead of the auto-saving update
                     if (onApplyLocalFlow) onApplyLocalFlow(updatedFlow);
                 }}
+            />
+            <FlowSettingsModal
+                isOpen={isOpenSettings}
+                onClose={() => setIsOpenSettings(false)}
+                flow={flow}
+                onUpdateFlowInfo={onUpdateFlowInfo}
             />
         </nav>
     );
