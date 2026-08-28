@@ -1,31 +1,7 @@
-.storyCard {
-    border: 1px solid #e2e8f0;
-    border-radius: 0.375rem;
-    padding: 0.75rem;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-}
-
-.cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.cardTitle {
-    font-size: 0.875rem;
-    font-weight: 700;
-    margin: 0;
-    color: #2d3748;
-}
-
 .subHeaderFlex {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.75rem;
     margin-bottom: 0.5rem;
 }
 
@@ -34,25 +10,6 @@
     font-weight: 700;
     margin: 0;
     color: #2d3748;
-}
-
-.removeBtnSmall {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    background-color: #fee2e2;
-    color: #e53e3e;
-    border: none;
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.removeBtnSmall:hover {
-    background-color: #fecaca;
 }
 
 .addBtnSmall {

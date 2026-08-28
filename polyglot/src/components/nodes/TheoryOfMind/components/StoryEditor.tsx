@@ -4,15 +4,11 @@ import TextField from '@/components/forms/TextField';
 import styles from './StoryEditor.module.css';
 import { TheoryOfMindQuizItem, TheoryOfMindQuestion } from '../types';
 import { QuestionEditor } from './QuestionEditor';
+import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 const AddIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-    </svg>
-);
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
 );
 
@@ -54,15 +50,11 @@ export const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorPro
     };
 
     return (
-        <div className={styles.storyCard}>
-            <div className={styles.cardHeader}>
-                <h4 className={styles.cardTitle}>Story #{index + 1}</h4>
-                <button type="button" className={styles.removeBtnSmall} onClick={onRemove}>
-                    <CloseIcon />
-                    <span>Remove story</span>
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Story #${index + 1}`}
+            onRemove={onRemove}
+            removeLabel="Remove story"
+        >
             <TextField
                 label="Narration"
                 name={`story-${index}-narration`}
@@ -111,6 +103,6 @@ export const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorPro
                     <span>Add question</span>
                 </button>
             )}
-        </div>
+        </EditorCardWrapper>
     );
 };
