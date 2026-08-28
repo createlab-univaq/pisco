@@ -1,4 +1,4 @@
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
+import { NODE_TYPE } from '@/types/NodeType';
 import icon from '@public/eyes_icon.png';
 import EmotionRecognitionNodeProperties from './EmotionRecognitionNodeProperties';
 import ReactFlowEmotionRecognitionNode from './ReactFlowEmotionRecognitionNode';

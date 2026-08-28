@@ -1,5 +1,5 @@
 import UnconditionalEdgeProperties from './UnconditionalEdgeProperties';
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import { EDGE_TYPE } from '@/types/EdgeType';
 import ReactFlowUnconditionalEdge from './ReactFlowUnconditionalEdge';
 
 export * from './types';

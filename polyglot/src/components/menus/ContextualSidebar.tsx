@@ -4,10 +4,10 @@ import Image from 'next/image';
 import { DragEvent, useEffect, useRef, useState } from 'react';
 import styles from './ContextualSidebar.module.css';
 import { polyglotNodeComponentMapping } from '../ElementMapping';
-import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
+import { PolyglotNode } from '@/types/PolyglotNode';
 import ElementProperties from '../editor/ElementProperties';
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType'; // <-- IMPORT NODE TYPES
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { NODE_TYPE } from '@/types/NodeType'; // <-- IMPORT NODE TYPES
+import { PolyglotEdge } from '@/types/PolyglotEdge';
 
 export type ContextualSidebarProps = {
     selectedElement?: PolyglotNode | PolyglotEdge | null;

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import styles from './TheoryOfMindExerciseANodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import { TheoryOfMindExerciseANode, TheoryOfMindExerciseAItem } from './types';
 import { useNodeSync } from '@/hooks/useNodeSync';

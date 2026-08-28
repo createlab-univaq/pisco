@@ -1,4 +1,4 @@
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
+import { NODE_TYPE } from '@/types/NodeType';
 import icon from '@public/brain_icon.png';
 import TheoryOfMindExerciseANodeProperties from './TheoryOfMindExerciseANodeProperties';
 import ReactFlowTheoryOfMindExerciseANode from './ReactFlowTheoryOfMindExerciseANode';

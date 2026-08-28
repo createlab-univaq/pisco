@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './FauxPasNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import { FauxPasNode, FauxPasQuizItem } from './types';
 import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';

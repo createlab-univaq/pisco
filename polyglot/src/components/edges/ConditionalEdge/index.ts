@@ -1,6 +1,6 @@
 import ConditionalEdgeProperties from './ConditionalEdgeProperties';
 import ReactFlowConditionalEdge from './ReactFlowConditionalEdge';
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import { EDGE_TYPE } from '@/types/EdgeType';
 
 export * from './types';
 export { ConditionalEdgeProperties };

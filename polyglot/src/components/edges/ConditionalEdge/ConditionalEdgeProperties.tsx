@@ -5,7 +5,7 @@ import TextField from '@/components/forms/TextField';
 import EdgeProperties from '../EdgeProperties';
 import { ConditionalEdge } from './types';
 import { useEdgeSync } from '@/hooks/useEdgeSync';
-import { PolyglotEdgePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotEdgePropertiesProps } from '@/types/ElementMappingTypes';
 
 // FIXED: Accept the universal props
 const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: PolyglotEdgePropertiesProps) => {

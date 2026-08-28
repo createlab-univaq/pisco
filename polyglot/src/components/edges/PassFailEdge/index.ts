@@ -1,5 +1,5 @@
 import PassFailEdgeProperties from './PassFailEdgeProperties';
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import { EDGE_TYPE } from '@/types/EdgeType';
 import ReactFlowPassFailEdge from './ReactFlowPassFailEdge';
 
 export * from './types';

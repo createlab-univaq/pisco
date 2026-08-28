@@ -1,6 +1,6 @@
-import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
+import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 // Import your central runtime constants!
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType'; 
+import { NODE_TYPE } from '@/types/NodeType'; 
 
 // 1. Define the runtime array using your constants (NO raw strings)
 export const CONTAINER_NODE_ALLOWED_TYPES = [

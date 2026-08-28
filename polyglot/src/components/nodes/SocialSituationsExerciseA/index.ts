@@ -1,4 +1,4 @@
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
+import { NODE_TYPE } from '@/types/NodeType';
 import icon from '@public/people_icon.png';
 import SocialSituationsExerciseANodeProperties from './SocialSituationsExerciseANodeProperties';
 import ReactFlowSocialSituationsExerciseANode from './ReactFlowSocialSituationsExerciseANode';

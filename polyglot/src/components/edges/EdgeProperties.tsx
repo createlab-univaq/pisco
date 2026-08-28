@@ -1,9 +1,9 @@
 'use client';
 
 import EnumField from '@/components/forms/EnumField';
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import { EDGE_TYPE } from '@/types/EdgeType';
 import styles from './EdgeProperties.module.css';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotEdge } from '@/types/PolyglotEdge';
 
 export type EdgePropertiesProps = {
     element: PolyglotEdge;

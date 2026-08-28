@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import FlowEditor from '@/components/editor/FlowEditor';
 import { FlowsAPI } from '@/data/api';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
 import styles from './FlowEditorClient.module.css';
 
 type ToastType = {

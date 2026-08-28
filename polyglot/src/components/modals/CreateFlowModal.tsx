@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styles from './CreateFlowModal.module.css';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
-import { PolyglotFlowInfo } from '@/types/polyglot-elements/PolyglotFlowInfo';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
+import { PolyglotFlowInfo } from '@/types/PolyglotFlowInfo';
 import { Editor } from '@monaco-editor/react';
 import { FlowsAPI } from '@/data/api';
 

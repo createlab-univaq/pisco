@@ -1,5 +1,5 @@
 import type React from 'react';
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType'; // <-- Import your constants!
+import { NODE_TYPE } from '@/types/NodeType'; // <-- Import your constants!
 
 // Using standard alias paths for public assets
 import emotion_icon from '@public/emotion_icon.png';

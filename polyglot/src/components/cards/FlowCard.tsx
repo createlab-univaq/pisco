@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import cardImage from '@public/test_card.png';
 import styles from './FlowCard.module.css';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
 
 type FlowCardProps = {
   canDelete?: boolean;

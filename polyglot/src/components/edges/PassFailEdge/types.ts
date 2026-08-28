@@ -1,5 +1,5 @@
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
-import { PolyglotEdgeBase } from '@/types/polyglot-elements/PolyglotEdgeBase';
+import { EDGE_TYPE } from '@/types/EdgeType';
+import { PolyglotEdgeBase } from '@/types/PolyglotEdgeBase';
 
 export type PassFailConditionKind = 'pass' | 'fail';
 

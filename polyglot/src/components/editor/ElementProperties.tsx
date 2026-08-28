@@ -3,10 +3,10 @@
 import Editor from '@monaco-editor/react';
 import { useState, useEffect } from 'react';
 import styles from './ElementProperties.module.css';
-import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotNode } from '@/types/PolyglotNode';
+import { PolyglotEdge } from '@/types/PolyglotEdge';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../ElementMapping';
-import { useHasHydrated } from '@/utils/utils';
+import { useHasHydrated } from '@/utils/useClientUtils';
 
 export type ElementPropertiesProps = {
     selectedElement: PolyglotNode | PolyglotEdge;

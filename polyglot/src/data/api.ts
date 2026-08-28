@@ -1,8 +1,8 @@
 import useSWR from 'swr';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
-import { PolyglotFlowInfo } from '@/types/polyglot-elements/PolyglotFlowInfo';
-import { createNewDefaultPolyglotFlow } from '@/utils/utils';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
+import { PolyglotFlowInfo } from '@/types/PolyglotFlowInfo';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '@/components/ElementMapping';
+import { createNewDefaultPolyglotFlow } from '@/utils/polyglotGenerators';
 
 // --- MOCK CONFIGURATION ---
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';

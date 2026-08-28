@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react';
 import brandLogo from '@public/solo_logo.png';
 import styles from './EditorNav.module.css';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
-import { useHasHydrated } from '@/utils/utils';
 import ExportJsonModal from '../modals/ExportJsonModal';
 import SaveFlowModal from '../modals/SaveFlowModal';
 import ViewCodeModal from '../modals/ViewCodeModal';
+import { useHasHydrated } from '@/utils/useClientUtils';
 
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
 const ArrowForwardIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;

@@ -5,7 +5,7 @@ import styles from './EmotionAttributionNodeProperties.module.css';
 import { EmotionAttributionNode, EmotionAttributionQuestion } from './types';
 import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import { QuestionEditor } from '@/components/nodes/EmotionAttribution/components/QuestionEditor';
 
 const newId = (prefix: string) =>

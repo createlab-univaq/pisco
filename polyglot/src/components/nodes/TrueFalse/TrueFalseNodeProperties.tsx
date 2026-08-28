@@ -3,7 +3,7 @@
 import styles from './TrueFalseNodeProperties.module.css';
 import TextField from '@/components/forms/TextField';
 import { TrueFalseNode } from './types';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import TrueFalseArrayField from './components/TrueFalseArrayField';
 import { useNodeSync } from '@/hooks/useNodeSync';

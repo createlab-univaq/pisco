@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './EmotionAttributionANodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import { EmotionAttributionACoreForm } from './components/EmotionAttributionACoreForm';
 import { useNodeSync } from '@/hooks/useNodeSync';

@@ -7,7 +7,7 @@ import styles from './ContainerNodeProperties.module.css';
 import NodeProperties from '../NodeProperties';
 import { embeddedByType } from '@/components/nodes/Container/components/EmbeddedRegistry';
 import { useNodeSync } from '@/hooks/useNodeSync';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import { SectionBlock } from './components/SectionBlock';
 
 const newId = () =>

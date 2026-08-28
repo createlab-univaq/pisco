@@ -2,7 +2,7 @@
 
 import Editor from '@monaco-editor/react';
 import styles from './ExportJsonModal.module.css';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
 
 export type ExportJsonModalProps = {
     isOpen: boolean;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MappingType } from '@/types/polyglot-elements/ElementMappingTypes';
+import { MappingType } from '@/types/ElementMappingTypes';
 
 export class PolyglotComponentMapping<T, U, K extends { type: string }> {
     public propertiesMapping: Record<string, React.ComponentType<T>> = {};

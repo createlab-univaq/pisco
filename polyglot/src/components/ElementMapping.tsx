@@ -1,10 +1,10 @@
-import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotNode } from '@/types/PolyglotNode';
+import { PolyglotEdge } from '@/types/PolyglotEdge';
 import { NodeProps, EdgeProps } from 'reactflow';
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
+import { NODE_TYPE } from '@/types/NodeType';
+import { EDGE_TYPE } from '@/types/EdgeType';
 
-import { PolyglotNodePropertiesProps, PolyglotEdgePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps, PolyglotEdgePropertiesProps } from '@/types/ElementMappingTypes';
 import { PolyglotComponentMapping } from './PolyglotComponentMapping';
 
 // --- Node Config Imports ---

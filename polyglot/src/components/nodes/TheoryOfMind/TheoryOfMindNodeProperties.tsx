@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './TheoryOfMindNodeProperties.module.css';
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import { TheoryOfMindNode, TheoryOfMindQuizItem } from './types';
 import { useNodeSync } from '@/hooks/useNodeSync';

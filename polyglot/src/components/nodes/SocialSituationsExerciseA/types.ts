@@ -1,5 +1,5 @@
-import { NODE_TYPE } from '@/types/polyglot-elements/NodeType';
-import { PolyglotNodeBase } from '@/types/polyglot-elements/PolyglotNodeBase';
+import { NODE_TYPE } from '@/types/NodeType';
+import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 
 export type SocialSituationsExerciseAAnswer = {
     text: string;

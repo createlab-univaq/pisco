@@ -1,6 +1,6 @@
 import React from 'react';
-import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotNode } from '@/types/PolyglotNode';
+import { PolyglotEdge } from '@/types/PolyglotEdge';
 
 // ---------------------------------------------------------------------------
 // UNIVERSAL PROPERTY PANEL PROPS

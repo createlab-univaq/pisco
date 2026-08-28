@@ -31,16 +31,15 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { v4 as UUIDv4 } from 'uuid';
-import { createNewDefaultPolyglotNode } from '../../utils/utils';
 import styles from './FlowEditor.module.css';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
 import ContextMenu, { ContextMenuProps, ContextMenuTypes } from '../menus/ContextMenu';
-import { PolyglotNode } from '@/types/polyglot-elements/PolyglotNode';
-import { PolyglotEdge } from '@/types/polyglot-elements/PolyglotEdge';
+import { PolyglotNode } from '@/types/PolyglotNode';
+import { PolyglotEdge } from '@/types/PolyglotEdge';
 import EditorNav from '../navbars/EditorNav';
 import { edgeTypes, nodeTypes } from '../ElementMapping'; // <-- Imported directly
-import { EDGE_TYPE } from '@/types/polyglot-elements/EdgeType';
 import ContextualSidebar from '../menus/ContextualSidebar';
+import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/utils/polyglotGenerators';
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
@@ -295,24 +294,24 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     };
 
     const onConnect = useCallback((connection: Connection) => {
-        const id = UUIDv4();
-        const newEdge: PolyglotEdge = {
-            _id: id,
-            type: EDGE_TYPE.UNCONDITIONAL,
-            data: {
-                edgeData: {},
-            },
-            reactFlow: {
-                id: id,
-                type: EDGE_TYPE.UNCONDITIONAL,
-                source: connection.source!,
-                target: connection.target!,
-            },
-        };
+        if (!connection.source || !connection.target) return;
+
+        // Find the source node to check its type (e.g., Container, Faux Pas)
+        const sourceNode = polyglotNodes.find(
+            (n) => n._id === connection.source || n.reactFlow?.id === connection.source
+        );
+        const sourceType = sourceNode?.type || '';
+
+        // Utilize your centralized generator for smart edge typing and styling
+        const newEdge = createNewDefaultPolyglotEdge(
+            connection.source,
+            sourceType,
+            connection.target
+        );
 
         setHasUnsavedChanges(true);
         setPolyglotEdges((prev) => [...prev, newEdge]);
-    }, []);
+    }, [polyglotNodes]);
 
     // ============================================================================
     // EVENT HANDLERS

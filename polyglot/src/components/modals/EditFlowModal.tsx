@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import styles from './EditFlowModal.module.css';
-import { PolyglotFlowInfo } from '@/types/polyglot-elements/PolyglotFlowInfo';
-import { PolyglotFlow } from '@/types/polyglot-elements/PolyglotFlow';
+import { PolyglotFlowInfo } from '@/types/PolyglotFlowInfo';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
 
 type EditFlowModalProps = {
     isOpen: boolean;

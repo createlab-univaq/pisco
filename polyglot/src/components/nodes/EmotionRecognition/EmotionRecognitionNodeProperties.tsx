@@ -1,6 +1,6 @@
 'use client';
 
-import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import { EmotionRecognitionNode } from './types';
 import styles from './EmotionRecognitionNodeProperties.module.css';
