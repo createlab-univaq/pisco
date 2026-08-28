@@ -1,11 +1,11 @@
 'use client';
 
-import EnumField from '@/components/forms/EnumField';
 import TextField from '@/components/forms/TextField';
 import styles from './NodeProperties.module.css';
 
 export type NodePropertiesProps = {
     activityDescription?: string;
+    activityTitle?: string;
     title?: string;
     description?: string;
     onUpdateTitle?: (val: string) => void;
@@ -14,6 +14,7 @@ export type NodePropertiesProps = {
 
 const NodeProperties = ({
     activityDescription,
+    activityTitle = 'Activity description',
     title,
     description,
     onUpdateTitle,
@@ -24,7 +25,7 @@ const NodeProperties = ({
             {activityDescription && (
                 <div className={styles.activityBox}>
                     <strong className={styles.activityTitle}>
-                        Activity description
+                        {activityTitle}
                     </strong>
                     <p className={styles.activityText}>{activityDescription}</p>
                 </div>
@@ -45,7 +46,6 @@ const NodeProperties = ({
                 onChange={(e) => onUpdateDescription?.(e.target.value)}
                 isTextArea
             />
-
         </div>
     );
 };

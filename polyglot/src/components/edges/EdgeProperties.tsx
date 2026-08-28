@@ -1,33 +1,46 @@
 'use client';
 
 import EnumField from '@/components/forms/EnumField';
+import TextField from '@/components/forms/TextField';
 import { EDGE_TYPE } from '@/types/EdgeType';
 import styles from './EdgeProperties.module.css';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
 
 export type EdgePropertiesProps = {
     element: PolyglotEdge;
-    onUpdateElement: (updatedElement: any) => void;
+    onUpdateElement: (updatedElement: PolyglotEdge) => void;
 };
 
 const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
-    // Safely read current data from reactFlow, NOT the root
-    const currentData = element.reactFlow?.data || {};
+    const currentData = (element.reactFlow?.data || {}) as Record<string, any>;
 
     const handleTypeChange = (newType: string) => {
-        let newData: any = { edgeData: {} };
+        let newData: Record<string, any> = { edgeData: {} };
         if (newType === EDGE_TYPE.PASS_FAIL) newData = { edgeData: {}, conditionKind: 'pass' };
         if (newType === EDGE_TYPE.CONDITIONAL) newData = { edgeData: {}, operator: '>=', threshold: 0 };
 
         onUpdateElement({
             ...element,
             type: newType,
-            // REMOVED root data writing
             reactFlow: element.reactFlow ? {
                 ...element.reactFlow,
                 type: newType,
-                data: newData // Only write to reactFlow.data
-            } : undefined
+                data: newData,
+            } : undefined,
+        });
+    };
+
+    const handleDataChange = (fields: Record<string, any>) => {
+        if (!element.reactFlow) return;
+        onUpdateElement({
+            ...element,
+            reactFlow: {
+                ...element.reactFlow,
+                data: {
+                    ...currentData,
+                    ...fields,
+                },
+            },
         });
     };
 
@@ -47,10 +60,14 @@ const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
                 }
             />
 
-            {/* Example of how to read the data correctly now: */}
-            {/* {element.type === EDGE_TYPE.CONDITIONAL && (
-                 <p>Current Operator is: {currentData.operator}</p> 
-            )} */}
+            {element.type === EDGE_TYPE.CONDITIONAL && (
+                <TextField
+                    label="Threshold"
+                    name="threshold"
+                    value={currentData.threshold?.toString() || '0'}
+                    onChange={(e) => handleDataChange({ threshold: Number(e.target.value) })}
+                />
+            )}
         </div>
     );
 };
