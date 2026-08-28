@@ -3,6 +3,8 @@
 import { EmotionAttributionBItem } from '../types';
 import { ItemEditor } from './ItemEditor';
 import styles from './EmotionAttributionBCoreForm.module.css';
+import { validateEmotionAttributionBNode } from '../validate';
+import { ValidationError } from '@/types/ValidationError';
 
 const AddIcon = () => (
     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
@@ -14,10 +16,10 @@ export type CoreFormProps = {
     items: EmotionAttributionBItem[];
     onChange: (newItems: EmotionAttributionBItem[]) => void;
     isDisabled?: boolean;
+    getExternalErrors?: ValidationError[];
 };
 
-export const EmotionAttributionBCoreForm = ({ items = [], onChange, isDisabled }: CoreFormProps) => {
-
+export const EmotionAttributionBCoreForm = ({ items = [], onChange, isDisabled, getExternalErrors }: CoreFormProps) => {
     const handleAddItem = () => {
         onChange([...items, { emotion: '', scenario: '', explanation: '' }]);
     };
@@ -32,8 +34,23 @@ export const EmotionAttributionBCoreForm = ({ items = [], onChange, isDisabled }
         onChange(items.filter((_, i) => i !== index));
     };
 
+    // Autonomous local validation fallback
+    const localErrors = validateEmotionAttributionBNode({ items });
+    const activeErrors = getExternalErrors || localErrors;
+
     return (
         <div className={styles.container}>
+            {activeErrors.length > 0 && !getExternalErrors && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    <strong>Validation Errors:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        {activeErrors.map((err, idx) => (
+                            <li key={idx}>[{err.path}]: {err.message}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <div className={styles.headerFlex}>
                 <h4 className={styles.heading}>Elementi</h4>
                 <button type="button" className={styles.addBtn} onClick={handleAddItem} disabled={isDisabled}>

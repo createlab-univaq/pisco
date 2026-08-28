@@ -5,7 +5,6 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateEmotionRecognitionNode = (data: any): ValidationError[] => {
-    // imageId is optional / can be undefined[cite: 37, 40]
     const allowedEmpty = ['imageId'];
     const errors: ValidationError[] = validateGenericStrict('EmotionRecognitionNode', data, allowedEmpty);
 
@@ -18,7 +17,7 @@ export const validateEmotionRecognitionNode = (data: any): ValidationError[] => 
         errors.push({
             label: 'answers',
             path: 'data.answers',
-            message: 'Insert at least one non-empty answer[cite: 37, 40].',
+            message: 'Insert at least one non-empty answer.',
         });
     }
 
@@ -27,14 +26,14 @@ export const validateEmotionRecognitionNode = (data: any): ValidationError[] => 
         errors.push({
             label: 'correctIndex',
             path: 'data.correctIndex',
-            message: 'Select a correct answer index[cite: 37, 40].',
+            message: 'Select a correct answer index.',
         });
     } else if (Array.isArray(answers) && answers.length > 0) {
         if (correctIndex < 0 || correctIndex >= answers.length) {
             errors.push({
                 label: 'correctIndex',
                 path: 'data.correctIndex',
-                message: 'correctIndex is out of bounds for the given answers[cite: 37, 40].',
+                message: 'correctIndex is out of bounds for the given answers.',
             });
         }
     }

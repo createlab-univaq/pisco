@@ -3,6 +3,8 @@
 import TextField from '@/components/forms/TextField';
 import StringArrayField from '@/components/forms/StringArrayField';
 import styles from './EmotionAttributionACoreForm.module.css';
+import { validateEmotionAttributionANode } from '../validate';
+import { ValidationError } from '@/types/ValidationError';
 
 export type EmotionAttributionAData = {
     scenario: string;
@@ -16,9 +18,10 @@ type Props = {
     data: EmotionAttributionAData;
     onChange: (newData: EmotionAttributionAData) => void;
     isDisabled?: boolean;
+    getExternalErrors?: ValidationError[];
 };
 
-export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionAData, onChange, isDisabled }: Props) => {
+export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionAData, onChange, isDisabled, getExternalErrors }: Props) => {
     const handleChange = (field: keyof EmotionAttributionAData, value: any) => {
         onChange({
             ...data,
@@ -26,8 +29,30 @@ export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionADa
         });
     };
 
+    // Autonomous local validation fallback
+    const localErrors = validateEmotionAttributionANode(data);
+    const activeErrors = getExternalErrors || localErrors;
+
+    const getFieldError = (localPath: string) => {
+        const match = activeErrors.find((e) =>
+            e.path && (e.path === localPath || e.path.endsWith('.' + localPath))
+        );
+        return match?.message;
+    };
+
     return (
         <div className={styles.container}>
+            {activeErrors.length > 0 && !getExternalErrors && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    <strong>Validation Errors:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        {activeErrors.map((err, idx) => (
+                            <li key={idx}>[{err.path}]: {err.message}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <TextField
                 label="Scenario"
                 name="scenario"
@@ -35,6 +60,7 @@ export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionADa
                 onChange={(e) => handleChange('scenario', e.target.value)}
                 isTextArea
                 isDisabled={isDisabled}
+                error={getFieldError('data.scenario')}
             />
 
             <TextField
@@ -44,6 +70,7 @@ export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionADa
                 onChange={(e) => handleChange('domanda', e.target.value)}
                 isTextArea
                 isDisabled={isDisabled}
+                error={getFieldError('data.domanda')}
             />
 
             <div className={styles.section}>
@@ -68,6 +95,7 @@ export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionADa
                 onChange={(e) => handleChange('spiegazioneS', e.target.value)}
                 isTextArea
                 isDisabled={isDisabled}
+                error={getFieldError('data.spiegazioneS')}
             />
 
             <TextField
@@ -77,6 +105,7 @@ export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionADa
                 onChange={(e) => handleChange('spiegazioneR', e.target.value)}
                 isTextArea
                 isDisabled={isDisabled}
+                error={getFieldError('data.spiegazioneR')}
             />
         </div>
     );

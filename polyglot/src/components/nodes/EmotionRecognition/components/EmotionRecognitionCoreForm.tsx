@@ -3,6 +3,8 @@
 import QuestionImageUploadField from '@/components/forms/QuestionImageUploadField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
 import styles from './EmotionRecognitionCoreForm.module.css';
+import { validateEmotionRecognitionNode } from '../validate';
+import { ValidationError } from '@/types/ValidationError';
 
 export type EmotionRecognitionData = {
     imageId?: string;
@@ -16,6 +18,7 @@ type Props = {
     parentNodeId?: string;
     parentItemId?: string;
     isDisabled?: boolean;
+    getExternalErrors?: ValidationError[];
 };
 
 export const EmotionRecognitionCoreForm = ({
@@ -24,13 +27,28 @@ export const EmotionRecognitionCoreForm = ({
     parentNodeId,
     parentItemId,
     isDisabled,
+    getExternalErrors,
 }: Props) => {
     const handleDataUpdate = (updates: Partial<EmotionRecognitionData>) => {
         onChange({ ...data, ...updates });
     };
 
+    const localErrors = validateEmotionRecognitionNode(data);
+    const activeErrors = getExternalErrors || localErrors;
+
     return (
         <div className={styles.container}>
+            {activeErrors.length > 0 && !getExternalErrors && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    <strong>Validation Errors:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        {activeErrors.map((err, idx) => (
+                            <li key={idx}>[{err.path}]: {err.message}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <p className={styles.title}>
                 Riconoscimento Emozioni
             </p>

@@ -3,6 +3,8 @@
 import { SocialSituationsExerciseAItem } from '../types';
 import { ItemEditor } from './ItemEditor';
 import styles from './SocialSituationsExerciseACoreForm.module.css';
+import { validateSocialSituationsExerciseANode } from '../validate';
+import { ValidationError } from '@/types/ValidationError';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -18,9 +20,10 @@ export type SocialSituationsExerciseACoreFormProps = {
     items: SocialSituationsExerciseAItem[];
     onChange: (newItems: SocialSituationsExerciseAItem[]) => void;
     isDisabled?: boolean;
+    getExternalErrors?: ValidationError[];
 };
 
-export const SocialSituationsExerciseACoreForm = ({ items = [], onChange, isDisabled }: SocialSituationsExerciseACoreFormProps) => {
+export const SocialSituationsExerciseACoreForm = ({ items = [], onChange, isDisabled, getExternalErrors }: SocialSituationsExerciseACoreFormProps) => {
     const handleAddItem = () => {
         onChange([
             ...items,
@@ -41,8 +44,22 @@ export const SocialSituationsExerciseACoreForm = ({ items = [], onChange, isDisa
         onChange(items.filter((_, i) => i !== index));
     };
 
+    const localErrors = validateSocialSituationsExerciseANode({ items });
+    const activeErrors = getExternalErrors || localErrors;
+
     return (
         <div className={styles.container}>
+            {activeErrors.length > 0 && !getExternalErrors && (
+                <div style={{ padding: '0 0.5rem', marginBottom: '0.5rem', color: '#e53e3e', fontSize: '0.875rem' }}>
+                    <strong>Validation Errors:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        {activeErrors.map((err, idx) => (
+                            <li key={idx}>[{err.path}]: {err.message}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <div className={styles.headerFlex}>
                 <h3 className={styles.sectionTitle}>Quesiti</h3>
                 <button type="button" className={styles.addBtnPrimary} onClick={handleAddItem} disabled={isDisabled}>

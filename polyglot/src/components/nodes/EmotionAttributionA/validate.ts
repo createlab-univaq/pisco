@@ -5,7 +5,6 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateEmotionAttributionANode = (data: any): ValidationError[] => {
-    // spiegazioneS and spiegazioneR are optional/allowed to be empty strings by default[cite: 25, 28]
     const allowedEmpty = ['spiegazioneS', 'spiegazioneR'];
     const errors: ValidationError[] = validateGenericStrict('EmotionAttributionANode', data, allowedEmpty);
 

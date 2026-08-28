@@ -3,15 +3,15 @@ import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 
 export type SocialSituationsExerciseAAnswer = {
     text: string;
-    explanation: string; // Independent explanation for this specific answer option[cite: 28]
+    explanation: string;
 };
 
 export type SocialSituationsExerciseASection = {
     before: string;
     bold: string;
     after: string;
-    answers: SocialSituationsExerciseAAnswer[]; // Strictly holds 4 answers[cite: 22, 28]
-    correctIndex: number; // Single correct choice (0 to 3 index)[cite: 28]
+    answers: SocialSituationsExerciseAAnswer[];
+    correctIndex: number;
 };
 
 export type SocialSituationsExerciseAItem = {
