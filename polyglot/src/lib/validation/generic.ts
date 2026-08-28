@@ -1,32 +1,16 @@
-export type ValidationError = { label: string; path?: string; message: string };
-
-export const allowNullByType: Record<string, string[]> = {
-    // fauxPasNode: ['correctIndex'], // Add when you have type+shape defined
-};
-
-export const allowEmptyStringByType: Record<string, string[]> = {
-    // someNode: ['optionalTitle'],
-};
-
-export const allowEmptyArrayByType: Record<string, string[]> = {
-    // someNode: ['tags'],
-};
+import { ValidationError } from "@/types/ValidationError";
 
 export const validateGenericStrict = (
     type: string,
     data: any,
-    allowedEmptyFields: string[]
+    allowEmptyKeys: string[] = []
 ): ValidationError[] => {
     const errors: ValidationError[] = [];
-    if (!data) return [{ label: type, message: 'Missing data' }]; 
-
-    const allowNull = new Set(allowNullByType[type] ?? []); 
-    const allowEmptyStr = new Set(allowEmptyStringByType[type] ?? []); 
-    const allowEmptyArr = new Set(allowEmptyArrayByType[type] ?? []); 
+    if (!data) return [{ label: type, message: 'Missing data' }];
 
     for (const key in data) {
-        if (allowedEmptyFields.includes(key)) continue; 
-        if (type === 'ContainerNode' && key === 'sections') continue; 
+        if (allowEmptyKeys.includes(key)) continue;
+        if (type === 'ContainerNode' && key === 'sections') continue;
 
         const v = data[key];
 
@@ -37,40 +21,25 @@ export const validateGenericStrict = (
                 message: 'Missing field.',
             });
             continue;
-        } 
+        }
 
-        if (v === null) {
-            if (!allowNull.has(key)) {
-                errors.push({
-                    label: key,
-                    path: `data.${key}`,
-                    message: 'Cannot be null.',
-                });
-            }
+        if (typeof v === 'string' && v.trim() === '') {
+            errors.push({
+                label: key,
+                path: `data.${key}`,
+                message: 'Cannot be empty.',
+            });
             continue;
-        } 
+        }
 
-        if (typeof v === 'string') {
-            if (v.trim() === '' && !allowEmptyStr.has(key)) {
-                errors.push({
-                    label: key,
-                    path: `data.${key}`,
-                    message: 'Cannot be empty.',
-                });
-            }
+        if (Array.isArray(v) && v.length === 0) {
+            errors.push({
+                label: key,
+                path: `data.${key}`,
+                message: 'Empty list.',
+            });
             continue;
-        } 
-
-        if (Array.isArray(v)) {
-            if (v.length === 0 && !allowEmptyArr.has(key)) {
-                errors.push({
-                    label: key,
-                    path: `data.${key}`,
-                    message: 'Empty list.',
-                });
-            }
-            continue;
-        } 
+        }
     }
 
     return errors;

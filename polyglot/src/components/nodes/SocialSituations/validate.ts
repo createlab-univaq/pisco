@@ -1,4 +1,5 @@
-import type { ValidationError } from '../generic';
+import { validateGenericStrict } from '@/lib/validation/generic';
+import { ValidationError } from '@/types/ValidationError';
 
 const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
@@ -10,7 +11,8 @@ const isValidAnswer = (a: any) =>
     a && isNonEmptyString(a.text) && isFiniteNumber(a.score);
 
 export const validateSocialSituationsNode = (data: any): ValidationError[] => {
-    const errors: ValidationError[] = [];
+    const allowedEmpty: string[] = [];
+    const errors: ValidationError[] = validateGenericStrict('SocialSituationsNode', data, allowedEmpty);
 
     const items = data?.items;
     if (!Array.isArray(items) || items.length === 0) {
@@ -75,7 +77,6 @@ export const validateSocialSituationsNode = (data: any): ValidationError[] => {
                     message: 'correctIndexes must be an array.',
                 });
             } else {
-                // If you want to force at least one correct answer, keep this; otherwise remove it
                 if (correctIndexes.length === 0) {
                     errors.push({
                         label: 'correctIndexes',

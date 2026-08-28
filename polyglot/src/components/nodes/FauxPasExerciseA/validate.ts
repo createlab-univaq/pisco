@@ -1,10 +1,12 @@
-import type { ValidationError } from '../generic';
+import { validateGenericStrict } from '@/lib/validation/generic';
+import { ValidationError } from '@/types/ValidationError';
 
 const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
-export const validateFauxPasNode = (data: any): ValidationError[] => {
-    const errors: ValidationError[] = [];
+export const validateFauxPasExerciseANode = (data: any): ValidationError[] => {
+    const allowedEmpty: string[] = [];
+    const errors: ValidationError[] = validateGenericStrict('FauxPasExerciseANode', data, allowedEmpty);
 
     const quiz = data?.quiz;
     if (!Array.isArray(quiz) || quiz.length === 0) {
