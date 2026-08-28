@@ -2,7 +2,7 @@
 
 import QuestionImageUploadField from '@/components/forms/QuestionImageUploadField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
-import styles from './EmotionRecognitionNodeEmbedded.module.css';
+import styles from './EmotionRecognitionCoreForm.module.css';
 
 export type EmotionRecognitionData = {
     imageId?: string;
@@ -10,24 +10,23 @@ export type EmotionRecognitionData = {
     correctIndex: number;
 };
 
-type EmotionRecognitionNodeEmbeddedProps = {
+type Props = {
     data: EmotionRecognitionData;
-    onDataChange: (newData: EmotionRecognitionData) => void;
+    onChange: (newData: EmotionRecognitionData) => void;
     parentNodeId?: string;
     parentItemId?: string;
     isDisabled?: boolean;
 };
 
-const EmotionRecognitionNodeEmbedded = ({
+export const EmotionRecognitionCoreForm = ({
     data,
-    onDataChange,
+    onChange,
     parentNodeId,
     parentItemId,
     isDisabled,
-}: EmotionRecognitionNodeEmbeddedProps) => {
-
+}: Props) => {
     const handleDataUpdate = (updates: Partial<EmotionRecognitionData>) => {
-        onDataChange({ ...data, ...updates });
+        onChange({ ...data, ...updates });
     };
 
     return (
@@ -55,9 +54,8 @@ const EmotionRecognitionNodeEmbedded = ({
                 minAnswers={2}
                 defaultAnswers={['', '']}
                 allowNoCorrect={false}
+                isDisabled={isDisabled}
             />
         </div>
     );
 };
-
-export default EmotionRecognitionNodeEmbedded;

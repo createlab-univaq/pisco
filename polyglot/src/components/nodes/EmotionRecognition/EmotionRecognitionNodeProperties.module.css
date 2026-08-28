@@ -4,16 +4,6 @@
     width: 100%;
 }
 
-.hintContainer {
-    padding: 0.5rem 0.5rem 0 0.5rem;
-}
-
-.hintText {
-    font-size: 0.875rem;
-    color: #718096;
-    margin: 0;
-}
-
 .divider {
     border: 0;
     border-top: 1px solid #e2e8f0;

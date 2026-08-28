@@ -6,11 +6,10 @@ import emotion_icon from '@public/emotion_icon.png';
 import eyes_icon from '@public/eyes_icon.png';
 import people_icon from '@public/people_icon.png';
 
-// Import your embedded components 
-import EmotionAttributionAEmbedded from './EmotionAttributionANodeEmbedded/EmotionAttributionANodeEmbedded';
-import EmotionAttributionBEmbedded from './EmotionAttributionBEmbedded/EmotionAttributionBEmbedded';
-import EmotionRecognitionNodeEmbedded from './EmotionRecognitionNodeEmbedded/EmotionRecognitionNodeEmbedded';
-import SocialSituationExerciseANodeEmbedded from './SocialSituationsExerciseANodeEmbedded/SocialSituationsExerciseANodeEmbedded';
+import EmotionAttributionAEmbedded from '../../EmotionAttributionA/components/EmotionAttributionANodeEmbedded';
+import EmotionAttributionBEmbedded from '../../EmotionAttributionB/components/EmotionAttributionBEmbedded';
+import EmotionRecognitionNodeEmbedded from '../../EmotionRecognition/components/EmotionRecognitionNodeEmbedded';
+import SocialSituationExerciseANodeEmbedded from '../../SocialSituationsExerciseA/components/SocialSituationsExerciseANodeEmbedded';
 
 export type EmbeddedProps<T = any> = {
     data: T;
@@ -59,7 +58,7 @@ export const embeddedRegistry: EmbeddedDefinition[] = [
         }),
     },
     {
-        type: NODE_TYPE.EMOTION_RECOGNITION, // Assuming you defined this in NodeType
+        type: NODE_TYPE.EMOTION_RECOGNITION,
         label: 'Riconoscimento Emozioni',
         icon: eyes_icon.src,
         component: EmotionRecognitionNodeEmbedded,
@@ -70,7 +69,7 @@ export const embeddedRegistry: EmbeddedDefinition[] = [
         }),
     },
     {
-        type: NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A, // Assuming you defined this in NodeType
+        type: NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
         label: 'Situazione Sociale (A)',
         icon: people_icon.src,
         component: SocialSituationExerciseANodeEmbedded,

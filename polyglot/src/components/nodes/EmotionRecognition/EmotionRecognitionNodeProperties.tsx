@@ -4,7 +4,7 @@ import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMa
 import NodeProperties from '../NodeProperties';
 import { EmotionRecognitionNode } from './types';
 import styles from './EmotionRecognitionNodeProperties.module.css';
-import EmotionRecognitionNodeEmbedded from '@/components/embedded/EmotionRecognitionNodeEmbedded/EmotionRecognitionNodeEmbedded';
+import { EmotionRecognitionCoreForm } from './components/EmotionRecognitionCoreForm';
 import { useNodeSync } from '@/hooks/useNodeSync';
 
 const EmotionRecognitionNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
@@ -24,17 +24,11 @@ const EmotionRecognitionNodeProperties = ({ element, onUpdateElement }: Polyglot
                 activityDescription="Riconoscimento delle emozioni: osserva un'immagine e seleziona l'emozione corretta."
             />
 
-            <div className={styles.hintContainer}>
-                <p className={styles.hintText}>
-                    Suggerimento: carica un’immagine e inserisci le emozioni come possibili risposte, poi seleziona quella corretta.
-                </p>
-            </div>
-
             <hr className={styles.divider} />
 
-            <EmotionRecognitionNodeEmbedded
+            <EmotionRecognitionCoreForm
                 data={data}
-                onDataChange={handleDataChange}
+                onChange={handleDataChange}
                 parentNodeId={parentNodeId}
             />
         </div>

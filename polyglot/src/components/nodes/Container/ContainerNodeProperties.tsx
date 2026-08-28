@@ -5,7 +5,7 @@ import TextField from '@/components/forms/TextField';
 import { ContainerNode, ContainerSection, ContainerItem } from './types';
 import styles from './ContainerNodeProperties.module.css';
 import NodeProperties from '../NodeProperties';
-import { embeddedByType } from '@/components/embedded/EmbeddedRegistry';
+import { embeddedByType } from '@/components/nodes/Container/components/EmbeddedRegistry';
 import { useNodeSync } from '@/hooks/useNodeSync';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import { SectionBlock } from './components/SectionBlock';

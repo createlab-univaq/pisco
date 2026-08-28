@@ -3,7 +3,7 @@
 import styles from './EmotionAttributionANodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
-import EmotionAttributionAEmbedded from './components/EmotionAttributionAEmbedded';
+import { EmotionAttributionACoreForm } from './components/EmotionAttributionACoreForm';
 import { useNodeSync } from '@/hooks/useNodeSync';
 
 const EmotionAttributionANodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
@@ -22,17 +22,9 @@ const EmotionAttributionANodeProperties = ({ element, onUpdateElement }: Polyglo
                 onUpdateDescription={(val) => handleBaseChange({ description: val })}
             />
 
-            <div className={styles.hintBox}>
-                <p className={styles.hintText}>
-                    Suggerimento: usa <b>Scenario</b> per descrivere la situazione e{' '}
-                    <b>Domanda</b> per chiedere quale emozione/interpretazione è corretta.
-                    Inserisci poi una o più <b>risposte corrette</b>.
-                </p>
-            </div>
-
             <hr className={styles.divider} />
 
-            <EmotionAttributionAEmbedded
+            <EmotionAttributionACoreForm
                 data={data}
                 onChange={handleDataChange}
             />

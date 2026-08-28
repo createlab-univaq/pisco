@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { FilesAPI } from '@/data/api';
 import { CONTAINER_NODE_ALLOWED_TYPES, ContainerSection, ContainerItem, AllowedContainerNodeType } from '../types';
 import styles from './SectionBlock.module.css';
-import { embeddedByType } from '@/components/embedded/EmbeddedRegistry';
+import { embeddedByType } from '@/components/nodes/Container/components/EmbeddedRegistry';
 import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 const newId = () =>

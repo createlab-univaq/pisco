@@ -2,9 +2,8 @@
 
 import TextField from '@/components/forms/TextField';
 import StringArrayField from '@/components/forms/StringArrayField';
-import styles from './EmotionAttributionANodeEmbedded.module.css';
+import styles from './EmotionAttributionACoreForm.module.css';
 
-// We define the data shape locally for type safety, matching the registry default data
 export type EmotionAttributionAData = {
     scenario: string;
     domanda: string;
@@ -15,15 +14,13 @@ export type EmotionAttributionAData = {
 
 type Props = {
     data: EmotionAttributionAData;
-    onDataChange: (newData: EmotionAttributionAData) => void;
+    onChange: (newData: EmotionAttributionAData) => void;
     isDisabled?: boolean;
 };
 
-const EmotionAttributionAEmbedded = ({ data, onDataChange, isDisabled }: Props) => {
-
-    // Generic update handler for simple text fields
+export const EmotionAttributionACoreForm = ({ data = {} as EmotionAttributionAData, onChange, isDisabled }: Props) => {
     const handleChange = (field: keyof EmotionAttributionAData, value: any) => {
-        onDataChange({
+        onChange({
             ...data,
             [field]: value,
         });
@@ -84,5 +81,3 @@ const EmotionAttributionAEmbedded = ({ data, onDataChange, isDisabled }: Props) 
         </div>
     );
 };
-
-export default EmotionAttributionAEmbedded;
