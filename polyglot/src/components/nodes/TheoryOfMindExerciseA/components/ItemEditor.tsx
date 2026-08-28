@@ -5,16 +5,11 @@ import QuestionImageUploadField from '@/components/forms/QuestionImageUploadFiel
 import styles from './ItemEditor.module.css';
 import { TheoryOfMindExerciseAItem, TheoryOfMindExerciseAQuestion } from '../types';
 import { QuestionEditor } from './QuestionEditor';
+import { EditorCardWrapper, EditorCardDivider } from '@/components/layouts/EditorCardWrapper';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
     `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
 
 // Exported so the root node can use it when adding a new item
 export const createDefaultQuestions = (): TheoryOfMindExerciseAQuestion[] => [
@@ -41,20 +36,12 @@ export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove
     };
 
     return (
-        <div className={styles.storyCard}>
-            <div className={styles.cardHeader}>
-                <h4 className={styles.cardTitle}>Elemento Immagine #{index + 1}</h4>
-                <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={onRemove}
-                    disabled={isDeleting}
-                    aria-label="Rimuovi elemento"
-                >
-                    {isDeleting ? '...' : <CloseIcon />}
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Elemento Immagine #${index + 1}`}
+            onRemove={onRemove}
+            isDeleting={isDeleting}
+            removeLabel="Rimuovi elemento"
+        >
             {nodeId ? (
                 <QuestionImageUploadField
                     parentNodeId={nodeId}
@@ -66,7 +53,7 @@ export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove
                 <p className={styles.hintText}>Seleziona il nodo per caricare un’immagine.</p>
             )}
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <TextField
                 label="Didascalia (Caption)"
@@ -90,6 +77,6 @@ export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove
                     />
                 ))}
             </div>
-        </div>
+        </EditorCardWrapper>
     );
 };

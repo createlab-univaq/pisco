@@ -1,20 +1,8 @@
 'use client';
 
 import TextField from '@/components/forms/TextField';
-import styles from './ItemEditor.module.css';
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
-
-export type EmotionAttributionBItem = {
-    qid: string;
-    emotion: string;
-    scenario: string;
-    explanation: string;
-};
+import { EmotionAttributionBItem } from '../types'; // Adjust path if needed
+import { EditorCardWrapper, EditorCardDivider } from '@/components/layouts/EditorCardWrapper';
 
 export type ItemEditorProps = {
     item: EmotionAttributionBItem;
@@ -25,20 +13,11 @@ export type ItemEditorProps = {
 
 export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps) => {
     return (
-        <div className={styles.itemCard}>
-            <div className={styles.cardHeader}>
-                <span className={styles.cardTitle}>Elemento #{index + 1}</span>
-                <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={onRemove}
-                    aria-label="Rimuovi elemento"
-                    title="Rimuovi elemento"
-                >
-                    <CloseIcon />
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Elemento #${index + 1}`}
+            onRemove={onRemove}
+            removeLabel="Rimuovi elemento"
+        >
             <TextField
                 label="Emozione"
                 name={`items-${index}-emotion`}
@@ -54,7 +33,7 @@ export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps)
                 isTextArea
             />
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <TextField
                 label="Spiegazione dello scenario"
@@ -63,6 +42,6 @@ export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps)
                 onChange={(e) => onChange({ ...item, explanation: e.target.value })}
                 isTextArea
             />
-        </div>
+        </EditorCardWrapper>
     );
 };

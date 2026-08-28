@@ -3,16 +3,11 @@
 import styles from './ItemEditor.module.css';
 import { SocialSituationItem, SocialSituationSection } from '../types';
 import { SectionEditor } from './SectionEditor';
+import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 const AddIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-    </svg>
-);
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
 );
 
@@ -53,15 +48,11 @@ export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem }: ItemEdit
     };
 
     return (
-        <div className={styles.itemCard}>
-            <div className={styles.cardHeader}>
-                <h4 className={styles.itemTitle}>Quesito #{itemIndex + 1}</h4>
-                <button type="button" className={styles.removeBtnMedium} onClick={onRemoveItem}>
-                    <CloseIcon />
-                    <span>Rimuovi quesito</span>
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Quesito #${itemIndex + 1}`}
+            onRemove={onRemoveItem}
+            removeLabel="Rimuovi quesito"
+        >
             <div className={styles.subHeaderFlex}>
                 <h5 className={styles.cardTitle}>Sezioni</h5>
                 <button type="button" className={styles.addBtnSmall} onClick={handleAddSection}>
@@ -102,6 +93,6 @@ export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem }: ItemEdit
                     <span>Aggiungi sezione</span>
                 </button>
             )}
-        </div>
+        </EditorCardWrapper>
     );
 };

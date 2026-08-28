@@ -2,9 +2,10 @@ import { NODE_TYPE } from "@/types/polyglot-elements/NodeType";
 import { PolyglotNodeBase } from "@/types/polyglot-elements/PolyglotNodeBase";
 
 export type EmotionAttributionBItem = {
-    emotion: string;
-    scenario: string;
-    scenarioExplanation: string;
+    qid?: string;
+    emotion?: string;
+    scenario?: string;
+    explanation?: string;
 };
 
 export type EmotionAttributionBNodeData = {
