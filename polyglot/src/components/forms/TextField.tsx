@@ -7,6 +7,7 @@ export type TextFieldProps = {
     label: string;
     name: string;
     width?: string;
+    type?: string;
     isTextArea?: boolean;
     isReadOnly?: boolean;
     isDisabled?: boolean;
@@ -25,6 +26,7 @@ export type TextFieldProps = {
 const TextField = ({
     label,
     name,
+    type = 'text',
     isTextArea,
     isReadOnly,
     isDisabled,
@@ -63,6 +65,7 @@ const TextField = ({
                     />
                 ) : (
                     <input
+                        type={type}
                         id={name}
                         name={name}
                         value={value}
