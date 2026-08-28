@@ -2,7 +2,8 @@
 
 import TextField from '@/components/forms/TextField';
 import styles from './QuestionEditor.module.css';
-import { TheoryOfMindExerciseAQuestion } from '../types';
+import { TheoryOfMindExerciseAQuestion } from '../types'; // Adjust path if needed
+import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 export type QuestionEditorProps = {
     question: TheoryOfMindExerciseAQuestion;
@@ -12,9 +13,7 @@ export type QuestionEditorProps = {
 
 export const QuestionEditor = ({ question, index, onChange }: QuestionEditorProps) => {
     return (
-        <div className={styles.questionCard}>
-            <h5 className={styles.cardTitle}>Domanda #{index + 1}</h5>
-
+        <EditorCardWrapper title={`Domanda #${index + 1}`}>
             <TextField
                 label="Testo della domanda"
                 name={`q-${index}-text`}
@@ -55,6 +54,6 @@ export const QuestionEditor = ({ question, index, onChange }: QuestionEditorProp
                 onChange={(e) => onChange({ ...question, explanation: e.target.value })}
                 isTextArea
             />
-        </div>
+        </EditorCardWrapper>
     );
 };

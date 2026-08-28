@@ -2,12 +2,7 @@
 
 import TextField from '@/components/forms/TextField';
 import styles from './QuestionEditor.module.css';
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
+import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 export type QuestionEditorProps = {
     index: number;
@@ -19,15 +14,11 @@ export type QuestionEditorProps = {
 
 export const QuestionEditor = ({ index, questionText, isCorrect, onChange, onRemove }: QuestionEditorProps) => {
     return (
-        <div className={styles.questionCard}>
-            <div className={styles.cardHeader}>
-                <h5 className={styles.cardTitle}>Quesito #{index + 1}</h5>
-                <button type="button" className={styles.removeBtnSmall} onClick={onRemove}>
-                    <CloseIcon />
-                    <span>Rimuovi</span>
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Quesito #${index + 1}`}
+            onRemove={onRemove}
+            removeLabel="Rimuovi"
+        >
             <TextField
                 label="Testo della domanda"
                 name={`q-${index}-text`}
@@ -58,6 +49,6 @@ export const QuestionEditor = ({ index, questionText, isCorrect, onChange, onRem
                     </label>
                 </div>
             </div>
-        </div>
+        </EditorCardWrapper>
     );
 };

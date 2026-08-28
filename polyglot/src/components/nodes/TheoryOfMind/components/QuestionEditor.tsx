@@ -2,14 +2,8 @@
 
 import TextField from '@/components/forms/TextField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
-import styles from './QuestionEditor.module.css';
 import { TheoryOfMindQuestion } from '../types';
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
+import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 export type QuestionEditorProps = {
     question: TheoryOfMindQuestion;
@@ -20,15 +14,11 @@ export type QuestionEditorProps = {
 
 export const QuestionEditor = ({ question, index, onChange, onRemove }: QuestionEditorProps) => {
     return (
-        <div className={styles.questionCard}>
-            <div className={styles.cardHeader}>
-                <h5 className={styles.cardTitle}>Q{index + 1}</h5>
-                <button type="button" className={styles.removeBtnSmall} onClick={onRemove}>
-                    <CloseIcon />
-                    <span>Remove</span>
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Q${index + 1}`}
+            onRemove={onRemove}
+            removeLabel="Remove"
+        >
             <TextField
                 label="Question"
                 name={`q-${index}-text`}
@@ -46,6 +36,6 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 defaultAnswers={['Si', 'No']}
                 allowNoCorrect={false}
             />
-        </div>
+        </EditorCardWrapper>
     );
 };

@@ -3,13 +3,9 @@
 import TextField from '@/components/forms/TextField';
 import StringArrayField from '@/components/forms/StringArrayField';
 import styles from './QuestionEditor.module.css';
+import { EditorCardDivider, EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
-
+// Adjust this import path depending on where your types are stored
 export type EmotionAttributionAQuestion = {
     qid: string;
     scenario: string;
@@ -27,20 +23,11 @@ export type QuestionEditorProps = {
 
 export const QuestionEditor = ({ question, index, onChange, onRemove }: QuestionEditorProps) => {
     return (
-        <div className={styles.questionCard}>
-            <div className={styles.cardHeader}>
-                <span className={styles.cardTitle}>Quesito #{index + 1}</span>
-                <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={onRemove}
-                    aria-label="Rimuovi quesito"
-                    title="Rimuovi quesito"
-                >
-                    <CloseIcon />
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Quesito #${index + 1}`}
+            onRemove={onRemove}
+            removeLabel="Rimuovi quesito"
+        >
             <TextField
                 label="Scenario"
                 name={`questions-${index}-scenario`}
@@ -57,7 +44,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 isTextArea
             />
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <h4 className={styles.listHeading}>Risposte corrette</h4>
             <StringArrayField
@@ -69,7 +56,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 keepAtLeastOne
             />
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <TextField
                 label="Spiegazione"
@@ -78,6 +65,6 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 onChange={(e) => onChange({ ...question, explanation: e.target.value })}
                 isTextArea
             />
-        </div>
+        </EditorCardWrapper>
     );
 };

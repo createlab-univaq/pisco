@@ -2,14 +2,9 @@
 
 import TextField from '@/components/forms/TextField';
 import StringArrayField from '@/components/forms/StringArrayField';
-import styles from './QuestionEditor.module.css'; // <-- Importing decoupled CSS
-import { EmotionAttributionQuestion } from '..';
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
+import styles from './QuestionEditor.module.css';
+import { EmotionAttributionQuestion } from '../types'; // Adjust path if needed
+import { EditorCardDivider, EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 export type QuestionEditorProps = {
     question: EmotionAttributionQuestion;
@@ -20,20 +15,11 @@ export type QuestionEditorProps = {
 
 export const QuestionEditor = ({ question, index, onChange, onRemove }: QuestionEditorProps) => {
     return (
-        <div className={styles.questionCard}>
-            <div className={styles.cardHeader}>
-                <span className={styles.cardTitle}>Quesito {index + 1}</span>
-                <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={onRemove}
-                    aria-label="Rimuovi quesito"
-                    title="Rimuovi quesito"
-                >
-                    <CloseIcon />
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Quesito ${index + 1}`}
+            onRemove={onRemove}
+            removeLabel="Rimuovi quesito"
+        >
             <TextField
                 label="Narrazione"
                 name={`questions-${index}-narration`}
@@ -50,7 +36,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 isTextArea
             />
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <h4 className={styles.listHeading}>Risposte corrette (lista)</h4>
 
@@ -62,6 +48,6 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 defaultItemValue=""
                 keepAtLeastOne
             />
-        </div>
+        </EditorCardWrapper>
     );
 };

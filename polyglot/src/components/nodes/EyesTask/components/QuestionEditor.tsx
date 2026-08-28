@@ -4,12 +4,7 @@ import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersFiel
 import QuestionImageUploadField from '@/components/forms/QuestionImageUploadField';
 import styles from './QuestionEditor.module.css';
 import { EyesTaskQuestion } from '../types';
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
+import { EditorCardWrapper, EditorCardDivider } from '@/components/layouts/EditorCardWrapper';
 
 export type QuestionEditorProps = {
     question: EyesTaskQuestion;
@@ -22,22 +17,12 @@ export type QuestionEditorProps = {
 
 export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, onRemove }: QuestionEditorProps) => {
     return (
-        <div className={styles.questionCard}>
-            <div className={styles.cardHeader}>
-                <h4 className={styles.cardTitle}>Quesito #{index + 1}</h4>
-
-                <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={onRemove}
-                    disabled={isDeleting}
-                    aria-label="Rimuovi quesito"
-                    title="Rimuovi quesito"
-                >
-                    {isDeleting ? '...' : <CloseIcon />}
-                </button>
-            </div>
-
+        <EditorCardWrapper
+            title={`Quesito #${index + 1}`}
+            onRemove={onRemove}
+            isDeleting={isDeleting}
+            removeLabel="Rimuovi quesito"
+        >
             {nodeId ? (
                 <QuestionImageUploadField
                     parentNodeId={nodeId}
@@ -50,7 +35,7 @@ export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, 
                 </p>
             )}
 
-            <hr className={styles.innerDivider} />
+            <EditorCardDivider />
 
             <SingleSelectAnswersField
                 label="Risposte (seleziona quella corretta)"
@@ -61,6 +46,6 @@ export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, 
                 minAnswers={2}
                 allowNoCorrect={false}
             />
-        </div>
+        </EditorCardWrapper>
     );
 };
