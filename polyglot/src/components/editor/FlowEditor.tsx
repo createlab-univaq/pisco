@@ -7,6 +7,7 @@ import {
     useEffect,
     useMemo,
     useState,
+    useRef,
 } from 'react';
 import ReactFlow, {
     applyEdgeChanges,
@@ -41,6 +42,16 @@ import { edgeTypes, nodeTypes } from '../ElementMapping';
 import ContextualSidebar from '../menus/ContextualSidebar';
 import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/lib/factories/polyglotGenerators';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
+
+// ==========================================
+// CONFIGURABLE KEYBOARD SHORTCUTS
+// ==========================================
+const SHORTCUTS = {
+    // CTRL+Z or CMD+Z
+    isUndo: (e: KeyboardEvent) => (e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'z' || e.code === 'KeyZ') && !e.shiftKey,
+    // CTRL+Y or CMD+Y or CTRL+SHIFT+Z or CMD+SHIFT+Z
+    isRedo: (e: KeyboardEvent) => (e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || e.code === 'KeyY' || ((e.key.toLowerCase() === 'z' || e.code === 'KeyZ') && e.shiftKey)),
+};
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
@@ -86,6 +97,57 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         pos: { x: 0, y: 0 },
     });
 
+    // ==========================================
+    // UNDO / REDO HISTORY STACK
+    // ==========================================
+    const [past, setPast] = useState<{ nodes: PolyglotNode[]; edges: PolyglotEdge[] }[]>([]);
+    const [future, setFuture] = useState<{ nodes: PolyglotNode[]; edges: PolyglotEdge[] }[]>([]);
+
+    // Safely takes a snapshot of the current state BEFORE it gets mutated
+    const takeSnapshot = useCallback(() => {
+        setPast((p) => {
+            const last = p[p.length - 1];
+            // Prevent duplicate snapshots if state hasn't actually changed
+            if (last && last.nodes === polyglotNodes && last.edges === polyglotEdges) {
+                return p;
+            }
+            // Keep history to 50 steps to preserve memory
+            return [...p, { nodes: polyglotNodes, edges: polyglotEdges }].slice(-50);
+        });
+        setFuture([]); // Editing clears the redo future
+    }, [polyglotNodes, polyglotEdges]);
+
+    const undo = useCallback(() => {
+        if (past.length === 0) return;
+        const previous = past[past.length - 1];
+        setFuture((f) => [{ nodes: polyglotNodes, edges: polyglotEdges }, ...f]);
+        setPast((p) => p.slice(0, p.length - 1));
+        setPolyglotNodes(previous.nodes);
+        setPolyglotEdges(previous.edges);
+        setHasUnsavedChanges(true);
+    }, [past, polyglotNodes, polyglotEdges]);
+
+    const redo = useCallback(() => {
+        if (future.length === 0) return;
+        const next = future[0];
+        setPast((p) => [...p, { nodes: polyglotNodes, edges: polyglotEdges }]);
+        setFuture((f) => f.slice(1));
+        setPolyglotNodes(next.nodes);
+        setPolyglotEdges(next.edges);
+        setHasUnsavedChanges(true);
+    }, [future, polyglotNodes, polyglotEdges]);
+
+
+    // ==========================================
+    // KEYBOARD LISTENER (Copy, Paste, Undo, Redo)
+    // ==========================================
+
+    // 1. Keep a stable reference to the latest state/functions so the listener never has to unmount
+    const stateRef = useRef({ polyglotNodes, polyglotEdges, undo, redo, takeSnapshot });
+    useEffect(() => {
+        stateRef.current = { polyglotNodes, polyglotEdges, undo, redo, takeSnapshot };
+    }, [polyglotNodes, polyglotEdges, undo, redo, takeSnapshot]);
+
     useEffect(() => {
         const handleKeyDown = async (e: KeyboardEvent) => {
             if (
@@ -94,10 +156,27 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 (e.target as HTMLElement).isContentEditable
             ) return;
 
+            // Extract the freshest state from the ref
+            const { undo, redo, takeSnapshot, polyglotNodes, polyglotEdges } = stateRef.current;
+
+            // Trigger Undo
+            if (SHORTCUTS.isUndo(e)) {
+                e.preventDefault();
+                undo();
+                return;
+            }
+
+            // Trigger Redo
+            if (SHORTCUTS.isRedo(e)) {
+                e.preventDefault();
+                redo();
+                return;
+            }
+
             // ==========================================
             // COPY: CTRL+C or CMD+C
             // ==========================================
-            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+            if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'c' || e.code === 'KeyC')) {
                 const rfNodes = getNodes();
                 const rfEdges = getEdges();
 
@@ -130,6 +209,8 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
                     // Validate this is our specific JSON payload, not random text
                     if (parsed.type !== 'polyglot-flow') return;
+
+                    takeSnapshot(); // Snapshot BEFORE pasting!
 
                     resetSelectedElements();
                     const idMap = new Map<string, string>();
@@ -172,14 +253,15 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     setPolyglotEdges(prev => [...prev, ...newEdges]);
                     setHasUnsavedChanges(true);
                 } catch (err) {
-                    // Ignore errors (happens if the clipboard contains normal text instead of JSON)
+                    // Ignore errors if clipboard contains generic text
                 }
             }
         };
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [polyglotNodes, polyglotEdges, getNodes, getEdges, resetSelectedElements]);
+        // Attach listener ONCE with capture flag. The empty dependency array [] stops it from ever unmounting.
+        document.addEventListener('keydown', handleKeyDown, { capture: true });
+        return () => document.removeEventListener('keydown', handleKeyDown, { capture: true });
+    }, [getNodes, getEdges, resetSelectedElements]);
 
     const hideContextMenu = () => {
         setContextMenu((prev) => ({ ...prev, show: false }));
@@ -191,11 +273,14 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     }, [resetSelectedElements]);
 
     // ============================================================================
-    // REACT FLOW CHANGE HANDLERS (Keeps UI and Polyglot Data Synced)
+    // REACT FLOW CHANGE HANDLERS
     // ============================================================================
 
     const onNodesChange: OnNodesChange = (changes) => {
-        if (changes.some((c) => c.type === 'position' || c.type === 'remove' || c.type === 'add')) {
+        if (changes.some((c) => c.type === 'remove' || c.type === 'add')) {
+            takeSnapshot(); // Snapshot before addition or deletion
+            setHasUnsavedChanges(true);
+        } else if (changes.some((c) => c.type === 'position')) {
             setHasUnsavedChanges(true);
         }
 
@@ -219,6 +304,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
     const onEdgesChange: OnEdgesChange = (changes) => {
         if (changes.some((c) => c.type === 'remove' || c.type === 'add')) {
+            takeSnapshot(); // Snapshot before addition or deletion
             setHasUnsavedChanges(true);
         }
 
@@ -261,6 +347,8 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         const type = event.dataTransfer.getData('application/reactflow');
         if (!type) return;
 
+        takeSnapshot(); // Snapshot BEFORE dropping a new node
+
         const pos = screenToFlowPosition({
             x: event.clientX,
             y: event.clientY,
@@ -296,13 +384,13 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     const onConnect = useCallback((connection: Connection) => {
         if (!connection.source || !connection.target) return;
 
-        // Find the source node to check its type (e.g., Container, Faux Pas)
+        takeSnapshot(); // Snapshot BEFORE drawing a new connection
+
         const sourceNode = polyglotNodes.find(
             (n) => n._id === connection.source || n.reactFlow?.id === connection.source
         );
         const sourceType = sourceNode?.type || '';
 
-        // Utilize your centralized generator for smart edge typing and styling
         const newEdge = createNewDefaultPolyglotEdge(
             connection.source,
             sourceType,
@@ -311,7 +399,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
 
         setHasUnsavedChanges(true);
         setPolyglotEdges((prev) => [...prev, newEdge]);
-    }, [polyglotNodes]);
+    }, [polyglotNodes, takeSnapshot]);
 
     // ============================================================================
     // EVENT HANDLERS
@@ -423,12 +511,17 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 flow={getCleanFlow()}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
+                canUndo={past.length > 0}
+                canRedo={future.length > 0}
+                onUndo={undo}
+                onRedo={redo}
                 onUpdateFlowInfo={async (updates) => {
                     if (updates.title !== undefined) setFlowTitle(updates.title);
                     if (updates.publish !== undefined) setFlowPublish(updates.publish);
                     await handleSave(updates);
                 }}
                 onApplyLocalFlow={(updates) => {
+                    takeSnapshot(); // Snapshot BEFORE editing via "View Code"
                     if (updates.title !== undefined) setFlowTitle(updates.title);
                     if (updates.publish !== undefined) setFlowPublish(updates.publish);
                     if (updates.nodes !== undefined) setPolyglotNodes(updates.nodes);
@@ -445,6 +538,9 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     onNodesDelete={onNodesDelete}
                     onNodeContextMenu={onNodeContextMenu}
                     onNodeDoubleClick={onOpenPanel}
+
+                    // Crucial: Snapshot the initial location before the user finishes dragging
+                    onNodeDragStart={() => takeSnapshot()}
 
                     edges={polyglotEdges.filter((e) => e.reactFlow !== undefined).map((e) => e.reactFlow!)}
                     edgeTypes={edgeTypes}
@@ -495,6 +591,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                     elementId={activeElement?._id}
                     onDismiss={hideContextMenu}
                     onRemoveElement={(type, id) => {
+                        takeSnapshot(); // Snapshot BEFORE deleting via context menu
                         setHasUnsavedChanges(true);
                         if (type === 'Node') {
                             setPolyglotNodes((prev) => prev.filter(n => n._id !== id));
@@ -507,6 +604,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 <ContextualSidebar
                     selectedElement={activeElement}
                     onUpdateElement={(updatedElement: any) => {
+                        takeSnapshot(); // Snapshot BEFORE updating data via sidebar
                         setHasUnsavedChanges(true);
                         if (selectedElement?.type === 'Node') {
                             setPolyglotNodes(prev => prev.map(n => {
