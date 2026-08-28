@@ -39,7 +39,7 @@ import { PolyglotEdge } from '@/types/PolyglotEdge';
 import EditorNav from '../navbars/EditorNav';
 import { edgeTypes, nodeTypes } from '../ElementMapping'; // <-- Imported directly
 import ContextualSidebar from '../menus/ContextualSidebar';
-import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/utils/polyglotGenerators';
+import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/lib/factories/polyglotGenerators';
 
 type FlowEditorProps = {
     mode: 'read' | 'write';

@@ -6,7 +6,7 @@ import styles from './ElementProperties.module.css';
 import { PolyglotNode } from '@/types/PolyglotNode';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '../ElementMapping';
-import { useHasHydrated } from '@/utils/useClientUtils';
+import { useHasHydrated } from '@/hooks/useHasHydrated';
 
 export type ElementPropertiesProps = {
     selectedElement: PolyglotNode | PolyglotEdge;

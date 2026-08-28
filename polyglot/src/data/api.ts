@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { PolyglotFlow } from '@/types/PolyglotFlow';
 import { PolyglotFlowInfo } from '@/types/PolyglotFlowInfo';
 import { polyglotEdgeComponentMapping, polyglotNodeComponentMapping } from '@/components/ElementMapping';
-import { createNewDefaultPolyglotFlow } from '@/utils/polyglotGenerators';
+import { createNewDefaultPolyglotFlow } from '@/lib/factories/polyglotGenerators';
 
 // --- MOCK CONFIGURATION ---
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
