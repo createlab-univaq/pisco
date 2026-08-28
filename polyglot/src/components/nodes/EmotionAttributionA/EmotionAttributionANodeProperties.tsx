@@ -3,15 +3,10 @@
 import styles from './EmotionAttributionANodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
-import EmotionAttributionAEmbedded from './EmotionAttributionAEmbedded';
+import EmotionAttributionAEmbedded from './components/EmotionAttributionAEmbedded';
 import { useNodeSync } from '@/hooks/useNodeSync';
 
-// NOTE: Import your specific node type here once it is defined in your types.ts file
-// import { EmotionAttributionANode } from './types'; 
-
 const EmotionAttributionANodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
-    // 1. Cast the generic PolyglotNode to your specific Node type
-    // Replace 'any' with 'EmotionAttributionANode' once your type file is created
     const node = element as any;
     const data = node.data;
 
@@ -37,11 +32,6 @@ const EmotionAttributionANodeProperties = ({ element, onUpdateElement }: Polyglo
 
             <hr className={styles.divider} />
 
-            {/* 
-                Since you no longer use react-hook-form or a global store, 
-                you must pass the 'data' and the 'onChange' handler down 
-                to your embedded component so it can update the node's state.
-            */}
             <EmotionAttributionAEmbedded
                 data={data}
                 onChange={handleDataChange}

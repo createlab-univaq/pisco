@@ -1,17 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import styles from './TrueFalseNodeProperties.module.css';
 import TextField from '@/components/forms/TextField';
 import { TrueFalseNode } from './types';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
-import TrueFalseArrayField from './TrueFalseArrayField';
+import TrueFalseArrayField from './components/TrueFalseArrayField';
 import { useNodeSync } from '@/hooks/useNodeSync';
 
 const TrueFalseNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
-    const [isOpenAITool, setIsOpenAITool] = useState(false);
-    const [generatingLoading, setGeneratingLoading] = useState(false);
 
     const node = element as TrueFalseNode;
     const data = node.data;
@@ -19,16 +16,10 @@ const TrueFalseNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
     // Golden standard: using the shared hook instead of rewriting sync logic
     const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
-    const handleOpenAITool = () => {
-        setGeneratingLoading(true);
-        setIsOpenAITool(true);
-        setTimeout(() => setGeneratingLoading(false), 2000);
-    };
-
     return (
         <div className={styles.container}>
             <NodeProperties
-                
+
                 activityDescription="In this activity learners will have to provide answers to true and false questions"
                 title={node.title}
                 description={node.description}
@@ -60,25 +51,18 @@ const TrueFalseNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
             </div>
 
             <div className={styles.questionsContainer}>
-                {generatingLoading ? (
-                    <div className={styles.skeletonBox}>
-                        <div className={styles.skeletonLine}></div>
-                        <div className={styles.skeletonLine}></div>
-                    </div>
-                ) : (
-                    <TrueFalseArrayField
-                        label="Questions"
-                        optionLabel="Question"
-                        questions={data?.questions || []}
-                        isCorrect={data?.isQuestionCorrect || []}
-                        onChange={(updatedQuestions, updatedIsCorrect) => {
-                            handleDataChange({
-                                questions: updatedQuestions,
-                                isQuestionCorrect: updatedIsCorrect,
-                            });
-                        }}
-                    />
-                )}
+                <TrueFalseArrayField
+                    label="Questions"
+                    optionLabel="Question"
+                    questions={data?.questions || []}
+                    isCorrect={data?.isQuestionCorrect || []}
+                    onChange={(updatedQuestions, updatedIsCorrect) => {
+                        handleDataChange({
+                            questions: updatedQuestions,
+                            isQuestionCorrect: updatedIsCorrect,
+                        });
+                    }}
+                />
             </div>
         </div>
     );

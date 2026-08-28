@@ -1,29 +1,20 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import TextField from '@/components/forms/TextField';
-import StringArrayField from '@/components/forms/StringArrayField'; // Assuming this was refactored in a previous step
 import styles from './EmotionAttributionNodeProperties.module.css';
 import { EmotionAttributionNode, EmotionAttributionQuestion } from './types';
 import NodeProperties from '../NodeProperties';
 import { useNodeSync } from '@/hooks/useNodeSync';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
+import { QuestionEditor } from '@/components/nodes/EmotionAttribution/components/QuestionEditor';
 
-// Genera un id (preferibilmente UUID se disponibile)
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
     `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
-// Reusable SVGs replacing Chakra Icons
 const AddIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-    </svg>
-);
-
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
 );
 
@@ -34,21 +25,15 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
 
     const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
-    /**
-     * Migrazione retro-compat (legacy):
-     * Ensures old data formats (like data.tests or correctAnswer) are safely
-     * migrated to the new schema upon mount.
-     */
     useEffect(() => {
         if (hasMigrated.current) return;
 
         let needsUpdate = false;
         const newData = { ...data } as any;
 
-        // Caso legacy: non ho questions, ma ho tests -> migro
+        // 1. Legacy migration from 'tests' to 'questions'
         if ((!newData.questions || !Array.isArray(newData.questions)) && Array.isArray(newData.tests) && newData.tests.length > 0) {
             const first = newData.tests[0];
-
             newData.minCorrectToPass = typeof first?.minCorrectToPass === 'number' ? first.minCorrectToPass : 0;
             newData.questions = (first?.questions ?? []).map((q: any) => ({
                 qid: q.qid ?? newId('q'),
@@ -56,12 +41,11 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
                 question: q.question ?? '',
                 correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers : [q.correctAnswer ?? ''],
             }));
-
-            delete newData.tests; // Rimuovo il legacy container
+            delete newData.tests;
             needsUpdate = true;
         }
 
-        // Normalizzo eventuale legacy correctAnswer dentro questions
+        // 2. Normalize existing questions structure
         if (Array.isArray(newData.questions)) {
             let questionsChanged = false;
             const normalized = newData.questions.map((q: any) => {
@@ -86,15 +70,9 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
             }
         }
 
-        // Default minCorrectToPass se mancante
+        // 3. Default numeric fields if missing
         if (newData.minCorrectToPass == null) {
             newData.minCorrectToPass = 0;
-            needsUpdate = true;
-        }
-
-        // Default questions se mancante
-        if (!newData.questions || newData.questions.length === 0) {
-            newData.questions = [{ qid: newId('q'), narration: '', question: '', correctAnswers: [''] }];
             needsUpdate = true;
         }
 
@@ -103,10 +81,8 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
         }
 
         hasMigrated.current = true;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data]);
+    }, [data, handleDataChange]);
 
-    // Array manipulation handlers
     const questions = data.questions || [];
 
     const handleAddQuestion = () => {
@@ -124,12 +100,9 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
         });
     };
 
-    const handleUpdateQuestion = (index: number, field: keyof EmotionAttributionQuestion, value: any) => {
+    const handleUpdateQuestion = (index: number, updatedQuestion: EmotionAttributionQuestion) => {
         const updatedQuestions = [...questions];
-        updatedQuestions[index] = {
-            ...updatedQuestions[index],
-            [field]: value,
-        };
+        updatedQuestions[index] = updatedQuestion;
         handleDataChange({ questions: updatedQuestions });
     };
 
@@ -144,6 +117,7 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
 
             <hr className={styles.divider} />
 
+            {/* Top Action Button */}
             <div className={styles.headerFlex}>
                 <h3 className={styles.sectionTitle}>Quesiti</h3>
                 <button type="button" className={styles.addBtn} onClick={handleAddQuestion}>
@@ -152,57 +126,41 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
                 </button>
             </div>
 
+            {/* Empty State Feedback */}
+            {questions.length === 0 && (
+                <div className={styles.emptyState}>
+                    <p className={styles.emptyText}>
+                        Nessun quesito ancora. Clicca <b>Aggiungi Quesito</b> per iniziare.
+                    </p>
+                </div>
+            )}
+
             <div className={styles.questionsList}>
                 {questions.map((q, qIndex) => (
-                    <div key={q.qid || qIndex} className={styles.questionCard}>
-
-                        <div className={styles.cardHeader}>
-                            <span className={styles.cardTitle}>Quesito {qIndex + 1}</span>
-                            <button
-                                type="button"
-                                className={styles.removeBtn}
-                                onClick={() => handleRemoveQuestion(qIndex)}
-                                aria-label="Rimuovi quesito"
-                                title="Rimuovi quesito"
-                            >
-                                <CloseIcon />
-                            </button>
-                        </div>
-
-                        {/* Campi del quesito */}
-                        <TextField
-                            label="Narrazione"
-                            name={`questions-${qIndex}-narration`}
-                            value={q.narration || ''}
-                            onChange={(e) => handleUpdateQuestion(qIndex, 'narration', e.target.value)}
-                            isTextArea
-                        />
-
-                        <TextField
-                            label="Domanda"
-                            name={`questions-${qIndex}-question`}
-                            value={q.question || ''}
-                            onChange={(e) => handleUpdateQuestion(qIndex, 'question', e.target.value)}
-                            isTextArea
-                        />
-
-                        <hr className={styles.innerDivider} />
-
-                        <h4 className={styles.listHeading}>Risposte corrette (lista)</h4>
-
-                        {/* Campo generico: array di stringhe */}
-                        <StringArrayField
-                            values={q.correctAnswers || []}
-                            onChange={(updatedAnswers) => handleUpdateQuestion(qIndex, 'correctAnswers', updatedAnswers)}
-                            itemLabel="Risposta corretta"
-                            addLabel="Aggiungi risposta corretta"
-                            defaultItemValue=""
-                            keepAtLeastOne
-                        />
-
-                    </div>
+                    <QuestionEditor
+                        key={q.qid || qIndex}
+                        question={q}
+                        index={qIndex}
+                        onChange={(updated) => handleUpdateQuestion(qIndex, updated)}
+                        onRemove={() => handleRemoveQuestion(qIndex)}
+                    />
                 ))}
             </div>
+
+            {/* Bottom Action Button (Dual-Placement Standard) */}
+            {questions.length > 0 && (
+                <div style={{ marginTop: '1rem', padding: '0 0.5rem' }}>
+                    <button
+                        type="button"
+                        className={styles.addBtn}
+                        onClick={handleAddQuestion}
+                        style={{ width: '100%', justifyContent: 'center' }}
+                    >
+                        <AddIcon />
+                        <span>Aggiungi Quesito</span>
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

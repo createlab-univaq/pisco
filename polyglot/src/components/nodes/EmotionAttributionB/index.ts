@@ -14,12 +14,6 @@ export const emotionAttributionBNodeConfig = {
     elementComponent: ReactFlowEmotionAttributionBNode,
     defaultData: {
         nodeData: {},
-        items: [
-            {
-                emotion: '',
-                scenario: '',
-                scenarioExplanation: '',
-            },
-        ],
+        items: [],
     },
 };

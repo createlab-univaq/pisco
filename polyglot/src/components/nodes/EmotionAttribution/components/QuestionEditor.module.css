@@ -1,0 +1,63 @@
+.questionCard {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cardTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2d3748;
+}
+
+.removeBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fee2e2;
+    color: #e53e3e;
+    border: none;
+    border-radius: 0.375rem;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.removeBtn:hover:not(:disabled) {
+    background-color: #fecaca;
+}
+
+.removeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.innerDivider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 1rem 0;
+}
+
+.listHeading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #4a5568;
+}
+
+.icon {
+    width: 14px;
+    height: 14px;
+}

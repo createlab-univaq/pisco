@@ -10,12 +10,6 @@
     margin: 1rem 0;
 }
 
-.innerDivider {
-    border: 0;
-    border-top: 1px solid #e2e8f0;
-    margin: 1rem 0;
-}
-
 .headerFlex {
     display: flex;
     justify-content: space-between;
@@ -25,7 +19,6 @@
 
 .sectionTitle {
     font-size: 0.875rem;
-    /* size="sm" equivalent */
     font-weight: 700;
     margin: 0;
     color: #1a202c;
@@ -40,7 +33,6 @@
     border: none;
     border-radius: 0.375rem;
     padding: 0.375rem 0.75rem;
-    /* size="sm" equivalent */
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -49,6 +41,12 @@
 
 .addBtn:hover {
     background-color: #e2e8f0;
+}
+
+.fullWidthBtn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 .emptyState {
@@ -64,68 +62,13 @@
     font-size: 0.875rem;
     margin: 0;
     color: #4a5568;
+    text-align: center;
 }
 
 .questionsList {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-.questionCard {
-    border: 1px solid #e2e8f0;
-    border-radius: 0.375rem;
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-}
-
-.cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.cardTitle {
-    font-size: 0.75rem;
-    /* size="xs" equivalent */
-    font-weight: 700;
-    margin: 0;
-    color: #2d3748;
-}
-
-.removeBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fee2e2;
-    color: #e53e3e;
-    border: none;
-    border-radius: 0.375rem;
-    width: 24px;
-    /* size="xs" equivalent */
-    height: 24px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.removeBtn:hover:not(:disabled) {
-    background-color: #fecaca;
-}
-
-.removeBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.hintText {
-    font-size: 0.75rem;
-    opacity: 0.6;
-    margin-top: 0.5rem;
-    margin-bottom: 0;
-    color: #1a202c;
 }
 
 .icon {

@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import TextField from '@/components/forms/TextField';
-import QuestionImageUploadField from '@/components/forms/QuestionImageUploadField';
 import styles from './TheoryOfMindExerciseANodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
-import { TheoryOfMindExerciseANode, TheoryOfMindExerciseAItem, TheoryOfMindExerciseAQuestion } from './types';
+import { TheoryOfMindExerciseANode, TheoryOfMindExerciseAItem } from './types';
 import { useNodeSync } from '@/hooks/useNodeSync';
 import { FilesAPI } from '@/data/api';
+import { ItemEditor, createDefaultQuestions } from './components/ItemEditor';
 
 const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
@@ -19,147 +18,7 @@ const AddIcon = () => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
     </svg>
 );
-const CloseIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
 
-const createDefaultQuestions = (): TheoryOfMindExerciseAQuestion[] => [
-    { qid: newId('q'), question: '', answers: ['Si', 'No'], correctIndex: 0, explanation: '' },
-    { qid: newId('q'), question: '', answers: ['Si', 'No'], correctIndex: 0, explanation: '' },
-];
-
-/* ---------------- Question Editor (Fixed Yes/No) ---------------- */
-type QuestionEditorProps = {
-    question: TheoryOfMindExerciseAQuestion;
-    index: number;
-    onChange: (updated: TheoryOfMindExerciseAQuestion) => void;
-};
-
-const QuestionEditor = ({ question, index, onChange }: QuestionEditorProps) => {
-    return (
-        <div className={styles.questionCard}>
-            <h5 className={styles.cardTitle}>Domanda #{index + 1}</h5>
-
-            <TextField
-                label="Testo della domanda"
-                name={`q-${index}-text`}
-                value={question.question || ''}
-                onChange={(e) => onChange({ ...question, question: e.target.value })}
-            />
-
-            <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                <label className={styles.sectionTitle} style={{ display: 'block', marginBottom: '6px' }}>
-                    Risposta Corretta (Sì / No)
-                </label>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.875rem' }}>
-                        <input
-                            type="radio"
-                            name={`correct-ans-${index}-${question.qid}`}
-                            checked={question.correctIndex === 0}
-                            onChange={() => onChange({ ...question, correctIndex: 0 })}
-                        />
-                        Sì
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.875rem' }}>
-                        <input
-                            type="radio"
-                            name={`correct-ans-${index}-${question.qid}`}
-                            checked={question.correctIndex === 1}
-                            onChange={() => onChange({ ...question, correctIndex: 1 })}
-                        />
-                        No
-                    </label>
-                </div>
-            </div>
-
-            <TextField
-                label="Spiegazione"
-                name={`q-${index}-explanation`}
-                value={question.explanation || ''}
-                onChange={(e) => onChange({ ...question, explanation: e.target.value })}
-                isTextArea
-            />
-        </div>
-    );
-};
-
-/* ---------------- Item / Story Editor ---------------- */
-type ItemEditorProps = {
-    item: TheoryOfMindExerciseAItem;
-    index: number;
-    nodeId: string;
-    isDeleting: boolean;
-    onChange: (updatedItem: TheoryOfMindExerciseAItem) => void;
-    onRemove: () => void;
-};
-
-const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove }: ItemEditorProps) => {
-    const questions = item.questions?.length === 2 ? item.questions : createDefaultQuestions();
-
-    const handleUpdateQuestion = (qIndex: number, updatedQuestion: TheoryOfMindExerciseAQuestion) => {
-        const newQuestions = [...questions] as [TheoryOfMindExerciseAQuestion, TheoryOfMindExerciseAQuestion];
-        newQuestions[qIndex] = updatedQuestion;
-        onChange({ ...item, questions: newQuestions });
-    };
-
-    return (
-        <div className={styles.storyCard}>
-            <div className={styles.cardHeader}>
-                <h4 className={styles.cardTitle}>Elemento Immagine #{index + 1}</h4>
-                <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={onRemove}
-                    disabled={isDeleting}
-                    aria-label="Rimuovi elemento"
-                >
-                    {isDeleting ? '...' : <CloseIcon />}
-                </button>
-            </div>
-
-            {nodeId ? (
-                <QuestionImageUploadField
-                    parentNodeId={nodeId}
-                    parentItemId={item.qid}
-                    imageId={item.imageId}
-                    onImageIdChange={(newId: string | undefined) => onChange({ ...item, imageId: newId })}
-                />
-            ) : (
-                <p className={styles.hintText}>Seleziona il nodo per caricare un’immagine.</p>
-            )}
-
-            <hr className={styles.innerDivider} />
-
-            <TextField
-                label="Didascalia (Caption)"
-                name={`item-${index}-caption`}
-                value={item.caption || ''}
-                onChange={(e) => onChange({ ...item, caption: e.target.value })}
-                isTextArea
-            />
-
-            <div className={styles.subHeaderFlex}>
-                <h5 className={styles.subTitle}>Domande (Fisse: 2)</h5>
-            </div>
-
-            <div className={styles.questionsList}>
-                {questions.map((q, i) => (
-                    <QuestionEditor
-                        key={q.qid || i}
-                        question={q}
-                        index={i}
-                        onChange={(updated) => handleUpdateQuestion(i, updated)}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-};
-
-/* ---------------- Root Component ---------------- */
 const TheoryOfMindExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
     const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
 
@@ -233,6 +92,7 @@ const TheoryOfMindExerciseANodeProperties = ({ element, onUpdateElement }: Polyg
                 </button>
             </div>
 
+            {/* Root Empty State Feedback */}
             {quizItems.length === 0 && (
                 <div className={styles.emptyState}>
                     <p className={styles.emptyText}>
@@ -254,6 +114,18 @@ const TheoryOfMindExerciseANodeProperties = ({ element, onUpdateElement }: Polyg
                     />
                 ))}
             </div>
+
+            {/* Root Bottom Action Button (Dual-Placement Standard) */}
+            {quizItems.length > 0 && (
+                <button
+                    type="button"
+                    className={`${styles.addBtn} ${styles.fullWidthBtn}`}
+                    onClick={handleAddItem}
+                >
+                    <AddIcon />
+                    <span>Aggiungi elemento</span>
+                </button>
+            )}
         </div>
     );
 };

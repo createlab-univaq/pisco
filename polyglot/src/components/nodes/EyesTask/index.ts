@@ -15,18 +15,12 @@ export const eyesTaskNodeConfig = {
     name: 'Eyes Task',
     icon: icon.src,
     group: 'remember_assessment',
-    
+
     propertiesComponent: EyesTaskNodeProperties,
     elementComponent: ReactFlowEyesTaskNode,
     defaultData: {
         nodeData: {},
         minCorrectToPass: 0, // default
-        questions: [
-            {
-                qid: newId('q'),
-                answers: ['', '', '', ''],
-                correctIndex: 0,
-            },
-        ],
+        questions: [],
     },
 };

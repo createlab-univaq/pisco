@@ -8,14 +8,6 @@
     border: 0;
     border-top: 1px solid #e2e8f0;
     margin: 1rem 0;
-    /* my={4} equivalent */
-}
-
-.innerDivider {
-    border: 0;
-    border-top: 1px solid #e2e8f0;
-    margin: 0.75rem 0;
-    /* my={3} equivalent */
 }
 
 .headerFlex {
@@ -23,18 +15,15 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
-    /* mb={2} equivalent */
 }
 
 .sectionTitle {
     font-size: 0.875rem;
-    /* size="sm" equivalent */
     font-weight: 700;
     margin: 0;
     color: #1a202c;
 }
 
-/* Add Button mimicking Chakra UI default behavior */
 .addBtn {
     display: inline-flex;
     align-items: center;
@@ -43,7 +32,7 @@
     color: #1a202c;
     border: none;
     border-radius: 0.375rem;
-    padding: 0.5rem 1rem;
+    padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -54,71 +43,29 @@
     background-color: #e2e8f0;
 }
 
+.emptyState {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    opacity: 0.85;
+    background-color: #f8fafc;
+    margin-bottom: 1rem;
+}
+
+.emptyText {
+    font-size: 0.875rem;
+    margin: 0;
+    color: #4a5568;
+    text-align: center;
+}
+
 .questionsList {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    /* Spacing between cards (mb={4} equivalent) */
-}
-
-/* Question Card */
-.questionCard {
-    border: 1px solid #e2e8f0;
-    /* borderWidth="1px" */
-    border-radius: 0.375rem;
-    /* borderRadius="md" */
-    padding: 0.75rem;
-    /* p={3} */
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    /* Inner spacing between fields */
-    background-color: #ffffff;
-}
-
-.cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.cardTitle {
-    font-weight: 700;
-    /* fontWeight="bold" */
-    font-size: 1rem;
-    color: #2d3748;
-}
-
-/* Remove Button mimicking Chakra UI's colorScheme="red" IconButton */
-.removeBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fee2e2;
-    color: #e53e3e;
-    border: none;
-    border-radius: 0.375rem;
-    width: 32px;
-    /* size="sm" equivalent */
-    height: 32px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.removeBtn:hover {
-    background-color: #fecaca;
-}
-
-.listHeading {
-    font-size: 0.75rem;
-    /* size="xs" equivalent */
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    /* mb={2} equivalent */
-    color: #4a5568;
 }
 
 .icon {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
 }

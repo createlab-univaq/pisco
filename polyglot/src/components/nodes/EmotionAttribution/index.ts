@@ -19,13 +19,6 @@ export const emotionAttributionNodeConfig = {
     elementComponent: ReactFlowEmotionAttributionNode,
     defaultData: {
         nodeData: {},
-        questions: [
-            {
-                qid: newId('q'),
-                narration: '',
-                question: '',
-                correctAnswers: [''],
-            },
-        ],
+        questions: [],
     },
 };

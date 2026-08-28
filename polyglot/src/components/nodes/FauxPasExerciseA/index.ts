@@ -7,7 +7,7 @@ export { FauxPasExerciseANodeProperties, ReactFlowFauxPasExerciseANode };
 
 export const fauxPasExerciseANodeConfig = {
     elementType: 'FauxPasExerciseANode',
-    name: 'Faux Pas Exercise A',
+    name: 'Faux Pas Exercise (A)',
     icon: icon.src,
     group: 'remember_assessment',
 

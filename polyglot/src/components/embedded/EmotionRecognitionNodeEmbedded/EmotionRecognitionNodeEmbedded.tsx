@@ -10,7 +10,7 @@ export type EmotionRecognitionData = {
     correctIndex: number;
 };
 
-type Props = {
+type EmotionRecognitionNodeEmbeddedProps = {
     data: EmotionRecognitionData;
     onDataChange: (newData: EmotionRecognitionData) => void;
     parentNodeId?: string;
@@ -24,9 +24,8 @@ const EmotionRecognitionNodeEmbedded = ({
     parentNodeId,
     parentItemId,
     isDisabled,
-}: Props) => {
+}: EmotionRecognitionNodeEmbeddedProps) => {
 
-    // Generic update handler
     const handleDataUpdate = (updates: Partial<EmotionRecognitionData>) => {
         onDataChange({ ...data, ...updates });
     };
@@ -34,10 +33,9 @@ const EmotionRecognitionNodeEmbedded = ({
     return (
         <div className={styles.container}>
             <p className={styles.title}>
-                Riconoscimento emozioni
+                Riconoscimento Emozioni
             </p>
 
-            {/* Assumes QuestionImageUploadField is refactored to take imageId & onImageIdChange */}
             <QuestionImageUploadField
                 parentNodeId={parentNodeId}
                 parentItemId={parentItemId}
@@ -48,7 +46,6 @@ const EmotionRecognitionNodeEmbedded = ({
 
             <hr className={styles.divider} />
 
-            {/* Matches the exact controlled API we built earlier for SingleSelectAnswersField */}
             <SingleSelectAnswersField
                 label="Seleziona la risposta corretta"
                 answers={data.answers || ['', '']}

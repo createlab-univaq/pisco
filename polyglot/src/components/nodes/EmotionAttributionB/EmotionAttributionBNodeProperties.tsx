@@ -4,11 +4,10 @@ import styles from './EmotionAttributionBNodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMappingTypes';
 import { EmotionAttributionBNode } from './types';
 import NodeProperties from '../NodeProperties';
-import EmotionAttributionBEmbedded from './EmotionAttributionBEmbedded';
+import EmotionAttributionBEmbedded from './components/EmotionAttributionBEmbedded';
 import { useNodeSync } from '@/hooks/useNodeSync';
 
 const EmotionAttributionBNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
-    // 1. Cast the generic PolyglotNode to your specific EmotionAttributionBNode
     const node = element as EmotionAttributionBNode;
     const data = node.data;
 
@@ -24,11 +23,9 @@ const EmotionAttributionBNodeProperties = ({ element, onUpdateElement }: Polyglo
                 onUpdateDescription={(val) => handleBaseChange({ description: val })}
             />
 
+            <hr className={styles.divider} />
+
             <div className={styles.embeddedContainer}>
-                {/* 
-                    The child component no longer relies on react-hook-form's 'basePath'.
-                    It now receives its state directly and reports changes back up.
-                */}
                 <EmotionAttributionBEmbedded
                     data={data}
                     onChange={handleDataChange}

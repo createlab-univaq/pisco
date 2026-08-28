@@ -4,7 +4,7 @@ import { PolyglotNodePropertiesProps } from '@/types/polyglot-elements/ElementMa
 import NodeProperties from '../NodeProperties';
 import { EmotionRecognitionNode } from './types';
 import styles from './EmotionRecognitionNodeProperties.module.css';
-import EmotionRecognitionNodeEmbedded, { EmotionRecognitionData } from '@/components/embedded/EmotionRecognitionNodeEmbedded/EmotionRecognitionNodeEmbedded';
+import EmotionRecognitionNodeEmbedded from '@/components/embedded/EmotionRecognitionNodeEmbedded/EmotionRecognitionNodeEmbedded';
 import { useNodeSync } from '@/hooks/useNodeSync';
 
 const EmotionRecognitionNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
