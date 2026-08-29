@@ -1,0 +1,66 @@
+import { env } from '$env/dynamic/private';
+import { fail, redirect } from '@sveltejs/kit';
+import { dev } from '$app/environment';
+import { LOGIN_PATH } from '$lib/server/api-paths';
+import type { Actions } from './$types';
+
+export const actions: Actions = {
+    default: async ({ request, cookies }) => {
+        const data = await request.formData();
+
+        const email = data.get('email')?.toString();
+        const password = data.get('password')?.toString();
+
+        if (!email || !password) {
+            return fail(400, {
+                globalError: 'Email e password sono obbligatori',
+                values: { email }
+            });
+        }
+
+        try {
+            const response = await fetch(`${env.API_BASE_URL}${LOGIN_PATH}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!response.ok) {
+                // Attempt to parse the API's JSON error response
+                let errorPayload;
+                try {
+                    errorPayload = await response.json();
+                } catch {
+                    return fail(response.status, {
+                        globalError: 'Errore di connessione al server.',
+                        values: { email }
+                    });
+                }
+
+                // Prefer 'detail', fallback to 'title' or generic error
+                return fail(response.status, {
+                    globalError: errorPayload.detail || errorPayload.title || 'Credenziali non valide',
+                    values: { email }
+                });
+            }
+
+            const result = await response.json();
+
+            cookies.set('session_token', result.token, {
+                path: '/',
+                httpOnly: true,
+                secure: !dev,
+                sameSite: 'strict',
+                expires: new Date(result.expiresAt)
+            });
+
+        } catch (err) {
+            return fail(500, {
+                globalError: 'Errore di rete durante il login.',
+                values: { email }
+            });
+        }
+
+        throw redirect(303, '/');
+    }
+};
