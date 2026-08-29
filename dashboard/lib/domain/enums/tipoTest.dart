@@ -1,1 +1,0 @@
-enum TipoTest { pre, post }
