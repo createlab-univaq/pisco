@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 </script>
 
 <header class="topbar">
 	<div class="spacer"></div>
-	<!-- Pushes the logout button to the right -->
 
-	<!-- The form posts to the /logout route we will create -->
-	<form action="/logout" method="POST" use:enhance>
+	<form action="/logout" method="POST">
 		<button type="submit" class="logout-btn"> Logout </button>
 	</form>
 </header>

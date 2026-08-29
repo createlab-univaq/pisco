@@ -1,18 +1,18 @@
-import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
 import { PATIENTS_PATH, DEGREES_PATH } from '$lib/server/api-paths';
+import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
 import type { Degree, ApiError } from '$lib/types';
 
-export const load: PageServerLoad = async ({ fetch }) => {
-    const response = await fetch(`${env.API_BASE_URL}${DEGREES_PATH}`);
+export const load: PageServerLoad = async ({ fetch, locals }) => {
+    const response = await apiFetch(fetch, DEGREES_PATH, { token: locals.token });
     const degrees = response.ok ? (await response.json() as Degree[]) : [];
 
     return { degrees };
 };
 
 export const actions: Actions = {
-    default: async ({ request, fetch }) => {
+    default: async ({ request, fetch, locals }) => {
         const data = await request.formData();
 
         const firstName = data.get('firstName')?.toString();
@@ -21,13 +21,12 @@ export const actions: Actions = {
         const ageString = data.get('age')?.toString();
         const degreeCode = data.get('degreeCode')?.toString();
 
-        // Group values to keep the fail returns clean
         const values = { firstName, lastName, gender, age: ageString, degreeCode };
 
         if (!firstName || !lastName || !gender || !ageString || !degreeCode) {
             return fail(400, {
                 globalError: 'Tutti i campi sono obbligatori',
-                fieldErrors: undefined, // explicitly declare undefined to satisfy TypeScript
+                fieldErrors: undefined,
                 values
             });
         }
@@ -35,7 +34,7 @@ export const actions: Actions = {
         const age = parseInt(ageString, 10);
 
         try {
-            const degreesRes = await fetch(`${env.API_BASE_URL}${DEGREES_PATH}`);
+            const degreesRes = await apiFetch(fetch, DEGREES_PATH, { token: locals.token });
             const degrees = degreesRes.ok ? (await degreesRes.json() as Degree[]) : [];
             const selectedDegree = degrees.find(d => d.code === degreeCode);
 
@@ -47,18 +46,13 @@ export const actions: Actions = {
                 });
             }
 
-            const payload = {
-                firstName,
-                lastName,
-                gender,
-                age,
-                degree: selectedDegree
-            };
+            const payload = { firstName, lastName, gender, age, degree: selectedDegree };
 
-            const response = await fetch(`${env.API_BASE_URL}${PATIENTS_PATH}`, {
+            const response = await apiFetch(fetch, PATIENTS_PATH, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                token: locals.token
             });
 
             if (!response.ok) {
@@ -75,7 +69,7 @@ export const actions: Actions = {
 
                 return fail(response.status, {
                     globalError: errorPayload.detail || errorPayload.title || 'Creazione fallita',
-                    fieldErrors: errorPayload.errors, // This is the only one that has the actual errors
+                    fieldErrors: errorPayload.errors,
                     values
                 });
             }

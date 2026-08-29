@@ -1,12 +1,12 @@
-import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 import { LOGIN_PATH } from '$lib/server/api-paths';
+import { apiFetch } from '$lib/server/apiClient';
 import type { Actions } from './$types';
 import type { LoginResponse, ApiError } from '$lib/types';
 
 export const actions: Actions = {
-    default: async ({ request, cookies }) => {
+    default: async ({ request, cookies, fetch }) => {
         const data = await request.formData();
 
         const email = data.get('email')?.toString();
@@ -20,7 +20,8 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${env.API_BASE_URL}${LOGIN_PATH}`, {
+            // Replaced direct fetch with centralized apiFetch to support mock switching
+            const response = await apiFetch(fetch, LOGIN_PATH, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
