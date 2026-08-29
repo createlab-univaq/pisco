@@ -11,9 +11,11 @@
 	let paths = $derived(data.paths);
 	let diagnoses = $derived(data.diagnoses);
 	let executions = $derived(data.executions);
+	let polyglotPaths = $derived(data.polyglotPaths);
 
 	let includeName = $state(false);
 	let gestionePercorsiMode = $state(false);
+	let selectedPolyglotPathId = $state<string>('');
 
 	// Filter node names for line chart dropdown
 	let availableTestTypes = $derived(() => {
@@ -82,7 +84,10 @@
 					<input type="checkbox" bind:checked={includeName} />
 					Includi nome e cognome
 				</label>
-				<button class="btn btn-primary" onclick={handleExportExcel}>
+				<button
+					class="btn btn-primary"
+					onclick={() => exportSinglePatientExcel(patient, executions, includeName)}
+				>
 					📊 Scarica report Excel
 				</button>
 				<button
@@ -116,6 +121,27 @@
 						</div>
 					{/each}
 				</div>
+			{/if}
+
+			<!-- Quick Assign Form in Management Mode -->
+			{#if gestionePercorsiMode}
+				<form action="?/assignPath" method="POST" use:enhance class="quick-assign-form">
+					<h4>Assegna Nuovo Percorso</h4>
+					<div class="assign-row">
+						<select
+							name="polyglotPathId"
+							bind:value={selectedPolyglotPathId}
+							class="dropdown"
+							required
+						>
+							<option value="" disabled>-- Seleziona protocollo --</option>
+							{#each polyglotPaths as pp}
+								<option value={pp.id}>{pp.name}</option>
+							{/each}
+						</select>
+						<button type="submit" class="btn btn-primary">Assegna</button>
+					</div>
+				</form>
 			{/if}
 		</div>
 	</div>
@@ -522,5 +548,30 @@
 		padding: 12px;
 		border-radius: 8px;
 		text-align: center;
+	}
+
+	.quick-assign-form {
+		margin-top: 16px;
+		padding-top: 16px;
+		border-top: 1px dashed #ddd;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.quick-assign-form h4 {
+		margin: 0;
+		font-size: 14px;
+		color: #444;
+	}
+
+	.assign-row {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+	}
+
+	.assign-row select {
+		flex: 1;
 	}
 </style>

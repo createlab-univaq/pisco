@@ -5,9 +5,18 @@ import {
     mockStats,
     mockExecutions,
     mockDiagnoses,
-    mockAnalyst
+    mockAnalyst,
+    mockPolyglotPaths
 } from '$lib/server/mocks/mockDatabase';
-import { LOGIN_PATH, REGISTER_PATH, PATIENTS_PATH, DEGREES_PATH, STATS_PATH, GAME_EXECUTIONS_PATH } from '$lib/server/api-paths';
+import {
+    LOGIN_PATH,
+    REGISTER_PATH,
+    PATIENTS_PATH,
+    DEGREES_PATH,
+    STATS_PATH,
+    GAME_EXECUTIONS_PATH,
+    POLYGLOT_PATHS_PATH
+} from '$lib/server/api-paths';
 
 export async function apiFetch(
     nativeFetch: typeof globalThis.fetch,
@@ -38,9 +47,29 @@ export async function apiFetch(
 
         if (path.includes(STATS_PATH)) return jsonResponse(mockStats);
         if (path.includes(DEGREES_PATH)) return jsonResponse(mockDegrees);
+        if (path.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(mockPolyglotPaths);
 
         if (path.includes(PATIENTS_PATH)) {
             const parts = path.split('/').filter(Boolean);
+
+            // POST /api/patients/{patientId}/paths
+            if (parts.includes('paths') && method === 'POST') {
+                const patientId = parts[1];
+                const patient = mockPatients.find(p => p.id === patientId) || mockPatients[0];
+                return jsonResponse({
+                    id: 'mock-patient-path-id',
+                    patient,
+                    polyglotPathId: 'poly-1',
+                    uniqueCode: 'CODE-999',
+                    assignedAt: new Date().toISOString()
+                });
+            }
+
+            // DELETE /api/patients/{patientId}/paths/{pathId}
+            if (parts.includes('paths') && method === 'DELETE') {
+                return new Response(null, { status: 204 });
+            }
+
             if (method === 'DELETE' && parts.length === 3) return jsonResponse({ success: true });
             if (method === 'POST' && parts.length === 2) return jsonResponse({ ...mockPatients[0], id: 'new-mock-id' });
             if (parts.length === 3) {
@@ -48,7 +77,6 @@ export async function apiFetch(
                 return jsonResponse(patient);
             }
             if (parts.includes('paths') && method === 'GET') return jsonResponse([mockExecutions[0].patientPath]);
-            if (parts.includes('paths') && method === 'DELETE') return jsonResponse({ success: true });
             if (parts.includes('diagnoses') && method === 'GET') return jsonResponse(mockDiagnoses);
             if (parts.includes('diagnoses') && method === 'POST') return jsonResponse(mockDiagnoses[0]);
             return jsonResponse(mockPatients);

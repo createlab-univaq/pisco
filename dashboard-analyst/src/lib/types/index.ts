@@ -8,5 +8,6 @@ export * from './GameExecution';
 export * from './LoginResponse';
 export * from './Patient';
 export * from './PatientPath';
+export * from './PolyglotPath';
 export * from './Stats';
 export * from './TestStat';

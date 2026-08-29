@@ -1,4 +1,18 @@
 import type { Patient, Degree, Diagnosis, GameExecution, Stats, Analyst } from '$lib/types';
+import type { PolyglotPath } from '$lib/types/PolyglotPath';
+
+export const mockPolyglotPaths: PolyglotPath[] = [
+    {
+        id: 'poly-1',
+        name: 'Protocollo Neurocognitivo Standard',
+        description: 'Valutazione completa di teoria della mente e riconoscimento emotivo.'
+    },
+    {
+        id: 'poly-2',
+        name: 'Modulo Avanzato Faux Pas',
+        description: 'Test mirato per interazioni sociali complesse e empatia cognitiva.'
+    }
+];
 
 export const mockDegrees: Degree[] = [
     { code: 'DEG_LIC', label: 'Licenza Media', educationLevel: 1 },
