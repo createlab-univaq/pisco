@@ -1,6 +1,10 @@
 import type { Patient, Degree, Diagnosis, GameExecution, Stats, Analyst } from '$lib/types';
 import type { PolyglotPath } from '$lib/types/PolyglotPath';
 
+
+const MALE: string = 'MASCHIO';
+const FEMALE: string = 'FEMMINA';
+
 export const mockPolyglotPaths: PolyglotPath[] = [
     {
         id: 'poly-1',
@@ -26,7 +30,7 @@ export const mockPatients: Patient[] = [
         id: 'mock-id-1',
         firstName: 'Mario',
         lastName: 'Rossi',
-        gender: 'MASCHIO',
+        gender: MALE,
         age: 45,
         degree: mockDegrees[1],
         createdAt: '2026-01-10T10:00:00.000Z'
@@ -35,7 +39,7 @@ export const mockPatients: Patient[] = [
         id: 'mock-id-2',
         firstName: 'Giulia',
         lastName: 'Bianchi',
-        gender: 'FEMMINA',
+        gender: FEMALE,
         age: 32,
         degree: mockDegrees[2],
         createdAt: '2026-02-14T11:30:00.000Z'
@@ -44,7 +48,7 @@ export const mockPatients: Patient[] = [
         id: 'mock-id-3',
         firstName: 'Marco',
         lastName: 'Verdi',
-        gender: 'MASCHIO',
+        gender: MALE,
         age: 58,
         degree: mockDegrees[0],
         createdAt: '2026-03-01T09:15:00.000Z'
@@ -53,7 +57,7 @@ export const mockPatients: Patient[] = [
         id: 'mock-id-4',
         firstName: 'Sofia',
         lastName: 'Neri',
-        gender: 'FEMMINA',
+        gender: FEMALE,
         age: 26,
         degree: mockDegrees[3],
         createdAt: '2026-03-10T14:20:00.000Z'
@@ -62,7 +66,7 @@ export const mockPatients: Patient[] = [
         id: 'mock-id-5',
         firstName: 'Luca',
         lastName: 'Gialli',
-        gender: 'MASCHIO',
+        gender: MALE,
         age: 51,
         degree: mockDegrees[1],
         createdAt: '2026-04-05T16:45:00.000Z'
@@ -70,10 +74,10 @@ export const mockPatients: Patient[] = [
 ];
 
 export const mockStats: Stats = {
-    pazienti: 5,
-    maschi: 3,
-    femmine: 2,
-    percorsi: 14,
+    pazienti: mockPatients.length,
+    maschi: mockPatients.filter((p) => p.gender === MALE).length,
+    femmine: mockPatients.filter((p) => p.gender === FEMALE).length,
+    percorsi: mockPolyglotPaths.length,
     testTable: [
         { nomeTest: 'Theory of Mind', percentualePre: 85.0, percentualePost: 95.0, tempoMedio: 420.5 },
         { nomeTest: 'Faux Pas Test', percentualePre: 70.0, percentualePost: 88.5, tempoMedio: 610.0 },

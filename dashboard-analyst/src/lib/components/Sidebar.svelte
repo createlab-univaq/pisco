@@ -11,7 +11,6 @@
 		<a href="/" class:active={$page.url.pathname === '/'}> Home </a>
 		<a href="/patients" class:active={$page.url.pathname.startsWith('/patients')}> Gestione Pazienti </a>
 		<a href="/paths" class:active={$page.url.pathname.startsWith('/paths')}> Percorsi </a>
-		<a href="/assign" class:active={$page.url.pathname.startsWith('/assign')}> Assegna Percorso </a>
 	</nav>
 </aside>
 
