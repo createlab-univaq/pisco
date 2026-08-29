@@ -6,9 +6,3 @@ export interface Analyst {
     role: string;
     createdAt: string;
 }
-
-export interface LoginResponse {
-    token: string;
-    expiresAt: string;
-    analyst: Analyst;
-}

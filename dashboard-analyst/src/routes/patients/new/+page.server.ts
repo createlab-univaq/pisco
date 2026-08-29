@@ -8,8 +8,6 @@ export const load: PageServerLoad = async ({ fetch }) => {
     const response = await fetch(`${env.API_BASE_URL}${DEGREES_PATH}`);
     const degrees = response.ok ? (await response.json() as Degree[]) : [];
 
-    console.log(degrees);
-
     return { degrees };
 };
 

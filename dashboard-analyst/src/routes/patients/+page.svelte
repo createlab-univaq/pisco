@@ -3,17 +3,17 @@
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
 	import PatientCard from '$lib/components/PatientCard.svelte';
+	import { exportAllPatientsExcel } from '$lib/utils/excelExport';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let selectionMode = $state(false);
 	let selectedIds = $state<string[]>([]);
+	let includeName = $state(false);
 
 	function toggleSelectionMode() {
 		selectionMode = !selectionMode;
-		if (!selectionMode) {
-			selectedIds = [];
-		}
+		if (!selectionMode) selectedIds = [];
 	}
 
 	function handlePatientClick(id: string) {
@@ -24,9 +24,12 @@
 				selectedIds = [...selectedIds, id];
 			}
 		} else {
-			// Navigate to patient Dashboard[cite: 10]
 			goto(`/patients/${id}`);
 		}
+	}
+
+	function handleExportAll() {
+		exportAllPatientsExcel(data.patients, data.executions, includeName);
 	}
 </script>
 
@@ -34,13 +37,20 @@
 	<h1>Elenco Pazienti</h1>
 
 	<div class="actions">
-		<!-- Add patient redirects to the new patient form -->
+		<!-- Global Excel Export -->
+		<label class="privacy-checkbox">
+			<input type="checkbox" bind:checked={includeName} />
+			Includi nome e cognome
+		</label>
+		<button class="btn btn-secondary" onclick={handleExportAll}>
+			📊 Esporta tutti i dati Excel
+		</button>
+
 		<button class="btn btn-primary" onclick={() => goto('/patients/new')}>
 			+ Aggiungi paziente
 		</button>
 
 		{#if selectionMode}
-			<!-- FIXED: Action name matches the server -->
 			<form
 				action="?/deletePatients"
 				method="POST"
@@ -61,7 +71,6 @@
 			</form>
 		{/if}
 
-		<!-- Toggle Selection Mode -->
 		<button class="btn btn-secondary" onclick={toggleSelectionMode}>
 			{selectionMode ? 'Annulla' : 'Elimina pazienti'}
 		</button>
@@ -74,10 +83,9 @@
 
 <div class="list-container">
 	{#if data.patients.length === 0}
-		<div class="empty-state">Nessun utente presente</div>
+		<div class="empty-state">Nessun paziente presente</div>
 	{:else}
 		<div class="patient-grid">
-			<!-- Iterate over patients instead of utenti -->
 			{#each data.patients as patient (patient.id)}
 				<PatientCard
 					{patient}
@@ -96,6 +104,8 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 24px;
+		flex-wrap: wrap;
+		gap: 16px;
 	}
 
 	h1 {
@@ -107,6 +117,16 @@
 		display: flex;
 		gap: 12px;
 		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.privacy-checkbox {
+		font-size: 14px;
+		color: #444;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		cursor: pointer;
 	}
 
 	.btn {
@@ -115,8 +135,8 @@
 		font-weight: 600;
 		cursor: pointer;
 		border: none;
-		transition: all 0.2s;
 		font-size: 14px;
+		transition: all 0.2s;
 	}
 
 	.btn:disabled {
@@ -129,27 +149,15 @@
 		color: white;
 	}
 
-	.btn-primary:hover {
-		background-color: #333;
-	}
-
 	.btn-secondary {
 		background-color: white;
 		color: black;
 		border: 1px solid black;
 	}
 
-	.btn-secondary:hover {
-		background-color: #f4f6f8;
-	}
-
 	.btn-danger {
 		background-color: #d32f2f;
 		color: white;
-	}
-
-	.btn-danger:hover {
-		background-color: #b71c1c;
 	}
 
 	.error-banner {
@@ -158,7 +166,6 @@
 		padding: 12px;
 		border-radius: 8px;
 		margin-bottom: 24px;
-		font-weight: 500;
 		text-align: center;
 	}
 
