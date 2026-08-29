@@ -4,6 +4,7 @@
 	import type { PageData, ActionData } from './$types';
 	import LineChart from '$lib/components/LineChart.svelte';
 	import { exportSinglePatientExcel } from '$lib/utils/excelExport';
+	import { toast } from '$lib/stores/toast.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -64,6 +65,7 @@
 
 	function handleExportExcel() {
 		exportSinglePatientExcel(patient, executions, includeName);
+		toast.add('Report Excel scaricato con successo', 'success');
 	}
 </script>
 
@@ -84,10 +86,7 @@
 					<input type="checkbox" bind:checked={includeName} />
 					Includi nome e cognome
 				</label>
-				<button
-					class="btn btn-primary"
-					onclick={() => exportSinglePatientExcel(patient, executions, includeName)}
-				>
+				<button class="btn btn-primary" onclick={handleExportExcel}>
 					📊 Scarica report Excel
 				</button>
 				<button
@@ -113,7 +112,21 @@
 								<span class="date">{new Date(path.assignedAt).toLocaleDateString()}</span>
 							</div>
 							{#if gestionePercorsiMode}
-								<form action="?/deletePath" method="POST" use:enhance>
+								<form
+									action="?/deletePath"
+									method="POST"
+									use:enhance={() => {
+										return async ({ result, update }) => {
+											if (result.type === 'success') {
+												toast.add('Percorso rimosso con successo', 'success');
+											} else if (result.type === 'failure') {
+												const errData = result.data as Record<string, any>;
+												toast.add(errData?.error || 'Impossibile eliminare il percorso', 'error');
+											}
+											await update();
+										};
+									}}
+								>
 									<input type="hidden" name="pathId" value={path.id} />
 									<button type="submit" class="btn-icon-delete" title="Rimuovi percorso">✕</button>
 								</form>
@@ -125,7 +138,23 @@
 
 			<!-- Quick Assign Form in Management Mode -->
 			{#if gestionePercorsiMode}
-				<form action="?/assignPath" method="POST" use:enhance class="quick-assign-form">
+				<form
+					action="?/assignPath"
+					method="POST"
+					use:enhance={() => {
+						return async ({ result, update }) => {
+							if (result.type === 'success') {
+								toast.add('Percorso assegnato con successo', 'success');
+								selectedPolyglotPathId = '';
+							} else if (result.type === 'failure') {
+								const errData = result.data as Record<string, any>;
+								toast.add(errData?.error || 'Impossibile assegnare il percorso', 'error');
+							}
+							await update();
+						};
+					}}
+					class="quick-assign-form"
+				>
 					<h4>Assegna Nuovo Percorso</h4>
 					<div class="assign-row">
 						<select
@@ -283,7 +312,22 @@
 			{/each}
 		</div>
 
-		<form action="?/addDiagnosis" method="POST" use:enhance class="diag-form">
+		<form
+			action="?/addDiagnosis"
+			method="POST"
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					if (result.type === 'success') {
+						toast.add('Diagnosi salvata con successo', 'success');
+					} else if (result.type === 'failure') {
+						const errData = result.data as Record<string, any>;
+						toast.add(errData?.error || 'Impossibile salvare la diagnosi', 'error');
+					}
+					await update();
+				};
+			}}
+			class="diag-form"
+		>
 			<h3>Aggiungi Nuova Diagnosi</h3>
 			<textarea name="diagnosisText" placeholder="Testo della diagnosi..." required rows="3"
 			></textarea>

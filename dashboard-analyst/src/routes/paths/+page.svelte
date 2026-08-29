@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
+	import { toast } from '$lib/stores/toast.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -18,14 +19,6 @@
 			Esplora i percorsi neurocognitivi disponibili e assegnali ai pazienti registrati.
 		</p>
 	</div>
-
-	{#if form?.error}
-		<div class="error-banner">{form.error}</div>
-	{/if}
-
-	{#if form?.success}
-		<div class="success-banner">Percorso assegnato con successo!</div>
-	{/if}
 
 	<div class="content-grid">
 		<!-- Available Polyglot Paths List -->
@@ -50,7 +43,24 @@
 		<!-- Assignment Form Section -->
 		<div class="section-card assignment-card">
 			<h2>Assegna Percorso a Paziente</h2>
-			<form action="?/assignPath" method="POST" use:enhance class="assignment-form">
+			<form
+				action="?/assignPath"
+				method="POST"
+				use:enhance={() => {
+					return async ({ result, update }) => {
+						if (result.type === 'success') {
+							toast.add('Percorso assegnato con successo!', 'success');
+							selectedPathId = '';
+							selectedPatientId = '';
+						} else if (result.type === 'failure') {
+							const errData = result.data as Record<string, any>;
+							toast.add(errData?.error || 'Impossibile assegnare il percorso', 'error');
+						}
+						await update();
+					};
+				}}
+				class="assignment-form"
+			>
 				<div class="form-group">
 					<label for="polyglotPathId">Seleziona Percorso</label>
 					<select
@@ -204,22 +214,6 @@
 	.btn-primary {
 		background-color: black;
 		color: white;
-	}
-
-	.error-banner {
-		background-color: #fde8e8;
-		color: #c81e1e;
-		padding: 12px;
-		border-radius: 8px;
-		text-align: center;
-	}
-
-	.success-banner {
-		background-color: #def7ec;
-		color: #03543f;
-		padding: 12px;
-		border-radius: 8px;
-		text-align: center;
 	}
 
 	.empty-text {

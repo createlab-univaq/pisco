@@ -3,15 +3,17 @@
 	import type { Snippet } from 'svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Topbar from '$lib/components/Topbar.svelte';
+	import ToastContainer from '$lib/components/ToastContainer.svelte';
+	import { page } from '$app/state';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
-	// Check if the current route is auth-related (login/register) to hide the shell
-	import { page } from '$app/stores';
 	let isAuthRoute = $derived(
-		$page.url.pathname.includes('/login') || $page.url.pathname.includes('/register')
+		page.url.pathname.includes('/login') || page.url.pathname.includes('/register')
 	);
 </script>
+
+<ToastContainer />
 
 {#if isAuthRoute}
 	{@render children()}
@@ -30,7 +32,7 @@
 <style>
 	:global(body) {
 		margin: 0;
-		background-color: white; /* Matched to Flutter Scaffold background */
+		background-color: white;
 		font-family: system-ui, sans-serif;
 	}
 
@@ -51,6 +53,6 @@
 		flex: 1;
 		overflow-y: auto;
 		padding: 24px;
-		background-color: #f4f6f8; /* Optional: distinct background for content area */
+		background-color: #f4f6f8;
 	}
 </style>

@@ -4,6 +4,7 @@
 	import type { PageData, ActionData } from './$types';
 	import PatientCard from '$lib/components/PatientCard.svelte';
 	import { exportAllPatientsExcel } from '$lib/utils/excelExport';
+	import { toast } from '$lib/stores/toast.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -30,6 +31,7 @@
 
 	function handleExportAll() {
 		exportAllPatientsExcel(data.patients, data.executions, includeName);
+		toast.add('Tutti i dati dei pazienti esportati con successo', 'success');
 	}
 </script>
 
@@ -58,8 +60,12 @@
 					return async ({ update, result }) => {
 						await update();
 						if (result.type === 'success') {
+							toast.add('Pazienti selezionati eliminati con successo', 'success');
 							selectionMode = false;
 							selectedIds = [];
+						} else if (result.type === 'failure') {
+							const errData = result.data as Record<string, any>;
+							toast.add(errData?.error || 'Impossibile eliminare i pazienti selezionati', 'error');
 						}
 					};
 				}}

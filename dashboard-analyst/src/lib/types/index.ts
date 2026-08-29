@@ -11,3 +11,4 @@ export * from './PatientPath';
 export * from './PolyglotPath';
 export * from './Stats';
 export * from './TestStat';
+export * from './Toast';

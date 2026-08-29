@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { PageData, ActionData } from './$types';
+	import { toast } from '$lib/stores/toast.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
@@ -14,7 +15,23 @@
 	<div class="form-container">
 		<h1>Registrazione nuovo paziente</h1>
 
-		<form method="POST" use:enhance>
+		<form
+			method="POST"
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					if (result.type === 'success' || result.type === 'redirect') {
+						toast.add('Paziente registrato con successo', 'success');
+					} else if (result.type === 'failure') {
+						const errData = result.data as Record<string, any>;
+						toast.add(
+							errData?.globalError || 'Errore durante la registrazione del paziente',
+							'error'
+						);
+					}
+					await update();
+				};
+			}}
+		>
 			<div class="input-row">
 				<div class="input-group">
 					<label for="firstName">Nome</label>
@@ -137,7 +154,7 @@
 
 	.form-container {
 		width: 100%;
-		max-width: 520px; /* Matched from Flutter constraints[cite: 11] */
+		max-width: 520px;
 		background-color: white;
 		padding: 32px;
 		border-radius: 12px;
