@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
 import { REGISTER_PATH } from '$lib/server/api-paths';
 import type { Actions } from './$types';
+import type { ApiError } from '$lib/types';
 
 export const actions: Actions = {
     default: async ({ request }) => {
@@ -27,22 +28,19 @@ export const actions: Actions = {
             });
 
             if (!response.ok) {
-                // Attempt to parse the API's JSON error response
-                let errorPayload;
+                let errorPayload: ApiError;
                 try {
-                    errorPayload = await response.json();
+                    errorPayload = await response.json() as ApiError;
                 } catch {
-                    // Fallback if the server returns HTML or a non-JSON error
                     return fail(response.status, {
                         globalError: 'Registration failed due to a server error.',
                         values: { firstName, lastName, email }
                     });
                 }
 
-                // Return the specific field errors, the global detail message, and the user's input
                 return fail(response.status, {
                     globalError: errorPayload.detail || errorPayload.title || 'Registration failed',
-                    fieldErrors: errorPayload.errors as Record<string, string> | undefined,
+                    fieldErrors: errorPayload.errors,
                     values: { firstName, lastName, email }
                 });
             }

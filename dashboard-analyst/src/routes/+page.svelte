@@ -1,71 +1,103 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { Stats } from '$lib/types';
+	import DataCard from '$lib/components/DataCard.svelte';
+	import LineChart from '$lib/components/LineChart.svelte';
 
-	// Receive the data returned from +page.server.ts
 	let { data }: { data: PageData } = $props();
+
+	// The $derived rune ensures 'stats' stays in sync if 'data' ever updates!
+	let stats: Stats = $derived(
+		data.stats || {
+			pazienti: 0,
+			maschi: 0,
+			femmine: 0,
+			percorsi: 0,
+			testTable: [],
+			chartData: []
+		}
+	);
 </script>
 
-<div class="dashboard-container">
-	<header>
-		<h1>Dashboard Analista</h1>
-		<!-- Add a logout form here later -->
-	</header>
+<div class="home-container">
+	<!-- Stat Cards Grid -->
+	<div class="stats-grid">
+		<DataCard icon="person" title="Pazienti" value={stats.pazienti} color="green" />
+		<DataCard icon="male" title="Maschi" value={stats.maschi} color="blue" />
+		<DataCard icon="female" title="Femmine" value={stats.femmine} color="pink" />
+		<DataCard icon="route" title="Percorsi" value={stats.percorsi} color="orange" />
+	</div>
 
-	<main>
-		<h2>Lista Utenti</h2>
-
-		{#if data.users.length === 0}
-			<p>Nessun utente trovato o errore nel caricamento.</p>
-		{:else}
-			<ul class="user-list">
-				{#each data.users as user}
-					<li class="user-card">
-						<!-- Adjust these properties based on your actual API response structure -->
-						<strong>{user.firstName} {user.lastName}</strong>
-						<p>{user.email}</p>
-					</li>
+	<!-- Data Table -->
+	<div class="table-container">
+		<table>
+			<thead>
+				<tr>
+					<th>Nome Test</th>
+					<th>% superamento test pre-esercitazione</th>
+					<th>% superamento test post-esercitazione</th>
+					<th>Tempo medio di reazione</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each stats.testTable as test}
+					<tr>
+						<td>{test.nomeTest}</td>
+						<td>{test.percentualePre.toFixed(1)}%</td>
+						<td>{test.percentualePost.toFixed(1)}%</td>
+						<td>{test.tempoMedio.toFixed(2)} ms</td>
+					</tr>
 				{/each}
-			</ul>
-		{/if}
-	</main>
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Chart -->
+	{#if stats.chartData.length > 0}
+		<div class="chart-container">
+			<LineChart data={stats.chartData} title="Media risposte corrette per test" />
+		</div>
+	{/if}
 </div>
 
 <style>
-	/* Add some basic styling matching your Flutter theme */
-	:global(body) {
-		margin: 0;
-		background-color: #f4f6f8;
-		font-family:
-			system-ui,
-			-apple-system,
-			sans-serif;
-	}
-
-	.dashboard-container {
-		max-width: 800px;
-		margin: 0 auto;
-		padding: 24px;
-	}
-
-	header {
+	.home-container {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 32px;
+		flex-direction: column;
+		gap: 40px;
 	}
 
-	.user-list {
-		list-style: none;
-		padding: 0;
+	.stats-grid {
 		display: grid;
-		gap: 16px;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 24px;
+		height: 160px;
 	}
 
-	.user-card {
-		background-color: white;
-		padding: 16px;
-		border-radius: 8px;
-		border: 1px solid rgba(0, 0, 0, 0.08);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	.table-container {
+		background: white;
+		padding: 20px;
+		border-radius: 16px;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+		overflow-x: auto;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	th {
+		background-color: white; /* Changed from black */
+		color: black; /* Changed from white */
+		text-align: left;
+		padding: 12px;
+		font-weight: bold;
+		border-bottom: 2px solid #ddd; /* Slightly thicker border for the header */
+	}
+
+	td {
+		padding: 12px;
+		border-bottom: 1px solid #eee;
 	}
 </style>

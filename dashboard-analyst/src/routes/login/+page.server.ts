@@ -3,6 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 import { LOGIN_PATH } from '$lib/server/api-paths';
 import type { Actions } from './$types';
+import type { LoginResponse, ApiError } from '$lib/types';
 
 export const actions: Actions = {
     default: async ({ request, cookies }) => {
@@ -26,10 +27,9 @@ export const actions: Actions = {
             });
 
             if (!response.ok) {
-                // Attempt to parse the API's JSON error response
-                let errorPayload;
+                let errorPayload: ApiError;
                 try {
-                    errorPayload = await response.json();
+                    errorPayload = await response.json() as ApiError;
                 } catch {
                     return fail(response.status, {
                         globalError: 'Errore di connessione al server.',
@@ -37,14 +37,13 @@ export const actions: Actions = {
                     });
                 }
 
-                // Prefer 'detail', fallback to 'title' or generic error
                 return fail(response.status, {
                     globalError: errorPayload.detail || errorPayload.title || 'Credenziali non valide',
                     values: { email }
                 });
             }
 
-            const result = await response.json();
+            const result = await response.json() as LoginResponse;
 
             cookies.set('session_token', result.token, {
                 path: '/',
