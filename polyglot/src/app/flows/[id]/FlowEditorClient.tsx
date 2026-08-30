@@ -6,6 +6,7 @@ import FlowEditor from '@/components/editor/FlowEditor';
 import { getFlowAction, saveFlowAction } from '@/lib/actions/flows';
 import styles from './FlowEditorClient.module.css';
 import { Flow } from '@/types';
+import { useToast } from '@/components/providers/ToastProvider';
 
 type ToastType = {
     id: number;
@@ -20,21 +21,11 @@ type FlowEditorClientProps = {
 
 export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
     const router = useRouter();
+    const { showToast } = useToast();
 
     const [flow, setFlow] = useState<Flow | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    // Custom Toast State
-    const [toasts, setToasts] = useState<ToastType[]>([]);
-
-    const showToast = (title: string, description: string, status: 'success' | 'warning' | 'error') => {
-        const id = Date.now();
-        setToasts((prev) => [...prev, { id, title, description, status }]);
-        setTimeout(() => {
-            setToasts((prev) => prev.filter((t) => t.id !== id));
-        }, 4000);
-    };
 
     // Flow Fetching & Rescue Logic
     useEffect(() => {
@@ -111,24 +102,6 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
 
     return (
         <>
-            {/* Toast Container */}
-            <div className={styles.toastContainer}>
-                {toasts.map((t) => (
-                    <div
-                        key={t.id}
-                        className={`${styles.toast} ${t.status === 'success'
-                            ? styles.toastSuccess
-                            : t.status === 'warning'
-                                ? styles.toastWarning
-                                : styles.toastError
-                            }`}
-                    >
-                        <div className={styles.toastTitle}>{t.title}</div>
-                        <div className={styles.toastDesc}>{t.description}</div>
-                    </div>
-                ))}
-            </div>
-
             {/* Editor rendered only when data is ready */}
             {!loading && flow && (
                 <FlowEditor

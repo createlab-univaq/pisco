@@ -10,6 +10,7 @@ import createIcon from '@public/plus-solid-full.svg';
 import styles from './FlowsClient.module.css';
 import { Flow } from '@/types';
 import ConfirmModal from '@/components/modals/ConfirmModal';
+import { useToast } from '@/components/providers/ToastProvider';
 
 interface FlowsClientProps {
     flows: Flow[];
@@ -20,6 +21,7 @@ export default function FlowsClient({ flows, initialSearch }: FlowsClientProps) 
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const { showToast } = useToast()
 
     const [searchValue, setSearchValue] = useState(initialSearch);
     const [selectedFlowId, setSelectedFlowId] = useState<string | undefined>();
@@ -49,8 +51,9 @@ export default function FlowsClient({ flows, initialSearch }: FlowsClientProps) 
         const result = await deleteFlowAction(flowId);
 
         if (result.error) {
-            alert(result.error); // In production, use a toast notification here
+            showToast('Delete Failed', result.error, 'error');
         } else {
+            showToast('Deleted', 'Learning path removed successfully', 'success');
             setSelectedFlowId(undefined);
         }
         setIsDeleting(false);
