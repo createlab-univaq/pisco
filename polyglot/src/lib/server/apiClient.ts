@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { FLOWS_PATH, LOGIN_PATH, REGISTER_PATH, IMAGE_PATH } from './api-paths';
+import { FLOWS_PATH, LOGIN_PATH, REGISTER_PATH, IMAGE_PATH, ANALYSTS_PATH } from './api-paths';
 import {
     mockNewAnalyst,
     getMockFlows,
@@ -37,13 +37,13 @@ export async function apiFetch(
             return jsonResponse({ path: storeMockImage(body.mimeType, body.image) });
         }
 
-        const imageIdMatch = basePath.match(/\/image\/([a-zA-Z0-9-_:/.]+)$/);
+        const imageIdMatch = basePath.match(new RegExp(`${IMAGE_PATH}/([a-zA-Z0-9-_:/.]+)$`));
         if (imageIdMatch && method === 'DELETE') {
             deleteMockImage(imageIdMatch[1]);
             return new Response(null, { status: 204 });
         }
 
-        const analystIdMatch = basePath.match(/\/analysts\/([a-zA-Z0-9-]+)$/);
+        const analystIdMatch = basePath.match(new RegExp(`${ANALYSTS_PATH}/([a-zA-Z0-9-]+)$`));
         if (analystIdMatch) {
             const analystId = analystIdMatch[1];
             if (method === 'GET') return jsonResponse(getMockAnalyst(analystId));
@@ -57,7 +57,7 @@ export async function apiFetch(
             }
         }
 
-        const flowIdMatch = basePath.match(/\/flows\/([a-zA-Z0-9-]+)$/);
+        const flowIdMatch = basePath.match(new RegExp(`${FLOWS_PATH}/([a-zA-Z0-9-]+)$`));
         if (flowIdMatch) {
             const flowId = flowIdMatch[1];
             if (method === 'GET') {
