@@ -24,7 +24,7 @@ export async function getFlowAction(flowId: string) {
     }
 }
 
-export async function saveFlowAction(flowId: string, updatedFlow: any) {
+export async function saveFlowAction(flowId: string, updatedFlow: Flow) {
     try {
         const res = await apiFetch(`${FLOWS_PATH}/${flowId}`, {
             method: 'PATCH',

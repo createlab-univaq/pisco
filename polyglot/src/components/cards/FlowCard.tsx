@@ -14,7 +14,7 @@ type FlowCardProps = {
 const FlowCard = ({ flow, setSelected }: FlowCardProps) => {
 
   // Fallback to calculate nodes from the flowJson object keys
-  const nodeCount = flow.flowJson ? Object.keys(flow.flowJson).length : 0;
+  const nodeCount = flow.flowJson ? Object.keys(flow.flowJson.nodes).length : 0;
 
   return (
     <div className={styles.card}>

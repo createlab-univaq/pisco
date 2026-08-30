@@ -48,7 +48,14 @@ const QuestionImageUploadField = ({
         try {
             setUploading(true);
             const base64 = await convertFileToBase64(file);
-            const result = await uploadImageAction(base64, file.type || 'image/jpeg');
+
+            // Pack the large strings into a FormData object
+            const formData = new FormData();
+            formData.append('image', base64);
+            formData.append('mimeType', file.type || 'image/jpeg');
+
+            // Pass the FormData instead of the raw strings
+            const result = await uploadImageAction(formData);
 
             if (result.error || !result.imagePath) {
                 window.alert(result.error || 'Upload fallito');

@@ -3,8 +3,13 @@
 import { apiFetch } from '../server/apiClient';
 import { IMAGE_PATH } from '../server/api-paths';
 
-export async function uploadImageAction(base64Image: string, mimeType: string) {
+export async function uploadImageAction(formData: FormData) {
     try {
+        // Extract the strings from the FormData object
+        const base64Image = formData.get('image') as string;
+        const mimeType = formData.get('mimeType') as string;
+
+        // The rest of your API call remains completely unchanged
         const res = await apiFetch(IMAGE_PATH, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
