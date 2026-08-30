@@ -24,8 +24,8 @@ public class OpenApiConfig {
                         .title("Analyst Dashboard API")
                         .version("v1")
                         .description("""
-                                Gestione analisti, pazienti, diagnosi, percorsi Polyglot e \
-                                telemetria di gioco.
+                                Gestione analisti, pazienti, diagnosi, flow e telemetria \
+                                di gioco.
 
                                 Autenticazione: POST /api/auth/login restituisce un JWT. \
                                 Incollarlo in Authorize (senza il prefisso "Bearer").

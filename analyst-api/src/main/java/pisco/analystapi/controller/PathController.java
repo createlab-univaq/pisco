@@ -34,10 +34,10 @@ public class PathController {
      * the code they were given. The code is masked in the log -- here it is a credential.
      */
     @Operation(
-            summary = "Risolve un codice univoco nel percorso Polyglot completo",
+            summary = "Risolve un codice univoco nel flow assegnato",
             description = "Endpoint pubblico (spec sezione 1): il paziente non ha login e "
-                    + "riscatta il codice ricevuto. Recupera il percorso da Polyglot in tempo "
-                    + "reale e non espone alcun dato anagrafico del paziente.")
+                    + "riscatta il codice ricevuto. Restituisce il flow senza flowJson e non "
+                    + "espone alcun dato anagrafico del paziente.")
     @SecurityRequirements
     @GetMapping("/resolve/{uniqueCode}")
     public ResolvedPathDTO resolve(@PathVariable String uniqueCode) {

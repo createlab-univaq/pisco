@@ -7,17 +7,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pisco.analystapi.client.PolyglotClient;
 import pisco.analystapi.common.LogUtils;
 import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
 import pisco.analystapi.model.dto.PatientPathDTO;
 import pisco.analystapi.model.dto.ResolvedPathDTO;
 import pisco.analystapi.model.entity.AnalystPatient;
+import pisco.analystapi.model.entity.Flow;
 import pisco.analystapi.model.entity.PatientPath;
+import pisco.analystapi.model.mapper.FlowMapper;
 import pisco.analystapi.model.mapper.PatientPathMapper;
 import pisco.analystapi.model.repository.PatientPathRepository;
 import pisco.analystapi.service.AnalystPatientService;
+import pisco.analystapi.service.FlowService;
 import pisco.analystapi.service.PatientPathService;
 
 @Service
@@ -27,9 +29,10 @@ public class PatientPathServiceImpl implements PatientPathService {
 
     private final PatientPathRepository repository;
     private final AnalystPatientService analystPatientService;
+    private final FlowService flowService;
     private final PatientPathMapper mapper;
+    private final FlowMapper flowMapper;
     private final UniqueCodeGenerator codeGenerator;
-    private final PolyglotClient polyglotClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,26 +49,28 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Transactional
     public PatientPathDTO assign(UUID patientId, PatientPathDTO dto) {
         AnalystPatient link = analystPatientService.requireLink(patientId);
+        // Any analyst may assign any flow, including a colleague's -- authorship governs
+        // editing the flow, not prescribing it.
+        Flow flow = flowService.requireById(dto.getFlow().getId());
 
-        // Re-assigning the same path is a conflict rather than a second code: two live
-        // codes for one path would split that patient's telemetry across both.
-        if (repository.existsByAnalystPatientIdAndPolyglotPathId(
-                link.getId(), dto.getPolyglotPathId())) {
-            log.warn("Assegnazione rifiutata: percorso {} gia' assegnato a patientId={}",
-                    dto.getPolyglotPathId(), patientId);
-            throw new ConflictException(
-                    "Percorso gia' assegnato a questo paziente: " + dto.getPolyglotPathId());
+        // Re-assigning the same flow is a conflict rather than a second code: two live
+        // codes for one flow would split that patient's telemetry across both.
+        if (repository.existsByAnalystPatientIdAndFlowId(link.getId(), flow.getId())) {
+            log.warn("Assegnazione rifiutata: flow {} gia' assegnato a patientId={}",
+                    flow.getId(), patientId);
+            throw new ConflictException("Flow gia' assegnato a questo paziente: " + flow.getId());
         }
 
         PatientPath patientPath = new PatientPath();
         mapper.updateEntity(patientPath, dto);
         patientPath.setAnalystPatient(link);
+        patientPath.setFlow(flow);
         patientPath.setUniqueCode(codeGenerator.generate());
         patientPath.setAssignedAt(Instant.now());
 
         PatientPath saved = repository.saveAndFlush(patientPath);
-        log.info("Percorso assegnato id={} patientId={} polyglotPathId={} codice={}",
-                saved.getId(), patientId, saved.getPolyglotPathId(),
+        log.info("Percorso assegnato id={} patientId={} flowId={} codice={}",
+                saved.getId(), patientId, flow.getId(),
                 LogUtils.maskCode(saved.getUniqueCode()));
         return mapper.toDto(saved);
     }
@@ -89,19 +94,16 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Transactional(readOnly = true)
     public ResolvedPathDTO resolve(String uniqueCode) {
         PatientPath patientPath = requireByCode(uniqueCode);
+        log.info("Codice risolto patientPathId={} flowId={}",
+                patientPath.getId(), patientPath.getFlow().getId());
 
-        log.info("Codice risolto patientPathId={} polyglotPathId={}: fetch da Polyglot",
-                patientPath.getId(), patientPath.getPolyglotPathId());
-        Object path = polyglotClient.fetchPath(patientPath.getPolyglotPathId());
-
-        // Ids only, deliberately: this response is served without a token, so it carries
-        // nothing about who the patient is.
+        // Ids and the flow's identity only, deliberately: this response is served without
+        // a token, so it carries neither the patient's details nor the flow's structure.
         return new ResolvedPathDTO(
                 patientPath.getUniqueCode(),
                 patientPath.getId(),
                 patientPath.getAnalystPatient().getPatient().getId(),
-                patientPath.getPolyglotPathId(),
-                path);
+                flowMapper.toDto(patientPath.getFlow()));
     }
 
     @Override

@@ -37,9 +37,3 @@ app:
     # Stamped into `iss` and required back on every token. Changing it invalidates every
     # token already out there, so it is deliberately not per-profile.
     issuer: analyst-dashboard
-
-polyglot:
-  # Only the timeouts here -- the routes are part of Polyglot's contract and live in
-  # PolyglotClientImpl. base-url and service-token come from the active profile.
-  connect-timeout: PT5S
-  read-timeout: PT10S

@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -47,16 +46,13 @@ public class Diagnosis extends BaseEntity {
     @Column(name = "diagnosis_date", nullable = false)
     private Instant diagnosisDate;
 
-    @Lob
-    @Column(name = "diagnosis_text", nullable = false)
+    @Column(name = "diagnosis_text", nullable = false, columnDefinition = "text")
     private String diagnosisText;
 
-    @Lob
-    @Column(name = "notes")
+    @Column(name = "notes", columnDefinition = "text")
     private String notes;
 
     /** Free text by explicit request (spec section 2.3), deliberately not a relation. */
-    @Lob
-    @Column(name = "medications")
+    @Column(name = "medications", columnDefinition = "text")
     private String medications;
 }

@@ -22,6 +22,9 @@ public class GameAnswerDTO {
     @Size(max = 64)
     private String polyglotNodeId;
 
+    @Size(max = 200)
+    private String nodeName;
+
     /** Named by its label on the way in; the server resolves or registers the lookup row. */
     @NotNull
     @Valid
@@ -29,6 +32,9 @@ public class GameAnswerDTO {
 
     @PositiveOrZero
     private Integer reactionTimeMs;
+
+    @PositiveOrZero
+    private Integer totalResponseTimeMs;
 
     private Double score;
 

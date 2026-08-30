@@ -37,6 +37,9 @@ public class GameAnswer extends BaseEntity {
     @Column(name = "polyglot_node_id", length = 64)
     private String polyglotNodeId;
 
+    @Column(name = "node_name", length = 200)
+    private String nodeName;
+
     /**
      * The lookup row rather than free text (spec section 4.2). Polyglot's type is an open
      * string upstream, so the service registers a code it has not seen before instead of
@@ -48,6 +51,9 @@ public class GameAnswer extends BaseEntity {
 
     @Column(name = "reaction_time_ms")
     private Integer reactionTimeMs;
+
+    @Column(name = "total_response_time_ms")
+    private Integer totalResponseTimeMs;
 
     /** What the patient scored on this node (spec section 4.2, PatientScore). */
     @Column(name = "score")

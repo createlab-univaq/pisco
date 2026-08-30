@@ -8,8 +8,11 @@ import lombok.Setter;
 
 /**
  * What the patient's client receives after redeeming a unique code: enough to identify
- * the session, plus the full Polyglot path fetched live. Nothing clinical, since this
- * endpoint is reachable without logging in.
+ * the session, plus the flow it refers to. Nothing clinical and nothing anagraphic, since
+ * this endpoint is reachable without logging in.
+ *
+ * <p>The flow comes back without its graph, like everywhere outside the flow detail
+ * endpoint.
  */
 @Getter
 @Setter
@@ -23,8 +26,5 @@ public class ResolvedPathDTO {
 
     private UUID patientId;
 
-    private String polyglotPathId;
-
-    /** Passed through verbatim from Polyglot -- this service does not model its shape. */
-    private Object path;
+    private FlowDTO flow;
 }

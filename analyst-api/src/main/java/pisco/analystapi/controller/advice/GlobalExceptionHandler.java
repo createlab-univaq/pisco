@@ -17,7 +17,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
-import pisco.analystapi.exception.UpstreamException;
 
 /** Every error leaves as an RFC 9457 ProblemDetail, never as a stack trace or a bare 500. */
 @RestControllerAdvice
@@ -42,16 +41,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ProblemDetail handleAccessDenied(AccessDeniedException ex) {
         return problem(HttpStatus.FORBIDDEN, "Accesso negato", "Permessi insufficienti");
-    }
-
-    @ExceptionHandler(UpstreamException.NotConfigured.class)
-    public ProblemDetail handleNotConfigured(UpstreamException.NotConfigured ex) {
-        return problem(HttpStatus.SERVICE_UNAVAILABLE, "Integrazione non configurata", ex.getMessage());
-    }
-
-    @ExceptionHandler(UpstreamException.Failed.class)
-    public ProblemDetail handleUpstreamFailed(UpstreamException.Failed ex) {
-        return problem(HttpStatus.BAD_GATEWAY, "Errore del sistema esterno", ex.getMessage());
     }
 
     /**

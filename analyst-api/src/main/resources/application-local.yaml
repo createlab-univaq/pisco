@@ -21,12 +21,6 @@ app:
     secret: ZIIXpgEfc9uZmDAGWc/LMccS7UL4J2+H0LjfoAw6dQonoySkmqvQEwKBl9l0q7or5LMPEHrc02SnzFUcm+Kgfg==
     expires-in: PT8H
 
-polyglot:
-  # Point at a locally running Polyglot backend, or leave blank to get a clean
-  # 503 "integration not configured" from the path endpoints.
-  base-url: ${POLYGLOT_API_URL:http://localhost:5000}
-  service-token: ${POLYGLOT_SERVICE_TOKEN:}
-
 logging:
   level:
     pisco.analystapi: DEBUG

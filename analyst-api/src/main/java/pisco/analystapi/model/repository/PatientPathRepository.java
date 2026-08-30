@@ -17,6 +17,5 @@ public interface PatientPathRepository extends JpaRepository<PatientPath, UUID> 
 
     Optional<PatientPath> findByIdAndAnalystPatientId(UUID id, UUID analystPatientId);
 
-    boolean existsByAnalystPatientIdAndPolyglotPathId(
-            UUID analystPatientId, String polyglotPathId);
+    boolean existsByAnalystPatientIdAndFlowId(UUID analystPatientId, UUID flowId);
 }

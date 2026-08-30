@@ -22,9 +22,6 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-PT8H}
       CORS_ORIGINS: ${CORS_ORIGINS}
-      POLYGLOT_API_URL: ${POLYGLOT_API_URL}
-      # Not SERVICE_* -- Coolify reserves that prefix for its own magic variables.
-      POLYGLOT_SERVICE_TOKEN: ${POLYGLOT_SERVICE_TOKEN}
     ports:
       - "${PORT:-8082}:${PORT:-8082}"
     healthcheck:

@@ -19,11 +19,6 @@ app:
     secret: ${JWT_SECRET}
     expires-in: ${JWT_EXPIRES_IN:PT8H}
 
-polyglot:
-  base-url: ${POLYGLOT_API_URL}
-  # Not SERVICE_* -- Coolify reserves that prefix for its own magic variables.
-  service-token: ${POLYGLOT_SERVICE_TOKEN}
-
 logging:
   level:
     pisco.analystapi: INFO

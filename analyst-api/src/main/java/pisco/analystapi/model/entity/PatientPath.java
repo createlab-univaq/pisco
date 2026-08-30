@@ -20,16 +20,17 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * The association between an assignment and a Polyglot path (spec section 3). Per that
- * section the local database stores only the external id -- no title, no nodes, nothing
- * that would go stale the moment the path is edited in Polyglot.
+ * The association between an assignment and a flow (spec section 3). Flows used to live
+ * in Polyglot and were referenced by an external id; now that they are authored here it
+ * is a plain foreign key, and the graph is read from the flow rather than fetched over
+ * the network.
  */
 @Entity
 @Table(
         name = "patient_paths",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_patient_paths_assignment_path",
-                columnNames = {"analyst_patient_id", "polyglot_path_id"}),
+                name = "uk_patient_paths_assignment_flow",
+                columnNames = {"analyst_patient_id", "flow_id"}),
         indexes = @Index(
                 name = "idx_patient_paths_analyst_patient", columnList = "analyst_patient_id"))
 @Getter
@@ -50,9 +51,13 @@ public class PatientPath extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AnalystPatient analystPatient;
 
-    /** The flow id as Polyglot knows it (a Mongo id), opaque to this service. */
-    @Column(name = "polyglot_path_id", nullable = false, updatable = false, length = 64)
-    private String polyglotPathId;
+    /**
+     * The flow being followed. No cascade on delete: a flow already handed to a patient
+     * cannot be deleted out from under them -- FlowService surfaces that as a 409.
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "flow_id", nullable = false, updatable = false)
+    private Flow flow;
 
     /**
      * Handed to the patient and typed into the game. It is the only credential guarding

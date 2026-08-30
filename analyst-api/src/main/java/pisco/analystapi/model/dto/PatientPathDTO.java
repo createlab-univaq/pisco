@@ -1,8 +1,8 @@
 package pisco.analystapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
@@ -14,17 +14,20 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PatientPathDTO {
 
-    /** The association's own id -- what DELETE takes, not the Polyglot flow id. */
+    /** The association's own id -- what DELETE takes, not the flow id. */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private PatientDTO patient;
 
-    /** The only piece of the Polyglot path stored locally (spec section 3). */
-    @NotBlank
-    @Size(max = 64)
-    private String polyglotPathId;
+    /**
+     * The flow being assigned. Only its id is read on the way in; on the way out it comes
+     * back without flowJson, which only the flow detail endpoint carries.
+     */
+    @NotNull
+    @Valid
+    private FlowDTO flow;
 
     /** Generated on assignment; the analyst hands it to the patient. */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

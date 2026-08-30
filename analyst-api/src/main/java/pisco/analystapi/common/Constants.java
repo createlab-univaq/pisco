@@ -2,8 +2,8 @@ package pisco.analystapi.common;
 
 /**
  * Values shared across layers, or fixed by a protocol rather than by us. Anything
- * deployment-dependent belongs in configuration instead -- the issuer, the token
- * lifetime and the Polyglot routes all live in application.yaml for that reason.
+ * deployment-dependent belongs in configuration instead -- the issuer and the token
+ * lifetime live in application.yaml for that reason.
  */
 public final class Constants {
 
@@ -27,10 +27,4 @@ public final class Constants {
         public static final String ROLE_ADMIN = ROLE_PREFIX + "ADMIN";
     }
 
-    public static final class Caches {
-
-        private Caches() {}
-
-        public static final String POLYGLOT_CATALOG = "polyglotCatalog";
-    }
 }

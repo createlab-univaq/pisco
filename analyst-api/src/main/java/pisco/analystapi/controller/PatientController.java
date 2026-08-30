@@ -143,9 +143,11 @@ public class PatientController {
         return ResponseEntity.created(URI.create("/api/diagnoses/" + created.getId())).body(created);
     }
 
-    // --- Polyglot paths assigned to a patient -------------------------------------------
+    // --- Flows assigned to a patient ----------------------------------------------------
 
-    @Operation(summary = "Elenca i percorsi assegnati a un paziente dal chiamante")
+    @Operation(
+            summary = "Elenca i percorsi assegnati a un paziente dal chiamante",
+            description = "Ogni assegnazione riporta il flow senza flowJson.")
     @GetMapping("/{patientId}/paths")
     public List<PatientPathDTO> listPaths(@PathVariable UUID patientId) {
         log.info("GET /api/patients/{}/paths", patientId);
@@ -154,14 +156,15 @@ public class PatientController {
 
     /** Returns the generated unique code -- the analyst hands it to the patient. */
     @Operation(
-            summary = "Assegna un percorso Polyglot a un paziente",
-            description = "Restituisce il codice univoco generato, da consegnare al paziente. "
-                    + "409 se lo stesso percorso e' gia' assegnato: due codici per un percorso "
-                    + "spezzerebbero la telemetria su entrambi.")
+            summary = "Assegna un flow a un paziente",
+            description = "Il flow si indica per id: {\"flow\": {\"id\": \"...\"}}. Puo' essere "
+                    + "anche il flow di un collega. Restituisce il codice univoco generato, da "
+                    + "consegnare al paziente. 409 se lo stesso flow e' gia' assegnato: due "
+                    + "codici per un flow spezzerebbero la telemetria su entrambi.")
     @PostMapping("/{patientId}/paths")
     public ResponseEntity<PatientPathDTO> assignPath(
             @PathVariable UUID patientId, @Valid @RequestBody PatientPathDTO dto) {
-        log.info("POST /api/patients/{}/paths polyglotPathId={}", patientId, dto.getPolyglotPathId());
+        log.info("POST /api/patients/{}/paths flowId={}", patientId, dto.getFlow().getId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(patientPathService.assign(patientId, dto));
     }
@@ -169,8 +172,8 @@ public class PatientController {
     /** {@code pathId} is the association's id, the one returned as {@code id} above. */
     @Operation(
             summary = "Rimuove un percorso assegnato",
-            description = "pathId e' l'id dell'assegnazione, non quello del percorso Polyglot. "
-                    + "Le esecuzioni registrate su quel codice vengono eliminate con essa.")
+            description = "pathId e' l'id dell'assegnazione, non quello del flow. Le esecuzioni "
+                    + "registrate su quel codice vengono eliminate con essa; il flow resta.")
     @DeleteMapping("/{patientId}/paths/{pathId}")
     public ResponseEntity<Void> removePath(@PathVariable UUID patientId, @PathVariable UUID pathId) {
         log.info("DELETE /api/patients/{}/paths/{}", patientId, pathId);
