@@ -11,6 +11,7 @@ import SaveFlowModal from '../modals/SaveFlowModal';
 import ViewCodeModal from '../modals/ViewCodeModal';
 import FlowSettingsModal from '../modals/FlowSettingsModal';
 import { useHasHydrated } from '@/hooks/useHasHydrated';
+import { Flow } from '@/types';
 
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
 const ArrowForwardIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
@@ -24,10 +25,10 @@ const EditPenIcon = () => <svg className={styles.editPenIcon} fill="none" stroke
 const SettingsIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 
 export type EditorNavProps = {
-    flow?: any;
+    flow: Flow;
     saveFunc: () => Promise<void>;
-    onUpdateFlowInfo?: (updates: any) => void;
-    onApplyLocalFlow?: (updates: any) => void;
+    onUpdateFlowInfo?: (updates: Partial<Flow>) => void;
+    onApplyLocalFlow?: (updates: Partial<Flow>) => void;
     hasUnsavedChanges?: boolean;
     canUndo?: boolean;
     canRedo?: boolean;
@@ -55,17 +56,17 @@ export default function EditorNav({
     const [publishLoading, setPublishLoading] = useState(false);
     const [publish, setPublish] = useState(false);
 
-    const [localTitle, setLocalTitle] = useState('');
+    const [localTitle, setLocalTitle] = useState(flow?.name || '');
 
     const [isOpenExport, setIsOpenExport] = useState(false);
     const [isOpenSave, setIsOpenSave] = useState(false);
     const [isOpenCode, setIsOpenCode] = useState(false);
-    const [isOpenSettings, setIsOpenSettings] = useState(false); // <-- Settings state
+    const [isOpenSettings, setIsOpenSettings] = useState(false);
 
     useEffect(() => {
         if (flow != null) {
-            setPublish(flow.publish);
-            setLocalTitle(flow.title || 'Untitled Flow');
+            setPublish(flow.published || false);
+            setLocalTitle(flow.name || '');
         }
     }, [flow]);
 
@@ -89,19 +90,19 @@ export default function EditorNav({
     };
 
     const handleTitleSubmit = () => {
-        if (localTitle.trim() !== '' && localTitle !== flow?.title) {
+        if (localTitle.trim() !== '' && localTitle !== (flow?.name || '')) {
             if (onUpdateFlowInfo) {
-                onUpdateFlowInfo({ title: localTitle.trim() });
+                onUpdateFlowInfo({ name: localTitle.trim() });
             }
         } else {
-            setLocalTitle(flow?.title || 'Untitled Flow');
+            setLocalTitle(flow?.name || '');
         }
     };
 
     const checkPublish = (): boolean => {
         if (flow == null) return false;
 
-        if (!flow.nodes || flow.nodes.length === 0) {
+        if (!flow.flowJson.nodes || flow.flowJson.nodes.length === 0) {
             notify('Flow not published', 'Something is off with your flow! Error: no nodes found', 'warning');
             return false;
         }
@@ -111,7 +112,7 @@ export default function EditorNav({
 
         let startingNode = 0;
 
-        for (const node of flow.nodes) {
+        for (const node of flow.flowJson.nodes) {
             let infoCheck = true;
             if (!node.description) infoCheck = false;
 
@@ -123,7 +124,7 @@ export default function EditorNav({
                 continue;
             }
 
-            const hasIncomingEdge = flow.edges.some((edge: any) => edge.reactFlow?.target === node._id);
+            const hasIncomingEdge = flow.flowJson.edges.some((edge: any) => edge.reactFlow?.target === node._id);
             if (!hasIncomingEdge) startingNode++;
         }
 
@@ -145,10 +146,10 @@ export default function EditorNav({
         if (!publish) {
             const isValid = checkPublish();
             setPublish(isValid);
-            if (onUpdateFlowInfo) onUpdateFlowInfo({ publish: isValid });
+            if (onUpdateFlowInfo) onUpdateFlowInfo({ published: isValid });
         } else {
             setPublish(false);
-            if (onUpdateFlowInfo) onUpdateFlowInfo({ publish: false });
+            if (onUpdateFlowInfo) onUpdateFlowInfo({ published: false });
         }
         setPublishLoading(false);
     };

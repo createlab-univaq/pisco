@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from './CreateFlowModal.module.css';
 import { Editor } from '@monaco-editor/react';
 import { createFlowAction } from '@/lib/actions/flows';
+import { createNewDefaultPolyglotFlow } from '@/lib/factories/polyglotGenerators';
 
 type CreateFlowModalProps = {
   isOpen: boolean;
@@ -43,12 +44,13 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
       let result;
 
       switch (currentTab) {
-        // TAB 0: Custom Flow (Empty JSON)
+        // TAB 0: Custom Flow (Initialized with default generator nodes/edges)
         case 0: {
+          const defaultFlow = createNewDefaultPolyglotFlow();
           result = await createFlowAction({
             name: name.trim(),
             description: description.trim(),
-            flowJson: {} // Explicitly empty as requested
+            flowJson: defaultFlow.flowJson, // Ensures { nodes: [], edges: [] }
           });
           break;
         }
@@ -61,10 +63,12 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
           }
 
           const parsedData = JSON.parse(jsonInput);
+          const flowJsonData = parsedData.flowJson || (parsedData.nodes ? parsedData : { nodes: [], edges: [] });
+
           result = await createFlowAction({
             name: parsedData.name || 'Imported Flow',
             description: parsedData.description || '',
-            flowJson: parsedData.flowJson || parsedData
+            flowJson: flowJsonData,
           });
           break;
         }
@@ -79,9 +83,8 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
       }
 
       if (result.success && result.flow?.id) {
-        onClose(); // Close the modal
-        // Route to the new flow's editor page
-        router.push(`/${result.flow.id}`);
+        onClose();
+        router.push(`/flows/${result.flow.id}`);
       }
 
     } catch (error: any) {

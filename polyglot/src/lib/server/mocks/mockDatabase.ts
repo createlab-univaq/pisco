@@ -1,13 +1,52 @@
 import { Analyst, Flow } from "@/types";
+import fs from 'fs';
+import path from 'path';
 
-export const mockAnalyst: Analyst = {
-    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    firstName: "Admin",
-    lastName: "Analyst",
-    email: "user@example.com",
-    role: "ANALYST",
-    createdAt: "2026-08-30T14:20:03.693Z"
+const DB_PATH = path.join(process.cwd(), 'mock-database.json');
+
+interface MockDatabaseSchema {
+    analysts: Analyst[];
+    flows: Flow[];
+}
+
+const initialDatabase: MockDatabaseSchema = {
+    analysts: [
+        {
+            id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            firstName: "Admin",
+            lastName: "Analyst",
+            email: "user@example.com",
+            role: "ANALYST",
+            createdAt: "2026-08-30T14:20:03.693Z"
+        }
+    ],
+    flows: []
 };
+
+function readDB(): MockDatabaseSchema {
+    try {
+        if (!fs.existsSync(DB_PATH)) {
+            fs.writeFileSync(DB_PATH, JSON.stringify(initialDatabase, null, 2), 'utf8');
+        }
+        return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+    } catch (e) {
+        console.error("Failed to read mock DB:", e);
+        return initialDatabase;
+    }
+}
+
+function writeDB(data: MockDatabaseSchema): void {
+    try {
+        fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+    } catch (e) {
+        console.error("Failed to write mock DB:", e);
+    }
+}
+
+export function getMockAnalyst(id: string = "3fa85f64-5717-4562-b3fc-2c963f66afa6"): Analyst {
+    const db = readDB();
+    return db.analysts.find(a => a.id === id) || db.analysts[0];
+}
 
 export const mockNewAnalyst: Analyst = {
     id: "mock-new-analyst-id",
@@ -18,61 +57,62 @@ export const mockNewAnalyst: Analyst = {
     createdAt: new Date().toISOString()
 };
 
-export const mockFlows: Flow[] = [
-    {
-        id: "mock-flow-1",
-        name: "Introduzione alla Teoria della Mente",
-        description: "Percorso base per il riconoscimento emotivo.",
-        published: true,
-        flowJson: {},
-        analyst: mockAnalyst,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    },
-    {
-        id: "mock-flow-2",
-        name: "Test Faux Pas Avanzato",
-        description: "Valutazione interazioni sociali complesse.",
-        published: false,
-        flowJson: {},
-        analyst: mockAnalyst,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+export function updateMockAnalyst(id: string, payload: Partial<Analyst>): Analyst {
+    const db = readDB();
+    let analyst = db.analysts.find(a => a.id === id);
+    if (!analyst) {
+        analyst = {
+            id: id || crypto.randomUUID(),
+            firstName: payload.firstName || "User",
+            lastName: payload.lastName || "",
+            email: payload.email || "user@example.com",
+            role: "ANALYST",
+            createdAt: new Date().toISOString()
+        };
+        db.analysts.push(analyst);
+    } else {
+        analyst.firstName = payload.firstName ?? analyst.firstName;
+        analyst.lastName = payload.lastName ?? analyst.lastName;
+        analyst.email = payload.email ?? analyst.email;
     }
-];
-
-// Helper to convert uploaded base64 file payload into a usable Data URL for mock rendering
-export function storeMockImage(mimeType: string, base64Data: string): string {
-    const cleanMime = mimeType || 'image/jpeg';
-    return `data:${cleanMime};base64,${base64Data}`;
+    writeDB(db);
+    return analyst;
 }
 
-export function deleteMockImage(id: string): void {
-    console.log(`Mock image reference cleaned: ${id}`);
+export function deleteMockAnalyst(id: string): void {
+    const db = readDB();
+    db.analysts = db.analysts.filter(a => a.id !== id);
+    writeDB(db);
+}
+
+export function getMockFlows(): Flow[] {
+    return readDB().flows;
 }
 
 export function addMockFlow(payload: Partial<Flow>): Flow {
+    const db = readDB();
     const newFlow: Flow = {
         id: payload.id || crypto.randomUUID(),
         name: payload.name || "Untitled Flow",
         description: payload.description || "",
         published: payload.published || false,
-        flowJson: payload.flowJson || {},
-        analyst: mockAnalyst,
+        flowJson: payload.flowJson || { nodes: [], edges: [] },
+        analyst: db.analysts[0],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
-
-    mockFlows.push(newFlow);
+    db.flows.push(newFlow);
+    writeDB(db);
     return newFlow;
 }
 
 export function getMockFlowById(id: string): Flow | undefined {
-    return mockFlows.find(f => f.id === id) || mockFlows[0];
+    return readDB().flows.find(f => f.id === id);
 }
 
 export function updateMockFlow(id: string, flowJson: any): Flow {
-    let flow = mockFlows.find(f => f.id === id);
+    const db = readDB();
+    let flow = db.flows.find(f => f.id === id);
     if (!flow) {
         flow = {
             id,
@@ -80,25 +120,29 @@ export function updateMockFlow(id: string, flowJson: any): Flow {
             description: "",
             published: false,
             flowJson: flowJson,
-            analyst: mockAnalyst,
+            analyst: db.analysts[0],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-        mockFlows.push(flow);
+        db.flows.push(flow);
     } else {
         flow.flowJson = flowJson;
         flow.updatedAt = new Date().toISOString();
     }
+    writeDB(db);
     return flow;
 }
 
-export function updateMockAnalyst(payload: Partial<Analyst>): Analyst {
-    mockAnalyst.firstName = payload.firstName || mockAnalyst.firstName;
-    mockAnalyst.lastName = payload.lastName || mockAnalyst.lastName;
-    mockAnalyst.email = payload.email || mockAnalyst.email;
-    return mockAnalyst;
+export function deleteMockFlow(id: string): void {
+    const db = readDB();
+    db.flows = db.flows.filter(f => f.id !== id);
+    writeDB(db);
 }
 
-export function deleteMockAnalyst(): void {
-    console.log("Mock analyst deleted.");
+export function storeMockImage(mimeType: string, base64Data: string): string {
+    return `data:${mimeType || 'image/jpeg'};base64,${base64Data}`;
+}
+
+export function deleteMockImage(id: string): void {
+    console.log(`Mock image deleted: ${id}`);
 }

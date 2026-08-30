@@ -7,26 +7,27 @@ import Navbar from '@/components/navbars/NavBar';
 export default async function FlowsPage({
     searchParams,
 }: {
-    searchParams: Promise<{ q?: string }>; // <-- Update type to Promise
+    searchParams: Promise<{ q?: string }>;
 }) {
-    // 1. AWAIT the search params before using them
     const resolvedParams = await searchParams;
-
-    // 2. Build the query string using the resolved params
     const query = resolvedParams.q ? `?name=${encodeURIComponent(resolvedParams.q)}` : '';
 
-    // 3. Fetch data securely on the server
-    const res = await apiFetch(`${FLOWS_PATH}${query}`);
-
-    // 4. Handle data
     let flows: Flow[] = [];
-    if (res.ok) {
-        flows = await res.json();
-    } else {
-        console.error("Failed to fetch flows. Status:", res.status);
+
+    try {
+        const res = await apiFetch(`${FLOWS_PATH}${query}`);
+
+        if (res.ok) {
+            // Safely parse JSON with a fallback if the body is empty
+            const text = await res.text();
+            flows = text ? JSON.parse(text) : [];
+        } else {
+            console.error("Failed to fetch flows. Status:", res.status);
+        }
+    } catch (error) {
+        console.error("Error fetching flows:", error);
     }
 
-    // 5. Pass the resolved query to the client
     return (
         <>
             <Navbar />

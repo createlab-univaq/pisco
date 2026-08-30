@@ -33,7 +33,6 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { v4 as UUIDv4 } from 'uuid';
 import styles from './FlowEditor.module.css';
-import { PolyglotFlow } from '@/types/PolyglotFlow';
 import ContextMenu, { ContextMenuProps, ContextMenuTypes } from '../menus/ContextMenu';
 import { PolyglotNode } from '@/types/PolyglotNode';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
@@ -42,6 +41,8 @@ import { edgeTypes, nodeTypes } from '../ElementMapping';
 import ContextualSidebar from '../menus/ContextualSidebar';
 import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/lib/factories/polyglotGenerators';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
+import { Flow } from '@/types';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
 
 // ==========================================
 // CONFIGURABLE KEYBOARD SHORTCUTS
@@ -55,8 +56,8 @@ const SHORTCUTS = {
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
-    initialFlow: PolyglotFlow;
-    saveFlow: (updatedFlow: PolyglotFlow) => Promise<void>;
+    initialFlow: Flow;
+    saveFlow: (updatedFlow: Flow) => Promise<void>;
     onSelectionChange?: (selection: OnSelectionChangeParams) => void;
 };
 
@@ -80,11 +81,11 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     }), []);
 
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-    const [flowTitle, setFlowTitle] = useState(initialFlow.title || 'Untitled Flow');
-    const [flowPublish, setFlowPublish] = useState(initialFlow.publish || false);
+    const [flowTitle, setFlowTitle] = useState(initialFlow.name);
+    const [flowPublish, setFlowPublish] = useState(initialFlow.published);
 
-    const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(initialFlow.nodes || []);
-    const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(initialFlow.edges || []);
+    const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(initialFlow.flowJson?.nodes || []);
+    const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(initialFlow.flowJson?.edges || []);
     const [selectedElement, setSelectedElement] = useState<{ type: 'Node' | 'Edge'; id: string } | null>(null);
 
     const [isOpenPanel, setIsOpenPanel] = useState(false);
@@ -361,10 +362,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 type: type,
                 title: 'New Node',
                 description: '',
-                data: {
-                    useFlowData: initialFlow?.sourceMaterial != null,
-                    sourceMaterial: initialFlow?.sourceMaterial,
-                } as any,
+                data: {} as any,
                 reactFlow: {
                     id: id,
                     type: type,
@@ -453,7 +451,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     // HELPERS
     // ============================================================================
 
-    const getCleanFlow = (): PolyglotFlow => {
+    const getCleanFlowJson = (): PolyglotFlow => {
         const cleanNodes = polyglotNodes.map((node) => {
             if (!node.reactFlow) return node;
             const { width, height, selected, dragging, positionAbsolute, resizing, ...cleanReactFlow } = node.reactFlow as any;
@@ -470,18 +468,15 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         });
 
         return {
-            ...initialFlow,
-            title: flowTitle,
-            publish: flowPublish,
             nodes: cleanNodes,
             edges: cleanEdges,
         };
     };
 
-    const handleSave = async (overrides?: Partial<PolyglotFlow>) => {
-        const cleanFlow = getCleanFlow();
+    const handleSave = async (overrides?: Partial<Flow>) => {
+        const cleanFlowJson = getCleanFlowJson();
 
-        const invalidNodes = cleanFlow.nodes.filter((node) => {
+        const invalidNodes = cleanFlowJson.nodes.filter((node) => {
             const result = validateNodeData(node.type, node.data);
             return !result.ok;
         });
@@ -492,8 +487,11 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         }
 
         await saveFlow({
-            ...cleanFlow,
+            ...initialFlow,
+            name: flowTitle,
+            published: flowPublish,
             ...overrides,
+            flowJson: cleanFlowJson,
         });
 
         setHasUnsavedChanges(false);
@@ -508,24 +506,29 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     return (
         <div className={styles.container}>
             <EditorNav
-                flow={getCleanFlow()}
+                flow={{
+                    ...initialFlow,
+                    name: flowTitle,
+                    published: flowPublish,
+                    flowJson: getCleanFlowJson(),
+                }}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
                 canUndo={past.length > 0}
                 canRedo={future.length > 0}
                 onUndo={undo}
                 onRedo={redo}
-                onUpdateFlowInfo={async (updates) => {
-                    if (updates.title !== undefined) setFlowTitle(updates.title);
-                    if (updates.publish !== undefined) setFlowPublish(updates.publish);
+                onUpdateFlowInfo={async (updates: Partial<Flow>) => {
+                    if (updates.name !== undefined) setFlowTitle(updates.name);
+                    if (updates.published !== undefined) setFlowPublish(updates.published);
                     await handleSave(updates);
                 }}
-                onApplyLocalFlow={(updates) => {
+                onApplyLocalFlow={(updates: Partial<Flow>) => {
                     takeSnapshot(); // Snapshot BEFORE editing via "View Code"
-                    if (updates.title !== undefined) setFlowTitle(updates.title);
-                    if (updates.publish !== undefined) setFlowPublish(updates.publish);
-                    if (updates.nodes !== undefined) setPolyglotNodes(updates.nodes);
-                    if (updates.edges !== undefined) setPolyglotEdges(updates.edges);
+                    if (updates.name !== undefined) setFlowTitle(updates.name);
+                    if (updates.published !== undefined) setFlowPublish(updates.published);
+                    if (updates.flowJson?.nodes !== undefined) setPolyglotNodes(updates.flowJson.nodes);
+                    if (updates.flowJson?.edges !== undefined) setPolyglotEdges(updates.flowJson.edges);
                     setHasUnsavedChanges(true);
                 }}
             />

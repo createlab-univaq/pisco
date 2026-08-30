@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { apiFetch } from '../server/apiClient';
 import { FLOWS_PATH } from '../server/api-paths';
+import { PolyglotFlow } from '@/types/PolyglotFlow';
+import { Flow } from '@/types';
 
 export async function getFlowAction(flowId: string) {
     try {
@@ -61,7 +63,7 @@ export async function deleteFlowAction(flowId: string) {
     }
 }
 
-export async function createFlowAction(data: { name: string, description: string, flowJson?: any }) {
+export async function createFlowAction(data: { name: string, description: string, flowJson: PolyglotFlow }) {
     try {
         // Generate a UUID for the new flow as requested by the API payload spec
         const newId = crypto.randomUUID();
@@ -71,7 +73,7 @@ export async function createFlowAction(data: { name: string, description: string
             name: data.name,
             description: data.description,
             published: false,
-            flowJson: data.flowJson || {} // Guaranteed to be empty for standard creation
+            flowJson: data.flowJson
         };
 
         const res = await apiFetch(FLOWS_PATH, {
@@ -85,7 +87,7 @@ export async function createFlowAction(data: { name: string, description: string
             return { error: errorData?.detail || 'Failed to create flow.' };
         }
 
-        const createdFlow = await res.json();
+        const createdFlow: Flow = await res.json();
 
         // Purge the cache so the flows list updates instantly
         revalidatePath('/');

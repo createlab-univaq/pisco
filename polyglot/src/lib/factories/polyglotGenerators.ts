@@ -1,19 +1,24 @@
 import { MarkerType } from 'reactflow';
 import { v4 as UUIDv4 } from 'uuid';
-import { PolyglotFlow } from '@/types/PolyglotFlow';
 import { PolyglotNode } from '@/types/PolyglotNode';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
 import { polyglotNodeComponentMapping } from '@/components/ElementMapping';
 import { EDGE_TYPE } from '@/types/EdgeType';
 import { NODE_TYPE } from '@/types/NodeType';
+import { Analyst, Flow } from '@/types';
 
-export const createNewDefaultPolyglotFlow = (): PolyglotFlow => ({
-    _id: UUIDv4(),
-    title: 'New Flow',
+export const createNewDefaultPolyglotFlow = (): Flow => ({
+    id: UUIDv4(),
+    name: 'New Flow',
     description: '',
-    publish: false,
-    nodes: [],
-    edges: [],
+    published: false,
+    flowJson: {
+        nodes: [],
+        edges: [],
+    },
+    analyst: {} as Analyst,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
 });
 
 export const createNewDefaultPolyglotNode = (

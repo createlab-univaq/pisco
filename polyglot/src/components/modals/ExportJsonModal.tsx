@@ -2,13 +2,13 @@
 
 import Editor from '@monaco-editor/react';
 import styles from './ExportJsonModal.module.css';
-import { PolyglotFlow } from '@/types/PolyglotFlow';
+import { Flow } from '@/types';
 
 export type ExportJsonModalProps = {
     isOpen: boolean;
     onClose: () => void;
     // Replaced custom Nullable<T> with standard TypeScript T | null
-    flow: PolyglotFlow | null;
+    flow: Flow | null;
 };
 
 // Inline SVG replacing Chakra's ModalCloseButton icon
@@ -32,7 +32,7 @@ const ExportJsonModal = ({ isOpen, onClose, flow }: ExportJsonModalProps) => {
 
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${flow?.title ? flow.title.replace(/\s+/g, '_') : 'flow'}_export.json`;
+        link.download = `${flow?.name ? flow.name.replace(/\s+/g, '_') : 'flow'}_export.json`;
 
         document.body.appendChild(link);
         link.click();

@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import FlowEditor from '@/components/editor/FlowEditor';
 import { getFlowAction, saveFlowAction } from '@/lib/actions/flows';
-import { PolyglotFlow } from '@/types/PolyglotFlow';
 import styles from './FlowEditorClient.module.css';
+import { Flow } from '@/types';
 
 type ToastType = {
     id: number;
@@ -21,7 +21,7 @@ type FlowEditorClientProps = {
 export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
     const router = useRouter();
 
-    const [flow, setFlow] = useState<PolyglotFlow | null>(null);
+    const [flow, setFlow] = useState<Flow | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -87,7 +87,7 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
     }, [flowId]);
 
     // Save Logic via Server Action
-    const handleSaveFlow = async (updatedFlow: PolyglotFlow, outputToast = true, returnPath?: string) => {
+    const handleSaveFlow = async (updatedFlow: Flow, outputToast = true, returnPath?: string) => {
         try {
             const result = await saveFlowAction(flowId, updatedFlow);
 
