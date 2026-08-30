@@ -529,9 +529,48 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                 onApplyLocalFlow={(updates: Partial<Flow>) => {
                     takeSnapshot();
                     if (updates.name !== undefined) setFlowName(updates.name);
+                    // (Assuming you added flowDescription from our previous step)
                     if (updates.description !== undefined) setFlowDescription(updates.description);
                     if (updates.published !== undefined) setIsFlowPublished(updates.published);
-                    if (updates.flowJson?.nodes !== undefined) setPolyglotNodes(updates.flowJson.nodes);
+
+                    if (updates.flowJson?.nodes !== undefined) {
+                        const syncedNodes = updates.flowJson.nodes.map(node => {
+                            if (!node.reactFlow) return node as PolyglotNode;
+
+                            // Find the previous state of this node
+                            const prevNode = polyglotNodes.find(pn => pn._id === node._id);
+
+                            const rfData = node.reactFlow.data as any;
+                            const prevRfData = prevNode?.reactFlow?.data as any;
+
+                            let resolvedTitle = node.title;
+
+                            // Detect exactly which title field the user changed
+                            if (prevNode) {
+                                if (rfData?.title !== prevRfData?.title) resolvedTitle = rfData?.title;
+                                else if (rfData?.label !== prevRfData?.label) resolvedTitle = rfData?.label;
+                                else if (node.title !== prevNode.title) resolvedTitle = node.title;
+                            } else {
+                                resolvedTitle = node.title || rfData?.title || rfData?.label || 'New Node';
+                            }
+
+                            // Sync all three fields to the newest value
+                            return {
+                                ...node,
+                                title: resolvedTitle,
+                                reactFlow: {
+                                    ...node.reactFlow,
+                                    data: {
+                                        ...(rfData || {}),
+                                        label: resolvedTitle,
+                                        title: resolvedTitle
+                                    }
+                                }
+                            } as PolyglotNode;
+                        });
+                        setPolyglotNodes(syncedNodes);
+                    }
+
                     if (updates.flowJson?.edges !== undefined) setPolyglotEdges(updates.flowJson.edges);
                     setHasUnsavedChanges(true);
                 }}
@@ -611,21 +650,36 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                 <ContextualSidebar
                     selectedElement={activeElement}
                     onUpdateElement={(updatedElement: any) => {
-                        takeSnapshot(); // Snapshot BEFORE updating data via sidebar
+                        takeSnapshot();
                         setHasUnsavedChanges(true);
+
                         if (selectedElement?.type === 'Node') {
                             setPolyglotNodes(prev => prev.map(n => {
                                 if (n.reactFlow?.id === selectedElement.id) {
+
+                                    const rfData = updatedElement.reactFlow?.data as any;
+                                    const prevRfData = n.reactFlow?.data as any;
+
+                                    let resolvedTitle = updatedElement.title;
+
+                                    // Detect exactly which title field the user changed
+                                    if (rfData?.title !== prevRfData?.title) resolvedTitle = rfData?.title;
+                                    else if (rfData?.label !== prevRfData?.label) resolvedTitle = rfData?.label;
+                                    else if (updatedElement.title !== n.title) resolvedTitle = updatedElement.title;
+
+                                    // Sync all three fields to the newest value
                                     return {
                                         ...updatedElement,
+                                        title: resolvedTitle,
                                         reactFlow: {
                                             ...updatedElement.reactFlow,
                                             data: {
-                                                ...updatedElement.reactFlow?.data,
-                                                label: updatedElement.title || updatedElement.reactFlow?.data?.label
+                                                ...(rfData || {}),
+                                                label: resolvedTitle,
+                                                title: resolvedTitle
                                             }
                                         }
-                                    };
+                                    } as PolyglotNode;
                                 }
                                 return n;
                             }));

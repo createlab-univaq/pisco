@@ -49,7 +49,9 @@ const ElementProperties = ({
             }
             setSchemaErrors(currentSchemaErrors);
         }
-    }, [selectedElement, isEditorOpen]);
+        // Depend on _id and isEditorOpen, NOT the whole selectedElement object.
+        // This prevents the editor from resetting its cursor while you type.
+    }, [selectedElement._id, isEditorOpen]);
 
     const handleEditorChange = (value: string | undefined) => {
         const text = value || '';
@@ -90,21 +92,16 @@ const ElementProperties = ({
             </div>
 
             {isEditorOpen ? (
-                <div className={styles.editorContainer}>
+                <div
+                    className={styles.editorContainer}
+                    onKeyDown={(e) => {
+                        e.stopPropagation();
+                        e.nativeEvent.stopImmediatePropagation();
+                    }}
+                >
                     {jsonError && (
                         <div className={styles.errorBanner}>
                             Invalid JSON: {jsonError}
-                        </div>
-                    )}
-
-                    {!jsonError && schemaErrors.length > 0 && (
-                        <div className={styles.errorBanner} style={{ backgroundColor: '#fffaf0', borderColor: '#eebc1d', color: '#744210' }}>
-                            <strong>Schema Validation Errors:</strong>
-                            <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
-                                {schemaErrors.map((err, idx) => (
-                                    <li key={idx}>{err}</li>
-                                ))}
-                            </ul>
                         </div>
                     )}
 

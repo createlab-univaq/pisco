@@ -108,7 +108,13 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
                     </div>
                 )}
 
-                <div className={styles.editorContainer}>
+                <div
+                    className={styles.editorContainer}
+                    onKeyDown={(e) => {
+                        e.stopPropagation();
+                        e.nativeEvent.stopImmediatePropagation();
+                    }}
+                >
                     <Editor
                         options={{ minimap: { enabled: false }, formatOnPaste: true, tabSize: 4 }}
                         language="json"
