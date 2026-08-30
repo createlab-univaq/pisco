@@ -11,9 +11,6 @@ public interface GameExecutionService {
     /** Records a run that already happened, telemetry and all. */
     GameExecutionDTO create(GameExecutionDTO dto);
 
-    /** Replaces a recorded run, including its answers. */
-    GameExecutionDTO update(UUID id, GameExecutionDTO dto);
-
     // --- Read and managed by the analyst ------------------------------------------------
 
     List<GameExecutionDTO> findAll(UUID patientId);

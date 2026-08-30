@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A run of a path, recorded after the fact. The game is played elsewhere; this service
+ * A run of a flow, recorded after the fact. The game is played elsewhere; this service
  * only stores what happened, so every value here is measured by the client rather than
  * observed by the server.
  */
@@ -26,16 +26,19 @@ public class GameExecutionDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
+    @Size(max = 200)
+    private String runName;
+
     /**
-     * Which path this run belongs to (spec section 4.1, PathCode). Write-only: reads get
-     * the same value inside {@code patientPath}, so it is not repeated in responses.
+     * The unique code of the assignment, not a flow id. Write-only: reads get the same
+     * value inside patientPath, so it is not repeated in responses.
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
     @Size(max = 12)
-    private String uniqueCode;
+    private String flowCode;
 
-    /** Resolved from the code; carries the patient, so responses need nothing else. */
+    /** Resolved from the code; carries the patient and the flow. */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private PatientPathDTO patientPath;
 
@@ -47,10 +50,10 @@ public class GameExecutionDTO {
     private Instant finishedAt;
 
     /**
-     * The telemetry, written with the run. Omitted from list responses; a PUT that
-     * carries answers replaces the recorded set rather than adding to it.
+     * The nodes played, in order. Omitted from list responses; a PUT that carries nodes
+     * replaces the recorded set rather than adding to it.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Valid
-    private List<GameAnswerDTO> answers;
+    private List<GameExecutionNodeDTO> nodes;
 }

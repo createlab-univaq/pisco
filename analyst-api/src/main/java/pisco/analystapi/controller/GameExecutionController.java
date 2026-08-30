@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,32 +44,18 @@ public class GameExecutionController {
     @Operation(
             summary = "Registra un'esecuzione con le sue risposte",
             description = "Endpoint pubblico: il client del paziente non ha login e il codice "
-                    + "univoco nel corpo e' l'unica credenziale. Le date sono quelle misurate "
+                    + "flowCode nel corpo e' l'unica credenziale. Le date sono quelle misurate "
                     + "dal gioco, non quelle di arrivo della richiesta; finishedAt puo' mancare "
                     + "se la sessione non e' mai stata chiusa.")
     @SecurityRequirements
     @PostMapping
     public ResponseEntity<GameExecutionDTO> create(@Valid @RequestBody GameExecutionDTO dto) {
-        log.info("POST /api/game-executions uniqueCode={} risposte={}",
-                LogUtils.maskCode(dto.getUniqueCode()),
-                dto.getAnswers() == null ? 0 : dto.getAnswers().size());
+        log.info("POST /api/game-executions flowCode={} nodi={}",
+                LogUtils.maskCode(dto.getFlowCode()),
+                dto.getNodes() == null ? 0 : dto.getNodes().size());
         GameExecutionDTO created = service.create(dto);
         return ResponseEntity.created(URI.create("/api/game-executions/" + created.getId()))
                 .body(created);
-    }
-
-    /** Re-records a run: the answers in the body replace the ones already stored. */
-    @Operation(
-            summary = "Ri-registra un'esecuzione",
-            description = "Endpoint pubblico: qui la credenziale e' l'id dell'esecuzione. "
-                    + "Le risposte inviate sostituiscono quelle gia' salvate, non si aggiungono.")
-    @SecurityRequirements
-    @PutMapping("/{id}")
-    public GameExecutionDTO update(
-            @PathVariable UUID id, @Valid @RequestBody GameExecutionDTO dto) {
-        log.info("PUT /api/game-executions/{} risposte={}",
-                id, dto.getAnswers() == null ? 0 : dto.getAnswers().size());
-        return service.update(id, dto);
     }
 
     // --- Analyst-only ------------------------------------------------------------------
@@ -78,7 +63,7 @@ public class GameExecutionController {
     @Operation(
             summary = "Elenca le esecuzioni",
             description = "Solo quelle dei percorsi assegnati dal chiamante. Filtrabili per "
-                    + "paziente. Le risposte non sono incluse: usare il dettaglio.")
+                    + "paziente. I nodi non sono inclusi: usare il dettaglio.")
     @GetMapping
     public List<GameExecutionDTO> list(@RequestParam(required = false) UUID patientId) {
         log.info("GET /api/game-executions patientId={}", patientId);
@@ -87,8 +72,8 @@ public class GameExecutionController {
 
     /** Includes every answer recorded, ordered by sequence number. */
     @Operation(
-            summary = "Recupera un'esecuzione con le sue risposte",
-            description = "Include tutte le risposte, ordinate per numero di sequenza.")
+            summary = "Recupera un'esecuzione con i suoi nodi",
+            description = "Include ogni nodo giocato con le sue risposte, nell'ordine inviato.")
     @GetMapping("/{id}")
     public GameExecutionDTO get(@PathVariable UUID id) {
         log.info("GET /api/game-executions/{}", id);
@@ -107,7 +92,7 @@ public class GameExecutionController {
 
     @Operation(
             summary = "Elimina un'esecuzione",
-            description = "Le risposte associate vengono eliminate con essa.")
+            description = "Nodi e risposte associati vengono eliminati con essa.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         log.info("DELETE /api/game-executions/{}", id);

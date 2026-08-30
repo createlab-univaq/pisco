@@ -50,11 +50,9 @@ public class SecurityConfig {
                         // Reached by the patient's client, which has no login (spec section 1).
                         // The unique code in the URL is the only credential.
                         .requestMatchers(HttpMethod.GET, "/api/paths/resolve/*").permitAll()
-                        // Recording a run: the unique code in the body is the credential
-                        // for POST, and the execution's own unguessable id for PUT.
+                        // Recording a run: the flow code in the body is the credential.
                         // Reading and deleting stay behind the token.
                         .requestMatchers(HttpMethod.POST, "/api/game-executions").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/game-executions/*").permitAll()
 
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .anyRequest().authenticated())

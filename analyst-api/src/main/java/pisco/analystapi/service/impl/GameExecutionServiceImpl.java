@@ -11,14 +11,16 @@ import pisco.analystapi.config.security.SecurityUtils;
 import pisco.analystapi.exception.NotFoundException;
 import pisco.analystapi.model.dto.GameAnswerDTO;
 import pisco.analystapi.model.dto.GameExecutionDTO;
+import pisco.analystapi.model.dto.GameExecutionNodeDTO;
 import pisco.analystapi.model.entity.GameAnswer;
 import pisco.analystapi.model.entity.GameExecution;
+import pisco.analystapi.model.entity.GameExecutionNode;
 import pisco.analystapi.model.entity.PatientPath;
 import pisco.analystapi.model.mapper.GameAnswerMapper;
 import pisco.analystapi.model.mapper.GameExecutionMapper;
+import pisco.analystapi.model.mapper.GameExecutionNodeMapper;
 import pisco.analystapi.model.repository.GameExecutionRepository;
 import pisco.analystapi.service.GameExecutionService;
-import pisco.analystapi.service.NodeTypeService;
 import pisco.analystapi.service.PatientPathService;
 
 /**
@@ -33,8 +35,8 @@ public class GameExecutionServiceImpl implements GameExecutionService {
 
     private final GameExecutionRepository repository;
     private final PatientPathService patientPathService;
-    private final NodeTypeService nodeTypeService;
     private final GameExecutionMapper mapper;
+    private final GameExecutionNodeMapper nodeMapper;
     private final GameAnswerMapper answerMapper;
 
     // --- Written by the patient's client, unauthenticated -----------------------------
@@ -42,54 +44,37 @@ public class GameExecutionServiceImpl implements GameExecutionService {
     @Override
     @Transactional
     public GameExecutionDTO create(GameExecutionDTO dto) {
-        PatientPath patientPath = patientPathService.requireByCode(dto.getUniqueCode());
+        PatientPath patientPath = patientPathService.requireByCode(dto.getFlowCode());
 
         GameExecution execution = new GameExecution();
         mapper.updateEntity(execution, dto);
         execution.setPatientPath(patientPath);
-        replaceAnswers(execution, dto.getAnswers());
+        addNodes(execution, dto.getNodes());
 
         GameExecution saved = repository.saveAndFlush(execution);
-        log.info("Esecuzione registrata id={} patientPathId={} codice={} risposte={}",
+        log.info("Esecuzione registrata id={} patientPathId={} codice={} nodi={}",
                 saved.getId(), patientPath.getId(),
-                LogUtils.maskCode(dto.getUniqueCode()), saved.getAnswers().size());
+                LogUtils.maskCode(dto.getFlowCode()), saved.getNodes().size());
         return mapper.toDetailDto(saved);
     }
 
-    @Override
-    @Transactional
-    public GameExecutionDTO update(UUID id, GameExecutionDTO dto) {
-        // Unauthenticated path: the execution id is an unguessable UUID handed back by
-        // create(), so it is what stands in for a credential here.
-        GameExecution execution = require(id);
-        mapper.updateEntity(execution, dto);
-        replaceAnswers(execution, dto.getAnswers());
-
-        // flush(), not save(): the execution was loaded in this transaction and is already
-        // managed, so save() would route to em.merge() and persist *copies* of the new
-        // answers, leaving these instances transient with null ids -- which is what the
-        // response would then carry. A plain flush cascades onto them and assigns ids in
-        // place, and drops the replaced rows via orphanRemoval.
-        repository.flush();
-
-        log.info("Esecuzione aggiornata id={} risposte={}", id, execution.getAnswers().size());
-        return mapper.toDetailDto(execution);
-    }
-
-    /**
-     * A re-recorded run replaces its telemetry rather than adding to it: the client is
-     * reporting the whole session again, not a second half of it.
-     */
-    private void replaceAnswers(GameExecution execution, List<GameAnswerDTO> dtos) {
-        execution.getAnswers().clear();
+    /** Order comes from the arrays themselves: the payload carries no sequence numbers. */
+    private void addNodes(GameExecution execution, List<GameExecutionNodeDTO> dtos) {
         if (dtos == null) {
             return;
         }
-        for (GameAnswerDTO dto : dtos) {
-            GameAnswer answer = new GameAnswer();
-            answerMapper.updateEntity(answer, dto);
-            answer.setNodeType(nodeTypeService.resolveOrRegister(dto.getNodeType().getLabel()));
-            execution.addAnswer(answer);
+        for (GameExecutionNodeDTO nodeDto : dtos) {
+            GameExecutionNode node = new GameExecutionNode();
+            nodeMapper.updateEntity(node, nodeDto);
+            execution.addNode(node);
+
+            if (nodeDto.getAnswers() != null) {
+                for (GameAnswerDTO answerDto : nodeDto.getAnswers()) {
+                    GameAnswer answer = new GameAnswer();
+                    answerMapper.updateEntity(answer, answerDto);
+                    node.addAnswer(answer);
+                }
+            }
         }
     }
 
@@ -109,7 +94,7 @@ public class GameExecutionServiceImpl implements GameExecutionService {
     @Transactional(readOnly = true)
     public GameExecutionDTO findById(UUID id) {
         GameExecution execution = requireOwned(id);
-        log.info("Dettaglio esecuzione id={} risposte={}", id, execution.getAnswers().size());
+        log.info("Dettaglio esecuzione id={} nodi={}", id, execution.getNodes().size());
         return mapper.toDetailDto(execution);
     }
 
@@ -130,17 +115,9 @@ public class GameExecutionServiceImpl implements GameExecutionService {
     @Override
     @Transactional
     public void delete(UUID id) {
-        // Answers go with it -- the foreign key cascades.
+        // Nodes and their answers go with it -- the foreign keys cascade.
         repository.delete(requireOwned(id));
         log.info("Esecuzione eliminata id={} (risposte in cascata)", id);
-    }
-
-    /** Unscoped: used by the write path, which has no analyst behind it. */
-    private GameExecution require(UUID id) {
-        return repository.findById(id).orElseThrow(() -> {
-            log.warn("Esecuzione {} inesistente", id);
-            return NotFoundException.of("Esecuzione", id);
-        });
     }
 
     private GameExecution requireOwned(UUID id) {

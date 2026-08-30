@@ -6,16 +6,13 @@ import org.mapstruct.MappingTarget;
 import pisco.analystapi.model.dto.GameAnswerDTO;
 import pisco.analystapi.model.entity.GameAnswer;
 
-@Mapper(uses = NodeTypeMapper.class)
+@Mapper
 public interface GameAnswerMapper extends BaseMapper<GameAnswer, GameAnswerDTO> {
 
-    /**
-     * The owning execution comes from the URL, and the node type is resolved against the
-     * lookup by the service -- neither is taken from the telemetry payload as-is.
-     */
+    /** The owning node and the position come from the payload's order, not its contents. */
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "execution", ignore = true)
-    @Mapping(target = "nodeType", ignore = true)
+    @Mapping(target = "executionNode", ignore = true)
+    @Mapping(target = "position", ignore = true)
     void updateEntity(@MappingTarget GameAnswer answer, GameAnswerDTO dto);
 }

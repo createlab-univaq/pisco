@@ -9,13 +9,14 @@ import org.mapstruct.Named;
 import pisco.analystapi.model.dto.GameExecutionDTO;
 import pisco.analystapi.model.entity.GameExecution;
 
-@Mapper(uses = {GameAnswerMapper.class, PatientPathMapper.class})
+@Mapper(uses = {GameExecutionNodeMapper.class, PatientPathMapper.class})
 public interface GameExecutionMapper extends BaseMapper<GameExecution, GameExecutionDTO> {
 
-    /** The default shape: no answers, so listing runs does not drag every telemetry row along. */
+    /** The default shape: no nodes, so listing runs does not drag every answer along. */
     @Override
     @Named("summary")
-    @Mapping(target = "answers", ignore = true)
+    @Mapping(target = "nodes", ignore = true)
+    @Mapping(target = "flowCode", ignore = true)
     GameExecutionDTO toDto(GameExecution execution);
 
     /** Two methods map the same pair, so the list has to say which one it wants. */
@@ -23,17 +24,17 @@ public interface GameExecutionMapper extends BaseMapper<GameExecution, GameExecu
     @IterableMapping(qualifiedByName = "summary")
     List<GameExecutionDTO> toDto(List<GameExecution> executions);
 
-    /** Adds the answers, ordered by sequence number. Used by the detail endpoint. */
+    /** Adds the nodes and their answers, in the order they were played. */
+    @Mapping(target = "flowCode", ignore = true)
     GameExecutionDTO toDetailDto(GameExecution execution);
 
     /**
-     * Only the two timestamps are taken from the payload as-is. The path is resolved from
-     * the unique code and the answers are rebuilt one by one, since each needs its node
-     * type looked up before it can be attached.
+     * Only the run name and the two timestamps are taken from the payload as-is. The path
+     * is resolved from the flow code and the nodes are rebuilt one by one.
      */
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "patientPath", ignore = true)
-    @Mapping(target = "answers", ignore = true)
+    @Mapping(target = "nodes", ignore = true)
     void updateEntity(@MappingTarget GameExecution execution, GameExecutionDTO dto);
 }
