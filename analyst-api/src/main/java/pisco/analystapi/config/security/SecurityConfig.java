@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -13,11 +14,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,7 +34,31 @@ public class SecurityConfig {
 
     private final AppProperties properties;
 
+    /**
+     * Downloading an image gets its own chain purely for the headers. The defaults exist
+     * to keep authenticated pages out of caches and out of frames; an image is neither, and
+     * no-store meant the browser re-fetched every megabyte on each render. The controller
+     * sets a short max-age and an ETag instead.
+     */
     @Bean
+    @Order(1)
+    public SecurityFilterChain imageDownloadFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(PathPatternRequestMatcher.withDefaults()
+                        .matcher(HttpMethod.GET, "/api/images/*"))
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .headers(headers -> headers
+                        .cacheControl(HeadersConfigurer.CacheControlConfig::disable)
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http, DomainJwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
 
@@ -53,6 +80,7 @@ public class SecurityConfig {
                         // Recording a run: the flow code in the body is the credential.
                         // Reading and deleting stay behind the token.
                         .requestMatchers(HttpMethod.POST, "/api/game-executions").permitAll()
+                        // GET /api/images/* is handled by imageDownloadFilterChain above.
 
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .anyRequest().authenticated())

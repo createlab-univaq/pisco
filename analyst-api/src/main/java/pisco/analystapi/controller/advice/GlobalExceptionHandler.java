@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import pisco.analystapi.exception.BadRequestException;
 import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
 
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex) {
         return problem(HttpStatus.NOT_FOUND, "Risorsa non trovata", ex.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ProblemDetail handleBadRequest(BadRequestException ex) {
+        return problem(HttpStatus.BAD_REQUEST, "Richiesta non valida", ex.getMessage());
     }
 
     @ExceptionHandler(ConflictException.class)
