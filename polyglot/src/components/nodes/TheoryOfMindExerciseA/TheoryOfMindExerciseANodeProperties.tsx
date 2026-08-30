@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { deleteImageAction } from '@/lib/actions/images';
 import styles from './TheoryOfMindExerciseANodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import NodeProperties from '../NodeProperties';
 import { TheoryOfMindExerciseANode, TheoryOfMindExerciseAItem } from './types';
 import { useNodeSync } from '@/hooks/useNodeSync';
-import { FilesAPI } from '@/data/api';
 import { ItemEditor, createDefaultQuestions } from './components/ItemEditor';
 import { validateTheoryOfMindExerciseANode } from './validate';
 
@@ -62,7 +62,7 @@ const TheoryOfMindExerciseANodeProperties = ({ element, onUpdateElement }: Polyg
 
         if (imageIdToDelete) {
             try {
-                await FilesAPI.delete(imageIdToDelete);
+                await deleteImageAction(imageIdToDelete);
             } catch (e) {
                 console.error('Delete image failed', e);
                 window.alert('Immagine non eliminata: Non sono riuscito a eliminare l’immagine associata. Riprova più tardi.');

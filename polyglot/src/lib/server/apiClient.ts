@@ -1,6 +1,17 @@
 import { cookies } from 'next/headers';
-import { FLOWS_PATH, LOGIN_PATH, REGISTER_PATH } from './api-paths';
-import { mockAnalyst, mockNewAnalyst, mockFlows, addMockFlow, updateMockAnalyst, deleteMockAnalyst } from './mocks/mockDatabase';
+import { FLOWS_PATH, LOGIN_PATH, REGISTER_PATH, IMAGE_PATH } from './api-paths';
+import {
+    mockAnalyst,
+    mockNewAnalyst,
+    mockFlows,
+    addMockFlow,
+    getMockFlowById,
+    updateMockFlow,
+    updateMockAnalyst,
+    deleteMockAnalyst,
+    storeMockImage,
+    deleteMockImage
+} from './mocks/mockDatabase';
 
 export async function apiFetch(
     path: string,
@@ -10,32 +21,56 @@ export async function apiFetch(
     const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api';
     const method = options.method || 'GET';
 
-    // Safely extract just the path without query strings (e.g., '/flows?name=Test' -> '/flows')
     const basePath = path.split('?')[0];
 
     if (useMock) {
-        const analystIdMatch = basePath.match(/\/analysts\/([a-zA-Z0-9-]+)$/);
-
         const jsonResponse = (data: unknown, status = 200) =>
             new Response(JSON.stringify(data), {
                 status,
                 headers: { 'Content-Type': 'application/json' }
             });
 
-        if (analystIdMatch) {
-            if (method === 'GET') {
-                return jsonResponse(mockAnalyst);
-            }
+        // Match /api/image (POST) - Uses the user's uploaded file data
+        if (basePath === IMAGE_PATH && method === 'POST') {
+            const body = JSON.parse(options.body as string);
+            const dataUrl = storeMockImage(body.mimeType, body.image);
+            return jsonResponse({ path: dataUrl });
+        }
 
+        // Match /api/image/{id} (DELETE)
+        const imageIdMatch = basePath.match(/\/image\/([a-zA-Z0-9-_:/.]+)$/);
+        if (imageIdMatch && method === 'DELETE') {
+            deleteMockImage(imageIdMatch[1]);
+            return new Response(null, { status: 204 });
+        }
+
+        // Match /api/analysts/{id}
+        const analystIdMatch = basePath.match(/\/analysts\/([a-zA-Z0-9-]+)$/);
+        if (analystIdMatch) {
+            if (method === 'GET') return jsonResponse(mockAnalyst);
             if (method === 'PUT') {
                 const body = JSON.parse(options.body as string);
-                const updatedAnalyst = updateMockAnalyst(body);
-                return jsonResponse(updatedAnalyst);
+                return jsonResponse(updateMockAnalyst(body));
             }
-
             if (method === 'DELETE') {
                 deleteMockAnalyst();
-                return new Response(null, { status: 204 }); // 204 No Content
+                return new Response(null, { status: 204 });
+            }
+        }
+
+        // Match /api/flows/{id}
+        const flowIdMatch = basePath.match(/\/flows\/([a-zA-Z0-9-]+)$/);
+        if (flowIdMatch) {
+            const flowId = flowIdMatch[1];
+            if (method === 'GET') {
+                const flow = getMockFlowById(flowId);
+                if (!flow) return jsonResponse({ detail: 'Flow not found' }, 404);
+                return jsonResponse(flow);
+            }
+            if (method === 'PUT' || method === 'POST') {
+                const body = JSON.parse(options.body as string);
+                const updated = updateMockFlow(flowId, body.flowJson || body);
+                return jsonResponse(updated);
             }
         }
 
@@ -48,14 +83,13 @@ export async function apiFetch(
         }
 
         if (basePath.endsWith(REGISTER_PATH) && method === 'POST') {
-            return jsonResponse(mockNewAnalyst, 201); // 201 Created
+            return jsonResponse(mockNewAnalyst, 201);
         }
 
-        // Mock POST /api/flows (Cleaned up!)
         if (basePath.endsWith(FLOWS_PATH) && method === 'POST') {
             const body = JSON.parse(options.body as string);
-            const newFlow = addMockFlow(body); // Delegate generation to the database file
-            return jsonResponse(newFlow, 201); // 201 Created
+            const newFlow = addMockFlow(body);
+            return jsonResponse(newFlow, 201);
         }
 
         if (basePath.endsWith(FLOWS_PATH) && method === 'GET') {
@@ -68,18 +102,15 @@ export async function apiFetch(
                     f.name.toLowerCase().includes(searchQuery)
                 );
             }
-
             return jsonResponse(returnedFlows);
         }
 
         if (basePath.startsWith(FLOWS_PATH + '/') && method === 'DELETE') {
-            return new Response(null, { status: 204 }); // 204 No Content
+            return new Response(null, { status: 204 });
         }
     }
 
     const headers = new Headers(options.headers || {});
-
-    // Await the cookies() promise
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
 

@@ -4,6 +4,45 @@ import { revalidatePath } from 'next/cache';
 import { apiFetch } from '../server/apiClient';
 import { FLOWS_PATH } from '../server/api-paths';
 
+export async function getFlowAction(flowId: string) {
+    try {
+        const res = await apiFetch(`${FLOWS_PATH}/${flowId}`, {
+            method: 'GET',
+        });
+
+        if (!res.ok) {
+            return { error: 'Flow not found', status: res.status };
+        }
+
+        const data = await res.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error('Get flow error:', error);
+        return { error: 'Network error occurred.' };
+    }
+}
+
+export async function saveFlowAction(flowId: string, flowJson: any) {
+    try {
+        const res = await apiFetch(`${FLOWS_PATH}/${flowId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ flowJson })
+        });
+
+        if (!res.ok) {
+            return { error: 'Failed to save flow.' };
+        }
+
+        const data = await res.json();
+        revalidatePath(`/flows/${flowId}`);
+        return { success: true, data };
+    } catch (error) {
+        console.error('Save flow error:', error);
+        return { error: 'Network error occurred.' };
+    }
+}
+
 export async function deleteFlowAction(flowId: string) {
     try {
         const res = await apiFetch(`${FLOWS_PATH}/${flowId}`, {
@@ -14,9 +53,7 @@ export async function deleteFlowAction(flowId: string) {
             return { error: 'Failed to delete flow.' };
         }
 
-        // Golden Standard: Tell Next.js to purge the cache for this route 
-        // so it automatically fetches the updated list without a hard reload.
-        revalidatePath('/flows');
+        revalidatePath('/');
         return { success: true };
     } catch (error) {
         console.error('Delete flow error:', error);

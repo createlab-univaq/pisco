@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FilesAPI } from '@/data/api';
+import { deleteImageAction } from '@/lib/actions/images';
 import styles from './EyesTaskNodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
 import { EyesTaskNode, EyesTaskQuestion } from './types';
@@ -54,7 +54,7 @@ const EyesTaskNodeProperties = ({ element, onUpdateElement }: PolyglotNodeProper
 
         if (imageIdToDelete) {
             try {
-                await FilesAPI.delete(imageIdToDelete);
+                await deleteImageAction(imageIdToDelete);
             } catch (e) {
                 console.error('Delete image failed', e);
                 window.alert('Immagine non eliminata: Non sono riuscito a eliminare l’immagine associata. Riprova più tardi.');

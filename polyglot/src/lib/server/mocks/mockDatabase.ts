@@ -41,7 +41,16 @@ export const mockFlows: Flow[] = [
     }
 ];
 
-// NEW: Helper function to generate and store the mock flow
+// Helper to convert uploaded base64 file payload into a usable Data URL for mock rendering
+export function storeMockImage(mimeType: string, base64Data: string): string {
+    const cleanMime = mimeType || 'image/jpeg';
+    return `data:${cleanMime};base64,${base64Data}`;
+}
+
+export function deleteMockImage(id: string): void {
+    console.log(`Mock image reference cleaned: ${id}`);
+}
+
 export function addMockFlow(payload: Partial<Flow>): Flow {
     const newFlow: Flow = {
         id: payload.id || crypto.randomUUID(),
@@ -58,6 +67,31 @@ export function addMockFlow(payload: Partial<Flow>): Flow {
     return newFlow;
 }
 
+export function getMockFlowById(id: string): Flow | undefined {
+    return mockFlows.find(f => f.id === id) || mockFlows[0];
+}
+
+export function updateMockFlow(id: string, flowJson: any): Flow {
+    let flow = mockFlows.find(f => f.id === id);
+    if (!flow) {
+        flow = {
+            id,
+            name: "Updated Flow",
+            description: "",
+            published: false,
+            flowJson: flowJson,
+            analyst: mockAnalyst,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        mockFlows.push(flow);
+    } else {
+        flow.flowJson = flowJson;
+        flow.updatedAt = new Date().toISOString();
+    }
+    return flow;
+}
+
 export function updateMockAnalyst(payload: Partial<Analyst>): Analyst {
     mockAnalyst.firstName = payload.firstName || mockAnalyst.firstName;
     mockAnalyst.lastName = payload.lastName || mockAnalyst.lastName;
@@ -66,6 +100,5 @@ export function updateMockAnalyst(payload: Partial<Analyst>): Analyst {
 }
 
 export function deleteMockAnalyst(): void {
-    // In a real mock scenario, you might clear out their flows or reset the object.
     console.log("Mock analyst deleted.");
 }

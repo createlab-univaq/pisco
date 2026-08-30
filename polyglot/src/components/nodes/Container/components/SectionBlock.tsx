@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { FilesAPI } from '@/data/api';
+import { deleteImageAction } from '@/lib/actions/images';
 import { CONTAINER_NODE_ALLOWED_TYPES, ContainerSection, ContainerItem, AllowedContainerNodeType } from '../types';
 import styles from './SectionBlock.module.css';
 import { embeddedByType } from '@/components/nodes/Container/components/EmbeddedRegistry';
@@ -54,7 +54,8 @@ export const SectionBlock = ({
     };
 
     const removeItem = async (itemIndex: number) => {
-        const itemId = section.items[itemIndex]?.id;
+        const item = section.items[itemIndex];
+        const itemId = item?.id;
 
         if (!containerNodeId || !itemId) {
             onUpdateSection({
@@ -65,15 +66,17 @@ export const SectionBlock = ({
         }
 
         try {
-            if ((FilesAPI as any).deleteItemFiles) {
-                await (FilesAPI as any).deleteItemFiles(containerNodeId, itemId);
+            // If the item data contains an image path/id, clean it up from the server/storage
+            if (item.data?.imageId) {
+                await deleteImageAction(item.data.imageId);
             }
+
             onUpdateSection({
                 ...section,
                 items: section.items.filter((_, i) => i !== itemIndex),
             });
         } catch (e: any) {
-            console.error('deleteItemFiles error', e);
+            console.error('delete item files error', e);
             window.alert('Impossibile eliminare i file associati a questo item. Riprova.');
         }
     };

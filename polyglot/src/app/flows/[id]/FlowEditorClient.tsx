@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import FlowEditor from '@/components/editor/FlowEditor';
-import { FlowsAPI } from '@/data/api';
+import { getFlowAction, saveFlowAction } from '@/lib/actions/flows';
 import { PolyglotFlow } from '@/types/PolyglotFlow';
 import styles from './FlowEditorClient.module.css';
 
@@ -61,17 +61,23 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
                 }
             }
 
-            // 2. Otherwise, load from server
+            // 2. Otherwise, load from server via Server Action
             try {
-                const fetchedFlow = await FlowsAPI.getById(flowId);
-                setFlow(fetchedFlow);
+                const result = await getFlowAction(flowId);
+
+                if (result.error) {
+                    if (result.status === 404) {
+                        setError('Flow not found');
+                    } else {
+                        setError('Error loading flow elements');
+                    }
+                } else if (result.data) {
+                    // Set ONLY the flowJson attribute of the response as requested
+                    setFlow(result.data.flowJson);
+                }
             } catch (err: any) {
                 console.error(err);
-                if (err.message?.includes('404')) {
-                    setError('Flow not found');
-                } else {
-                    setError('Error loading flow elements');
-                }
+                setError('Error loading flow elements');
             } finally {
                 setLoading(false);
             }
@@ -80,19 +86,24 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
         loadFlowData();
     }, [flowId]);
 
-    // Save Logic
+    // Save Logic via Server Action
     const handleSaveFlow = async (updatedFlow: PolyglotFlow, outputToast = true, returnPath?: string) => {
         try {
-            const response = await FlowsAPI.save(updatedFlow);
+            const result = await saveFlowAction(flowId, updatedFlow);
 
-            if (response) {
-                localStorage.removeItem(`rescue_flow_${updatedFlow._id}`);
-                setFlow(response);
+            if (result.success && result.data) {
+                localStorage.removeItem(`rescue_flow_${flowId}`);
+                // Update state with the returned flowJson
+                setFlow(result.data.flowJson);
 
                 if (outputToast) {
                     showToast('Flow saved', 'The save was successful', 'success');
                 }
                 if (returnPath) router.push(returnPath);
+            } else {
+                if (outputToast) {
+                    showToast('Internal Error', 'Unexpected error, try again. ' + (result.error || ''), 'error');
+                }
             }
         } catch (err: any) {
             if (outputToast) {
@@ -109,10 +120,10 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
                     <div
                         key={t.id}
                         className={`${styles.toast} ${t.status === 'success'
-                                ? styles.toastSuccess
-                                : t.status === 'warning'
-                                    ? styles.toastWarning
-                                    : styles.toastError
+                            ? styles.toastSuccess
+                            : t.status === 'warning'
+                                ? styles.toastWarning
+                                : styles.toastError
                             }`}
                     >
                         <div className={styles.toastTitle}>{t.title}</div>
