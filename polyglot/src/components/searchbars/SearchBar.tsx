@@ -1,13 +1,14 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './SearchBar.module.css';
 
 type SearchItems = string[];
 
 type SearchBarProps = {
   inputValue: string;
-  setInputValue: Dispatch<SetStateAction<string>>;
+  // Fix: Changed from Dispatch<SetStateAction<string>> to a generic callback
+  setInputValue: (value: string) => void;
   placeholder?: string;
   items: SearchItems;
   onSelectOption?: (value: string) => void;
@@ -62,6 +63,19 @@ export default function SearchBar({
 
       <div className={styles.autocompleteWrapper} ref={wrapperRef}>
 
+        {/* Fix: Added the missing input element! */}
+        <input
+          type="text"
+          className={styles.input} /* Ensure this class exists in your CSS */
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            setIsOpen(true);
+          }}
+          onFocus={() => setIsOpen(true)}
+          placeholder={placeholder}
+        />
+
         {/* Dropdown Menu */}
         {isOpen && filteredItems.length > 0 && (
           <ul className={styles.dropdownList}>
@@ -88,7 +102,7 @@ export default function SearchBar({
             // Trigger whatever global search logic you need here
           }}
         >
-          {/* Magnifying Glass SVG (Replaces Chakra's SearchIcon) */}
+          {/* Magnifying Glass SVG */}
           <svg
             viewBox="0 0 24 24"
             fill="none"

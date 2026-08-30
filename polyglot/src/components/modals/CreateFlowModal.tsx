@@ -3,89 +3,69 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styles from './CreateFlowModal.module.css';
-import { PolyglotFlow } from '@/types/PolyglotFlow';
-import { PolyglotFlowInfo } from '@/types/PolyglotFlowInfo';
 import { Editor } from '@monaco-editor/react';
-import { FlowsAPI } from '@/data/api';
+import { createFlowAction } from '@/lib/actions/flows';
 
-// We removed the API prop since we import FlowsAPI directly now!
 type CreateFlowModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const colorMap: Record<string, string> = {
-  gray: '#cbd5e0',
-  yellow: '#faf089',
-  orange: '#f6ad55',
-  red: '#fc8181',
-  pink: '#f687b3',
-  purple: '#b794f4',
-  blue: '#63b3ed',
-  cyan: '#76e4f7',
-  teal: '#4fd1c5',
-  green: '#68d391',
-};
-export const colors = Object.keys(colorMap);
-
 const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
   const router = useRouter();
 
   const [currentTab, setCurrentTab] = useState(0);
-  const [flow, setFlow] = useState<string | undefined>(undefined);
+  const [jsonInput, setJsonInput] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [title, setTitle] = useState('');
+  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-
-  const [tagName, setTagName] = useState('');
-  const [colorTag, setColorTag] = useState(colors[0]);
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   // Reset on reopen
   useEffect(() => {
     if (!isOpen) return;
     setCurrentTab(0);
-    setFlow(undefined);
+    setJsonInput(undefined);
     setLoading(false);
     setErrorMessage(null);
-    setTitle('');
+    setName('');
     setDescription('');
-    setColorTag(colors[0]);
-    setTagName('');
-    setIsColorPickerOpen(false);
   }, [isOpen]);
 
   if (!isOpen) return null;
-
-  const normalizedTagName = tagName.trim().toUpperCase();
 
   const createFlow = async () => {
     try {
       setErrorMessage(null);
       setLoading(true);
 
-      let createdFlow: PolyglotFlow;
+      let result;
 
       switch (currentTab) {
+        // TAB 0: Custom Flow (Empty JSON)
         case 0: {
-          const base_Flow: PolyglotFlowInfo = {
-            title: title.trim(),
+          result = await createFlowAction({
+            name: name.trim(),
             description: description.trim(),
-            publish: false,
-          };
-          // Call our new native fetch API
-          createdFlow = await FlowsAPI.create(base_Flow);
+            flowJson: {} // Explicitly empty as requested
+          });
           break;
         }
+        // TAB 1: Import JSON
         case 1: {
-          if (!flow) {
+          if (!jsonInput) {
+            setErrorMessage('Please provide valid JSON.');
             setLoading(false);
             return;
           }
-          const poly_flow: PolyglotFlow = JSON.parse(flow);
-          createdFlow = await FlowsAPI.createFromJson(poly_flow);
+
+          const parsedData = JSON.parse(jsonInput);
+          result = await createFlowAction({
+            name: parsedData.name || 'Imported Flow',
+            description: parsedData.description || '',
+            flowJson: parsedData.flowJson || parsedData
+          });
           break;
         }
         default:
@@ -93,19 +73,21 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
           return;
       }
 
-      if (!createdFlow || !createdFlow._id) {
-        setErrorMessage('Something went wrong. Flow was not created.');
+      if (result.error) {
+        setErrorMessage(result.error);
         return;
       }
 
-      // Native fetch returns the direct object, so we access _id directly!
-      router.push('/flows/' + createdFlow._id);
+      if (result.success && result.flow?.id) {
+        onClose(); // Close the modal
+        // Route to the new flow's editor page
+        router.push(`/${result.flow.id}`);
+      }
 
     } catch (error: any) {
       if (error instanceof SyntaxError) {
         setErrorMessage(`Invalid JSON syntax: ${error.message}`);
       } else {
-        console.error(error);
         setErrorMessage(error.message || 'An unexpected error occurred.');
       }
     } finally {
@@ -113,7 +95,7 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
     }
   };
 
-  const canCreateCustom = title.trim().length > 0 && description.trim().length > 0;
+  const canCreateCustom = name.trim().length > 0 && description.trim().length > 0;
 
   return (
     <div className={styles.modalOverlay}>
@@ -121,7 +103,7 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
 
         <div className={styles.modalHeader}>
           <h2>Create Flow</h2>
-          <button className={styles.closeButton} onClick={onClose}>&times;</button>
+          <button className={styles.closeButton} onClick={onClose} disabled={loading}>&times;</button>
         </div>
 
         <div className={styles.modalBody}>
@@ -129,12 +111,14 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
             <button
               className={currentTab === 0 ? styles.activeTab : styles.tab}
               onClick={() => setCurrentTab(0)}
+              disabled={loading}
             >
               Custom
             </button>
             <button
               className={currentTab === 1 ? styles.activeTab : styles.tab}
               onClick={() => setCurrentTab(1)}
+              disabled={loading}
             >
               Import JSON
             </button>
@@ -144,12 +128,13 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
             {/* TAB 0: Custom */}
             {currentTab === 0 && (
               <div className={styles.formControl}>
-                <label className={styles.label}>Title:</label>
+                <label className={styles.label}>Name:</label>
                 <input
                   className={styles.input}
-                  placeholder="Insert title..."
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Insert name..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={loading}
                 />
 
                 <label className={styles.label}>Description:</label>
@@ -158,8 +143,8 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
                   placeholder="Insert description..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  disabled={loading}
                 />
-
               </div>
             )}
 
@@ -169,9 +154,9 @@ const CreateFlowModal = ({ isOpen, onClose }: CreateFlowModalProps) => {
                 <Editor
                   height="400px"
                   language="json"
-                  value={flow}
-                  onChange={(value) => setFlow(value)}
-                  options={{ minimap: { enabled: false } }}
+                  value={jsonInput}
+                  onChange={(value) => setJsonInput(value)}
+                  options={{ minimap: { enabled: false }, readOnly: loading }}
                 />
               </div>
             )}

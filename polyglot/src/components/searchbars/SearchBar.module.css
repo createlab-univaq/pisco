@@ -2,8 +2,9 @@
 .container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
+  position: relative;
 }
 
 /* Autocomplete relative wrapper */
@@ -12,59 +13,149 @@
   flex-grow: 1;
 }
 
-/* Input Area (mimicking Chakra's variant="filled") */
-.inputBox {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  background-color: #edf2f7; /* Chakra's filled bg color */
-  border: 2px solid transparent;
-  border-radius: 6px;
-  padding: 6px 12px;
-  min-height: 40px;
-  cursor: text;
-  transition: all 0.2s;
-}
-
-.inputBoxFocused {
-  background-color: white;
-  border-color: #3182ce;
-  box-shadow: 0 0 0 1px #3182ce;
-}
-
+/* Premium Input Styling */
 .input {
-  flex-grow: 1;
-  background: transparent;
-  border: none;
-  outline: none;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 16px;
   font-size: 1rem;
-  color: #1a202c;
-  min-width: 120px;
-  padding: 4px 0;
+  color: #2d3748;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
 .input::placeholder {
   color: #a0aec0;
+  font-weight: 400;
 }
 
-/* Tag Styles for `multiple` selection */
+.input:focus {
+  border-color: #3182ce;
+  /* Soft blue glow on focus */
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+/* Dropdown Menu Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown List */
+.dropdownList {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 8px 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1000;
+  list-style: none;
+  animation: slideDown 0.2s ease-out forwards;
+}
+
+/* Custom Scrollbar for Dropdown (Webkit) */
+.dropdownList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdownList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdownList::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 20px;
+  border: 2px solid #ffffff;
+}
+
+.dropdownList::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0;
+}
+
+/* Dropdown Items */
+.dropdownItem {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: #2d3748;
+  font-size: 0.95rem;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+}
+
+.dropdownItem:hover {
+  background-color: #ebf8ff;
+  /* Soft blue background on hover */
+  color: #2b6cb0;
+  /* Darker blue text on hover */
+}
+
+/* Search Action Button */
+.searchButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3182ce;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.searchButton:hover {
+  background-color: #2b6cb0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(49, 130, 206, 0.2);
+}
+
+.searchButton:active {
+  transform: translateY(0);
+}
+
+.searchIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Keeping Tag Styles in case you implement the `multiple` tags feature later */
 .tag {
   display: inline-flex;
   align-items: center;
-  background-color: #e2e8f0;
-  color: #1a202c;
-  padding: 2px 8px;
-  border-radius: 4px;
+  background-color: #edf2f7;
+  color: #2d3748;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 500;
-  gap: 4px;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 .tagRemoveBtn {
   background: transparent;
   border: none;
-  color: #4a5568;
+  color: #718096;
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
@@ -72,62 +163,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.15s ease;
 }
 
 .tagRemoveBtn:hover {
   color: #e53e3e;
-}
-
-/* Dropdown Menu */
-.dropdownList {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 4px;
-  padding: 8px 0;
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-height: 250px;
-  overflow-y: auto;
-  z-index: 1000;
-  list-style: none;
-}
-
-.dropdownItem {
-  padding: 8px 16px;
-  cursor: pointer;
-  color: #1a202c;
-  text-transform: capitalize;
-  font-size: 0.95rem;
-  transition: background-color 0.15s;
-}
-
-.dropdownItem:hover {
-  background-color: #edf2f7;
-}
-
-/* Search Button */
-.searchButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #4a5568;
-  transition: background-color 0.2s;
-}
-
-.searchButton:hover {
-  background-color: #edf2f7;
-}
-
-.searchIcon {
-  width: 20px;
-  height: 20px;
 }

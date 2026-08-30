@@ -4,40 +4,48 @@ import Image from 'next/image';
 import Link from 'next/link';
 import cardImage from '@public/test_card.png';
 import styles from './FlowCard.module.css';
-import { PolyglotFlow } from '@/types/PolyglotFlow';
+import { Flow } from '@/types'; // <-- Updated import to match your new type
 
 type FlowCardProps = {
   canDelete?: boolean;
   setSelected?: (flowId: string) => void;
-  flow: PolyglotFlow;
+  flow: Flow; // <-- Updated type
 };
 
 const FlowCard = ({ flow, canDelete, setSelected }: FlowCardProps) => {
+  // Derive the author name from the new analyst object
+  const authorFullName = flow.analyst
+    ? `${flow.analyst.firstName} ${flow.analyst.lastName}`
+    : 'Unknown Author';
+
+  // Fallback to calculate nodes from the flowJson object keys
+  const nodeCount = flow.flowJson ? Object.keys(flow.flowJson).length : 0;
+
   return (
     <div className={styles.card}>
-      
+
       <div className={styles.imageContainer}>
         <Image
           src={cardImage}
           alt="Flow card"
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // FIXED: Added sizes prop
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className={styles.image}
         />
       </div>
 
       <div className={styles.content}>
         <div className={styles.cardBody}>
-          
+
           {canDelete && (
             <button
               className={styles.deleteButton}
               title="Delete"
               aria-label="Delete Flow"
               onClick={(e) => {
-                e.preventDefault(); 
+                e.preventDefault();
                 e.stopPropagation();
-                setSelected?.(flow._id!);
+                setSelected?.(flow.id); // <-- Changed from _id to id
               }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
@@ -48,26 +56,28 @@ const FlowCard = ({ flow, canDelete, setSelected }: FlowCardProps) => {
           )}
 
           <h2 className={styles.title}>
-            <Link href={`/flows/${flow._id}`} className={styles.cardLink}>
-              {flow.title}
+            {/* Changed from _id to id */}
+            <Link href={`/${flow.id}`} className={styles.cardLink}>
+              {flow.name} {/* Changed from title to name */}
             </Link>
           </h2>
 
           <p className={styles.description}>{flow.description}</p>
-          
+
           <p className={styles.metaText}>
-            In this Learning Path there are: <strong>{flow.nodes?.length || 0}</strong> learning activities
+            In this Learning Path there are: <strong>{nodeCount}</strong> learning activities
           </p>
         </div>
 
         <div className={styles.cardFooter}>
-          
+
           <div className={styles.authorSection}>
-            {!canDelete && flow.author?.username && (
+            {/* Display author if it's not the user's own editable view */}
+            {!canDelete && flow.analyst && (
               <>
-                <span className={styles.authorName}>{flow.author.username}</span>
+                <span className={styles.authorName}>{authorFullName}</span>
                 <div className={styles.avatar}>
-                  {flow.author.username.charAt(0).toUpperCase()}
+                  {flow.analyst.firstName.charAt(0).toUpperCase()}
                 </div>
               </>
             )}
@@ -75,10 +85,10 @@ const FlowCard = ({ flow, canDelete, setSelected }: FlowCardProps) => {
 
           <div className={styles.publishStatus}>
             <span className={styles.publishText}>
-              {flow.publish ? 'Published' : 'Not published'}:
+              {flow.published ? 'Published' : 'Not published'}: {/* Changed from publish to published */}
             </span>
-            <div className={`${styles.statusIcon} ${flow.publish ? styles.statusGreen : styles.statusRed}`}>
-              {flow.publish ? (
+            <div className={`${styles.statusIcon} ${flow.published ? styles.statusGreen : styles.statusRed}`}>
+              {flow.published ? (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" width="12" height="12">
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>

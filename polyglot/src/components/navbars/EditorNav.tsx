@@ -155,7 +155,7 @@ export default function EditorNav({
 
     return (
         <nav className={styles.nav}>
-            <div className={styles.logoWrapper} onClick={() => router.push('/flows')}>
+            <div className={styles.logoWrapper} onClick={() => router.push('/')}>
                 <Image
                     src={brandLogo}
                     alt="Polyglot Logo"

@@ -11,7 +11,7 @@ export type TextFieldProps = {
     isTextArea?: boolean;
     isReadOnly?: boolean;
     isDisabled?: boolean;
-    isRequired?: boolean;
+    required?: boolean; // <-- Changed from isRequired to required
     placeholder?: string;
 
     // Standard React Form Props (replacing react-hook-form)
@@ -30,7 +30,7 @@ const TextField = ({
     isTextArea,
     isReadOnly,
     isDisabled,
-    isRequired,
+    required, // <-- Changed here
     placeholder,
     width = '100%',
     value,
@@ -59,7 +59,7 @@ const TextField = ({
                         onChange={onChange}
                         readOnly={isReadOnly}
                         disabled={isDisabled}
-                        required={isRequired}
+                        required={required} // <-- Updated here
                         placeholder={_placeholder}
                         className={inputClass}
                     />
@@ -73,7 +73,7 @@ const TextField = ({
                         onChange={onChange}
                         readOnly={isReadOnly}
                         disabled={isDisabled}
-                        required={isRequired}
+                        required={required} // <-- Updated here
                         placeholder={_placeholder}
                         className={inputClass}
                     />
@@ -83,7 +83,7 @@ const TextField = ({
                     htmlFor={name}
                     className={`${styles.label} ${isInvalid ? styles.labelInvalid : ''}`}
                 >
-                    {label} {isRequired && <span aria-hidden="true" style={{ color: '#e53e3e' }}>*</span>}
+                    {label} {required && <span aria-hidden="true" style={{ color: '#e53e3e' }}>*</span>}
                 </label>
 
                 {isInvalid && (

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import TextField from '@/components/forms/TextField';
+import { loginAction, registerAction } from '@/lib/actions/auth';
 import brandLogo from '@public/solo_logo.png';
 import styles from './page.module.css';
 
@@ -12,65 +13,57 @@ export default function LoginPage() {
     const [isLoginView, setIsLoginView] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [globalError, setGlobalError] = useState<string | null>(null);
-
-    // Form State
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-    });
-
-    const handleChange = (field: string, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-        setGlobalError(null); // Clear errors when user types
-    };
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const toggleView = () => {
         setIsLoginView(!isLoginView);
         setGlobalError(null);
-        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+        setSuccessMessage(null);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setGlobalError(null);
+        setSuccessMessage(null);
 
-        // Basic frontend validation
-        if (!formData.email || !formData.password) {
-            setGlobalError('Please fill in all required fields.');
-            return;
-        }
+        const formData = new FormData(e.currentTarget);
+        const password = formData.get('password') as string;
 
-        if (!isLoginView && formData.password !== formData.confirmPassword) {
-            setGlobalError('Passwords do not match.');
-            return;
+        if (!isLoginView) {
+            const confirmPassword = formData.get('confirmPassword') as string;
+            if (password !== confirmPassword) {
+                setGlobalError('Le password non coincidono.');
+                return;
+            }
         }
 
         setIsLoading(true);
 
         try {
             if (isLoginView) {
-                // TODO: Wire up your actual Login API call here
-                console.log('Logging in with:', formData.email, formData.password);
+                // LOGIN FLOW
+                const result = await loginAction(formData);
 
-                // Simulate network request
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                // On success, redirect to flows
-                router.push('/flows');
+                if (result.error) {
+                    setGlobalError(result.error);
+                } else if (result.success) {
+                    router.push('/flows');
+                }
             } else {
-                // TODO: Wire up your actual Register API call here
-                console.log('Registering with:', formData.name, formData.email, formData.password);
+                // REGISTER FLOW
+                const result = await registerAction(formData);
 
-                // Simulate network request
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                // On success, login and redirect to flows
-                router.push('/flows');
+                if (result.error) {
+                    setGlobalError(result.error);
+                } else if (result.success) {
+                    // Switch to login view and show success message
+                    setIsLoginView(true);
+                    setSuccessMessage('Account creato con successo! Ora puoi accedere.');
+                    e.currentTarget.reset(); // Clear the form
+                }
             }
         } catch (error) {
-            setGlobalError('Authentication failed. Please check your credentials and try again.');
+            setGlobalError('Si è verificato un errore imprevisto. Riprova.');
         } finally {
             setIsLoading(false);
         }
@@ -79,7 +72,6 @@ export default function LoginPage() {
     return (
         <div className={styles.pageContainer}>
             <div className={styles.card}>
-
                 <div className={styles.logoContainer}>
                     <Image
                         src={brandLogo}
@@ -91,57 +83,67 @@ export default function LoginPage() {
                 </div>
 
                 <h1 className={styles.title}>
-                    {isLoginView ? 'Welcome back' : 'Create an account'}
+                    {isLoginView ? 'Bentornato' : 'Crea un account'}
                 </h1>
                 <p className={styles.subtitle}>
                     {isLoginView
-                        ? 'Enter your details to access your flows.'
-                        : 'Sign up to start building interactive learning nodes.'}
+                        ? 'Inserisci i tuoi dati per accedere.'
+                        : 'Registrati per iniziare a creare percorsi interattivi.'}
                 </p>
 
                 {globalError && (
-                    <div className={styles.errorText}>
+                    <div className={styles.errorText} aria-live="polite" role="alert">
                         {globalError}
+                    </div>
+                )}
+
+                {successMessage && (
+                    <div className={styles.successText} aria-live="polite" role="status">
+                        {successMessage}
                     </div>
                 )}
 
                 <form className={styles.form} onSubmit={handleSubmit}>
                     {!isLoginView && (
-                        <TextField
-                            label="Full Name"
-                            name="name"
-                            value={formData.name}
-                            onChange={(e) => handleChange('name', e.target.value)}
-                            isDisabled={isLoading}
-                        />
+                        <>
+                            <TextField
+                                label="Nome"
+                                name="firstName"
+                                isDisabled={isLoading}
+                                required
+                            />
+                            <TextField
+                                label="Cognome"
+                                name="lastName"
+                                isDisabled={isLoading}
+                                required
+                            />
+                        </>
                     )}
 
                     <TextField
-                        label="Email Address"
+                        label="Indirizzo Email"
                         name="email"
-                        type="email" // <-- Added this
-                        value={formData.email}
-                        onChange={(e) => handleChange('email', e.target.value)}
+                        type="email"
                         isDisabled={isLoading}
+                        required
                     />
 
                     <TextField
                         label="Password"
                         name="password"
-                        type="password" // <-- Hides the text as asterisks
-                        value={formData.password}
-                        onChange={(e) => handleChange('password', e.target.value)}
+                        type="password"
                         isDisabled={isLoading}
+                        required
                     />
 
                     {!isLoginView && (
                         <TextField
-                            label="Confirm Password"
+                            label="Conferma Password"
                             name="confirmPassword"
-                            type="password" // <-- Hides the text as asterisks
-                            value={formData.confirmPassword}
-                            onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                            type="password"
                             isDisabled={isLoading}
+                            required
                         />
                     )}
 
@@ -151,24 +153,23 @@ export default function LoginPage() {
                         disabled={isLoading}
                     >
                         {isLoading
-                            ? 'Processing...'
-                            : isLoginView ? 'Sign In' : 'Register'
+                            ? 'Elaborazione...'
+                            : isLoginView ? 'Accedi' : 'Registrati'
                         }
                     </button>
                 </form>
 
                 <div className={styles.toggleContainer}>
-                    {isLoginView ? "Don't have an account? " : "Already have an account? "}
+                    {isLoginView ? "Non hai un account? " : "Hai già un account? "}
                     <button
                         type="button"
                         className={styles.toggleBtn}
                         onClick={toggleView}
                         disabled={isLoading}
                     >
-                        {isLoginView ? 'Sign up' : 'Log in'}
+                        {isLoginView ? 'Registrati' : 'Accedi'}
                     </button>
                 </div>
-
             </div>
         </div>
     );

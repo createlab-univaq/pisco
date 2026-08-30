@@ -15,13 +15,13 @@ const SaveFlowModal = ({ isOpen, onClose, saveFunc }: ModaTemplateProps) => {
     if (!isOpen) return null;
 
     const handleSave = async () => {
-        await saveFunc(false, '/flows');
+        await saveFunc(false, '/');
         localStorage.removeItem('flow');
     };
 
     const handleDontSave = () => {
         localStorage.removeItem('flow');
-        router.push('/flows');
+        router.push('/');
     };
 
     return (
