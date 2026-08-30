@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import styles from './ViewCodeModal.module.css';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
+import { Flow } from '@/types';
 
 type ViewCodeModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    flow: any;
-    onApplyChanges: (updatedFlow: any) => void;
+    flow: Flow;
+    onApplyChanges: (updatedFlow: Flow) => void;
 };
 
 export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }: ViewCodeModalProps) {

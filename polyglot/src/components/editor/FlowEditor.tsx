@@ -83,6 +83,7 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     const [flowName, setFlowName] = useState<string>(flow.name || '');
+    const [flowDescription, setFlowDescription] = useState<string>(flow.description || '');
     const [isFlowPublished, setIsFlowPublished] = useState<boolean>(flow.published || false);
     const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(flow.flowJson?.nodes || []);
     const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(flow.flowJson?.edges || []);
@@ -489,6 +490,7 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
         await saveFlow({
             ...flow,
             name: flowName,
+            description: flowDescription,
             published: isFlowPublished,
             ...overrides,
             flowJson: cleanFlowJson,
@@ -505,7 +507,13 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     return (
         <div className={styles.container}>
             <EditorNav
-                flow={flow}
+                flow={{
+                    ...flow,
+                    name: flowName,
+                    description: flowDescription,
+                    published: isFlowPublished,
+                    flowJson: getCleanFlowJson(),
+                }}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
                 canUndo={past.length > 0}
@@ -514,12 +522,14 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                 onRedo={redo}
                 onUpdateFlowInfo={async (updates: Partial<Flow>) => {
                     if (updates.name !== undefined) setFlowName(updates.name);
+                    if (updates.description !== undefined) setFlowDescription(updates.description);
                     if (updates.published !== undefined) setIsFlowPublished(updates.published);
                     await handleSave(updates);
                 }}
                 onApplyLocalFlow={(updates: Partial<Flow>) => {
-                    takeSnapshot(); // Snapshot BEFORE editing via "View Code"
+                    takeSnapshot();
                     if (updates.name !== undefined) setFlowName(updates.name);
+                    if (updates.description !== undefined) setFlowDescription(updates.description);
                     if (updates.published !== undefined) setIsFlowPublished(updates.published);
                     if (updates.flowJson?.nodes !== undefined) setPolyglotNodes(updates.flowJson.nodes);
                     if (updates.flowJson?.edges !== undefined) setPolyglotEdges(updates.flowJson.edges);
