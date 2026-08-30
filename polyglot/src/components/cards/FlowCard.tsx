@@ -57,7 +57,7 @@ const FlowCard = ({ flow, canDelete, setSelected }: FlowCardProps) => {
 
           <h2 className={styles.title}>
             {/* Changed from _id to id */}
-            <Link href={`/${flow.id}`} className={styles.cardLink}>
+            <Link href={`/flows/${flow.id}`} className={styles.cardLink}>
               {flow.name} {/* Changed from title to name */}
             </Link>
           </h2>
