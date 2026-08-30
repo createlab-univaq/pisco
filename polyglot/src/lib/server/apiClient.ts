@@ -2,7 +2,6 @@ import { cookies } from 'next/headers';
 import { FLOWS_PATH, LOGIN_PATH, REGISTER_PATH, IMAGE_PATH } from './api-paths';
 import {
     mockNewAnalyst,
-    getMockAnalyst,
     getMockFlows,
     addMockFlow,
     getMockFlowById,
@@ -11,8 +10,11 @@ import {
     updateMockAnalyst,
     deleteMockAnalyst,
     storeMockImage,
-    deleteMockImage
+    deleteMockImage,
+    login,
+    getMockAnalyst
 } from './mocks/mockDatabase';
+import { Analyst } from '@/types';
 
 export async function apiFetch(
     path: string,
@@ -74,10 +76,21 @@ export async function apiFetch(
         }
 
         if (basePath.endsWith(LOGIN_PATH) && method === 'POST') {
+            const body = JSON.parse(options.body as string);
+
+            // Call login and capture the specific matched user
+            const matchedAnalyst: Analyst | undefined = login(body.email, body.password);
+
+            // Return 401 Unauthorized with a clear error payload if it fails
+            if (!matchedAnalyst) {
+                return jsonResponse({ error: 'Invalid email or password' }, 401);
+            }
+
+            // Return the actual matched analyst, not the generic getMockAnalyst()
             return jsonResponse({
                 token: 'mock-jwt-token-12345',
                 expiresAt: new Date(Date.now() + 86400000).toISOString(),
-                analyst: getMockAnalyst()
+                analyst: matchedAnalyst
             });
         }
 

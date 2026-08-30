@@ -13,9 +13,9 @@ const initialDatabase: MockDatabaseSchema = {
     analysts: [
         {
             id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            firstName: "Admin",
-            lastName: "Analyst",
-            email: "user@example.com",
+            firstName: "Calogero",
+            lastName: "Carlino",
+            email: "calogerocarlino@polyglot.it",
             role: "ANALYST",
             createdAt: "2026-08-30T14:20:03.693Z"
         }
@@ -43,9 +43,9 @@ function writeDB(data: MockDatabaseSchema): void {
     }
 }
 
-export function getMockAnalyst(id: string = "3fa85f64-5717-4562-b3fc-2c963f66afa6"): Analyst {
+export function getMockAnalyst(id: string = "3fa85f64-5717-4562-b3fc-2c963f66afa6"): Analyst | undefined {
     const db = readDB();
-    return db.analysts.find(a => a.id === id) || db.analysts[0];
+    return db.analysts.find(a => a.id === id);
 }
 
 export const mockNewAnalyst: Analyst = {
@@ -56,6 +56,19 @@ export const mockNewAnalyst: Analyst = {
     role: "ANALYST",
     createdAt: new Date().toISOString()
 };
+
+export function login(email: string, password: string): Analyst | undefined {
+    const db = readDB();
+
+    // Simulate a basic password requirement for the mock
+    if (!password || password.trim() === '') {
+        return undefined;
+    }
+
+    let analyst = db.analysts.find(a => a.email === email);
+    return analyst;
+}
+
 
 export function updateMockAnalyst(id: string, payload: Partial<Analyst>): Analyst {
     const db = readDB();
