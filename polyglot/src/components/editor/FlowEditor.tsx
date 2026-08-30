@@ -56,7 +56,7 @@ const SHORTCUTS = {
 
 type FlowEditorProps = {
     mode: 'read' | 'write';
-    initialFlow: Flow;
+    flow: Flow;
     saveFlow: (updatedFlow: Flow) => Promise<void>;
     onSelectionChange?: (selection: OnSelectionChangeParams) => void;
 };
@@ -65,7 +65,7 @@ const deleteKeyCodes = ['Delete'];
 const multiSelectionKeyCodes = ['Control', 'Meta'];
 const panOnDragButton = [1];
 
-const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProps) => {
+const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
 
@@ -81,11 +81,11 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     }), []);
 
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-    const [flowTitle, setFlowTitle] = useState(initialFlow.name);
-    const [flowPublish, setFlowPublish] = useState(initialFlow.published);
 
-    const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(initialFlow.flowJson?.nodes || []);
-    const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(initialFlow.flowJson?.edges || []);
+    const [flowName, setFlowName] = useState<string>(flow.name || '');
+    const [isFlowPublished, setIsFlowPublished] = useState<boolean>(flow.published || false);
+    const [polyglotNodes, setPolyglotNodes] = useState<PolyglotNode[]>(flow.flowJson?.nodes || []);
+    const [polyglotEdges, setPolyglotEdges] = useState<PolyglotEdge[]>(flow.flowJson?.edges || []);
     const [selectedElement, setSelectedElement] = useState<{ type: 'Node' | 'Edge'; id: string } | null>(null);
 
     const [isOpenPanel, setIsOpenPanel] = useState(false);
@@ -487,13 +487,12 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
         }
 
         await saveFlow({
-            ...initialFlow,
-            name: flowTitle,
-            published: flowPublish,
+            ...flow,
+            name: flowName,
+            published: isFlowPublished,
             ...overrides,
             flowJson: cleanFlowJson,
         });
-
         setHasUnsavedChanges(false);
     };
 
@@ -506,12 +505,7 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
     return (
         <div className={styles.container}>
             <EditorNav
-                flow={{
-                    ...initialFlow,
-                    name: flowTitle,
-                    published: flowPublish,
-                    flowJson: getCleanFlowJson(),
-                }}
+                flow={flow}
                 saveFunc={() => handleSave()}
                 hasUnsavedChanges={hasUnsavedChanges}
                 canUndo={past.length > 0}
@@ -519,14 +513,14 @@ const FlowEditor = ({ initialFlow, saveFlow, onSelectionChange }: FlowEditorProp
                 onUndo={undo}
                 onRedo={redo}
                 onUpdateFlowInfo={async (updates: Partial<Flow>) => {
-                    if (updates.name !== undefined) setFlowTitle(updates.name);
-                    if (updates.published !== undefined) setFlowPublish(updates.published);
+                    if (updates.name !== undefined) setFlowName(updates.name);
+                    if (updates.published !== undefined) setIsFlowPublished(updates.published);
                     await handleSave(updates);
                 }}
                 onApplyLocalFlow={(updates: Partial<Flow>) => {
                     takeSnapshot(); // Snapshot BEFORE editing via "View Code"
-                    if (updates.name !== undefined) setFlowTitle(updates.name);
-                    if (updates.published !== undefined) setFlowPublish(updates.published);
+                    if (updates.name !== undefined) setFlowName(updates.name);
+                    if (updates.published !== undefined) setIsFlowPublished(updates.published);
                     if (updates.flowJson?.nodes !== undefined) setPolyglotNodes(updates.flowJson.nodes);
                     if (updates.flowJson?.edges !== undefined) setPolyglotEdges(updates.flowJson.edges);
                     setHasUnsavedChanges(true);

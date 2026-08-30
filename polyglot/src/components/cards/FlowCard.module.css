@@ -81,7 +81,6 @@
 .description, .metaText {
   font-size: 1rem;
   color: #4a5568;
-  margin: 8px 0 0 0;
   white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -90,7 +89,6 @@
 }
 
 .metaText {
-  margin-top: 12px;
   font-size: 0.9rem;
 }
 
@@ -137,31 +135,6 @@
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #edf2f7;
-}
-
-.authorSection {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.authorName {
-  font-size: 0.75rem;
-  color: #4a5568;
-}
-
-/* Fallback Avatar */
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #cbd5e0;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 0.9rem;
 }
 
 /* Publish Status */

@@ -24,12 +24,12 @@ export async function getFlowAction(flowId: string) {
     }
 }
 
-export async function saveFlowAction(flowId: string, flowJson: any) {
+export async function saveFlowAction(flowId: string, updatedFlow: any) {
     try {
         const res = await apiFetch(`${FLOWS_PATH}/${flowId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ flowJson })
+            body: JSON.stringify(updatedFlow)
         });
 
         if (!res.ok) {

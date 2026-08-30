@@ -110,26 +110,23 @@ export function getMockFlowById(id: string): Flow | undefined {
     return readDB().flows.find(f => f.id === id);
 }
 
-export function updateMockFlow(id: string, flowJson: any): Flow {
+export function updateMockFlow(id: string, updatedFlow: Flow): Flow {
     const db = readDB();
     let flow = db.flows.find(f => f.id === id);
     if (!flow) {
-        flow = {
-            id,
-            name: "Updated Flow",
-            description: "",
-            published: false,
-            flowJson: flowJson,
-            analyst: db.analysts[0],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        };
-        db.flows.push(flow);
+        const partialFlow: Partial<Flow> = {
+            ...updatedFlow,
+            id: id,
+        }
+        flow = addMockFlow(partialFlow)
     } else {
-        flow.flowJson = flowJson;
+        flow.name = updatedFlow.name;
+        flow.description = updatedFlow.description;
+        flow.published = updatedFlow.published;
+        flow.flowJson = updatedFlow.flowJson;
         flow.updatedAt = new Date().toISOString();
+        writeDB(db);
     }
-    writeDB(db);
     return flow;
 }
 

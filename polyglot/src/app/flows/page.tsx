@@ -31,7 +31,7 @@ export default async function FlowsPage({
     return (
         <>
             <Navbar />
-            <FlowsClient initialFlows={flows} initialSearch={resolvedParams.q || ''} />
+            <FlowsClient flows={flows} initialSearch={resolvedParams.q || ''} />
         </>
     );
 }

@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './FlowSettingsModal.module.css';
+import { Flow } from '@/types';
 
 type FlowSettingsModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    flow: any;
-    onUpdateFlowInfo?: (updates: any) => void;
+    flow: Flow;
+    onUpdateFlowInfo?: (updates: Partial<Flow>) => void;
 };
 
 export default function FlowSettingsModal({ isOpen, onClose, flow, onUpdateFlowInfo }: FlowSettingsModalProps) {

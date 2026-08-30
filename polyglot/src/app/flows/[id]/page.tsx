@@ -6,9 +6,7 @@ type FlowEditorPageProps = {
 };
 
 export default async function FlowEditorPage({ params }: FlowEditorPageProps) {
-  // 1. Unwrap the params promise using await
   const { id } = await params;
 
-  // 2. Pass the resolved id down to your client component
   return <FlowEditorClient flowId={id} />;
 }

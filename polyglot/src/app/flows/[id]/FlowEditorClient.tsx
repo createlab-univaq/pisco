@@ -72,8 +72,7 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
                         setError('Error loading flow elements');
                     }
                 } else if (result.data) {
-                    // Set ONLY the flowJson attribute of the response as requested
-                    setFlow(result.data.flowJson);
+                    setFlow(result.data);
                 }
             } catch (err: any) {
                 console.error(err);
@@ -90,11 +89,9 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
     const handleSaveFlow = async (updatedFlow: Flow, outputToast = true, returnPath?: string) => {
         try {
             const result = await saveFlowAction(flowId, updatedFlow);
-
             if (result.success && result.data) {
                 localStorage.removeItem(`rescue_flow_${flowId}`);
-                // Update state with the returned flowJson
-                setFlow(result.data.flowJson);
+                setFlow(result.data);
 
                 if (outputToast) {
                     showToast('Flow saved', 'The save was successful', 'success');
@@ -136,7 +133,7 @@ export default function FlowEditorClient({ flowId }: FlowEditorClientProps) {
             {!loading && flow && (
                 <FlowEditor
                     mode="write"
-                    initialFlow={flow}
+                    flow={flow}
                     saveFlow={(updated) => handleSaveFlow(updated)}
                 />
             )}

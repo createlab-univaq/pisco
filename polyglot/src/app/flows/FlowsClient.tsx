@@ -12,11 +12,11 @@ import { Flow } from '@/types';
 import ConfirmModal from '@/components/modals/ConfirmModal';
 
 interface FlowsClientProps {
-    initialFlows: Flow[];
+    flows: Flow[];
     initialSearch: string;
 }
 
-export default function FlowsClient({ initialFlows, initialSearch }: FlowsClientProps) {
+export default function FlowsClient({ flows, initialSearch }: FlowsClientProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -28,8 +28,8 @@ export default function FlowsClient({ initialFlows, initialSearch }: FlowsClient
 
     // Get unique flow names for the search suggestions
     const suggestions = useMemo(() => {
-        return Array.from(new Set(initialFlows.map((flow) => flow.name)));
-    }, [initialFlows]);
+        return Array.from(new Set(flows.map((flow) => flow.name)));
+    }, [flows]);
 
     // Handle Search via URL (Triggering a server refetch)
     const handleSearch = (value: string) => {
@@ -68,13 +68,12 @@ export default function FlowsClient({ initialFlows, initialSearch }: FlowsClient
             />
 
             <div className={styles.contentArea}>
-                {initialFlows.length ? (
+                {flows.length ? (
                     <div className={styles.flowGrid}>
-                        {initialFlows.map((flow) => (
+                        {flows.map((flow) => (
                             <FlowCard
-                                key={flow.id} // Changed from flow._id to flow.id
+                                key={flow.id}
                                 flow={flow}
-                                canDelete={true}
                                 setSelected={setSelectedFlowId}
                             />
                         ))}

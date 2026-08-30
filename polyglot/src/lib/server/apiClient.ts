@@ -63,9 +63,9 @@ export async function apiFetch(
                 if (!flow) return jsonResponse({ detail: 'Flow not found' }, 404);
                 return jsonResponse(flow);
             }
-            if (method === 'PUT' || method === 'POST') {
+            if (method === 'PATCH') {
                 const body = JSON.parse(options.body as string);
-                return jsonResponse(updateMockFlow(flowId, body.flowJson || body));
+                return jsonResponse(updateMockFlow(flowId, body));
             }
             if (method === 'DELETE') {
                 deleteMockFlow(flowId);
