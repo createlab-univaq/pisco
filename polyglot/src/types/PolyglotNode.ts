@@ -1,8 +1,8 @@
 import { ContainerNode } from "@/components/nodes/Container";
 import { EmotionAttributionNode } from "@/components/nodes/EmotionAttribution";
-import { EmotionAttributionANode } from "@/components/nodes/EmotionAttributionA";
-import { EmotionAttributionBNode } from "@/components/nodes/EmotionAttributionB";
-import { EmotionRecognitionNode } from "@/components/nodes/EmotionRecognition";
+import { EmotionAttributionExerciseANode } from "@/components/nodes/EmotionAttributionExerciseA";
+import { EmotionAttributionExerciseBNode } from "@/components/nodes/EmotionAttributionExerciseB";
+import { EmotionRecognitionExerciseANode } from "@/components/nodes/EmotionRecognitionExerciseA";
 import { EyesTaskNode } from "@/components/nodes/EyesTask";
 import { FauxPasNode } from "@/components/nodes/FauxPas";
 import { SocialSituationsNode } from "@/components/nodes/SocialSituations";
@@ -16,12 +16,12 @@ import { TheoryOfMindExerciseANode } from "@/components/nodes/TheoryOfMindExerci
 export type PolyglotNode =
   | ContainerNode
   | EmotionAttributionNode
-  | EmotionAttributionANode
-  | EmotionAttributionBNode
+  | EmotionAttributionExerciseANode
+  | EmotionAttributionExerciseBNode
   | EyesTaskNode
   | FauxPasNode
   | FauxPasExerciseANode
-  | EmotionRecognitionNode
+  | EmotionRecognitionExerciseANode
   | SocialSituationsNode
   | SocialSituationsExerciseANode
   | TheoryOfMindNode

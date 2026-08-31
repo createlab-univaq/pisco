@@ -23,7 +23,7 @@ export const createNewDefaultPolyglotFlow = (): Flow => ({
 
 export const createNewDefaultPolyglotNode = (
     pos: { x: number; y: number },
-    nodeType: string = NODE_TYPE.EMOTION_ATTRIBUTION_A
+    nodeType: string = NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A
 ): PolyglotNode => {
     const id = UUIDv4();
     const defaultData = polyglotNodeComponentMapping.defaultDataMapping[nodeType] ?? {};

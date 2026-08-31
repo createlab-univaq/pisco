@@ -9,15 +9,15 @@ import { PolyglotComponentMapping } from './PolyglotComponentMapping';
 
 // --- Node Config Imports ---
 import { trueFalseNodeConfig } from '@/components/nodes/TrueFalse';
-import { emotionAttributionANodeConfig } from './nodes/EmotionAttributionA';
-import { emotionAttributionBNodeConfig } from './nodes/EmotionAttributionB';
+import { emotionAttributionExerciseANodeConfig } from './nodes/EmotionAttributionExerciseA';
+import { emotionAttributionExerciseBNodeConfig } from './nodes/EmotionAttributionExerciseB';
 import { emotionAttributionNodeConfig } from './nodes/EmotionAttribution';
 import { eyesTaskNodeConfig } from './nodes/EyesTask';
 import { fauxPasNodeConfig } from './nodes/FauxPas';
 import { socialSituationsNodeConfig } from './nodes/SocialSituations';
 import { theoryOfMindNodeConfig } from './nodes/TheoryOfMind';
 import { containerNodeConfig } from './nodes/Container';
-import { emotionRecognitionNodeConfig } from './nodes/EmotionRecognition';
+import { emotionRecognitionExerciseANodeConfig } from './nodes/EmotionRecognitionExerciseA';
 import { socialSituationsExerciseANodeConfig } from './nodes/SocialSituationsExerciseA';
 
 // --- Edge Config Imports ---
@@ -42,8 +42,8 @@ export const polyglotEdgeComponentMapping = new PolyglotComponentMapping<
 
 polyglotNodeComponentMapping.registerMany([
   trueFalseNodeConfig,
-  emotionAttributionANodeConfig,
-  emotionAttributionBNodeConfig,
+  emotionAttributionExerciseANodeConfig,
+  emotionAttributionExerciseBNodeConfig,
   emotionAttributionNodeConfig,
   eyesTaskNodeConfig,
   fauxPasNodeConfig,
@@ -52,7 +52,7 @@ polyglotNodeComponentMapping.registerMany([
   theoryOfMindNodeConfig,
   theoryOfMindExerciseANodeConfig,
   containerNodeConfig,
-  emotionRecognitionNodeConfig,
+  emotionRecognitionExerciseANodeConfig,
   socialSituationsExerciseANodeConfig,
 ]);
 
@@ -66,8 +66,8 @@ polyglotEdgeComponentMapping.registerMany([
 // Pure static object literals. No class instances, no dynamic mutations.
 export const nodeTypes = {
   [NODE_TYPE.TRUE_FALSE]: trueFalseNodeConfig.elementComponent,
-  [NODE_TYPE.EMOTION_ATTRIBUTION_A]: emotionAttributionANodeConfig.elementComponent,
-  [NODE_TYPE.EMOTION_ATTRIBUTION_B]: emotionAttributionBNodeConfig.elementComponent,
+  [NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A]: emotionAttributionExerciseANodeConfig.elementComponent,
+  [NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_B]: emotionAttributionExerciseBNodeConfig.elementComponent,
   [NODE_TYPE.EMOTION_ATTRIBUTION]: emotionAttributionNodeConfig.elementComponent,
   [NODE_TYPE.EYES_TASK]: eyesTaskNodeConfig.elementComponent,
   [NODE_TYPE.FAUX_PAS]: fauxPasNodeConfig.elementComponent,
@@ -76,7 +76,7 @@ export const nodeTypes = {
   [NODE_TYPE.THEORY_OF_MIND]: theoryOfMindNodeConfig.elementComponent,
   [NODE_TYPE.THEORY_OF_MIND_EXERCISE_A]: theoryOfMindExerciseANodeConfig.elementComponent,
   [NODE_TYPE.CONTAINER]: containerNodeConfig.elementComponent,
-  [NODE_TYPE.EMOTION_RECOGNITION]: emotionRecognitionNodeConfig.elementComponent,
+  [NODE_TYPE.EMOTION_RECOGNITION_EXERCISE_A]: emotionRecognitionExerciseANodeConfig.elementComponent,
   [NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A]: socialSituationsExerciseANodeConfig.elementComponent,
 };
 

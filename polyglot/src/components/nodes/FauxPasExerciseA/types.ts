@@ -2,6 +2,10 @@ import { NODE_TYPE } from '@/types/NodeType';
 import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 import { FauxPasQuestion } from '../FauxPas/types';
 
+export type FauxPasExerciseAData = {
+    quiz?: FauxPasExerciseAQuizItem[];
+};
+
 export type FauxPasExerciseAQuizItem = {
     qid: string;
     narration: string;

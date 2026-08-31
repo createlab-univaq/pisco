@@ -2,17 +2,18 @@
 import icon from '@public/brain_icon.png';
 import TheoryOfMindNodeProperties from './TheoryOfMindNodeProperties';
 import ReactFlowTheoryOfMindNode from './ReactFlowTheoryOfMindNode';
+import { NODE_TYPE } from '@/types/NodeType';
 
 export * from './types';
 export { TheoryOfMindNodeProperties, ReactFlowTheoryOfMindNode };
 
 // Export the configuration object (do NOT call registerMapping here)
 export const theoryOfMindNodeConfig = {
-    elementType: 'TheoryOfMindNode',
-    name: 'Teoria Della Mente',
+    elementType: NODE_TYPE.THEORY_OF_MIND,
+    name: 'Theory Of Mind',
     icon: icon.src,
     group: 'remember_assessment',
-    
+
     propertiesComponent: TheoryOfMindNodeProperties,
     elementComponent: ReactFlowTheoryOfMindNode,
     defaultData: {

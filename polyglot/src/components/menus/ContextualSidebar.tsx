@@ -36,12 +36,12 @@ const MENU_SECTIONS: Array<{
         {
             label: 'Exercises',
             nodes: [
-                NODE_TYPE.EMOTION_ATTRIBUTION_A,
-                NODE_TYPE.EMOTION_ATTRIBUTION_B,
                 NODE_TYPE.CONTAINER,
+                NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A,
+                NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_B,
                 NODE_TYPE.FAUX_PAS_EXERCISE_A,
                 NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
-                NODE_TYPE.EMOTION_RECOGNITION,
+                NODE_TYPE.EMOTION_RECOGNITION_EXERCISE_A,
                 NODE_TYPE.THEORY_OF_MIND_EXERCISE_A,
             ],
         },

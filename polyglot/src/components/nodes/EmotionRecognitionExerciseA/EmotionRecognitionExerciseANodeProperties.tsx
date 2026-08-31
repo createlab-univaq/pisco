@@ -1,15 +1,16 @@
 'use client';
 
-import styles from './FauxPasExerciseANodeProperties.module.css';
 import { PolyglotNodePropertiesProps } from '@/types/ElementMappingTypes';
-import { FauxPasExerciseANode } from './types';
 import NodeProperties from '../NodeProperties';
+import { EmotionRecognitionExerciseANode } from './types';
+import styles from './EmotionRecognitionExerciseANodeProperties.module.css';
+import { EmotionRecognitionExerciseACoreForm } from './components/EmotionRecognitionExerciseACoreForm';
 import { useNodeSync } from '@/hooks/useNodeSync';
-import { FauxPasExerciseACoreForm } from './components/FauxPasExerciseACoreForm';
 
-const FauxPasExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
-    const node = element as FauxPasExerciseANode;
+const EmotionRecognitionExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNodePropertiesProps) => {
+    const node = element as EmotionRecognitionExerciseANode;
     const data = node.data || {};
+    const parentNodeId = node._id;
 
     const { handleBaseChange, handleDataChange } = useNodeSync(node, onUpdateElement);
 
@@ -20,16 +21,18 @@ const FauxPasExerciseANodeProperties = ({ element, onUpdateElement }: PolyglotNo
                 description={node.description}
                 onUpdateTitle={(val) => handleBaseChange({ title: val })}
                 onUpdateDescription={(val) => handleBaseChange({ description: val })}
+                activityDescription="Riconoscimento delle emozioni: osserva un'immagine e seleziona l'emozione corretta."
             />
 
             <hr className={styles.divider} />
 
-            <FauxPasExerciseACoreForm
+            <EmotionRecognitionExerciseACoreForm
                 data={data}
                 onChange={handleDataChange}
+                parentNodeId={parentNodeId}
             />
         </div>
     );
 };
 
-export default FauxPasExerciseANodeProperties;
+export default EmotionRecognitionExerciseANodeProperties;

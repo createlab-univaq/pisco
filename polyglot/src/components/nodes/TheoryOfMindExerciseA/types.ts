@@ -1,6 +1,10 @@
 import { NODE_TYPE } from '@/types/NodeType';
 import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 
+export type TheoryOfMindExerciseAData = {
+    quiz?: TheoryOfMindExerciseAItem[];
+};
+
 export type TheoryOfMindExerciseAQuestion = {
     qid: string;
     question: string;

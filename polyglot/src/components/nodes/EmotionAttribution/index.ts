@@ -1,6 +1,7 @@
 import icon from '@public/emotion_icon.png';
 import EmotionAttributionNodeProperties from './EmotionAttributionNodeProperties';
 import ReactFlowEmotionAttributionNode from './ReactFlowEmotionAttributionNode';
+import { NODE_TYPE } from '@/types/NodeType';
 
 export * from './types';
 export { EmotionAttributionNodeProperties, ReactFlowEmotionAttributionNode };
@@ -11,8 +12,8 @@ const newId = (prefix: string) =>
 
 // Export the configuration object (do NOT call registerMapping here)
 export const emotionAttributionNodeConfig = {
-    elementType: 'EmotionAttributionNode',
-    name: 'Attribuzione delle Emozioni',
+    elementType: NODE_TYPE.EMOTION_ATTRIBUTION,
+    name: 'Emotion Attribution',
     icon: icon.src,
     group: 'remember_assessment',
     propertiesComponent: EmotionAttributionNodeProperties,

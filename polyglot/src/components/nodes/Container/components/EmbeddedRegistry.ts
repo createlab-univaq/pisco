@@ -1,15 +1,23 @@
 import type React from 'react';
-import { NODE_TYPE } from '@/types/NodeType'; // <-- Import your constants!
+import { NODE_TYPE } from '@/types/NodeType';
 
 // Using standard alias paths for public assets
 import emotion_icon from '@public/emotion_icon.png';
 import eyes_icon from '@public/eyes_icon.png';
 import people_icon from '@public/people_icon.png';
 
-import EmotionAttributionAEmbedded from '../../EmotionAttributionA/components/EmotionAttributionANodeEmbedded';
-import EmotionAttributionBEmbedded from '../../EmotionAttributionB/components/EmotionAttributionBEmbedded';
-import EmotionRecognitionNodeEmbedded from '../../EmotionRecognition/components/EmotionRecognitionNodeEmbedded';
+import EmotionAttributionExerciseAEmbedded from '../../EmotionAttributionExerciseA/components/EmotionAttributionExerciseANodeEmbedded';
+import EmotionAttributionExerciseBEmbedded from '../../EmotionAttributionExerciseB/components/EmotionAttributionExerciseBEmbedded';
+import EmotionRecognitionExerciseANodeEmbedded from '../../EmotionRecognitionExerciseA/components/EmotionRecognitionExerciseANodeEmbedded';
 import SocialSituationExerciseANodeEmbedded from '../../SocialSituationsExerciseA/components/SocialSituationsExerciseANodeEmbedded';
+import FauxPasExerciseAEmbedded from '../../FauxPasExerciseA/components/FauxPasExerciseAEmbedded';
+import TheoryOfMindExerciseAEmbedded from '../../TheoryOfMindExerciseA/components/TheoryOfMindExerciseAEmbedded';
+import { theoryOfMindExerciseANodeConfig } from '../../TheoryOfMindExerciseA';
+import { fauxPasExerciseANodeConfig } from '../../FauxPasExerciseA';
+import { socialSituationsExerciseANodeConfig } from '../../SocialSituationsExerciseA';
+import { emotionRecognitionExerciseANodeConfig } from '../../EmotionRecognitionExerciseA';
+import { emotionAttributionExerciseBNodeConfig } from '../../EmotionAttributionExerciseB';
+import { emotionAttributionExerciseANodeConfig } from '../../EmotionAttributionExerciseA';
 
 export type EmbeddedProps<T = any> = {
     data: T;
@@ -20,7 +28,6 @@ export type EmbeddedProps<T = any> = {
 };
 
 export type EmbeddedDefinition = {
-    // We can now strictly type this to ensure only valid node types are registered
     type: string;
     label: string;
     icon?: string;
@@ -30,59 +37,46 @@ export type EmbeddedDefinition = {
 
 export const embeddedRegistry: EmbeddedDefinition[] = [
     {
-        type: NODE_TYPE.EMOTION_ATTRIBUTION_A,
-        label: 'Attribuzione delle Emozioni (A)',
-        icon: emotion_icon.src,
-        component: EmotionAttributionAEmbedded,
-        createDefaultData: () => ({
-            scenario: '',
-            domanda: '',
-            risposteCorrette: [''],
-            spiegazioneS: '',
-            spiegazioneR: '',
-        }),
+        type: emotionAttributionExerciseANodeConfig.elementType,
+        label: emotionAttributionExerciseANodeConfig.name,
+        icon: emotionAttributionExerciseANodeConfig.icon,
+        component: EmotionAttributionExerciseAEmbedded,
+        createDefaultData: () => (emotionAttributionExerciseANodeConfig.defaultData),
     },
     {
-        type: NODE_TYPE.EMOTION_ATTRIBUTION_B,
-        label: 'Attribuzione delle Emozioni (B)',
-        icon: emotion_icon.src,
-        component: EmotionAttributionBEmbedded,
-        createDefaultData: () => ({
-            items: [
-                {
-                    emotion: '',
-                    scenario: '',
-                    scenarioExplanation: '',
-                },
-            ],
-        }),
+        type: emotionAttributionExerciseBNodeConfig.elementType,
+        label: emotionAttributionExerciseBNodeConfig.name,
+        icon: emotionAttributionExerciseBNodeConfig.icon,
+        component: EmotionAttributionExerciseBEmbedded,
+        createDefaultData: () => (emotionAttributionExerciseBNodeConfig.defaultData),
     },
     {
-        type: NODE_TYPE.EMOTION_RECOGNITION,
-        label: 'Riconoscimento Emozioni',
-        icon: eyes_icon.src,
-        component: EmotionRecognitionNodeEmbedded,
-        createDefaultData: () => ({
-            imageId: undefined,
-            answers: ['', ''],
-            correctIndex: 0,
-        }),
+        type: fauxPasExerciseANodeConfig.elementType,
+        label: fauxPasExerciseANodeConfig.name,
+        icon: fauxPasExerciseANodeConfig.icon,
+        component: FauxPasExerciseAEmbedded,
+        createDefaultData: () => (fauxPasExerciseANodeConfig.defaultData),
     },
     {
-        type: NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
-        label: 'Situazione Sociale (A)',
-        icon: people_icon.src,
+        type: socialSituationsExerciseANodeConfig.elementType,
+        label: socialSituationsExerciseANodeConfig.name,
+        icon: socialSituationsExerciseANodeConfig.icon,
         component: SocialSituationExerciseANodeEmbedded,
-        createDefaultData: () => ({
-            scenario: '',
-            items: [
-                {
-                    answer: '',
-                    explanation: '',
-                },
-            ],
-            correctIndex: 0,
-        }),
+        createDefaultData: () => (socialSituationsExerciseANodeConfig.defaultData),
+    },
+    {
+        type: emotionRecognitionExerciseANodeConfig.elementType,
+        label: emotionRecognitionExerciseANodeConfig.name,
+        icon: emotionRecognitionExerciseANodeConfig.icon,
+        component: EmotionRecognitionExerciseANodeEmbedded,
+        createDefaultData: () => (emotionRecognitionExerciseANodeConfig.defaultData),
+    },
+    {
+        type: theoryOfMindExerciseANodeConfig.elementType,
+        label: theoryOfMindExerciseANodeConfig.name,
+        icon: theoryOfMindExerciseANodeConfig.icon,
+        component: TheoryOfMindExerciseAEmbedded,
+        createDefaultData: () => (theoryOfMindExerciseANodeConfig.defaultData),
     },
 ];
 

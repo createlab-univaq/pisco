@@ -8,7 +8,7 @@ export { SocialSituationsExerciseANodeProperties, ReactFlowSocialSituationsExerc
 
 export const socialSituationsExerciseANodeConfig = {
     elementType: NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
-    name: 'Situazione Sociale (A)',
+    name: 'Social Situations Exercise (A)',
     icon: icon.src,
     group: 'apply_assessment',
 
