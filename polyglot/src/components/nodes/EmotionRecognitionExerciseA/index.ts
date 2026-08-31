@@ -13,10 +13,5 @@ export const emotionRecognitionExerciseANodeConfig = {
     group: 'remember_assessment',
     propertiesComponent: EmotionRecognitionExerciseANodeProperties,
     elementComponent: ReactFlowEmotionRecognitionExerciseANode,
-    defaultData: {
-        nodeData: {},
-        imageId: undefined,
-        answers: ['', ''],
-        correctIndex: 0,
-    },
+    defaultData: {},
 };

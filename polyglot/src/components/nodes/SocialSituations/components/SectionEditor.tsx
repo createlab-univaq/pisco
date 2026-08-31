@@ -46,7 +46,7 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 label="Risposte"
                 answers={section.answers || []}
                 correctIndexes={section.correctIndexes || []}
-                onAnswersChange={(newAnswers: any) => onChange({ ...section, answers: newAnswers })}
+                onAnswersChange={(newAnswers: string[]) => onChange({ ...section, answers: newAnswers })}
                 onCorrectIndexesChange={(newIndexes: number[]) => onChange({ ...section, correctIndexes: newIndexes })}
             />
         </EditorCardWrapper>

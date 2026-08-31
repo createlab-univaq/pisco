@@ -15,18 +15,12 @@ const CloseIcon = () => (
     </svg>
 );
 
-export type AnswerValue = {
-    text: string;
-    score: number;
-};
-
 type AnswerRowProps = {
-    value: AnswerValue;
+    value: string;
     isCorrect: boolean;
     idx: number;
     canRemove: boolean;
-    onTextChange: (text: string) => void;
-    onScoreChange: (score: number) => void;
+    onChange: (text: string) => void;
     onToggleCorrect: (idx: number) => void;
     onRemove: (idx: number) => void;
 };
@@ -36,17 +30,10 @@ const AnswerRow = ({
     isCorrect,
     idx,
     canRemove,
-    onTextChange,
-    onScoreChange,
+    onChange,
     onToggleCorrect,
     onRemove,
 }: AnswerRowProps) => {
-
-    const handleScoreChange = (raw: string) => {
-        const n = raw === '' ? 0 : Number(raw);
-        onScoreChange(Number.isFinite(n) ? n : 0);
-    };
-
     return (
         <div className={styles.row}>
             {/* Checkbox */}
@@ -63,20 +50,9 @@ const AnswerRow = ({
             <div className={`${styles.inputBox} ${styles.textBox}`}>
                 <input
                     type="text"
-                    value={value.text ?? ''}
+                    value={value ?? ''}
                     placeholder={`Risposta ${idx + 1}`}
-                    onChange={(e) => onTextChange(e.target.value)}
-                    className={styles.inputUnstyled}
-                />
-            </div>
-
-            {/* Box: punteggio */}
-            <div className={`${styles.inputBox} ${styles.scoreBox}`}>
-                <input
-                    type="number"
-                    value={Number.isFinite(value.score) ? value.score : 0}
-                    placeholder="Punti"
-                    onChange={(e) => handleScoreChange(e.target.value)}
+                    onChange={(e) => onChange(e.target.value)}
                     className={styles.inputUnstyled}
                 />
             </div>
@@ -98,9 +74,9 @@ const AnswerRow = ({
 
 export type MultiSelectAnswersFieldProps = {
     label: string;
-    answers: AnswerValue[];
+    answers: string[];
     correctIndexes: number[];
-    onAnswersChange: (newAnswers: AnswerValue[]) => void;
+    onAnswersChange: (newAnswers: string[]) => void;
     onCorrectIndexesChange: (newIndexes: number[]) => void;
     minAnswers?: number;
 };
@@ -126,15 +102,9 @@ const MultiSelectAnswersField = ({
         onCorrectIndexesChange(next);
     };
 
-    const updateAnswerText = (idx: number, text: string) => {
+    const updateAnswer = (idx: number, text: string) => {
         const newAnswers = [...answers];
-        newAnswers[idx] = { ...newAnswers[idx], text };
-        onAnswersChange(newAnswers);
-    };
-
-    const updateAnswerScore = (idx: number, score: number) => {
-        const newAnswers = [...answers];
-        newAnswers[idx] = { ...newAnswers[idx], score };
+        newAnswers[idx] = text;
         onAnswersChange(newAnswers);
     };
 
@@ -156,7 +126,7 @@ const MultiSelectAnswersField = ({
     };
 
     const addAnswer = () => {
-        onAnswersChange([...answers, { text: '', score: 0 }]);
+        onAnswersChange([...answers, '']);
     };
 
     const canRemove = answers.length > minAnswers;
@@ -173,8 +143,7 @@ const MultiSelectAnswersField = ({
                         isCorrect={correctIndexes.includes(idx)}
                         idx={idx}
                         canRemove={canRemove}
-                        onTextChange={(text) => updateAnswerText(idx, text)}
-                        onScoreChange={(score) => updateAnswerScore(idx, score)}
+                        onChange={(text) => updateAnswer(idx, text)}
                         onToggleCorrect={toggleCorrect}
                         onRemove={removeAnswer}
                     />

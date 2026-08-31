@@ -62,33 +62,33 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
             <EditorCardDivider />
 
             <div>
-                <label className={styles.sectionLabel} style={{ display: 'block', marginBottom: '8px' }}>
+                <label className={styles.sectionLabel}>
                     Risposte (4 opzioni, seleziona la corretta e inserisci la spiegazione)
                 </label>
                 {answers.map((ansItem, ansIdx) => (
-                    <div key={ansIdx} style={{ display: 'flex', gap: '8px', marginBottom: '10px', alignItems: 'flex-start' }}>
+                    <div key={ansIdx} className={styles.answerRow}>
                         <input
                             type="radio"
                             name={`correct-answer-sec-${sectionIndex}`}
                             checked={section.correctIndex === ansIdx}
                             onChange={() => onChange({ ...section, correctIndex: ansIdx })}
-                            style={{ marginTop: '8px' }}
+                            className={styles.radioInput}
                             title="Imposta come risposta corretta"
                         />
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div className={styles.inputsWrapper}>
                             <input
                                 type="text"
                                 placeholder={`Risposta ${ansIdx + 1}`}
                                 value={ansItem.text}
                                 onChange={(e) => handleAnswerChange(ansIdx, 'text', e.target.value)}
-                                style={{ width: '100%', padding: '4px 8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                                className={styles.textInput}
                             />
                             <input
                                 type="text"
                                 placeholder={`Spiegazione per Risposta ${ansIdx + 1}`}
                                 value={ansItem.explanation}
                                 onChange={(e) => handleAnswerChange(ansIdx, 'explanation', e.target.value)}
-                                style={{ width: '100%', padding: '4px 8px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '0.8rem', background: '#f8fafc' }}
+                                className={styles.explanationInput}
                             />
                         </div>
                     </div>

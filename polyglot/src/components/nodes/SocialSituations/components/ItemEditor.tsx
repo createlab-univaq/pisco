@@ -40,7 +40,7 @@ export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem }: ItemEdit
                     before: '',
                     bold: '',
                     after: '',
-                    answers: [{ text: '', score: 0 }],
+                    answers: [''],
                     correctIndexes: [],
                 }
             ]

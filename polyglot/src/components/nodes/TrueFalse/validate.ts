@@ -34,27 +34,5 @@ export const validateTrueFalseNode = (data: any): ValidationError[] => {
         }
     }
 
-    const positivePoints = data?.positivePoints;
-    if (positivePoints !== undefined && positivePoints !== null) {
-        if (typeof positivePoints !== 'number' || !Number.isFinite(positivePoints)) {
-            errors.push({
-                label: 'positivePoints',
-                path: 'data.positivePoints',
-                message: 'positivePoints must be a valid number.',
-            });
-        }
-    }
-
-    const negativePoints = data?.negativePoints;
-    if (negativePoints !== undefined && negativePoints !== null) {
-        if (typeof negativePoints !== 'number' || !Number.isFinite(negativePoints)) {
-            errors.push({
-                label: 'negativePoints',
-                path: 'data.negativePoints',
-                message: 'negativePoints must be a valid number.',
-            });
-        }
-    }
-
     return errors;
 };

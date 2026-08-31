@@ -1,16 +1,11 @@
 import { NODE_TYPE } from '@/types/NodeType';
 import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 
-export type SocialSituationAnswer = {
-    text: string;
-    score: number; // valutazione numerica associata alla risposta
-};
-
 export type SocialSituationSection = {
     before: string;
     bold: string;
     after: string;
-    answers: SocialSituationAnswer[];
+    answers: string[];
     correctIndexes: number[]; // multi-select (indici dentro answers)
 };
 
