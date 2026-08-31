@@ -1,40 +1,91 @@
 import { PolyglotEdge } from "@/types/PolyglotEdge";
 import { PolyglotNode } from "@/types/PolyglotNode";
+import { NODE_TYPE } from "@/types/NodeType";
+
+// Helper to calculate points for individual embedded items inside a Container node
+function calculateEmbeddedItemMaxPoints(type: string, data: any): number {
+    if (!data) return 0;
+    switch (type) {
+        case NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A:
+        case NODE_TYPE.EMOTION_RECOGNITION_EXERCISE_A:
+            return 1;
+
+        case NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_B:
+            return Array.isArray(data.items) ? data.items.length : 0;
+
+        case NODE_TYPE.FAUX_PAS_EXERCISE_A:
+        case NODE_TYPE.THEORY_OF_MIND_EXERCISE_A: {
+            if (!Array.isArray(data.quiz)) return 0;
+            return data.quiz.reduce((acc: number, q: any) => acc + (Array.isArray(q.questions) ? q.questions.length : 0), 0);
+        }
+
+        case NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A: {
+            if (!Array.isArray(data.items)) return 0;
+            return data.items.reduce((acc: number, item: any) => acc + (Array.isArray(item.sections) ? item.sections.length : 0), 0);
+        }
+
+        default:
+            return 0;
+    }
+}
 
 function calculateNodeMaxPoints(node: PolyglotNode): number {
     if (!node || !node.data) return 0;
     const data = node.data as any;
-    let total = 0;
 
-    if (Array.isArray(data.questions)) total += data.questions.length;
-    if (Array.isArray(data.risposteCorrette)) total += data.risposteCorrette.length;
+    switch (node.type) {
+        case NODE_TYPE.TRUE_FALSE:
+        case NODE_TYPE.EMOTION_ATTRIBUTION:
+        case NODE_TYPE.EYES_TASK:
+            return Array.isArray(data.questions) ? data.questions.length : 0;
 
-    if (Array.isArray(data.quiz)) {
-        data.quiz.forEach((item: any) => {
-            total += 1;
-            if (Array.isArray(item.questions)) total += item.questions.length;
-        });
-    }
+        case NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A:
+        case NODE_TYPE.EMOTION_RECOGNITION_EXERCISE_A:
+            return 1;
 
-    if (Array.isArray(data.items)) {
-        data.items.forEach((item: any) => {
-            total += 1;
-            if (Array.isArray(item.questions)) total += item.questions.length;
-            if (Array.isArray(item.sections)) {
-                item.sections.forEach((sec: any) => {
-                    if (Array.isArray(sec.items)) total += sec.items.length;
+        case NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_B:
+            return Array.isArray(data.items) ? data.items.length : 0;
+
+        case NODE_TYPE.FAUX_PAS:
+        case NODE_TYPE.FAUX_PAS_EXERCISE_A:
+        case NODE_TYPE.THEORY_OF_MIND:
+        case NODE_TYPE.THEORY_OF_MIND_EXERCISE_A: {
+            if (!Array.isArray(data.quiz)) return 0;
+            return data.quiz.reduce((acc: number, q: any) => acc + (Array.isArray(q.questions) ? q.questions.length : 0), 0);
+        }
+
+        case NODE_TYPE.SOCIAL_SITUATIONS:
+        case NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A: {
+            if (!Array.isArray(data.items)) return 0;
+            return data.items.reduce((acc: number, item: any) => acc + (Array.isArray(item.sections) ? item.sections.length : 0), 0);
+        }
+
+        case NODE_TYPE.CONTAINER: {
+            if (!Array.isArray(data.sections)) return 0;
+            let total = 0;
+            data.sections.forEach((section: any) => {
+                if (Array.isArray(section.items)) {
+                    section.items.forEach((item: any) => {
+                        total += calculateEmbeddedItemMaxPoints(item.type, item.data);
+                    });
+                }
+            });
+            return total;
+        }
+
+        default: {
+            let total = 0;
+            if (Array.isArray(data.questions)) total += data.questions.length;
+            if (Array.isArray(data.risposteCorrette)) total += data.risposteCorrette.length;
+            if (Array.isArray(data.items)) total += data.items.length;
+            if (Array.isArray(data.quiz)) {
+                data.quiz.forEach((item: any) => {
+                    total += Array.isArray(item.questions) ? item.questions.length : 1;
                 });
             }
-        });
+            return total;
+        }
     }
-
-    if (Array.isArray(data.sections)) {
-        data.sections.forEach((sec: any) => {
-            if (Array.isArray(sec.items)) total += sec.items.length;
-        });
-    }
-
-    return total > 0 ? total : 0;
 }
 
 export const validateConditionalEdges = (nodes: PolyglotNode[], edges: PolyglotEdge[]): string[] => {

@@ -505,7 +505,6 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
             flowJson: cleanFlowJson,
         });
         setHasUnsavedChanges(false);
-        showToast('Success', 'Flow saved successfully.', 'success');
     };
 
     const activeElement = selectedElement?.type === 'Node'

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 import styles from './ToastProvider.module.css';
 
 export type ToastType = {
@@ -18,9 +18,10 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
     const [toasts, setToasts] = useState<ToastType[]>([]);
+    const counterRef = useRef(0);
 
     const showToast = useCallback((title: string, description: string, status: 'success' | 'warning' | 'error') => {
-        const id = Date.now();
+        const id = ++counterRef.current;
         setToasts((prev) => [...prev, { id, title, description, status }]);
         setTimeout(() => {
             setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -30,7 +31,6 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     return (
         <ToastContext.Provider value={{ showToast }}>
             {children}
-            {/* Global Toast UI */}
             <div className={styles.toastContainer}>
                 {toasts.map((t) => (
                     <div
