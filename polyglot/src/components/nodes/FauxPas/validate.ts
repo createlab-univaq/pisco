@@ -35,14 +35,6 @@ export const validateFauxPasNode = (data: any): ValidationError[] => {
             });
         }
 
-        if (!isNonEmptyString(item?.explanation)) {
-            errors.push({
-                label: 'explanation',
-                path: `data.quiz.${qi}.explanation`,
-                message: 'Missing explanation.',
-            });
-        }
-
         const questions = item?.questions;
         if (!Array.isArray(questions) || questions.length === 0) {
             errors.push({

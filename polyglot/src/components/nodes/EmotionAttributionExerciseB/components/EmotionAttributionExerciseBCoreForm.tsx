@@ -5,6 +5,7 @@ import { ItemEditor } from './ItemEditor';
 import styles from './EmotionAttributionExerciseBCoreForm.module.css';
 import { validateEmotionAttributionExerciseBNode } from '../validate';
 import { ValidationError } from '@/types/ValidationError';
+import { v4 as UUIDv4 } from 'uuid';
 
 const AddIcon = () => (
     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
@@ -21,7 +22,7 @@ export type CoreFormProps = {
 
 export const EmotionAttributionExerciseBCoreForm = ({ items = [], onChange, isDisabled, getExternalErrors }: CoreFormProps) => {
     const handleAddItem = () => {
-        onChange([...items, { emotion: '', scenario: '', explanation: '' }]);
+        onChange([...items, { qid: UUIDv4(), emotion: '', scenario: '', explanation: '' }]);
     };
 
     const handleUpdateItem = (index: number, updatedItem: EmotionAttributionExerciseBItem) => {
