@@ -27,11 +27,15 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
             if (flow?.flowJson?.nodes && Array.isArray(flow.flowJson.nodes)) {
                 flow.flowJson.nodes.forEach((node: any, idx: number) => {
                     if (node.type && node.data) {
-                        const result = validateNodeData(node.type, node.data);
-                        if (!result.ok) {
-                            result.errors.forEach(e => {
-                                currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
-                            });
+                        try {
+                            const result = validateNodeData(node.type, node.data);
+                            if (!result.ok) {
+                                result.errors.forEach(e => {
+                                    currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
+                                });
+                            }
+                        } catch (valErr) {
+                            currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - Structure is incomplete or malformed.`);
                         }
                     }
                 });
@@ -50,14 +54,19 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
             setJsonError(null);
 
             let currentSchemaErrors: string[] = [];
-            if (parsedFlow?.nodes && Array.isArray(parsedFlow.nodes)) {
-                parsedFlow.nodes.forEach((node: any, idx: number) => {
+            const nodesList = parsedFlow?.flowJson?.nodes || parsedFlow?.nodes;
+            if (Array.isArray(nodesList)) {
+                nodesList.forEach((node: any, idx: number) => {
                     if (node.type && node.data) {
-                        const result = validateNodeData(node.type, node.data);
-                        if (!result.ok) {
-                            result.errors.forEach(e => {
-                                currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
-                            });
+                        try {
+                            const result = validateNodeData(node.type, node.data);
+                            if (!result.ok) {
+                                result.errors.forEach(e => {
+                                    currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
+                                });
+                            }
+                        } catch (valErr) {
+                            currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - Structure is incomplete or malformed.`);
                         }
                     }
                 });
@@ -65,7 +74,6 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
             setSchemaErrors(currentSchemaErrors);
         } catch (err: any) {
             setJsonError(err.message);
-            setSchemaErrors([]);
         }
     };
 
@@ -73,29 +81,31 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
         try {
             const parsedFlow = JSON.parse(editorValue);
 
+            // Recalculate schema errors for the banner display, but allow applying changes
             let currentSchemaErrors: string[] = [];
-            if (parsedFlow?.nodes && Array.isArray(parsedFlow.nodes)) {
-                parsedFlow.nodes.forEach((node: any, idx: number) => {
+            const nodesList = parsedFlow?.flowJson?.nodes || parsedFlow?.nodes;
+            if (Array.isArray(nodesList)) {
+                nodesList.forEach((node: any, idx: number) => {
                     if (node.type && node.data) {
-                        const result = validateNodeData(node.type, node.data);
-                        if (!result.ok) {
-                            result.errors.forEach(e => {
-                                currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
-                            });
+                        try {
+                            const result = validateNodeData(node.type, node.data);
+                            if (!result.ok) {
+                                result.errors.forEach(e => {
+                                    currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
+                                });
+                            }
+                        } catch (valErr) {
+                            currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - Structure is incomplete or malformed.`);
                         }
                     }
                 });
             }
-
-            if (currentSchemaErrors.length > 0) {
-                setSchemaErrors(currentSchemaErrors);
-                return;
-            }
+            setSchemaErrors(currentSchemaErrors);
 
             onApplyChanges(parsedFlow);
             onClose();
         } catch (err) {
-            // Error is already caught and displayed by handleEditorChange
+            // Handled by JSON parser check
         }
     };
 
@@ -111,7 +121,7 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
                     <div className={styles.errorBanner}>Invalid JSON: {jsonError}</div>
                 )}
 
-                {!jsonError && schemaErrors.length > 0 && (
+                {schemaErrors.length > 0 && (
                     <div className={styles.errorBanner} style={{ backgroundColor: '#fffaf0', borderColor: '#eebc1d', color: '#744210', maxHeight: '120px', overflowY: 'auto' }}>
                         <strong>Schema Validation Errors:</strong>
                         <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
@@ -143,7 +153,7 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
                     </button>
                     <button
                         className={styles.saveBtn}
-                        disabled={!!jsonError || schemaErrors.length > 0}
+                        disabled={!!jsonError}
                         onClick={handleSave}
                     >
                         Apply Changes
