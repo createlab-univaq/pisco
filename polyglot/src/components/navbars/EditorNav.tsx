@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import brandLogo from '@public/solo_logo.png';
 import styles from './EditorNav.module.css';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
+import { validateConditionalEdges } from '@/lib/validation/conditionalEdgeValidator';
+import { useToast } from '@/components/providers/ToastProvider';
 import ExportJsonModal from '../modals/ExportJsonModal';
 import SaveFlowModal from '../modals/SaveFlowModal';
 import ViewCodeModal from '../modals/ViewCodeModal';
@@ -21,7 +23,6 @@ const CheckIcon = () => <svg className={styles.iconSmall} fill="none" stroke="cu
 const CloseIcon = () => <svg className={styles.iconSmall} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>;
 const CodeIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
 const EditPenIcon = () => <svg className={styles.editPenIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>;
-// Added Settings Icon
 const SettingsIcon = () => <svg className={`${styles.icon} ${styles.iconMargin}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 
 export type EditorNavProps = {
@@ -51,6 +52,7 @@ export default function EditorNav({
 }: EditorNavProps) {
     const hydrated = useHasHydrated();
     const router = useRouter();
+    const { showToast } = useToast();
 
     const [saveLoading, setSaveLoading] = useState(false);
     const [publishLoading, setPublishLoading] = useState(false);
@@ -85,8 +87,8 @@ export default function EditorNav({
     }, [saveFunc]);
 
     const notify = (title: string, desc: string, status: 'warning' | 'error' | 'success') => {
+        showToast(title, desc, status);
         if (onShowMessage) onShowMessage(title, desc, status);
-        else alert(`${title}: ${desc}`);
     };
 
     const handleTitleSubmit = () => {
@@ -126,6 +128,13 @@ export default function EditorNav({
 
             const hasIncomingEdge = flow.flowJson.edges.some((edge: any) => edge.reactFlow?.target === node._id);
             if (!hasIncomingEdge) startingNode++;
+        }
+
+        // Validate conditional edges universally across all nodes
+        const conditionalErrors = validateConditionalEdges(flow.flowJson.nodes, flow.flowJson.edges);
+        if (conditionalErrors.length > 0) {
+            notify('Flow not published', 'Conditional Edge Error: ' + conditionalErrors[0], 'error');
+            return false;
         }
 
         if (missingData !== '') {

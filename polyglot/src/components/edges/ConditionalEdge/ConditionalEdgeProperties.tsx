@@ -10,9 +10,13 @@ import { validateConditionalEdge } from './validate';
 
 const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: PolyglotEdgePropertiesProps) => {
     const element = baseElement as ConditionalEdge;
-    const { handleDataChange } = useEdgeSync(element, onUpdateElement);
 
-    const validationErrors = validateConditionalEdge(element.data);
+    const edgeData = element.data || element.reactFlow?.data || { operator: '>=', threshold: 0 };
+
+    const syncedElement = { ...element, data: edgeData };
+    const { handleDataChange } = useEdgeSync(syncedElement, onUpdateElement);
+
+    const validationErrors = validateConditionalEdge(edgeData);
     const getFieldError = (path: string) => validationErrors.find(e => e.path === path)?.message;
 
     return (
@@ -24,7 +28,7 @@ const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: Po
                     <EnumField
                         label="Operator"
                         name="operator"
-                        value={element.data?.operator || '>='}
+                        value={edgeData.operator || '>='}
                         onChange={(e) => handleDataChange({ operator: e.target.value as any })}
                         options={
                             <>
@@ -42,9 +46,8 @@ const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: Po
                         label="Threshold"
                         name="threshold"
                         type="number"
-                        value={element.data?.threshold?.toString() ?? '0'}
+                        value={edgeData.threshold?.toString() ?? '0'}
                         onChange={(e) => handleDataChange({ threshold: Number(e.target.value) })}
-                        /* FIX: Connect the extracted error */
                         error={getFieldError('data.threshold')}
                     />
                 </div>

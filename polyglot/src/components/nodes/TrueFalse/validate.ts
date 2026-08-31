@@ -5,8 +5,7 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateTrueFalseNode = (data: any): ValidationError[] => {
-    const allowedEmpty = ['negativePoints', 'positivePoints'];
-    const errors: ValidationError[] = validateGenericStrict('TrueFalseNode', data, allowedEmpty);
+    const errors: ValidationError[] = validateGenericStrict('TrueFalseNode', data);
 
     if (!isNonEmptyString(data?.instructions)) {
         errors.push({

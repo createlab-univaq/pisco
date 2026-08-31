@@ -19,7 +19,5 @@ export const trueFalseNodeConfig = {
         instructions: '',
         questions: [],
         isQuestionCorrect: [],
-        negativePoints: 0,
-        positivePoints: 1,
     },
 };

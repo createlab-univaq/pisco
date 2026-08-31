@@ -41,6 +41,8 @@ import { edgeTypes, nodeTypes } from '../ElementMapping';
 import ContextualSidebar from '../menus/ContextualSidebar';
 import { createNewDefaultPolyglotEdge, createNewDefaultPolyglotNode } from '@/lib/factories/polyglotGenerators';
 import { validateNodeData } from '@/lib/validation/nodeValidator';
+import { validateConditionalEdges } from '@/lib/validation/conditionalEdgeValidator';
+import { useToast } from '@/components/providers/ToastProvider';
 import { Flow } from '@/types';
 import { PolyglotFlow } from '@/types/PolyglotFlow';
 
@@ -68,6 +70,7 @@ const panOnDragButton = [1];
 const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
     const { resetSelectedElements } = useStoreApi().getState();
+    const { showToast } = useToast();
 
     const defaultEdgeOptions = useMemo(() => ({
         markerEnd: {
@@ -483,7 +486,13 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
         });
 
         if (invalidNodes.length > 0) {
-            window.alert(`Cannot save flow: ${invalidNodes.length} node(s) have validation errors.`);
+            showToast('Save Failed', `${invalidNodes.length} node(s) have validation errors.`, 'error');
+            return;
+        }
+
+        const conditionalErrors = validateConditionalEdges(cleanFlowJson.nodes, cleanFlowJson.edges);
+        if (conditionalErrors.length > 0) {
+            showToast('Conditional Edge Error', conditionalErrors[0], 'error');
             return;
         }
 
@@ -496,6 +505,7 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
             flowJson: cleanFlowJson,
         });
         setHasUnsavedChanges(false);
+        showToast('Success', 'Flow saved successfully.', 'success');
     };
 
     const activeElement = selectedElement?.type === 'Node'
@@ -529,7 +539,6 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                 onApplyLocalFlow={(updates: Partial<Flow>) => {
                     takeSnapshot();
                     if (updates.name !== undefined) setFlowName(updates.name);
-                    // (Assuming you added flowDescription from our previous step)
                     if (updates.description !== undefined) setFlowDescription(updates.description);
                     if (updates.published !== undefined) setIsFlowPublished(updates.published);
 
@@ -537,7 +546,6 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                         const syncedNodes = updates.flowJson.nodes.map(node => {
                             if (!node.reactFlow) return node as PolyglotNode;
 
-                            // Find the previous state of this node
                             const prevNode = polyglotNodes.find(pn => pn._id === node._id);
 
                             const rfData = node.reactFlow.data as any;
@@ -545,7 +553,6 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
 
                             let resolvedTitle = node.title;
 
-                            // Detect exactly which title field the user changed
                             if (prevNode) {
                                 if (rfData?.title !== prevRfData?.title) resolvedTitle = rfData?.title;
                                 else if (rfData?.label !== prevRfData?.label) resolvedTitle = rfData?.label;
@@ -554,7 +561,6 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                                 resolvedTitle = node.title || rfData?.title || rfData?.label || 'New Node';
                             }
 
-                            // Sync all three fields to the newest value
                             return {
                                 ...node,
                                 title: resolvedTitle,
@@ -584,19 +590,14 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                     onNodesDelete={onNodesDelete}
                     onNodeContextMenu={onNodeContextMenu}
                     onNodeDoubleClick={onOpenPanel}
-
-                    // Crucial: Snapshot the initial location before the user finishes dragging
                     onNodeDragStart={() => takeSnapshot()}
-
                     edges={polyglotEdges.filter((e) => e.reactFlow !== undefined).map((e) => e.reactFlow!)}
                     edgeTypes={edgeTypes}
                     onEdgesChange={onEdgesChange}
                     onEdgeContextMenu={onEdgeContextMenu}
                     onEdgeDoubleClick={onOpenPanel}
-
                     onConnect={onConnect}
                     defaultEdgeOptions={defaultEdgeOptions}
-
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     deleteKeyCode={deleteKeyCodes}
@@ -604,7 +605,6 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                     snapToGrid={true}
                     fitView={true}
                     fitViewOptions={fitViewOptions}
-
                     onClick={onClick}
                     onMoveStart={onMoveStart}
                     onPaneContextMenu={(e) => {
@@ -619,14 +619,11 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                             }),
                         });
                     }}
-
                     panOnDrag={panOnDragButton}
-                    panActivationKeyCode="Space" // Allows the user to hold Spacebar + Left Click to pan
-
-                    // AREA SELECTION (LASSO) CONTROLS
-                    selectionOnDrag={true}   // Makes Left Click + Drag on the background draw the lasso
-                    selectionKeyCode={null} // CRITICAL: Removes the need to hold Shift to lasso, preventing input cross-talk
-                    selectionMode={SelectionMode.Partial} // Selects elements even if the box only touches them partially (requires importing SelectionMode from 'reactflow')
+                    panActivationKeyCode="Space"
+                    selectionOnDrag={true}
+                    selectionKeyCode={null}
+                    selectionMode={SelectionMode.Partial}
                 >
                     <Background variant={BackgroundVariant.Dots} />
                     <Controls />
@@ -637,7 +634,7 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                     elementId={activeElement?._id}
                     onDismiss={hideContextMenu}
                     onRemoveElement={(type, id) => {
-                        takeSnapshot(); // Snapshot BEFORE deleting via context menu
+                        takeSnapshot();
                         setHasUnsavedChanges(true);
                         if (type === 'Node') {
                             setPolyglotNodes((prev) => prev.filter(n => n._id !== id));
@@ -656,18 +653,15 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                         if (selectedElement?.type === 'Node') {
                             setPolyglotNodes(prev => prev.map(n => {
                                 if (n.reactFlow?.id === selectedElement.id) {
-
                                     const rfData = updatedElement.reactFlow?.data as any;
                                     const prevRfData = n.reactFlow?.data as any;
 
                                     let resolvedTitle = updatedElement.title;
 
-                                    // Detect exactly which title field the user changed
                                     if (rfData?.title !== prevRfData?.title) resolvedTitle = rfData?.title;
                                     else if (rfData?.label !== prevRfData?.label) resolvedTitle = rfData?.label;
                                     else if (updatedElement.title !== n.title) resolvedTitle = updatedElement.title;
 
-                                    // Sync all three fields to the newest value
                                     return {
                                         ...updatedElement,
                                         title: resolvedTitle,
