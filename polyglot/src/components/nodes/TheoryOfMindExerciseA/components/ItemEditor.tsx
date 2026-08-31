@@ -11,7 +11,6 @@ const newId = (prefix: string) =>
     globalThis.crypto?.randomUUID?.() ??
     `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
-// Exported so the root node can use it when adding a new item
 export const createDefaultQuestions = (): TheoryOfMindExerciseAQuestion[] => [
     { qid: newId('q'), question: '', answers: ['Si', 'No'], correctIndex: 0, explanation: '' },
     { qid: newId('q'), question: '', answers: ['Si', 'No'], correctIndex: 0, explanation: '' },
@@ -24,9 +23,10 @@ export type ItemEditorProps = {
     isDeleting: boolean;
     onChange: (updatedItem: TheoryOfMindExerciseAItem) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove }: ItemEditorProps) => {
+export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove, getFieldError }: ItemEditorProps) => {
     const questions = item.questions?.length === 2 ? item.questions : createDefaultQuestions();
 
     const handleUpdateQuestion = (qIndex: number, updatedQuestion: TheoryOfMindExerciseAQuestion) => {
@@ -48,6 +48,7 @@ export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove
                     parentItemId={item.qid}
                     imageId={item.imageId}
                     onImageIdChange={(newId: string | undefined) => onChange({ ...item, imageId: newId })}
+                    error={getFieldError(`data.quiz.${index}.imageId`)}
                 />
             ) : (
                 <p className={styles.hintText}>Seleziona il nodo per caricare un’immagine.</p>
@@ -61,6 +62,7 @@ export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove
                 value={item.caption || ''}
                 onChange={(e) => onChange({ ...item, caption: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.quiz.${index}.caption`)}
             />
 
             <div className={styles.subHeaderFlex}>
@@ -73,7 +75,9 @@ export const ItemEditor = ({ item, index, nodeId, isDeleting, onChange, onRemove
                         key={q.qid || i}
                         question={q}
                         index={i}
+                        itemIndex={index}
                         onChange={(updated) => handleUpdateQuestion(i, updated)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

@@ -10,6 +10,7 @@ export type QuestionImageUploadFieldProps = {
     imageId?: string;
     onImageIdChange: (newImageId: string | undefined) => void;
     isDisabled?: boolean;
+    error?: string;
 };
 
 const QuestionImageUploadField = ({
@@ -17,8 +18,11 @@ const QuestionImageUploadField = ({
     imageId,
     onImageIdChange,
     isDisabled = false,
+    error,
 }: QuestionImageUploadFieldProps) => {
     const [uploading, setUploading] = useState(false);
+
+    const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
     const convertFileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -86,7 +90,7 @@ const QuestionImageUploadField = ({
     };
 
     return (
-        <div className={styles.container}>
+        <div className={containerClass}>
             <div className={styles.header}>
                 <span className={styles.label}>Immagine (PNG/JPG/WEBP)</span>
                 <span className={`${styles.badge} ${imageId ? styles.badgeSuccess : styles.badgeDefault}`}>
@@ -126,6 +130,8 @@ const QuestionImageUploadField = ({
                     />
                 </div>
             )}
+
+            {error && <span className={styles.errorText}>{error}</span>}
         </div>
     );
 };

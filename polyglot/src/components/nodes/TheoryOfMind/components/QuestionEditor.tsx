@@ -8,11 +8,13 @@ import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 export type QuestionEditorProps = {
     question: TheoryOfMindQuestion;
     index: number;
+    storyIndex: number;
     onChange: (updated: TheoryOfMindQuestion) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ question, index, onChange, onRemove }: QuestionEditorProps) => {
+export const QuestionEditor = ({ question, index, storyIndex, onChange, onRemove, getFieldError }: QuestionEditorProps) => {
     return (
         <EditorCardWrapper
             title={`Q${index + 1}`}
@@ -24,6 +26,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 name={`q-${index}-text`}
                 value={question.question || ''}
                 onChange={(e) => onChange({ ...question, question: e.target.value })}
+                error={getFieldError(`data.quiz.${storyIndex}.questions.${index}.question`)}
             />
 
             <SingleSelectAnswersField
@@ -35,6 +38,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 minAnswers={2}
                 defaultAnswers={['Si', 'No']}
                 allowNoCorrect={false}
+                error={getFieldError(`data.quiz.${storyIndex}.questions.${index}.answers`) || getFieldError(`data.quiz.${storyIndex}.questions.${index}.correctIndex`)}
             />
         </EditorCardWrapper>
     );

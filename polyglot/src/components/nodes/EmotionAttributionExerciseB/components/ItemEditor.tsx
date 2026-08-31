@@ -9,9 +9,11 @@ export type ItemEditorProps = {
     index: number;
     onChange: (updated: EmotionAttributionExerciseBItem) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps) => {
+export const ItemEditor = ({ item, index, onChange, onRemove, getFieldError }: ItemEditorProps) => {
+
     return (
         <EditorCardWrapper
             title={`Elemento #${index + 1}`}
@@ -23,6 +25,7 @@ export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps)
                 name={`items-${index}-emotion`}
                 value={item.emotion || ''}
                 onChange={(e) => onChange({ ...item, emotion: e.target.value })}
+                error={getFieldError(`data.items.${index}.emotion`)}
             />
 
             <TextField
@@ -31,6 +34,7 @@ export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps)
                 value={item.scenario || ''}
                 onChange={(e) => onChange({ ...item, scenario: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.items.${index}.emotion`)}
             />
 
             <EditorCardDivider />
@@ -41,6 +45,7 @@ export const ItemEditor = ({ item, index, onChange, onRemove }: ItemEditorProps)
                 value={item.explanation || ''}
                 onChange={(e) => onChange({ ...item, explanation: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.items.${index}.emotion`)}
             />
         </EditorCardWrapper>
     );

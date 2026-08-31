@@ -11,9 +11,11 @@ export type QuestionEditorProps = {
     index: number;
     onChange: (updated: EmotionAttributionQuestion) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ question, index, onChange, onRemove }: QuestionEditorProps) => {
+export const QuestionEditor = ({ question, index, onChange, onRemove, getFieldError }: QuestionEditorProps) => {
+
     return (
         <EditorCardWrapper
             title={`Quesito ${index + 1}`}
@@ -47,6 +49,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove }: Question
                 addLabel="Aggiungi risposta corretta"
                 defaultItemValue=""
                 keepAtLeastOne
+                error={getFieldError(`data.questions.${index}.correctAnswers`)}
             />
         </EditorCardWrapper>
     );

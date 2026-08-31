@@ -6,17 +6,17 @@ import EdgeProperties from '../EdgeProperties';
 import { ConditionalEdge } from './types';
 import { useEdgeSync } from '@/hooks/useEdgeSync';
 import { PolyglotEdgePropertiesProps } from '@/types/ElementMappingTypes';
+import { validateConditionalEdge } from './validate';
 
-// FIXED: Accept the universal props
 const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: PolyglotEdgePropertiesProps) => {
-
-    // FIXED: Cast it safely inside the component, just like you did for TrueFalseNode!
     const element = baseElement as ConditionalEdge;
+    const { handleDataChange } = useEdgeSync(element, onUpdateElement);
 
-    const { handleBaseChange, handleDataChange } = useEdgeSync(element, onUpdateElement);
+    const validationErrors = validateConditionalEdge(element.data);
+    const getFieldError = (path: string) => validationErrors.find(e => e.path === path)?.message;
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <EdgeProperties element={element} onUpdateElement={onUpdateElement} />
 
             <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
@@ -41,8 +41,11 @@ const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: Po
                     <TextField
                         label="Threshold"
                         name="threshold"
-                        value={element.data?.threshold?.toString() || '0'}
+                        type="number"
+                        value={element.data?.threshold?.toString() ?? '0'}
                         onChange={(e) => handleDataChange({ threshold: Number(e.target.value) })}
+                        /* FIX: Connect the extracted error */
+                        error={getFieldError('data.threshold')}
                     />
                 </div>
             </div>

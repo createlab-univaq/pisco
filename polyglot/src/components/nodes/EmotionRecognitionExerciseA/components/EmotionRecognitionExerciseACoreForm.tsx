@@ -64,6 +64,7 @@ export const EmotionRecognitionExerciseACoreForm = ({
                 imageId={data.imageId}
                 onImageIdChange={(newId: string | undefined) => handleDataUpdate({ imageId: newId })}
                 isDisabled={!!isDisabled || !parentNodeId}
+                error={getFieldError('data.imageId')}
             />
 
             <hr className={styles.divider} />
@@ -78,6 +79,7 @@ export const EmotionRecognitionExerciseACoreForm = ({
                 defaultAnswers={['', '']}
                 allowNoCorrect={false}
                 isDisabled={isDisabled}
+                error={getFieldError('data.answers') || getFieldError('data.correctIndex')}
             />
 
             <TextField

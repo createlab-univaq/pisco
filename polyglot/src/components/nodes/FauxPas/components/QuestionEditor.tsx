@@ -9,12 +9,14 @@ import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 export type QuestionEditorProps = {
     question: FauxPasQuestion;
     index: number;
+    storyIndex: number;
     allQuestions: FauxPasQuestion[];
     onChange: (updated: FauxPasQuestion) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemove }: QuestionEditorProps) => {
+export const QuestionEditor = ({ question, index, storyIndex, allQuestions, onChange, onRemove, getFieldError }: QuestionEditorProps) => {
     const skipIf = question.skipIf || { enabled: false, questionIndex: null, answerIndex: null };
     const previousQuestions = allQuestions.slice(0, index);
     const selectedPreviousQuestion = skipIf.questionIndex !== null ? previousQuestions[skipIf.questionIndex] : null;
@@ -25,6 +27,13 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
             skipIf: { ...skipIf, [field]: value }
         });
     };
+
+    const questionError = getFieldError(`data.quiz.${storyIndex}.questions.${index}.question`);
+    const answersError = getFieldError(`data.quiz.${storyIndex}.questions.${index}.answers`);
+    const correctIndexError = getFieldError(`data.quiz.${storyIndex}.questions.${index}.correctIndex`);
+    const skipIfError = getFieldError(`data.quiz.${storyIndex}.questions.${index}.skipIf`);
+    const skipIfQuestionError = getFieldError(`data.quiz.${storyIndex}.questions.${index}.skipIf.questionIndex`);
+    const skipIfAnswerError = getFieldError(`data.quiz.${storyIndex}.questions.${index}.skipIf.answerIndex`);
 
     return (
         <EditorCardWrapper
@@ -37,6 +46,7 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                 name={`q-${index}-text`}
                 value={question.question || ''}
                 onChange={(e) => onChange({ ...question, question: e.target.value })}
+                error={questionError}
             />
 
             <SingleSelectAnswersField
@@ -48,6 +58,7 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                 minAnswers={2}
                 defaultAnswers={['Si', 'No']}
                 allowNoCorrect={true}
+                error={answersError || correctIndexError}
             />
 
             {index > 0 && (
@@ -62,10 +73,12 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                         Skippa questa domanda in base a una risposta precedente
                     </label>
 
+                    {skipIfError && <span className={styles.errorText}>{skipIfError}</span>}
+
                     {skipIf.enabled && (
                         <div className={styles.skipSelects}>
                             <select
-                                className={styles.select}
+                                className={`${styles.select} ${skipIfQuestionError ? styles.selectInvalid : ''}`}
                                 value={skipIf.questionIndex !== null ? skipIf.questionIndex : ''}
                                 onChange={(e) => {
                                     const val = e.target.value === '' ? null : Number(e.target.value);
@@ -86,9 +99,10 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                                     </option>
                                 ))}
                             </select>
+                            {skipIfQuestionError && <span className={styles.errorText}>{skipIfQuestionError}</span>}
 
                             <select
-                                className={styles.select}
+                                className={`${styles.select} ${skipIfAnswerError ? styles.selectInvalid : ''}`}
                                 value={skipIf.answerIndex !== null ? skipIf.answerIndex : ''}
                                 onChange={(e) => {
                                     const val = e.target.value === '' ? null : Number(e.target.value);
@@ -103,6 +117,7 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                                     </option>
                                 ))}
                             </select>
+                            {skipIfAnswerError && <span className={styles.errorText}>{skipIfAnswerError}</span>}
                         </div>
                     )}
                 </div>

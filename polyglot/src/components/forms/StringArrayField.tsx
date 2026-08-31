@@ -25,6 +25,7 @@ export type StringArrayFieldProps = {
     defaultItemValue?: string;
     keepAtLeastOne?: boolean;
     isDisabled?: boolean;
+    error?: string;
 };
 
 const StringArrayField = ({
@@ -36,7 +37,10 @@ const StringArrayField = ({
     defaultItemValue = '',
     keepAtLeastOne = false,
     isDisabled = false,
+    error
 }: StringArrayFieldProps) => {
+
+    const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
     const handleUpdateText = (index: number, newText: string) => {
         const updatedValues = [...values];
@@ -54,7 +58,7 @@ const StringArrayField = ({
     };
 
     return (
-        <div className={styles.container}>
+        <div className={containerClass}>
             {values.map((value, index) => {
                 // If keepAtLeastOne is true, disable removal when only 1 item is left
                 const canRemove = keepAtLeastOne ? values.length > 1 : true;
@@ -96,6 +100,8 @@ const StringArrayField = ({
                 <AddIcon />
                 <span>{addLabel}</span>
             </button>
+
+            {error && <span className={styles.errorText}>{error}</span>}
         </div>
     );
 };

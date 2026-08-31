@@ -128,3 +128,16 @@
     object-fit: contain;
     max-width: 100%;
 }
+
+/* Validation Error Styling */
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+}
+
+.containerInvalid .fileInput {
+    border-color: #e53e3e !important;
+    background-color: #fff5f5;
+}

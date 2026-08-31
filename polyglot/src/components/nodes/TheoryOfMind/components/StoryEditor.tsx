@@ -17,9 +17,10 @@ export type StoryEditorProps = {
     index: number;
     onChange: (updated: TheoryOfMindQuizItem) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorProps) => {
+export const StoryEditor = ({ story, index, onChange, onRemove, getFieldError }: StoryEditorProps) => {
     const questions = story.questions || [];
 
     const handleUpdateQuestion = (qIndex: number, updatedQuestion: TheoryOfMindQuestion) => {
@@ -61,6 +62,7 @@ export const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorPro
                 value={story.narration || ''}
                 onChange={(e) => onChange({ ...story, narration: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.quiz.${index}.narration`)}
             />
 
             <div className={styles.subHeaderFlex}>
@@ -86,8 +88,10 @@ export const StoryEditor = ({ story, index, onChange, onRemove }: StoryEditorPro
                         key={i}
                         question={q}
                         index={i}
+                        storyIndex={index}
                         onChange={(updated) => handleUpdateQuestion(i, updated)}
                         onRemove={() => handleRemoveQuestion(i)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

@@ -20,6 +20,11 @@ const NodeProperties = ({
     onUpdateTitle,
     onUpdateDescription,
 }: NodePropertiesProps) => {
+
+    // Autonomous local validation for base properties
+    const titleError = !title?.trim() ? 'Title is required.' : undefined;
+    const descriptionError = !description?.trim() ? 'Description is required.' : undefined;
+
     return (
         <div className={styles.container}>
             {activityDescription && (
@@ -36,7 +41,8 @@ const NodeProperties = ({
                 name="title"
                 value={title || ''}
                 onChange={(e) => onUpdateTitle?.(e.target.value)}
-                isRequired
+                required
+                error={titleError}
             />
 
             <TextField
@@ -45,6 +51,8 @@ const NodeProperties = ({
                 value={description || ''}
                 onChange={(e) => onUpdateDescription?.(e.target.value)}
                 isTextArea
+                required
+                error={descriptionError}
             />
         </div>
     );

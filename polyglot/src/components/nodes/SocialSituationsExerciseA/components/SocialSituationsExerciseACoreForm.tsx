@@ -47,6 +47,8 @@ export const SocialSituationsExerciseACoreForm = ({ items = [], onChange, isDisa
     const localErrors = validateSocialSituationsExerciseANode({ items });
     const activeErrors = getExternalErrors || localErrors;
 
+    const getFieldError = (path: string) => activeErrors.find((e) => e.path === path)?.message;
+
     return (
         <div className={styles.container}>
             {activeErrors.length > 0 && !getExternalErrors && (
@@ -84,6 +86,7 @@ export const SocialSituationsExerciseACoreForm = ({ items = [], onChange, isDisa
                         itemIndex={itemIndex}
                         onChange={(updated) => handleUpdateItem(itemIndex, updated)}
                         onRemoveItem={() => handleRemoveItem(itemIndex)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

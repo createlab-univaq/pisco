@@ -10,9 +10,10 @@ export type QuestionEditorProps = {
     isCorrect: boolean;
     onChange: (updatedText: string, updatedIsCorrect: boolean) => void;
     onRemove: () => void;
+    getFieldError?: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ index, questionText, isCorrect, onChange, onRemove }: QuestionEditorProps) => {
+export const QuestionEditor = ({ index, questionText, isCorrect, onChange, onRemove, getFieldError }: QuestionEditorProps) => {
     return (
         <EditorCardWrapper
             title={`Quesito #${index + 1}`}
@@ -24,6 +25,7 @@ export const QuestionEditor = ({ index, questionText, isCorrect, onChange, onRem
                 name={`q-${index}-text`}
                 value={questionText || ''}
                 onChange={(e) => onChange(e.target.value, isCorrect)}
+                error={getFieldError?.(`data.questions.${index}`)}
             />
 
             <div className={styles.radioContainer}>

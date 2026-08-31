@@ -27,6 +27,8 @@ const FauxPasNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropert
 
     const validationErrors = validateFauxPasNode(data);
 
+    const getFieldError = (path: string) => validationErrors.find((e) => e.path === path)?.message;
+
     const handleQuizChange = (newQuiz: FauxPasQuizItem[]) => {
         onUpdateElement({ ...node, data: { ...(node.data || {}), quiz: newQuiz } });
     };
@@ -96,6 +98,7 @@ const FauxPasNodeProperties = ({ element, onUpdateElement }: PolyglotNodePropert
                         index={i}
                         onChange={(updated) => handleUpdateStory(i, updated)}
                         onRemove={() => handleRemoveStory(i)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

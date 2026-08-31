@@ -10,9 +10,11 @@ export type SectionEditorProps = {
     sectionIndex: number;
     onChange: (updatedSection: SocialSituationsExerciseASection) => void;
     onRemoveSection: () => void;
+    itemIndex: number;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection }: SectionEditorProps) => {
+export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection, itemIndex, getFieldError }: SectionEditorProps) => {
     // Ensure answers array always contains 4 items
     const answers = section.answers?.length === 4 ? section.answers : [
         { text: '', explanation: '' },
@@ -44,12 +46,14 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 value={section.before || ''}
                 onChange={(e) => onChange({ ...section, before: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.before`)}
             />
             <TextField
                 label="Parte in grassetto"
                 name={`section-${sectionIndex}-bold`}
                 value={section.bold || ''}
                 onChange={(e) => onChange({ ...section, bold: e.target.value })}
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.bold`)}
             />
             <TextField
                 label="Testo finale"
@@ -57,6 +61,7 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 value={section.after || ''}
                 onChange={(e) => onChange({ ...section, after: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.after`)}
             />
 
             <EditorCardDivider />

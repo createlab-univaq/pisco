@@ -16,9 +16,10 @@ export type ItemEditorProps = {
     itemIndex: number;
     onChange: (updatedItem: SocialSituationItem) => void;
     onRemoveItem: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem }: ItemEditorProps) => {
+export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem, getFieldError }: ItemEditorProps) => {
     const sections = item.sections || [];
 
     const handleUpdateSection = (index: number, updatedSection: SocialSituationSection) => {
@@ -78,6 +79,8 @@ export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem }: ItemEdit
                         sectionIndex={sectionIndex}
                         onChange={(updated) => handleUpdateSection(sectionIndex, updated)}
                         onRemoveSection={() => handleRemoveSection(sectionIndex)}
+                        itemIndex={itemIndex}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

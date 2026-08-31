@@ -13,9 +13,11 @@ export type QuestionEditorProps = {
     isDeleting: boolean;
     onChange: (updated: EyesTaskQuestion) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, onRemove }: QuestionEditorProps) => {
+export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, onRemove, getFieldError }: QuestionEditorProps) => {
+
     return (
         <EditorCardWrapper
             title={`Quesito #${index + 1}`}
@@ -28,6 +30,7 @@ export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, 
                     parentNodeId={nodeId}
                     imageId={question.imageId}
                     onImageIdChange={(newId: string | undefined) => onChange({ ...question, imageId: newId })}
+                    error={getFieldError(`data.questions.${index}.imageId`)}
                 />
             ) : (
                 <p className={styles.hintText}>
@@ -45,6 +48,7 @@ export const QuestionEditor = ({ question, index, nodeId, isDeleting, onChange, 
                 onCorrectIndexChange={(newIndex: number | null) => onChange({ ...question, correctIndex: newIndex ?? 0 })}
                 minAnswers={2}
                 allowNoCorrect={false}
+                error={getFieldError(`data.questions.${index}.answers`) || getFieldError(`data.questions.${index}.correctIndex`)}
             />
         </EditorCardWrapper>
     );

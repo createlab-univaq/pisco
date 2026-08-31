@@ -26,19 +26,27 @@ export const createNewDefaultPolyglotNode = (
     nodeType: string = NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A
 ): PolyglotNode => {
     const id = UUIDv4();
-    const defaultData = polyglotNodeComponentMapping.defaultDataMapping[nodeType] ?? {};
+    const defaultData = polyglotNodeComponentMapping.defaultDataMapping?.[nodeType] ?? {};
+
+    const defaultTitle = polyglotNodeComponentMapping.nameMapping?.[nodeType]
+        ?? nodeType.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+        ?? 'New Node';
 
     return {
         _id: id,
         type: nodeType,
-        title: 'New Node',
+        title: defaultTitle,
         description: '',
         data: defaultData,
         reactFlow: {
             id,
             type: nodeType,
             position: pos,
-            data: defaultData,
+            data: {
+                ...defaultData,
+                label: defaultTitle,
+                title: defaultTitle,
+            },
         },
     };
 };

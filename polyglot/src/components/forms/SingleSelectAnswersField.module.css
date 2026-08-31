@@ -142,3 +142,19 @@
     width: 12px;
     height: 12px;
 }
+
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+}
+
+/* Force red borders on the text inputs when the container is invalid */
+.containerInvalid .textInput {
+    border-color: #e53e3e;
+}
+
+.containerInvalid .textInput:focus {
+    box-shadow: 0 0 0 1px #e53e3e;
+}

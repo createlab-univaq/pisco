@@ -33,6 +33,8 @@ export const TheoryOfMindExerciseACoreForm = ({ data, onChange, nodeId = 'embedd
     const localErrors = validateTheoryOfMindExerciseANode(data);
     const activeErrors = getExternalErrors || localErrors;
 
+    const getFieldError = (path: string) => activeErrors.find((e) => e.path === path)?.message;
+
     const handleQuizChange = (newQuiz: TheoryOfMindExerciseAItem[]) => {
         onChange({ ...data, quiz: newQuiz });
     };
@@ -117,7 +119,7 @@ export const TheoryOfMindExerciseACoreForm = ({ data, onChange, nodeId = 'embedd
                         isDeleting={deletingIndex === i}
                         onChange={(updated) => handleUpdateItem(i, updated)}
                         onRemove={() => handleRemoveItem(i)}
-                    // Pass isDisabled to ItemEditor if your component supports it
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

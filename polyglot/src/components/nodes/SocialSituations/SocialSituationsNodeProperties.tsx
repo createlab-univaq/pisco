@@ -27,6 +27,8 @@ const SocialSituationsNodeProperties = ({ element, onUpdateElement }: PolyglotNo
 
     const validationErrors = validateSocialSituationsNode(data);
 
+    const getFieldError = (path: string) => validationErrors.find((e) => e.path === path)?.message;
+
     const handleAddItem = () => {
         handleDataChange({
             items: [
@@ -98,6 +100,7 @@ const SocialSituationsNodeProperties = ({ element, onUpdateElement }: PolyglotNo
                         itemIndex={itemIndex}
                         onChange={(updated) => handleUpdateItem(itemIndex, updated)}
                         onRemoveItem={() => handleRemoveItem(itemIndex)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

@@ -38,6 +38,8 @@ export const EmotionAttributionExerciseBCoreForm = ({ items = [], onChange, isDi
     const localErrors = validateEmotionAttributionExerciseBNode({ items });
     const activeErrors = getExternalErrors || localErrors;
 
+    const getFieldError = (path: string) => activeErrors.find(e => e.path === path)?.message;
+
     return (
         <div className={styles.container}>
             {activeErrors.length > 0 && !getExternalErrors && (
@@ -72,6 +74,7 @@ export const EmotionAttributionExerciseBCoreForm = ({ items = [], onChange, isDi
                         index={index}
                         onChange={(updated) => handleUpdateItem(index, updated)}
                         onRemove={() => handleRemoveItem(index)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

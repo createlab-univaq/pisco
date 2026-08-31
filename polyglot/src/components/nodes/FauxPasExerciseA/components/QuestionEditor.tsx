@@ -9,12 +9,14 @@ import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 export type QuestionEditorProps = {
     question: FauxPasQuestion;
     index: number;
+    storyIndex: number;
     allQuestions: FauxPasQuestion[];
     onChange: (updated: FauxPasQuestion) => void;
     onRemove: () => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemove }: QuestionEditorProps) => {
+export const QuestionEditor = ({ question, index, storyIndex, allQuestions, onChange, onRemove, getFieldError }: QuestionEditorProps) => {
     const skipIf = question.skipIf || { enabled: false, questionIndex: null, answerIndex: null };
     const previousQuestions = allQuestions.slice(0, index);
     const selectedPreviousQuestion = skipIf.questionIndex !== null ? previousQuestions[skipIf.questionIndex] : null;
@@ -37,6 +39,7 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                 name={`q-${index}-text`}
                 value={question.question || ''}
                 onChange={(e) => onChange({ ...question, question: e.target.value })}
+                error={getFieldError(`data.quiz.${storyIndex}.questions.${index}.question`)}
             />
 
             <SingleSelectAnswersField
@@ -48,6 +51,7 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                 minAnswers={2}
                 defaultAnswers={['Si', 'No']}
                 allowNoCorrect={true}
+                error={getFieldError(`data.quiz.${storyIndex}.questions.${index}.answers`) || getFieldError(`data.quiz.${storyIndex}.questions.${index}.correctIndex`)}
             />
 
             {index > 0 && (
@@ -69,7 +73,6 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                                 value={skipIf.questionIndex !== null ? skipIf.questionIndex : ''}
                                 onChange={(e) => {
                                     const val = e.target.value === '' ? null : Number(e.target.value);
-                                    // FIX: Update both properties simultaneously in one object payload
                                     onChange({
                                         ...question,
                                         skipIf: {

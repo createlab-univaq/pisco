@@ -27,6 +27,7 @@ export type SingleSelectAnswersFieldProps = {
     allowNoCorrect?: boolean;
     noCorrectLabel?: string;
     isDisabled?: boolean;
+    error?: string;
 };
 
 const SingleSelectAnswersField = ({
@@ -40,9 +41,12 @@ const SingleSelectAnswersField = ({
     allowNoCorrect = false,
     noCorrectLabel = 'Nessuna risposta corretta',
     isDisabled = false,
+    error,
 }: SingleSelectAnswersFieldProps) => {
     // Generate a unique name for the radio group so multiple instances don't clash
     const radioGroupId = useId();
+
+    const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
     // Inizializzo se l'array è vuoto
     const effectiveAnswers = answers.length ? answers : defaultAnswers;
@@ -83,7 +87,7 @@ const SingleSelectAnswersField = ({
     };
 
     return (
-        <div className={styles.container}>
+        <div className={containerClass}>
             <h4 className={styles.label}>{label}</h4>
 
             <div className={styles.radioGroup}>
@@ -150,6 +154,12 @@ const SingleSelectAnswersField = ({
                 <AddIcon />
                 <span>Add answer</span>
             </button>
+
+            {error && (
+                <span className={styles.errorText}>
+                    {error}
+                </span>
+            )}
         </div>
     );
 };

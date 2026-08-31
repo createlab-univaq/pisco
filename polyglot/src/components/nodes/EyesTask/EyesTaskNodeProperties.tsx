@@ -32,6 +32,8 @@ const EyesTaskNodeProperties = ({ element, onUpdateElement }: PolyglotNodeProper
 
     const validationErrors = validateEyesTaskNode(data);
 
+    const getFieldError = (path: string) => validationErrors.find(e => e.path === path)?.message;
+
     const handleAddQuestion = () => {
         handleDataChange({
             questions: [
@@ -125,6 +127,7 @@ const EyesTaskNodeProperties = ({ element, onUpdateElement }: PolyglotNodeProper
                         isDeleting={isDeleting === index}
                         onChange={(updated) => handleUpdateQuestion(index, updated)}
                         onRemove={() => handleRemoveQuestion(index)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

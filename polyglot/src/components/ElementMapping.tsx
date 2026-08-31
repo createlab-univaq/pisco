@@ -23,7 +23,6 @@ import { socialSituationsExerciseANodeConfig } from './nodes/SocialSituationsExe
 // --- Edge Config Imports ---
 import { unconditionalEdgeConfig } from './edges/UnconditionalEdge';
 import { conditionalEdgeConfig } from './edges/ConditionalEdge';
-import { passFailEdgeConfig } from './edges/PassFailEdge';
 import { fauxPasExerciseANodeConfig } from './nodes/FauxPasExerciseA';
 import { theoryOfMindExerciseANodeConfig } from './nodes/TheoryOfMindExerciseA';
 
@@ -59,7 +58,6 @@ polyglotNodeComponentMapping.registerMany([
 polyglotEdgeComponentMapping.registerMany([
   unconditionalEdgeConfig,
   conditionalEdgeConfig,
-  passFailEdgeConfig,
 ]);
 
 // REACT FLOW PERFORMANCE DICTIONARIES
@@ -83,5 +81,4 @@ export const nodeTypes = {
 export const edgeTypes = {
   [EDGE_TYPE.UNCONDITIONAL]: unconditionalEdgeConfig.elementComponent,
   [EDGE_TYPE.CONDITIONAL]: conditionalEdgeConfig.elementComponent,
-  [EDGE_TYPE.PASS_FAIL]: passFailEdgeConfig.elementComponent,
 };

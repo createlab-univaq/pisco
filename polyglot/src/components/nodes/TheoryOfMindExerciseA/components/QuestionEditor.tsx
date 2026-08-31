@@ -8,10 +8,16 @@ import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 export type QuestionEditorProps = {
     question: TheoryOfMindExerciseAQuestion;
     index: number;
+    itemIndex: number; // <-- FIX: Add itemIndex to props
     onChange: (updated: TheoryOfMindExerciseAQuestion) => void;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const QuestionEditor = ({ question, index, onChange }: QuestionEditorProps) => {
+export const QuestionEditor = ({ question, index, itemIndex, onChange, getFieldError }: QuestionEditorProps) => {
+
+    // Check for radio button error
+    const correctIndexError = getFieldError(`data.quiz.${itemIndex}.questions.${index}.correctIndex`);
+
     return (
         <EditorCardWrapper title={`Domanda #${index + 1}`}>
             <TextField
@@ -19,6 +25,7 @@ export const QuestionEditor = ({ question, index, onChange }: QuestionEditorProp
                 name={`q-${index}-text`}
                 value={question.question || ''}
                 onChange={(e) => onChange({ ...question, question: e.target.value })}
+                error={getFieldError(`data.quiz.${itemIndex}.questions.${index}.question`)}
             />
 
             <div style={{ marginTop: '10px', marginBottom: '10px' }}>
@@ -45,6 +52,11 @@ export const QuestionEditor = ({ question, index, onChange }: QuestionEditorProp
                         No
                     </label>
                 </div>
+                {correctIndexError && (
+                    <span style={{ color: '#e53e3e', fontSize: '0.875rem', display: 'block', marginTop: '4px' }}>
+                        {correctIndexError}
+                    </span>
+                )}
             </div>
 
             <TextField
@@ -53,6 +65,7 @@ export const QuestionEditor = ({ question, index, onChange }: QuestionEditorProp
                 value={question.explanation || ''}
                 onChange={(e) => onChange({ ...question, explanation: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.quiz.${itemIndex}.questions.${index}.explanation`)}
             />
         </EditorCardWrapper>
     );

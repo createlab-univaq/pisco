@@ -28,6 +28,8 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
 
     const validationResultErrors = validateEmotionAttributionNode(data);
 
+    const getFieldError = (path: string) => validationResultErrors.find(e => e.path === path)?.message;
+
     useEffect(() => {
         if (hasMigrated.current) return;
 
@@ -157,6 +159,7 @@ const EmotionAttributionNodeProperties = ({ element, onUpdateElement }: Polyglot
                         index={qIndex}
                         onChange={(updated) => handleUpdateQuestion(qIndex, updated)}
                         onRemove={() => handleRemoveQuestion(qIndex)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

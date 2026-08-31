@@ -10,9 +10,11 @@ export type SectionEditorProps = {
     sectionIndex: number;
     onChange: (updatedSection: SocialSituationSection) => void;
     onRemoveSection: () => void;
+    itemIndex: number;
+    getFieldError: (path: string) => string | undefined;
 };
 
-export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection }: SectionEditorProps) => {
+export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection, itemIndex, getFieldError }: SectionEditorProps) => {
     return (
         <EditorCardWrapper
             title={`Sezione #${sectionIndex + 1}`}
@@ -25,12 +27,14 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 value={section.before || ''}
                 onChange={(e) => onChange({ ...section, before: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.before`)}
             />
             <TextField
                 label="Parte in grassetto"
                 name={`section-${sectionIndex}-bold`}
                 value={section.bold || ''}
                 onChange={(e) => onChange({ ...section, bold: e.target.value })}
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.bold`)}
             />
             <TextField
                 label="Testo finale"
@@ -38,6 +42,7 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 value={section.after || ''}
                 onChange={(e) => onChange({ ...section, after: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.after`)}
             />
 
             <EditorCardDivider />
@@ -48,6 +53,7 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 correctIndexes={section.correctIndexes || []}
                 onAnswersChange={(newAnswers: string[]) => onChange({ ...section, answers: newAnswers })}
                 onCorrectIndexesChange={(newIndexes: number[]) => onChange({ ...section, correctIndexes: newIndexes })}
+                error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.answers`) || getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.correctIndexes`)}
             />
         </EditorCardWrapper>
     );

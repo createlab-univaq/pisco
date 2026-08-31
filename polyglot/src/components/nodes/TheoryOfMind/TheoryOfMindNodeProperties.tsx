@@ -27,6 +27,8 @@ const TheoryOfMindNodeProperties = ({ element, onUpdateElement }: PolyglotNodePr
 
     const validationErrors = validateTheoryOfMindNode(data);
 
+    const getFieldError = (path: string) => validationErrors.find((e) => e.path === path)?.message;
+
     const handleQuizChange = (newQuiz: TheoryOfMindQuizItem[]) => {
         onUpdateElement({ ...node, data: { ...(node.data || {}), quiz: newQuiz } });
     };
@@ -96,6 +98,7 @@ const TheoryOfMindNodeProperties = ({ element, onUpdateElement }: PolyglotNodePr
                         index={i}
                         onChange={(updated) => handleUpdateStory(i, updated)}
                         onRemove={() => handleRemoveStory(i)}
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

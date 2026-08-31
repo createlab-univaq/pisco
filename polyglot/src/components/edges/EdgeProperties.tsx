@@ -1,10 +1,10 @@
 'use client';
 
 import EnumField from '@/components/forms/EnumField';
-import TextField from '@/components/forms/TextField';
 import { EDGE_TYPE } from '@/types/EdgeType';
 import styles from './EdgeProperties.module.css';
 import { PolyglotEdge } from '@/types/PolyglotEdge';
+import { polyglotEdgeComponentMapping } from '@/components/ElementMapping';
 
 export type EdgePropertiesProps = {
     element: PolyglotEdge;
@@ -12,12 +12,14 @@ export type EdgePropertiesProps = {
 };
 
 const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
-    const currentData = (element.reactFlow?.data || {}) as Record<string, any>;
 
     const handleTypeChange = (newType: string) => {
         let newData: Record<string, any> = { edgeData: {} };
-        if (newType === EDGE_TYPE.PASS_FAIL) newData = { edgeData: {}, conditionKind: 'pass' };
-        if (newType === EDGE_TYPE.CONDITIONAL) newData = { edgeData: {}, operator: '>=', threshold: 0 };
+
+        // Reset conditional data when switching types
+        if (newType === EDGE_TYPE.CONDITIONAL) {
+            newData = { edgeData: {}, operator: '>=', threshold: 0 };
+        }
 
         onUpdateElement({
             ...element,
@@ -30,19 +32,14 @@ const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
         });
     };
 
-    const handleDataChange = (fields: Record<string, any>) => {
-        if (!element.reactFlow) return;
-        onUpdateElement({
-            ...element,
-            reactFlow: {
-                ...element.reactFlow,
-                data: {
-                    ...currentData,
-                    ...fields,
-                },
-            },
-        });
-    };
+    // Dynamically generate the options based on the edge name mapping!
+    const edgeOptions = Object.values(EDGE_TYPE).map((type) => {
+
+        const displayName = polyglotEdgeComponentMapping.nameMapping?.[type]
+            ?? type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+        return <option key={type} value={type}>{displayName}</option>;
+    });
 
     return (
         <div className={styles.container}>
@@ -51,23 +48,8 @@ const EdgeProperties = ({ element, onUpdateElement }: EdgePropertiesProps) => {
                 name="edgeType"
                 value={element.type}
                 onChange={(e) => handleTypeChange(e.target.value)}
-                options={
-                    <>
-                        <option value={EDGE_TYPE.UNCONDITIONAL}>Unconditional</option>
-                        <option value={EDGE_TYPE.PASS_FAIL}>Pass / Fail</option>
-                        <option value={EDGE_TYPE.CONDITIONAL}>Conditional</option>
-                    </>
-                }
+                options={<>{edgeOptions}</>}
             />
-
-            {element.type === EDGE_TYPE.CONDITIONAL && (
-                <TextField
-                    label="Threshold"
-                    name="threshold"
-                    value={currentData.threshold?.toString() || '0'}
-                    onChange={(e) => handleDataChange({ threshold: Number(e.target.value) })}
-                />
-            )}
         </div>
     );
 };

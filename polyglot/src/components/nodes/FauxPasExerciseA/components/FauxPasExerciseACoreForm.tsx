@@ -29,6 +29,8 @@ export const FauxPasExerciseACoreForm = ({ data, onChange, isDisabled, getExtern
     const localErrors = validateFauxPasExerciseANode(data);
     const activeErrors = getExternalErrors || localErrors;
 
+    const getFieldError = (path: string) => activeErrors.find((e) => e.path === path)?.message;
+
     const handleQuizChange = (newQuiz: FauxPasExerciseAQuizItem[]) => {
         onChange({ ...data, quiz: newQuiz });
     };
@@ -89,7 +91,7 @@ export const FauxPasExerciseACoreForm = ({ data, onChange, isDisabled, getExtern
                         index={i}
                         onChange={(updated) => handleUpdateStory(i, updated)}
                         onRemove={() => handleRemoveStory(i)}
-                    // Pass isDisabled to StoryEditor if your component supports it
+                        getFieldError={getFieldError}
                     />
                 ))}
             </div>

@@ -84,3 +84,20 @@
     width: 16px;
     height: 16px;
 }
+
+/* Validation Error Styling */
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+}
+
+/* Force red borders on the nested input fields when the container is invalid */
+.containerInvalid input {
+    border-color: #e53e3e !important;
+}
+
+.containerInvalid input:focus {
+    box-shadow: 0 0 0 1px #e53e3e !important;
+}

@@ -27,6 +27,7 @@ type TrueFalseArrayFieldProps = {
     questions: string[];
     isCorrect: boolean[];
     onChange: (questions: string[], isCorrect: boolean[]) => void;
+    error?: string;
 };
 
 const TrueFalseArrayField = ({
@@ -35,9 +36,12 @@ const TrueFalseArrayField = ({
     questions = [],
     isCorrect = [],
     onChange,
+    error,
 }: TrueFalseArrayFieldProps) => {
     const [newInput, setNewInput] = useState('');
     const [newChecked, setNewChecked] = useState(false);
+
+    const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
     const handleUpdateText = (index: number, text: string) => {
         const updatedQuestions = [...questions];
@@ -65,7 +69,7 @@ const TrueFalseArrayField = ({
     };
 
     return (
-        <div className={styles.container}>
+        <div className={containerClass}>
             <label className={styles.mainLabel}>{label}</label>
 
             {questions.map((question, index) => (
@@ -138,6 +142,8 @@ const TrueFalseArrayField = ({
                     <AddIcon />
                 </button>
             </div>
+
+            {error && <span className={styles.errorText}>{error}</span>}
         </div>
     );
 };

@@ -79,6 +79,7 @@ export type MultiSelectAnswersFieldProps = {
     onAnswersChange: (newAnswers: string[]) => void;
     onCorrectIndexesChange: (newIndexes: number[]) => void;
     minAnswers?: number;
+    error?: string;
 };
 
 const MultiSelectAnswersField = ({
@@ -88,7 +89,10 @@ const MultiSelectAnswersField = ({
     onAnswersChange,
     onCorrectIndexesChange,
     minAnswers = 0,
+    error,
 }: MultiSelectAnswersFieldProps) => {
+
+    const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
     // Aggiunge/toglie l'indice dall'array correctIndexes
     const toggleCorrect = (idx: number) => {
@@ -132,7 +136,7 @@ const MultiSelectAnswersField = ({
     const canRemove = answers.length > minAnswers;
 
     return (
-        <div className={styles.container}>
+        <div className={containerClass}>
             <h4 className={styles.label}>{label}</h4>
 
             <div className={styles.stack}>
@@ -158,6 +162,12 @@ const MultiSelectAnswersField = ({
                 <AddIcon />
                 <span>Add answer</span>
             </button>
+
+            {error && (
+                <span className={styles.errorText}>
+                    {error}
+                </span>
+            )}
         </div>
     );
 };
