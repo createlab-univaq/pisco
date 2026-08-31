@@ -5,7 +5,8 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateEmotionAttributionExerciseANode = (data: any): ValidationError[] => {
-    const allowedEmpty = ['spiegazioneS', 'spiegazioneR'];
+    // FIX: Removed 'spiegazioneS' and 'spiegazioneR' from allowedEmpty
+    const allowedEmpty: string[] = [];
     const errors: ValidationError[] = validateGenericStrict('EmotionAttributionExerciseANode', data, allowedEmpty);
 
     if (!isNonEmptyString(data?.scenario)) {
@@ -25,15 +26,33 @@ export const validateEmotionAttributionExerciseANode = (data: any): ValidationEr
     }
 
     const risposteCorrette = data?.risposteCorrette;
-    if (
-        !Array.isArray(risposteCorrette) ||
-        risposteCorrette.length === 0 ||
-        !risposteCorrette.every(isNonEmptyString)
-    ) {
+    if (!Array.isArray(risposteCorrette) || risposteCorrette.length === 0) {
         errors.push({
             label: 'risposteCorrette',
             path: 'data.risposteCorrette',
-            message: 'Insert at least one non-empty correct answer.',
+            message: 'Insert at least one correct answer.',
+        });
+    } else if (risposteCorrette.some(ans => !isNonEmptyString(ans))) {
+        errors.push({
+            label: 'risposteCorrette',
+            path: 'data.risposteCorrette',
+            message: 'Answers cannot be empty.',
+        });
+    }
+
+    if (!isNonEmptyString(data?.spiegazioneS)) {
+        errors.push({
+            label: 'spiegazioneS',
+            path: 'data.spiegazioneS',
+            message: 'Spiegazione (Scenario) cannot be empty.',
+        });
+    }
+
+    if (!isNonEmptyString(data?.spiegazioneR)) {
+        errors.push({
+            label: 'spiegazioneR',
+            path: 'data.spiegazioneR',
+            message: 'Spiegazione (Risposta) cannot be empty.',
         });
     }
 

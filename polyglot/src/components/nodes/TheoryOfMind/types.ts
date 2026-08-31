@@ -2,6 +2,7 @@ import { NODE_TYPE } from '@/types/NodeType';
 import { PolyglotNodeBase } from '@/types/PolyglotNodeBase';
 
 export type TheoryOfMindQuestion = {
+    qid?: string;
     question: string;
     answers: string[];
     correctIndex: number | null;

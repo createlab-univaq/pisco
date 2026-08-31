@@ -21,6 +21,7 @@ export type ItemEditorProps = {
 
 export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem, getFieldError }: ItemEditorProps) => {
     const sections = item.sections || [];
+    const sectionsError = getFieldError(`data.items.${itemIndex}.sections`);
 
     const handleUpdateSection = (index: number, updatedSection: SocialSituationsExerciseASection) => {
         const updatedSections = [...sections];
@@ -67,13 +68,16 @@ export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem, getFieldEr
                 </button>
             </div>
 
-            {/* Sections Empty State */}
+            {/* Sections Empty State with Validation Highlighting */}
             {sections.length === 0 && (
-                <div className={styles.emptyState}>
-                    <p className={styles.emptyText}>
-                        Nessuna sezione presente. Clicca <b>Aggiungi sezione</b> per iniziare.
-                    </p>
-                </div>
+                <>
+                    <div className={`${styles.emptyState} ${sectionsError ? styles.emptyStateInvalid : ''}`}>
+                        <p className={styles.emptyText}>
+                            Nessuna sezione presente. Clicca <b>Aggiungi sezione</b> per iniziare.
+                        </p>
+                    </div>
+                    {sectionsError && <div className={styles.errorText}>{sectionsError}</div>}
+                </>
             )}
 
             <div className={styles.sectionsList}>
@@ -90,7 +94,6 @@ export const ItemEditor = ({ item, itemIndex, onChange, onRemoveItem, getFieldEr
                 ))}
             </div>
 
-            {/* Sections Dual-Placement Action Button */}
             {sections.length > 0 && (
                 <button
                     type="button"

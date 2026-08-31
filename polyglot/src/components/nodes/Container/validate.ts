@@ -9,10 +9,8 @@ export type ValidateChildFn = (
 export const validateContainerNode = (validateChild: ValidateChildFn) => (data: any): ValidationError[] => {
     const errors: ValidationError[] = [];
 
-    // 1) Run strict generic checks locally for this node type
     errors.push(...validateGenericStrict('ContainerNode', data));
 
-    // 2) Container-specific validation logic
     const sections = data?.sections;
     if (!Array.isArray(sections) || sections.length === 0) {
         errors.push({
@@ -32,6 +30,14 @@ export const validateContainerNode = (validateChild: ValidateChildFn) => (data: 
                 message: 'items must be an array.',
             });
             return;
+        }
+
+        if (items.length === 0) {
+            errors.push({
+                label: 'items',
+                path: `data.sections.${s}.items`,
+                message: 'Nessun nodo in questa sezione.',
+            });
         }
 
         items.forEach((item: any, i: number) => {

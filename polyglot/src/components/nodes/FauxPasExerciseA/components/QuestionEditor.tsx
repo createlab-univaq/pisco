@@ -3,7 +3,7 @@
 import TextField from '@/components/forms/TextField';
 import SingleSelectAnswersField from '@/components/forms/SingleSelectAnswersField';
 import styles from './QuestionEditor.module.css';
-import { FauxPasQuestion, FauxPasSkipIf } from '../../FauxPas/types'; // Adjust path if needed
+import { FauxPasQuestion, FauxPasSkipIf } from '../../FauxPas/types';
 import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
 export type QuestionEditorProps = {

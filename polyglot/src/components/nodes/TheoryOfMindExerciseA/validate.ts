@@ -5,7 +5,8 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateTheoryOfMindExerciseANode = (data: any): ValidationError[] => {
-    const allowedEmpty = ['imageId', 'explanation'];
+    // Removed 'imageId' from allowedEmpty so it requires strict validation
+    const allowedEmpty: string[] = [];
     const errors: ValidationError[] = validateGenericStrict('TheoryOfMindExerciseANode', data, allowedEmpty);
 
     const quiz = data?.quiz;
@@ -24,6 +25,15 @@ export const validateTheoryOfMindExerciseANode = (data: any): ValidationError[] 
                 label: 'qid',
                 path: `data.quiz.${qi}.qid`,
                 message: 'Missing qid.',
+            });
+        }
+
+        // Explicit validation check for imageId to trigger the red border
+        if (!isNonEmptyString(item?.imageId)) {
+            errors.push({
+                label: 'imageId',
+                path: `data.quiz.${qi}.imageId`,
+                message: 'Missing image.',
             });
         }
 
@@ -59,6 +69,14 @@ export const validateTheoryOfMindExerciseANode = (data: any): ValidationError[] 
                     label: 'question',
                     path: `data.quiz.${qi}.questions.${qj}.question`,
                     message: 'Missing question text.',
+                });
+            }
+
+            if (!isNonEmptyString(q?.explanation)) {
+                errors.push({
+                    label: 'explanation',
+                    path: `data.quiz.${qi}.questions.${qj}.explanation`,
+                    message: 'Missing explanation.',
                 });
             }
 

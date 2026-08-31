@@ -63,15 +63,17 @@ export const validateFauxPasExerciseANode = (data: any): ValidationError[] => {
             }
 
             const answers = q?.answers;
-            if (
-                !Array.isArray(answers) ||
-                answers.length === 0 ||
-                !answers.every(isNonEmptyString)
-            ) {
+            if (!Array.isArray(answers) || answers.length === 0) {
                 errors.push({
                     label: 'answers',
                     path: `data.quiz.${qi}.questions.${qj}.answers`,
-                    message: 'Insert at least one (non-empty) answer.',
+                    message: 'Insert at least one answer.',
+                });
+            } else if (answers.some(ans => !isNonEmptyString(ans))) {
+                errors.push({
+                    label: 'answers',
+                    path: `data.quiz.${qi}.questions.${qj}.answers`,
+                    message: 'Answers cannot be empty.',
                 });
             }
 
@@ -86,7 +88,6 @@ export const validateFauxPasExerciseANode = (data: any): ValidationError[] => {
                 return;
             }
 
-            // Only check bounds if a correct index was actually provided (and is not -1)
             if (Number.isInteger(ci) && ci !== null && ci !== -1) {
                 if (Array.isArray(answers) && answers.length > 0) {
                     if (ci < 0 || ci >= answers.length) {

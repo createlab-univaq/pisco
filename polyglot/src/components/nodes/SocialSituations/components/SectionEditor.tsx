@@ -53,6 +53,10 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 correctIndexes={section.correctIndexes || []}
                 onAnswersChange={(newAnswers: string[]) => onChange({ ...section, answers: newAnswers })}
                 onCorrectIndexesChange={(newIndexes: number[]) => onChange({ ...section, correctIndexes: newIndexes })}
+                onBulkChange={(newAnswers, newCorrectIndexes) => {
+                    onChange({ ...section, answers: newAnswers, correctIndexes: newCorrectIndexes });
+                }}
+                minAnswers={0}
                 error={getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.answers`) || getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.correctIndexes`)}
             />
         </EditorCardWrapper>

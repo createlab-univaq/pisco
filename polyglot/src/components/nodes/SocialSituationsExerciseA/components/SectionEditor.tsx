@@ -15,7 +15,6 @@ export type SectionEditorProps = {
 };
 
 export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection, itemIndex, getFieldError }: SectionEditorProps) => {
-    // Ensure answers array always contains 4 items
     const answers = section.answers?.length === 4 ? section.answers : [
         { text: '', explanation: '' },
         { text: '', explanation: '' },
@@ -32,6 +31,10 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
         ];
         updatedAnswers[ansIndex] = { ...updatedAnswers[ansIndex], [field]: value };
         onChange({ ...section, answers: updatedAnswers });
+    };
+
+    const getAnswerError = (ansIdx: number, field: 'text' | 'explanation') => {
+        return getFieldError(`data.items.${itemIndex}.sections.${sectionIndex}.answers.${ansIdx}.${field}`);
     };
 
     return (
@@ -70,34 +73,38 @@ export const SectionEditor = ({ section, sectionIndex, onChange, onRemoveSection
                 <label className={styles.sectionLabel}>
                     Risposte (4 opzioni, seleziona la corretta e inserisci la spiegazione)
                 </label>
-                {answers.map((ansItem, ansIdx) => (
-                    <div key={ansIdx} className={styles.answerRow}>
-                        <input
-                            type="radio"
-                            name={`correct-answer-sec-${sectionIndex}`}
-                            checked={section.correctIndex === ansIdx}
-                            onChange={() => onChange({ ...section, correctIndex: ansIdx })}
-                            className={styles.radioInput}
-                            title="Imposta come risposta corretta"
-                        />
-                        <div className={styles.inputsWrapper}>
+                {answers.map((ansItem, ansIdx) => {
+                    const textErr = getAnswerError(ansIdx, 'text');
+                    const expErr = getAnswerError(ansIdx, 'explanation');
+                    return (
+                        <div key={ansIdx} className={styles.answerRow}>
                             <input
-                                type="text"
-                                placeholder={`Risposta ${ansIdx + 1}`}
-                                value={ansItem.text}
-                                onChange={(e) => handleAnswerChange(ansIdx, 'text', e.target.value)}
-                                className={styles.textInput}
+                                type="radio"
+                                name={`correct-answer-sec-${sectionIndex}`}
+                                checked={section.correctIndex === ansIdx}
+                                onChange={() => onChange({ ...section, correctIndex: ansIdx })}
+                                className={styles.radioInput}
+                                title="Imposta come risposta corretta"
                             />
-                            <input
-                                type="text"
-                                placeholder={`Spiegazione per Risposta ${ansIdx + 1}`}
-                                value={ansItem.explanation}
-                                onChange={(e) => handleAnswerChange(ansIdx, 'explanation', e.target.value)}
-                                className={styles.explanationInput}
-                            />
+                            <div className={styles.inputsWrapper}>
+                                <input
+                                    type="text"
+                                    placeholder={`Risposta ${ansIdx + 1}`}
+                                    value={ansItem.text}
+                                    onChange={(e) => handleAnswerChange(ansIdx, 'text', e.target.value)}
+                                    className={`${styles.textInput} ${textErr ? styles.inputInvalid : ''}`}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder={`Spiegazione per Risposta ${ansIdx + 1}`}
+                                    value={ansItem.explanation}
+                                    onChange={(e) => handleAnswerChange(ansIdx, 'explanation', e.target.value)}
+                                    className={`${styles.explanationInput} ${expErr ? styles.inputInvalid : ''}`}
+                                />
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </EditorCardWrapper>
     );

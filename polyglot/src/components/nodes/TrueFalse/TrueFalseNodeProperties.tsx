@@ -64,6 +64,7 @@ const TrueFalseNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
                                 isQuestionCorrect: updatedIsCorrect,
                             });
                         }}
+                        error={getFieldError('data.questions') || getFieldError('data.isQuestionCorrect')}
                     />
                 </div>
             </div>

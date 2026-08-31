@@ -55,15 +55,17 @@ export const validateTheoryOfMindNode = (data: any): ValidationError[] => {
             }
 
             const answers = q?.answers;
-            if (
-                !Array.isArray(answers) ||
-                answers.length === 0 ||
-                !answers.every(isNonEmptyString)
-            ) {
+            if (!Array.isArray(answers) || answers.length === 0) {
                 errors.push({
                     label: 'answers',
                     path: `data.quiz.${qi}.questions.${qj}.answers`,
-                    message: 'Insert at least one (non-empty) answer.',
+                    message: 'Insert at least one answer.',
+                });
+            } else if (answers.some(ans => !isNonEmptyString(ans))) {
+                errors.push({
+                    label: 'answers',
+                    path: `data.quiz.${qi}.questions.${qj}.answers`,
+                    message: 'Answers cannot be empty.',
                 });
             }
 

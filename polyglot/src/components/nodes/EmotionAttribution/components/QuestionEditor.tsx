@@ -28,6 +28,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove, getFieldEr
                 value={question.narration || ''}
                 onChange={(e) => onChange({ ...question, narration: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.questions.${index}.narration`)}
             />
 
             <TextField
@@ -36,6 +37,7 @@ export const QuestionEditor = ({ question, index, onChange, onRemove, getFieldEr
                 value={question.question || ''}
                 onChange={(e) => onChange({ ...question, question: e.target.value })}
                 isTextArea
+                error={getFieldError(`data.questions.${index}.question`)}
             />
 
             <EditorCardDivider />

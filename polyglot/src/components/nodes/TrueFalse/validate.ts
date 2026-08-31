@@ -5,8 +5,16 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateTrueFalseNode = (data: any): ValidationError[] => {
-    const allowedEmpty = ['instructions', 'negativePoints', 'positivePoints'];
+    const allowedEmpty = ['negativePoints', 'positivePoints'];
     const errors: ValidationError[] = validateGenericStrict('TrueFalseNode', data, allowedEmpty);
+
+    if (!isNonEmptyString(data?.instructions)) {
+        errors.push({
+            label: 'instructions',
+            path: 'data.instructions',
+            message: 'Instructions cannot be empty.',
+        });
+    }
 
     const questions = data?.questions;
     if (!Array.isArray(questions) || questions.length === 0 || !questions.every(isNonEmptyString)) {

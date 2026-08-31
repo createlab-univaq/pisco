@@ -188,6 +188,7 @@ const ContainerNodeProperties = ({ element, onUpdateElement }: PolyglotNodePrope
                         onUpdateSection={(updated) => handleUpdateSection(index, updated)}
                         onRemoveSection={() => handleRemoveSection(index)}
                         onOpenItem={(itemIndex) => setDrill({ mode: 'edit', sectionIndex: index, itemIndex })}
+                        error={getFieldError(`data.sections.${index}.items`)}
                     />
                 ))}
             </div>

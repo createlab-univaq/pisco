@@ -21,7 +21,7 @@ const AddIcon = () => (
 type Props = {
     data: TheoryOfMindExerciseAData;
     onChange: (newData: TheoryOfMindExerciseAData) => void;
-    nodeId?: string; // Required for image uploads in ItemEditor
+    nodeId?: string;
     isDisabled?: boolean;
     getExternalErrors?: ValidationError[];
 };
@@ -34,6 +34,7 @@ export const TheoryOfMindExerciseACoreForm = ({ data, onChange, nodeId = 'embedd
     const activeErrors = getExternalErrors || localErrors;
 
     const getFieldError = (path: string) => activeErrors.find((e) => e.path === path)?.message;
+    const quizError = getFieldError('data.quiz');
 
     const handleQuizChange = (newQuiz: TheoryOfMindExerciseAItem[]) => {
         onChange({ ...data, quiz: newQuiz });
@@ -102,11 +103,14 @@ export const TheoryOfMindExerciseACoreForm = ({ data, onChange, nodeId = 'embedd
             </div>
 
             {quizItems.length === 0 && (
-                <div className={styles.emptyState}>
-                    <p className={styles.emptyText}>
-                        Nessun elemento ancora. Clicca <b>Aggiungi elemento</b> per iniziare.
-                    </p>
-                </div>
+                <>
+                    <div className={`${styles.emptyState} ${quizError ? styles.emptyStateInvalid : ''}`}>
+                        <p className={styles.emptyText}>
+                            Nessun elemento ancora. Clicca <b>Aggiungi elemento</b> per iniziare.
+                        </p>
+                    </div>
+                    {quizError && <div className={styles.errorText}>{quizError}</div>}
+                </>
             )}
 
             <div className={styles.storiesList}>

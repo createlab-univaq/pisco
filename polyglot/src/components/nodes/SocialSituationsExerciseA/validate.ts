@@ -5,7 +5,7 @@ const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
 export const validateSocialSituationsExerciseANode = (data: any): ValidationError[] => {
-    const allowedEmpty = ['explanation'];
+    const allowedEmpty: string[] = [];
     const errors: ValidationError[] = validateGenericStrict('SocialSituationsExerciseANode', data, allowedEmpty);
 
     const items = data?.items;
@@ -38,28 +38,53 @@ export const validateSocialSituationsExerciseANode = (data: any): ValidationErro
         }
 
         sections.forEach((s: any, j: number) => {
-            const before = (s?.before ?? '').trim();
-            const bold = (s?.bold ?? '').trim();
-            const after = (s?.after ?? '').trim();
-
-            if (before === '' && bold === '' && after === '') {
+            if (!isNonEmptyString(s?.before)) {
                 errors.push({
-                    label: 'section text',
-                    path: `data.items.${i}.sections.${j}`,
-                    message: 'At least one of before/bold/after must be provided.',
+                    label: 'before',
+                    path: `data.items.${i}.sections.${j}.before`,
+                    message: 'Testo iniziale cannot be empty.',
+                });
+            }
+
+            if (!isNonEmptyString(s?.bold)) {
+                errors.push({
+                    label: 'bold',
+                    path: `data.items.${i}.sections.${j}.bold`,
+                    message: 'Parte in grassetto cannot be empty.',
+                });
+            }
+
+            if (!isNonEmptyString(s?.after)) {
+                errors.push({
+                    label: 'after',
+                    path: `data.items.${i}.sections.${j}.after`,
+                    message: 'Testo finale cannot be empty.',
                 });
             }
 
             const answers = s?.answers;
-            if (
-                !Array.isArray(answers) ||
-                answers.length === 0 ||
-                !answers.every((a: any) => isNonEmptyString(a?.text))
-            ) {
+            if (!Array.isArray(answers) || answers.length !== 4) {
                 errors.push({
                     label: 'answers',
                     path: `data.items.${i}.sections.${j}.answers`,
-                    message: 'Insert at least one answer with non-empty text.',
+                    message: 'Must provide exactly 4 answers.',
+                });
+            } else {
+                answers.forEach((ans: any, ansIdx: number) => {
+                    if (!isNonEmptyString(ans?.text)) {
+                        errors.push({
+                            label: 'answer text',
+                            path: `data.items.${i}.sections.${j}.answers.${ansIdx}.text`,
+                            message: `Answer ${ansIdx + 1} text cannot be empty.`,
+                        });
+                    }
+                    if (!isNonEmptyString(ans?.explanation)) {
+                        errors.push({
+                            label: 'answer explanation',
+                            path: `data.items.${i}.sections.${j}.answers.${ansIdx}.explanation`,
+                            message: `Answer ${ansIdx + 1} explanation cannot be empty.`,
+                        });
+                    }
                 });
             }
 

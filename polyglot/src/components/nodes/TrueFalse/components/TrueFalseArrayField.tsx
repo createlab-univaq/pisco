@@ -3,21 +3,15 @@
 import { useState } from 'react';
 import styles from './TrueFalseArrayField.module.css';
 
-const CheckIcon = () => (
+const AddIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
     </svg>
 );
 
 const CloseIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
-
-const AddIcon = () => (
-    <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
     </svg>
 );
 
@@ -76,11 +70,11 @@ const TrueFalseArrayField = ({
                 <div key={index} className={styles.row}>
                     <button
                         type="button"
-                        className={`${styles.toggleBtn} ${isCorrect[index] ? styles.toggleTrue : `${styles.toggleFalse} ${styles.filled}`}`}
+                        className={`${styles.toggleBtn} ${isCorrect[index] ? styles.toggleTrue : styles.toggleFalse}`}
                         onClick={() => handleToggleCorrect(index)}
-                        title={isCorrect[index] ? 'Mark as False' : 'Mark as True'}
+                        title="Clicca per invertire Vero/Falso"
                     >
-                        {isCorrect[index] ? <CheckIcon /> : <CloseIcon />}
+                        {isCorrect[index] ? 'Vero' : 'Falso'}
                     </button>
 
                     <div className={styles.inputWrapper}>
@@ -92,6 +86,7 @@ const TrueFalseArrayField = ({
                             value={question}
                             onChange={(e) => handleUpdateText(index, e.target.value)}
                             className={styles.input}
+                            placeholder="Inserisci affermazione..."
                         />
                     </div>
 
@@ -99,7 +94,7 @@ const TrueFalseArrayField = ({
                         type="button"
                         className={styles.removeBtn}
                         onClick={() => handleRemove(index)}
-                        title="Remove question"
+                        title="Rimuovi affermazione"
                     >
                         <CloseIcon />
                     </button>
@@ -109,11 +104,11 @@ const TrueFalseArrayField = ({
             <div className={styles.row}>
                 <button
                     type="button"
-                    className={`${styles.toggleBtn} ${newChecked ? styles.toggleTrue : `${styles.toggleFalse} ${styles.filled}`}`}
+                    className={`${styles.toggleBtn} ${newChecked ? styles.toggleTrue : styles.toggleFalse}`}
                     onClick={() => setNewChecked(!newChecked)}
-                    title={newChecked ? 'Mark as False' : 'Mark as True'}
+                    title="Clicca per invertire Vero/Falso"
                 >
-                    {newChecked ? <CheckIcon /> : <CloseIcon />}
+                    {newChecked ? 'Vero' : 'Falso'}
                 </button>
 
                 <div className={styles.inputWrapper}>
@@ -121,7 +116,7 @@ const TrueFalseArrayField = ({
                         type="text"
                         value={newInput}
                         onChange={(e) => setNewInput(e.target.value)}
-                        placeholder="Insert new choice.."
+                        placeholder="Inserisci nuova affermazione..."
                         className={styles.input}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -137,7 +132,7 @@ const TrueFalseArrayField = ({
                     className={styles.addBtn}
                     onClick={handleAdd}
                     disabled={!newInput.trim()}
-                    title="Add question"
+                    title="Aggiungi affermazione"
                 >
                     <AddIcon />
                 </button>

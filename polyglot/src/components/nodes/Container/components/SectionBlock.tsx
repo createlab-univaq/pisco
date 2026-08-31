@@ -24,6 +24,7 @@ export type SectionBlockProps = {
     onUpdateSection: (updated: ContainerSection) => void;
     onRemoveSection: () => void;
     onOpenItem: (itemIndex: number) => void;
+    error?: string; // Added error prop
 };
 
 export const SectionBlock = ({
@@ -33,6 +34,7 @@ export const SectionBlock = ({
     onUpdateSection,
     onRemoveSection,
     onOpenItem,
+    error,
 }: SectionBlockProps) => {
 
     const allowedDefs = useMemo(() => {
@@ -66,7 +68,6 @@ export const SectionBlock = ({
         }
 
         try {
-            // If the item data contains an image path/id, clean it up from the server/storage
             if (item.data?.imageId) {
                 await deleteImageAction(item.data.imageId);
             }
@@ -90,7 +91,7 @@ export const SectionBlock = ({
             <div className={styles.sectionSubHeader}>
                 <h5 className={styles.subTitle}>Nodi</h5>
                 <select
-                    className={styles.select}
+                    className={`${styles.select} ${error ? styles.selectInvalid : ''}`}
                     value=""
                     onChange={(e) => {
                         const type = e.target.value as AllowedContainerNodeType;
@@ -106,8 +107,10 @@ export const SectionBlock = ({
                 </select>
             </div>
 
+            {error && <div className={styles.errorText}>{error}</div>}
+
             {section.items.length === 0 ? (
-                <div className={styles.emptyState}>
+                <div className={`${styles.emptyState} ${error ? styles.emptyStateInvalid : ''}`}>
                     <p className={styles.emptyText}>Nessun nodo in questa sezione.</p>
                 </div>
             ) : (

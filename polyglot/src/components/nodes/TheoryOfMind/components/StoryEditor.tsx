@@ -6,6 +6,10 @@ import { TheoryOfMindQuizItem, TheoryOfMindQuestion } from '../types';
 import { QuestionEditor } from './QuestionEditor';
 import { EditorCardWrapper } from '@/components/layouts/EditorCardWrapper';
 
+const newId = (prefix: string) =>
+    globalThis.crypto?.randomUUID?.() ??
+    `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
 const AddIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -35,6 +39,7 @@ export const StoryEditor = ({ story, index, onChange, onRemove, getFieldError }:
             questions: [
                 ...questions,
                 {
+                    qid: newId('q'),
                     question: '',
                     answers: ['Si', 'No'],
                     correctIndex: 0,
@@ -85,7 +90,7 @@ export const StoryEditor = ({ story, index, onChange, onRemove, getFieldError }:
             <div className={styles.questionsList}>
                 {questions.map((q, i) => (
                     <QuestionEditor
-                        key={i}
+                        key={q.qid || i}
                         question={q}
                         index={i}
                         storyIndex={index}

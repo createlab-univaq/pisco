@@ -4,12 +4,6 @@ import { ValidationError } from '@/types/ValidationError';
 const isNonEmptyString = (v: unknown) =>
     typeof v === 'string' && v.trim() !== '';
 
-const isFiniteNumber = (v: unknown) =>
-    typeof v === 'number' && Number.isFinite(v);
-
-const isValidAnswer = (a: any) =>
-    a && isNonEmptyString(a.text) && isFiniteNumber(a.score);
-
 export const validateSocialSituationsNode = (data: any): ValidationError[] => {
     const allowedEmpty: string[] = [];
     const errors: ValidationError[] = validateGenericStrict('SocialSituationsNode', data, allowedEmpty);
@@ -44,15 +38,28 @@ export const validateSocialSituationsNode = (data: any): ValidationError[] => {
         }
 
         sections.forEach((s: any, j: number) => {
-            const before = (s?.before ?? '').trim();
-            const bold = (s?.bold ?? '').trim();
-            const after = (s?.after ?? '').trim();
-
-            if (before === '' && bold === '' && after === '') {
+            // Individual validations for the text fields so red borders trigger correctly!
+            if (!isNonEmptyString(s?.before)) {
                 errors.push({
-                    label: 'section text',
-                    path: `data.items.${i}.sections.${j}`,
-                    message: 'At least one of before/bold/after must be provided.',
+                    label: 'before',
+                    path: `data.items.${i}.sections.${j}.before`,
+                    message: 'Testo iniziale cannot be empty.',
+                });
+            }
+
+            if (!isNonEmptyString(s?.bold)) {
+                errors.push({
+                    label: 'bold',
+                    path: `data.items.${i}.sections.${j}.bold`,
+                    message: 'Parte in grassetto cannot be empty.',
+                });
+            }
+
+            if (!isNonEmptyString(s?.after)) {
+                errors.push({
+                    label: 'after',
+                    path: `data.items.${i}.sections.${j}.after`,
+                    message: 'Testo finale cannot be empty.',
                 });
             }
 
@@ -60,12 +67,12 @@ export const validateSocialSituationsNode = (data: any): ValidationError[] => {
             if (
                 !Array.isArray(answers) ||
                 answers.length === 0 ||
-                !answers.every(isValidAnswer)
+                !answers.every(isNonEmptyString)
             ) {
                 errors.push({
                     label: 'answers',
                     path: `data.items.${i}.sections.${j}.answers`,
-                    message: 'Insert at least one answer (non-empty text + numeric score).',
+                    message: 'Insert at least one non-empty answer.',
                 });
             }
 

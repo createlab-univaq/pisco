@@ -27,6 +27,14 @@ export const validateEyesTaskNode = (data: any): ValidationError[] => {
             });
         }
 
+        if (!isNonEmptyString(q?.imageId)) {
+            errors.push({
+                label: 'imageId',
+                path: `data.questions.${qi}.imageId`,
+                message: 'Immagine mancante.', // Adjust text as needed
+            });
+        }
+
         const answers = q?.answers;
         if (
             !Array.isArray(answers) ||

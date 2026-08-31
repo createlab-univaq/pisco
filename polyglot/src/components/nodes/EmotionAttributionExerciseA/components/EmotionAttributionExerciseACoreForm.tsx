@@ -22,7 +22,6 @@ export const EmotionAttributionExerciseACoreForm = ({ data = {} as EmotionAttrib
         });
     };
 
-    // Autonomous local validation fallback
     const localErrors = validateEmotionAttributionExerciseANode(data);
     const activeErrors = getExternalErrors || localErrors;
 
@@ -76,6 +75,7 @@ export const EmotionAttributionExerciseACoreForm = ({ data = {} as EmotionAttrib
                     defaultItemValue=""
                     keepAtLeastOne
                     isDisabled={isDisabled}
+                    error={getFieldError('data.risposteCorrette')}
                 />
             </div>
 

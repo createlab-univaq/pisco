@@ -63,16 +63,22 @@ export const validateFauxPasNode = (data: any): ValidationError[] => {
             }
 
             const answers = q?.answers;
-            if (
-                !Array.isArray(answers) ||
-                answers.length === 0 ||
-                !answers.every(isNonEmptyString)
-            ) {
+
+            if (!Array.isArray(answers) || answers.length === 0) {
                 errors.push({
                     label: 'answers',
                     path: `data.quiz.${qi}.questions.${qj}.answers`,
-                    message: 'Insert at least one (non-empty) answer.',
+                    message: 'Insert at least one answer.',
                 });
+            } else {
+                const hasEmptyAnswer = answers.some(ans => !isNonEmptyString(ans));
+                if (hasEmptyAnswer) {
+                    errors.push({
+                        label: 'answers',
+                        path: `data.quiz.${qi}.questions.${qj}.answers`,
+                        message: 'Answers cannot be empty.', // <-- Now correctly identifies the blank field!
+                    });
+                }
             }
 
             const ci = q?.correctIndex;
