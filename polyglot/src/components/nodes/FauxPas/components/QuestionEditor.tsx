@@ -69,8 +69,14 @@ export const QuestionEditor = ({ question, index, allQuestions, onChange, onRemo
                                 value={skipIf.questionIndex !== null ? skipIf.questionIndex : ''}
                                 onChange={(e) => {
                                     const val = e.target.value === '' ? null : Number(e.target.value);
-                                    handleSkipIfChange('questionIndex', val);
-                                    handleSkipIfChange('answerIndex', null);
+                                    onChange({
+                                        ...question,
+                                        skipIf: {
+                                            ...skipIf,
+                                            questionIndex: val,
+                                            answerIndex: null
+                                        }
+                                    });
                                 }}
                             >
                                 <option value="">-- Seleziona Domanda precedente --</option>

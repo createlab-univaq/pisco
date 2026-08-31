@@ -35,6 +35,14 @@ export const validateFauxPasNode = (data: any): ValidationError[] => {
             });
         }
 
+        if (!isNonEmptyString(item?.explanation)) {
+            errors.push({
+                label: 'explanation',
+                path: `data.quiz.${qi}.explanation`,
+                message: 'Missing explanation.',
+            });
+        }
+
         const questions = item?.questions;
         if (!Array.isArray(questions) || questions.length === 0) {
             errors.push({
@@ -69,22 +77,25 @@ export const validateFauxPasNode = (data: any): ValidationError[] => {
 
             const ci = q?.correctIndex;
 
-            if (!Number.isInteger(ci)) {
+            if (ci !== null && ci !== undefined && !Number.isInteger(ci)) {
                 errors.push({
                     label: 'correctIndex',
                     path: `data.quiz.${qi}.questions.${qj}.correctIndex`,
-                    message: 'Select a correct answer.',
+                    message: 'Invalid correct answer format.',
                 });
                 return;
             }
 
-            if (Array.isArray(answers) && answers.length > 0) {
-                if (ci < 0 || ci >= answers.length) {
-                    errors.push({
-                        label: 'correctIndex',
-                        path: `data.quiz.${qi}.questions.${qj}.correctIndex`,
-                        message: 'correctIndex is out of bounds for the given answers.',
-                    });
+            // Only check bounds if a valid correct index was actually selected
+            if (Number.isInteger(ci) && ci !== null && ci !== -1) {
+                if (Array.isArray(answers) && answers.length > 0) {
+                    if (ci < 0 || ci >= answers.length) {
+                        errors.push({
+                            label: 'correctIndex',
+                            path: `data.quiz.${qi}.questions.${qj}.correctIndex`,
+                            message: 'correctIndex is out of bounds for the given answers.',
+                        });
+                    }
                 }
             }
 
