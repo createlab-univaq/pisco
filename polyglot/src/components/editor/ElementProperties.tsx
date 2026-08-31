@@ -49,8 +49,6 @@ const ElementProperties = ({
             }
             setSchemaErrors(currentSchemaErrors);
         }
-        // Depend on _id and isEditorOpen, NOT the whole selectedElement object.
-        // This prevents the editor from resetting its cursor while you type.
     }, [selectedElement._id, isEditorOpen]);
 
     const handleEditorChange = (value: string | undefined) => {
@@ -105,6 +103,17 @@ const ElementProperties = ({
                         </div>
                     )}
 
+                    {!jsonError && schemaErrors.length > 0 && (
+                        <div className={styles.errorBanner}>
+                            <strong>Schema Validation Errors:</strong>
+                            <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                                {schemaErrors.map((err, idx) => (
+                                    <li key={idx}>{err}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     <Editor
                         options={{
                             readOnly: false,
@@ -112,7 +121,7 @@ const ElementProperties = ({
                             formatOnPaste: true,
                             tabSize: 4
                         }}
-                        height="calc(100vh - 120px)"
+                        height="calc(100vh - 160px)" /* Adjusted height for sidebar padding */
                         language="json"
                         value={editorValue}
                         onChange={handleEditorChange}

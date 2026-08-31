@@ -22,7 +22,21 @@ export default function ViewCodeModal({ isOpen, onClose, flow, onApplyChanges }:
         if (isOpen && flow) {
             setEditorValue(JSON.stringify(flow, null, 4));
             setJsonError(null);
-            setSchemaErrors([]);
+
+            let currentSchemaErrors: string[] = [];
+            if (flow?.flowJson?.nodes && Array.isArray(flow.flowJson.nodes)) {
+                flow.flowJson.nodes.forEach((node: any, idx: number) => {
+                    if (node.type && node.data) {
+                        const result = validateNodeData(node.type, node.data);
+                        if (!result.ok) {
+                            result.errors.forEach(e => {
+                                currentSchemaErrors.push(`Node #${idx} (${node.title || node.type}) - [${e.path}]: ${e.message}`);
+                            });
+                        }
+                    }
+                });
+            }
+            setSchemaErrors(currentSchemaErrors);
         }
     }, [isOpen, flow]);
 
