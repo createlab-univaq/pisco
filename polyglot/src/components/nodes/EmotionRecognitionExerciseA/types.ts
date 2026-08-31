@@ -6,6 +6,7 @@ export type EmotionRecognitionExerciseANodeData = {
     imageId?: string;
     answers: string[];
     correctIndex: number;
+    explanation: string;
 };
 
 export type EmotionRecognitionExerciseANode = PolyglotNodeBase & {

@@ -38,5 +38,13 @@ export const validateEmotionRecognitionExerciseANode = (data: any): ValidationEr
         }
     }
 
+    if (!isNonEmptyString(data?.explanation)) {
+        errors.push({
+            label: 'explanation',
+            path: 'data.explanation',
+            message: 'Missing explanation.',
+        });
+    }
+
     return errors;
 };
