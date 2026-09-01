@@ -6,7 +6,8 @@ import {
     DEGREES_PATH,
     STATS_PATH,
     GAME_EXECUTIONS_PATH,
-    POLYGLOT_PATHS_PATH
+    POLYGLOT_PATHS_PATH,
+    ANALYSTS_PATH
 } from '$lib/server/api-paths';
 import { getDb, saveDb } from './mockDb';
 
@@ -53,6 +54,41 @@ export async function apiFetch(
         if (path.includes(STATS_PATH)) return jsonResponse(db.stats);
         if (path.includes(DEGREES_PATH)) return jsonResponse(db.degrees);
         if (path.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(db.polyglotPaths);
+
+        // --- ANALYST PROFILE ---
+        if (path.includes(ANALYSTS_PATH) && !path.endsWith(REGISTER_PATH)) {
+            const parts = path.split('/').filter(Boolean);
+
+            // Expected format: /api/analysts/{id}
+            if (parts.length === 3) {
+                // GET /api/analysts/{id}
+                if (method === 'GET') {
+                    return jsonResponse(db.analyst);
+                }
+
+                // PUT /api/analysts/{id}
+                if (method === 'PUT') {
+                    db.analyst = {
+                        ...db.analyst,
+                        firstName: body.firstName || db.analyst.firstName,
+                        lastName: body.lastName || db.analyst.lastName,
+                        email: body.email || db.analyst.email,
+                        // Not storing password in plain text mock for security practice, but it passes through
+                        updatedAt: new Date().toISOString()
+                    };
+                    await saveDb(db);
+                    return jsonResponse(db.analyst);
+                }
+
+                // DELETE /api/analysts/{id}
+                if (method === 'DELETE') {
+                    // For mock purposes, just reset it to null or keep it as is since it logs out anyway
+                    db.analyst = null;
+                    await saveDb(db);
+                    return new Response(null, { status: 204 });
+                }
+            }
+        }
 
         // --- PATIENTS & RELATIONS ---
         if (path.includes(PATIENTS_PATH)) {
