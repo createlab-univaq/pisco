@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/diagnoses`, { token }),
         apiFetch(fetch, `${GAME_EXECUTIONS_PATH}?patientId=${patientId}`, { token }),
         apiFetch(fetch, POLYGLOT_PATHS_PATH, { token }),
-        apiFetch(fetch, DEGREES_PATH, { token }) // Fetch degrees for the edit form
+        apiFetch(fetch, DEGREES_PATH, { token })
     ]);
 
     if (!patientRes.ok) {
@@ -36,7 +36,6 @@ export const actions: Actions = {
         const data = await request.formData();
         const patientId = params.id;
 
-        // Fetch degrees so we can attach the full Degree object required by the backend
         const degreesRes = await apiFetch(fetch, DEGREES_PATH, { token: locals.token });
         let degreeObj = null;
         if (degreesRes.ok) {
@@ -71,11 +70,9 @@ export const actions: Actions = {
 
         if (!response.ok) return fail(response.status, { error: 'Impossibile eliminare il paziente' });
 
-        // Redirect back to the patients list after successful deletion
         throw redirect(303, '/patients');
     },
 
-    // --- The rest of your existing actions remain identical ---
     deletePath: async ({ request, params, fetch, locals }) => {
         const data = await request.formData();
         const pathId = data.get('pathId')?.toString();
@@ -99,14 +96,27 @@ export const actions: Actions = {
 
         if (!polyglotPathId) return fail(400, { error: 'Seleziona un protocollo valido' });
 
+        // Fetch polyglot paths to locate the matching full flow object
+        const pathsRes = await apiFetch(fetch, POLYGLOT_PATHS_PATH, { token: locals.token });
+        const polyglotPaths = pathsRes.ok ? ((await pathsRes.json()) as PolyglotPath[]) : [];
+        const selectedPath = polyglotPaths.find((p) => p.id === polyglotPathId);
+
+        if (!selectedPath) {
+            return fail(400, { error: 'Percorso selezionato non trovato' });
+        }
+
+        // Send the full flow object as required by the backend
         const response = await apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/paths`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ polyglotPathId }),
+            body: JSON.stringify({ flow: selectedPath }),
             token: locals.token
         });
 
-        if (!response.ok) return fail(response.status, { error: 'Impossibile assegnare il percorso' });
+        if (!response.ok) {
+            return fail(response.status, { error: 'Impossibile assegnare il percorso' });
+        }
+
         return { success: true };
     },
 

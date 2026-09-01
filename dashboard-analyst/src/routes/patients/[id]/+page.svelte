@@ -262,7 +262,8 @@
 						{#each paths as path}
 							<div class="path-badge">
 								<div>
-									<strong>Codice: {path.uniqueCode}</strong>
+									<strong>{path.flow?.name || 'Percorso'}</strong>
+									<span class="code-sub">Codice: {path.uniqueCode}</span>
 									<span class="date">{new Date(path.assignedAt).toLocaleDateString()}</span>
 								</div>
 								{#if gestionePercorsiMode}
@@ -694,8 +695,14 @@
 	}
 	.path-badge .date {
 		display: block;
-		font-size: 12px;
+		font-size: 11px;
 		color: #777;
+		margin-top: 2px;
+	}
+	.path-badge .code-sub {
+		display: block;
+		font-size: 12px;
+		color: #555;
 	}
 	.btn-icon-delete {
 		background: #ff4d4f;

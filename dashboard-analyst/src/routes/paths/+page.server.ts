@@ -26,10 +26,20 @@ export const actions: Actions = {
             return fail(400, { error: 'Seleziona un paziente e un percorso valido' });
         }
 
+        // 1. Fetch the full list of paths to find the matching flow object
+        const pathsRes = await apiFetch(fetch, POLYGLOT_PATHS_PATH, { token: locals.token });
+        const polyglotPaths = pathsRes.ok ? ((await pathsRes.json()) as PolyglotPath[]) : [];
+        const selectedPath = polyglotPaths.find((p) => p.id === polyglotPathId);
+
+        if (!selectedPath) {
+            return fail(400, { error: 'Percorso selezionato non trovato' });
+        }
+
+        // 2. Send the exact request structure required: { flow: { ... } }
         const response = await apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/paths`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ polyglotPathId }),
+            body: JSON.stringify({ flow: selectedPath }),
             token: locals.token
         });
 

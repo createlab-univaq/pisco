@@ -4,7 +4,6 @@ import {
     REGISTER_PATH,
     PATIENTS_PATH,
     DEGREES_PATH,
-    STATS_PATH,
     GAME_EXECUTIONS_PATH,
     POLYGLOT_PATHS_PATH,
     ANALYSTS_PATH
@@ -59,7 +58,6 @@ export async function apiFetch(
         }
 
         // --- STATIC COLLECTIONS ---
-        if (pathname.includes(STATS_PATH)) return jsonResponse(db.stats);
         if (pathname.includes(DEGREES_PATH)) return jsonResponse(db.degrees);
         if (pathname.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(db.polyglotPaths);
 
@@ -108,14 +106,13 @@ export async function apiFetch(
                 const newPath = {
                     id: `path-${Date.now()}`,
                     patient,
-                    polyglotPathId: body.polyglotPathId,
+                    flow: body.flow, // Stores the full flow object matching your schema response
                     uniqueCode: `CODE-${Math.floor(Math.random() * 10000)}`,
-                    assignedAt: new Date().toISOString(),
-                    flow: {}
+                    assignedAt: new Date().toISOString()
                 };
                 db.patientPaths.push(newPath);
                 await saveDb(db);
-                return jsonResponse(newPath);
+                return jsonResponse(newPath, 201);
             }
 
             // DELETE /api/patients/{id}/paths/{pathId}
