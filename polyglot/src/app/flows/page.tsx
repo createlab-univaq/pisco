@@ -1,8 +1,7 @@
-import { apiFetch } from '@/lib/server/apiClient';
-import { FLOWS_PATH } from '@/lib/server/api-paths';
-import { Flow } from '@/types';
+import { getFlowsAction } from '@/lib/actions/flows';
 import FlowsClient from './FlowsClient';
 import Navbar from '@/components/navbars/NavBar';
+import { Flow } from '@/types';
 
 export default async function FlowsPage({
     searchParams,
@@ -10,28 +9,21 @@ export default async function FlowsPage({
     searchParams: Promise<{ q?: string }>;
 }) {
     const resolvedParams = await searchParams;
-    const query = resolvedParams.q ? `?name=${encodeURIComponent(resolvedParams.q)}` : '';
+    const query = resolvedParams.q;
 
     let flows: Flow[] = [];
 
-    try {
-        const res = await apiFetch(`${FLOWS_PATH}${query}`);
-
-        if (res.ok) {
-            // Safely parse JSON with a fallback if the body is empty
-            const text = await res.text();
-            flows = text ? JSON.parse(text) : [];
-        } else {
-            console.error("Failed to fetch flows. Status:", res.status);
-        }
-    } catch (error) {
-        console.error("Error fetching flows:", error);
+    const result = await getFlowsAction(query);
+    if (result.success && result.data) {
+        flows = result.data;
+    } else {
+        console.error("Failed to fetch flows:", result.error);
     }
 
     return (
         <>
             <Navbar />
-            <FlowsClient flows={flows} initialSearch={resolvedParams.q || ''} />
+            <FlowsClient flows={flows} initialSearch={query || ''} />
         </>
     );
 }

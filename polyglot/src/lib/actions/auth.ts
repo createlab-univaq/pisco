@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { LOGIN_PATH, REGISTER_PATH } from '../server/api-paths';
 import { apiFetch } from '../server/apiClient';
 import { LoginResponse } from '@/types';
+import { redirect } from 'next/navigation';
 
 export async function loginAction(formData: FormData) {
     const email = formData.get('email') as string;
@@ -67,8 +68,9 @@ export async function logoutAction() {
     const cookieStore = await cookies();
     cookieStore.delete('token');
     cookieStore.delete('userId');
-}
 
+    redirect('/login');
+}
 export async function registerAction(formData: FormData) {
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;

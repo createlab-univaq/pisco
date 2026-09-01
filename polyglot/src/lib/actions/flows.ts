@@ -6,6 +6,28 @@ import { FLOWS_PATH } from '../server/api-paths';
 import { PolyglotFlow } from '@/types/PolyglotFlow';
 import { Flow } from '@/types';
 
+export async function getFlowsAction(searchQuery?: string) {
+    try {
+        const url = searchQuery
+            ? `${FLOWS_PATH}?name=${encodeURIComponent(searchQuery)}`
+            : FLOWS_PATH;
+
+        const res = await apiFetch(url, {
+            method: 'GET',
+        });
+
+        if (!res.ok) {
+            return { error: 'Failed to fetch flows.', status: res.status };
+        }
+
+        const data = await res.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error('Get flows error:', error);
+        return { error: 'Network error occurred.' };
+    }
+}
+
 export async function getFlowAction(flowId: string) {
     try {
         const res = await apiFetch(`${FLOWS_PATH}/${flowId}`, {
@@ -65,7 +87,6 @@ export async function deleteFlowAction(flowId: string) {
 
 export async function createFlowAction(data: { name: string, description: string, flowJson: PolyglotFlow }) {
     try {
-        // Generate a UUID for the new flow as requested by the API payload spec
         const newId = crypto.randomUUID();
 
         const payload = {
@@ -88,8 +109,6 @@ export async function createFlowAction(data: { name: string, description: string
         }
 
         const createdFlow: Flow = await res.json();
-
-        // Purge the cache so the flows list updates instantly
         revalidatePath('/');
 
         return { success: true, flow: createdFlow };
