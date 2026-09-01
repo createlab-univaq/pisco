@@ -23,6 +23,11 @@ const QuestionImageUploadField = ({
 }: QuestionImageUploadFieldProps) => {
     const [uploading, setUploading] = useState(false);
 
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+    const imageUrl = imageId
+        ? (imageId.startsWith('data:') ? imageId : `${apiBaseUrl}${IMAGE_PATH}/${imageId}`)
+        : '';
+
     const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
     const convertFileToBase64 = (file: File): Promise<string> => {
@@ -86,9 +91,6 @@ const QuestionImageUploadField = ({
             window.alert('Eliminazione fallita');
         }
     };
-
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-    const imageUrl = imageId ? `${apiBaseUrl}${IMAGE_PATH}/${imageId}` : '';
 
     return (
         <div className={containerClass}>
