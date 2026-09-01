@@ -108,7 +108,7 @@
 	});
 
 	function handleExportExcel() {
-		exportSinglePatientExcel(patient, executions, includeName);
+		exportSinglePatientExcel(patient, executions, diagnoses, includeName);
 		toast.add('Report Excel scaricato con successo', 'success');
 	}
 </script>
@@ -526,10 +526,109 @@
 			/>
 		</div>
 	{/if}
+
+	<!-- Diagnoses & Clinical Notes Section (At the bottom) -->
+	<div class="section-card">
+		<div class="section-header">
+			<h3>Diagnosi e Note Cliniche</h3>
+		</div>
+
+		<div class="diagnoses-list">
+			{#if diagnoses.length === 0}
+				<p class="empty-text">Nessuna diagnosi registrata per questo paziente.</p>
+			{:else}
+				{#each diagnoses as diag}
+					<div class="diagnosis-item">
+						<div class="diag-meta">
+							<span class="diag-date">{new Date(diag.diagnosisDate).toLocaleDateString()}</span>
+							{#if diag.medications}<span class="diag-med">Farmaci: {diag.medications}</span>{/if}
+						</div>
+						<p class="diag-text"><strong>Diagnosi:</strong> {diag.diagnosisText}</p>
+						{#if diag.notes}
+							<p class="diag-notes"><strong>Note:</strong> {diag.notes}</p>
+						{/if}
+					</div>
+				{/each}
+			{/if}
+		</div>
+
+		<!-- Form to Add New Diagnosis -->
+		<form
+			action="?/addDiagnosis"
+			method="POST"
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					if (result.type === 'success') {
+						toast.add('Diagnosi aggiunta con successo', 'success');
+					} else if (result.type === 'failure') {
+						const errData = result.data as Record<string, any>;
+						toast.add(errData?.error || 'Impossibile salvare la diagnosi', 'error');
+					}
+					await update();
+				};
+			}}
+			class="diagnosis-form"
+		>
+			<div class="diagnosis-form-header">
+				<h4>Registra Nuova Diagnosi</h4>
+				<p class="form-subtitle">
+					Compila i campi sottostanti per aggiungere una nuova valutazione clinica al dossier del
+					paziente.
+				</p>
+			</div>
+
+			<div class="form-grid">
+				<div class="form-group span-2">
+					<label for="diagnosisText">Testo Diagnosi <span class="required">*</span></label>
+					<input
+						type="text"
+						id="diagnosisText"
+						name="diagnosisText"
+						required
+						placeholder="Es. Ottimi progressi cognitivi, stabilità nei tempi di reazione..."
+						class="dropdown"
+					/>
+				</div>
+				<div class="form-group span-1">
+					<label for="diagnosisDate">Data <span class="required">*</span></label>
+					<input
+						type="date"
+						id="diagnosisDate"
+						name="diagnosisDate"
+						value={new Date().toISOString().slice(0, 10)}
+						required
+						class="dropdown"
+					/>
+				</div>
+				<div class="form-group span-1">
+					<label for="medications">Terapia Farmacologica</label>
+					<input
+						type="text"
+						id="medications"
+						name="medications"
+						placeholder="Es. Nessuno / Vitamina B12..."
+						class="dropdown"
+					/>
+				</div>
+				<div class="form-group span-2">
+					<label for="notes">Note Cliniche / Annotazioni</label>
+					<textarea
+						id="notes"
+						name="notes"
+						placeholder="Aggiungi eventuali osservazioni comportamentali o note di follow-up..."
+						class="dropdown textarea-field"
+						rows="3"></textarea>
+				</div>
+			</div>
+
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary">Salva Diagnosi</button>
+			</div>
+		</form>
+	</div>
 </div>
 
 <style>
-	/* Add the existing styles from the previous page file here, plus this new class for the selectors */
 	.controls-card {
 		background: #fdfdfd;
 		border-left: 4px solid #111;
@@ -552,7 +651,6 @@
 		color: #555;
 	}
 
-	/* Reused base classes */
 	.dashboard-page {
 		display: flex;
 		flex-direction: column;
@@ -575,6 +673,11 @@
 		padding: 24px;
 		border: 1px solid rgba(0, 0, 0, 0.08);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+	}
+	.section-header h3 {
+		margin: 0 0 16px 0;
+		font-size: 20px;
+		color: #111;
 	}
 	.patient-header {
 		display: flex;
@@ -629,11 +732,23 @@
 		border: 1.5px solid black;
 	}
 	.dropdown {
-		padding: 8px 12px;
+		padding: 10px 14px;
 		border-radius: 8px;
-		border: 1.5px solid #ccc;
+		border: 1.5px solid #d1d5db;
 		font-size: 14px;
 		background: white;
+		width: 100%;
+		box-sizing: border-box;
+		font-family: inherit;
+		transition: border-color 0.2s;
+	}
+	.dropdown:focus {
+		outline: none;
+		border-color: black;
+	}
+	.textarea-field {
+		resize: vertical;
+		min-height: 80px;
 	}
 	.table-title {
 		margin: 0 0 12px 0;
@@ -667,6 +782,90 @@
 	.empty-text {
 		color: #888;
 		font-style: italic;
+	}
+
+	/* Diagnoses section styles */
+	.diagnoses-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-bottom: 24px;
+	}
+	.diagnosis-item {
+		background: #fdfdfd;
+		border: 1px solid #e5e7eb;
+		border-radius: 10px;
+		padding: 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+	}
+	.diag-meta {
+		display: flex;
+		justify-content: space-between;
+		font-size: 12px;
+		color: #6b7280;
+		font-weight: 500;
+	}
+	.diag-text,
+	.diag-notes {
+		margin: 0;
+		font-size: 14px;
+		color: #1f2937;
+		line-height: 1.5;
+	}
+
+	/* Beautiful Form Styling */
+	.diagnosis-form {
+		background: #f9fafb;
+		border: 1px solid #e5e7eb;
+		border-radius: 12px;
+		padding: 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		margin-top: 16px;
+	}
+	.diagnosis-form-header h4 {
+		margin: 0 0 4px 0;
+		font-size: 16px;
+		color: #111;
+		font-weight: 600;
+	}
+	.form-subtitle {
+		margin: 0;
+		font-size: 13px;
+		color: #6b7280;
+	}
+	.form-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 16px;
+	}
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+	.form-group label {
+		font-size: 13px;
+		font-weight: 600;
+		color: #374151;
+	}
+	.required {
+		color: #d32f2f;
+	}
+	.span-2 {
+		grid-column: span 2;
+	}
+	.span-1 {
+		grid-column: span 1;
+	}
+	.form-actions {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 4px;
 	}
 
 	/* Diagnostics form classes */

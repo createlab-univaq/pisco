@@ -30,7 +30,7 @@
 	}
 
 	function handleExportAll() {
-		exportAllPatientsExcel(data.patients, data.executions, includeName);
+		exportAllPatientsExcel(data.patients, data.executions, data.diagnosesMap, includeName);
 		toast.add('Tutti i dati dei pazienti esportati con successo', 'success');
 	}
 </script>

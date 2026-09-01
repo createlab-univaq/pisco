@@ -122,7 +122,8 @@ export const actions: Actions = {
 
     addDiagnosis: async ({ request, params, fetch, locals }) => {
         const data = await request.formData();
-        const diagnosisDate = data.get('diagnosisDate')?.toString() || new Date().toISOString();
+        const rawDate = data.get('diagnosisDate')?.toString();
+        const diagnosisDate = rawDate ? new Date(rawDate).toISOString() : new Date().toISOString();
         const diagnosisText = data.get('diagnosisText')?.toString();
         const notes = data.get('notes')?.toString() || '';
         const medications = data.get('medications')?.toString() || '';

@@ -1,48 +1,62 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { PATIENTS_PATH, GAME_EXECUTIONS_PATH } from '$lib/server/api-paths';
 import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
-import type { Patient, GameExecution } from '$lib/types';
+import type { Patient, GameExecution, Diagnosis } from '$lib/types';
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
+    const token = locals.token;
+
     const [patientsRes, executionsRes] = await Promise.all([
-        apiFetch(fetch, PATIENTS_PATH, { token: locals.token }),
-        apiFetch(fetch, GAME_EXECUTIONS_PATH, { token: locals.token })
+        apiFetch(fetch, PATIENTS_PATH, { token }),
+        apiFetch(fetch, GAME_EXECUTIONS_PATH, { token })
     ]);
 
     const patients = patientsRes.ok ? ((await patientsRes.json()) as Patient[]) : [];
     const executions = executionsRes.ok ? ((await executionsRes.json()) as GameExecution[]) : [];
 
-    return { patients, executions };
+    // Build diagnosesMap for all patients
+    const diagnosesMap: Record<string, Diagnosis[]> = {};
+    await Promise.all(
+        patients.map(async (patient) => {
+            const diagRes = await apiFetch(fetch, `${PATIENTS_PATH}/${patient.id}/diagnoses`, { token });
+            if (diagRes.ok) {
+                diagnosesMap[patient.id] = (await diagRes.json()) as Diagnosis[];
+            } else {
+                diagnosesMap[patient.id] = [];
+            }
+        })
+    );
+
+    return {
+        patients,
+        executions,
+        diagnosesMap
+    };
 };
 
 export const actions: Actions = {
     deletePatients: async ({ request, fetch, locals }) => {
         const data = await request.formData();
-        const idsString = data.get('ids')?.toString();
-        if (!idsString) return fail(400, { error: 'Nessun paziente selezionato' });
+        const rawIds = data.get('ids')?.toString();
 
-        let ids: string[];
-        try {
-            ids = JSON.parse(idsString);
-        } catch {
-            return fail(400, { error: 'Dati non validi' });
+        if (!rawIds) {
+            return fail(400, { error: 'Nessun paziente selezionato' });
         }
 
-        try {
-            const deletionPromises = ids.map((id) =>
-                apiFetch(fetch, `${PATIENTS_PATH}/${id}`, { method: 'DELETE', token: locals.token })
-            );
-            const responses = await Promise.all(deletionPromises);
-            const failed = responses.filter((r) => !r.ok);
+        const ids: string[] = JSON.parse(rawIds);
 
-            if (failed.length > 0) {
-                return fail(500, { error: `Impossibile eliminare ${failed.length} paziente/i` });
+        for (const id of ids) {
+            const response = await apiFetch(fetch, `${PATIENTS_PATH}/${id}`, {
+                method: 'DELETE',
+                token: locals.token
+            });
+
+            if (!response.ok) {
+                return fail(response.status, { error: `Impossibile eliminare il paziente con ID ${id}` });
             }
-
-            return { success: true };
-        } catch {
-            return fail(500, { error: "Errore di rete durante l'eliminazione" });
         }
+
+        return { success: true };
     }
 };

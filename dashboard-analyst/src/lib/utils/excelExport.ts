@@ -1,49 +1,52 @@
 import * as XLSX from 'xlsx';
-import type { GameExecution, Patient } from '$lib/types';
+import type { GameExecution, Patient, Diagnosis } from '$lib/types';
 
 export function exportSinglePatientExcel(
     patient: Patient,
     executions: GameExecution[],
+    diagnoses: Diagnosis[],
     includeName: boolean
 ) {
-    const rows = executions.map((exec, index) => {
-        const sessionDate = new Date(exec.startedAt);
-        const formattedDate = `${sessionDate.getDate().toString().padStart(2, '0')}${(sessionDate.getMonth() + 1).toString().padStart(2, '0')}${sessionDate.getFullYear()}_${index + 1}`;
+    const sortedExecs = [...executions].sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+    const firstExec = sortedExecs[0];
+    const latestDiag = diagnoses[diagnoses.length - 1];
 
-        const row: Record<string, string | number> = {
-            'Sessione': formattedDate,
-            'ID Paziente': patient.id
-        };
+    const baseRow: Record<string, string | number> = {
+        'ID': patient.id,
+        'Cognome': includeName ? patient.lastName : '***',
+        'Nome ': includeName ? patient.firstName : '***',
+        'Età': patient.age,
+        'Genere ': patient.gender === 'MASCHIO' ? 1 : 0,
+        'Data primo accesso': firstExec ? firstExec.startedAt.slice(0, 10) : '',
+        'Scolarità': patient.degree?.educationLevel || 0,
+        'Scuola frequentata': patient.degree?.label || '',
+        'Diagnosi': latestDiag?.diagnosisText || '',
+        'Altre note importanti': latestDiag?.notes || ''
+    };
 
-        if (includeName) {
-            row['Nome'] = patient.firstName;
-            row['Cognome'] = patient.lastName;
-        }
+    // Dinamico: mappa i nodi senza stringhe hardcodate
+    const typeCounters: Record<string, number> = {};
 
-        row['Genere'] = patient.gender;
-        row['Età'] = patient.age;
-        row['Titolo di Studio'] = patient.degree?.label || '';
-        row['Inizio'] = exec.startedAt;
-        row['Fine'] = exec.finishedAt;
+    sortedExecs.forEach((exec) => {
+        (exec.nodes || []).forEach((node) => {
+            if (node.isExercise) return;
+            const cleanType = (node.nodeType || 'Test').replace(/\s+/g, '_');
+            typeCounters[cleanType] = (typeCounters[cleanType] || 0) + 1;
+            const idx = typeCounters[cleanType];
 
-        exec.answers.forEach((ans) => {
-            const prefix = ans.nodeName || ans.nodeType?.label || `Node_${ans.sequenceNumber}`;
-            const pct = ans.maxScore > 0 ? ((ans.score / ans.maxScore) * 100).toFixed(1) : '0';
+            const prefix = `Test_${cleanType}_${idx}`;
+            const pct = node.maxScore > 0 ? ((node.score / node.maxScore) * 100).toFixed(1) : '0';
 
-            row[`${prefix} - Punteggio`] = ans.score;
-            row[`${prefix} - Max Punteggio`] = ans.maxScore;
-            row[`${prefix} - %`] = `${pct}%`;
-            row[`${prefix} - Tempo Reazione (ms)`] = ans.reactionTimeMs;
-            row[`${prefix} - Tempo Totale (ms)`] = ans.totalResponseTimeMs ?? ans.reactionTimeMs;
-            row[`${prefix} - Distanza Mouse (px)`] = ans.mouseDistancePx;
+            baseRow[prefix] = node.score;
+            baseRow[`reaction time ${prefix}`] = node.averageReactionTimeInMilliseconds || 0;
+            baseRow[`response time ${prefix}`] = node.averageResponseTimeInMilliseconds || 0;
+            baseRow[`% ${prefix}`] = `${pct}%`;
         });
-
-        return row;
     });
 
-    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const worksheet = XLSX.utils.json_to_sheet([baseRow]);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sessioni Paziente');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
     const fileName = includeName
         ? `Report_${patient.firstName}_${patient.lastName}.xlsx`
@@ -55,6 +58,7 @@ export function exportSinglePatientExcel(
 export function exportAllPatientsExcel(
     patients: Patient[],
     allExecutions: GameExecution[],
+    diagnosesMap: Record<string, Diagnosis[]>,
     includeName: boolean
 ) {
     const rows = patients.map((patient) => {
@@ -63,31 +67,37 @@ export function exportAllPatientsExcel(
             .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
 
         const latestExec = patientExecs[0];
+        const patientDiags = diagnosesMap[patient.id] || [];
+        const latestDiag = patientDiags[patientDiags.length - 1];
 
         const row: Record<string, string | number> = {
-            'ID Paziente': patient.id
+            'ID': patient.id,
+            'Cognome': includeName ? patient.lastName : '***',
+            'Nome ': includeName ? patient.firstName : '***',
+            'Età': patient.age,
+            'Genere ': patient.gender === 'MASCHIO' ? 1 : 0,
+            'Data primo accesso': patientExecs.length > 0 ? patientExecs[patientExecs.length - 1].startedAt.slice(0, 10) : '',
+            'Scolarità': patient.degree?.educationLevel || 0,
+            'Scuola frequentata': patient.degree?.label || '',
+            'Diagnosi': latestDiag?.diagnosisText || '',
+            'Altre note importanti': latestDiag?.notes || ''
         };
 
-        if (includeName) {
-            row['Nome'] = patient.firstName;
-            row['Cognome'] = patient.lastName;
-        }
-
-        row['Genere'] = patient.gender;
-        row['Età'] = patient.age;
-        row['Titolo di Studio'] = patient.degree?.label || '';
-        row['Totale Sessioni'] = patientExecs.length;
-
         if (latestExec) {
-            row['Ultima Sessione'] = latestExec.startedAt;
-            latestExec.answers.forEach((ans) => {
-                const prefix = ans.nodeName || ans.nodeType?.label || `Node_${ans.sequenceNumber}`;
-                const pct = ans.maxScore > 0 ? ((ans.score / ans.maxScore) * 100).toFixed(1) : '0';
+            const typeCounters: Record<string, number> = {};
+            (latestExec.nodes || []).forEach((node) => {
+                if (node.isExercise) return;
+                const cleanType = (node.nodeType || 'Test').replace(/\s+/g, '_');
+                typeCounters[cleanType] = (typeCounters[cleanType] || 0) + 1;
+                const idx = typeCounters[cleanType];
 
-                row[`${prefix} - Punteggio`] = ans.score;
-                row[`${prefix} - %`] = `${pct}%`;
-                row[`${prefix} - Tempo Reazione (ms)`] = ans.reactionTimeMs;
-                row[`${prefix} - Distanza Mouse (px)`] = ans.mouseDistancePx;
+                const prefix = `Test_${cleanType}_${idx}`;
+                const pct = node.maxScore > 0 ? ((node.score / node.maxScore) * 100).toFixed(1) : '0';
+
+                row[prefix] = node.score;
+                row[`reaction time ${prefix}`] = node.averageReactionTimeInMilliseconds || 0;
+                row[`response time ${prefix}`] = node.averageResponseTimeInMilliseconds || 0;
+                row[`% ${prefix}`] = `${pct}%`;
             });
         }
 
@@ -96,7 +106,7 @@ export function exportAllPatientsExcel(
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Tutti i Pazienti');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
     XLSX.writeFile(workbook, `Report_Tutti_Pazienti_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
