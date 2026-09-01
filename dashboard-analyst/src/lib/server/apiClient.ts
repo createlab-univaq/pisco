@@ -1,14 +1,5 @@
 import { API_BASE_URL, USE_MOCK_DATA } from '$env/static/private';
 import {
-    mockPatients,
-    mockDegrees,
-    mockStats,
-    mockExecutions,
-    mockDiagnoses,
-    mockAnalyst,
-    mockPolyglotPaths
-} from '$lib/server/mocks/mockDatabase';
-import {
     LOGIN_PATH,
     REGISTER_PATH,
     PATIENTS_PATH,
@@ -17,6 +8,7 @@ import {
     GAME_EXECUTIONS_PATH,
     POLYGLOT_PATHS_PATH
 } from '$lib/server/api-paths';
+import { getDb, saveDb } from './mockDb';
 
 export async function apiFetch(
     nativeFetch: typeof globalThis.fetch,
@@ -33,61 +25,138 @@ export async function apiFetch(
                 headers: { 'Content-Type': 'application/json' }
             });
 
+        // 1. Load the DB from mock-database.json
+        const db = await getDb();
+
+        // 2. Safely parse JSON body for POST/PUT requests
+        const body = options.body ? JSON.parse(options.body as string) : {};
+
+        // --- AUTH ---
         if (path.endsWith(LOGIN_PATH) && method === 'POST') {
-            return jsonResponse({
-                token: 'mock-jwt-token-12345',
-                expiresAt: new Date(Date.now() + 86400000).toISOString(),
-                analyst: mockAnalyst
-            });
+            // Verify credentials against the mock database analyst
+            if (body.email === db.analyst.email) {
+                return jsonResponse({
+                    token: 'mock-jwt-token-12345',
+                    expiresAt: new Date(Date.now() + 86400000).toISOString(),
+                    analyst: db.analyst
+                });
+            }
+            // Return 401 Unauthorized if credentials fail
+            return jsonResponse({ globalError: 'Email o password errati. (Usa admin@gmail.com / password)' }, 401);
         }
 
         if (path.endsWith(REGISTER_PATH) && method === 'POST') {
             return jsonResponse({ success: true }, 201);
         }
 
-        if (path.includes(STATS_PATH)) return jsonResponse(mockStats);
-        if (path.includes(DEGREES_PATH)) return jsonResponse(mockDegrees);
-        if (path.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(mockPolyglotPaths);
+        // --- STATIC COLLECTIONS ---
+        if (path.includes(STATS_PATH)) return jsonResponse(db.stats);
+        if (path.includes(DEGREES_PATH)) return jsonResponse(db.degrees);
+        if (path.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(db.polyglotPaths);
 
+        // --- PATIENTS & RELATIONS ---
         if (path.includes(PATIENTS_PATH)) {
             const parts = path.split('/').filter(Boolean);
+            const isBaseRoute = parts[parts.length - 1] === 'patients';
+            const patientId = !isBaseRoute ? parts[2] : null;
 
-            // POST /api/patients/{patientId}/paths
+            // POST /api/patients/{id}/paths
             if (parts.includes('paths') && method === 'POST') {
-                const patientId = parts[1];
-                const patient = mockPatients.find(p => p.id === patientId) || mockPatients[0];
-                return jsonResponse({
-                    id: 'mock-patient-path-id',
+                const patient = db.patients.find((p: any) => p.id === patientId);
+                const newPath = {
+                    id: `path-${Date.now()}`,
                     patient,
-                    polyglotPathId: 'poly-1',
-                    uniqueCode: 'CODE-999',
-                    assignedAt: new Date().toISOString()
-                });
+                    polyglotPathId: body.polyglotPathId,
+                    uniqueCode: `CODE-${Math.floor(Math.random() * 10000)}`,
+                    assignedAt: new Date().toISOString(),
+                    flow: {}
+                };
+                db.patientPaths.push(newPath);
+                await saveDb(db);
+                return jsonResponse(newPath);
             }
 
-            // DELETE /api/patients/{patientId}/paths/{pathId}
+            // DELETE /api/patients/{id}/paths/{pathId}
             if (parts.includes('paths') && method === 'DELETE') {
+                const pathId = parts[4];
+                db.patientPaths = db.patientPaths.filter((p: any) => p.id !== pathId);
+                await saveDb(db);
                 return new Response(null, { status: 204 });
             }
 
-            if (method === 'DELETE' && parts.length === 3) return jsonResponse({ success: true });
-            if (method === 'POST' && parts.length === 2) return jsonResponse({ ...mockPatients[0], id: 'new-mock-id' });
-            if (parts.length === 3) {
-                const patient = mockPatients.find((p) => p.id === parts[2]) || mockPatients[0];
-                return jsonResponse(patient);
+            // GET /api/patients/{id}/paths
+            if (parts.includes('paths') && method === 'GET') {
+                const assignedPaths = db.patientPaths.filter((p: any) => p.patient.id === patientId);
+                return jsonResponse(assignedPaths);
             }
-            if (parts.includes('paths') && method === 'GET') return jsonResponse([mockExecutions[0].patientPath]);
-            if (parts.includes('diagnoses') && method === 'GET') return jsonResponse(mockDiagnoses);
-            if (parts.includes('diagnoses') && method === 'POST') return jsonResponse(mockDiagnoses[0]);
-            return jsonResponse(mockPatients);
+
+            // POST /api/patients/{id}/diagnoses
+            if (parts.includes('diagnoses') && method === 'POST') {
+                const patient = db.patients.find((p: any) => p.id === patientId);
+                const newDiag = {
+                    id: `diag-${Date.now()}`,
+                    patient,
+                    ...body,
+                    createdAt: new Date().toISOString()
+                };
+                db.diagnoses.push(newDiag);
+                await saveDb(db);
+                return jsonResponse(newDiag);
+            }
+
+            // GET /api/patients/{id}/diagnoses
+            if (parts.includes('diagnoses') && method === 'GET') {
+                const patientDiags = db.diagnoses.filter((d: any) => d.patient.id === patientId);
+                return jsonResponse(patientDiags);
+            }
+
+            // DELETE /api/patients/{id} 
+            if (method === 'DELETE' && parts.length === 3) {
+                db.patients = db.patients.filter((p: any) => p.id !== patientId);
+                await saveDb(db);
+                return jsonResponse({ success: true });
+            }
+
+            // POST /api/patients (Create new patient)
+            if (method === 'POST' && parts.length === 2) {
+                const degree = db.degrees.find((d: any) => d.code === body.degreeCode);
+                const newPatient = {
+                    ...body,
+                    id: `patient-${Date.now()}`,
+                    createdAt: new Date().toISOString(),
+                    degree
+                };
+                db.patients.push(newPatient);
+                await saveDb(db);
+                return jsonResponse(newPatient, 201);
+            }
+
+            // GET /api/patients/{id}
+            if (method === 'GET' && parts.length === 3) {
+                const patient = db.patients.find((p: any) => p.id === patientId);
+                return patient ? jsonResponse(patient) : jsonResponse({ error: 'Not found' }, 404);
+            }
+
+            // GET /api/patients
+            if (method === 'GET' && parts.length === 2) {
+                return jsonResponse(db.patients);
+            }
         }
 
+        // --- EXECUTIONS ---
         if (path.includes(GAME_EXECUTIONS_PATH)) {
-            if (method === 'POST') return jsonResponse(mockExecutions[0]);
-            return jsonResponse(mockExecutions);
+            if (method === 'POST') {
+                const newExec = { ...body, id: `exec-${Date.now()}` };
+                db.executions.push(newExec);
+                await saveDb(db);
+                return jsonResponse(newExec, 201);
+            }
+            // GET /api/game-executions
+            return jsonResponse(db.executions);
         }
     }
 
+    // --- FALLBACK TO REAL API ---
     const headers = new Headers(options.headers || {});
     if (options.token && !path.endsWith(LOGIN_PATH) && !path.endsWith(REGISTER_PATH)) {
         headers.set('Authorization', `Bearer ${options.token}`);

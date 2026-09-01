@@ -48,6 +48,8 @@
 				method="POST"
 				use:enhance={() => {
 					return async ({ result, update }) => {
+						await update({ reset: true });
+
 						if (result.type === 'success') {
 							toast.add('Percorso assegnato con successo!', 'success');
 							selectedPathId = '';
@@ -56,7 +58,6 @@
 							const errData = result.data as Record<string, any>;
 							toast.add(errData?.error || 'Impossibile assegnare il percorso', 'error');
 						}
-						await update();
 					};
 				}}
 				class="assignment-form"
