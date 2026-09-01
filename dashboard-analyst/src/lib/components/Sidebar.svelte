@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	// Import from $app/state instead of $app/stores
+	import { page } from '$app/state';
 </script>
 
 <aside class="sidebar">
@@ -8,21 +9,23 @@
 	</div>
 
 	<nav>
-		<a href="/" class:active={$page.url.pathname === '/'}> Home </a>
-		<a href="/patients" class:active={$page.url.pathname.startsWith('/patients')}> Gestione Pazienti </a>
-		<a href="/paths" class:active={$page.url.pathname.startsWith('/paths')}> Percorsi </a>
+		<a href="/" class:active={page.url.pathname === '/'}> Home </a>
+		<a href="/patients" class:active={page.url.pathname.startsWith('/patients')}>
+			Gestione Pazienti
+		</a>
+		<a href="/paths" class:active={page.url.pathname.startsWith('/paths')}> Percorsi </a>
 	</nav>
 </aside>
 
 <style>
 	.sidebar {
 		width: 250px;
-		background-color: white; /* Changed from #111 to white */
-		color: black; /* Changed text to black */
+		background-color: white;
+		color: black;
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		border-right: 1px solid rgba(0, 0, 0, 0.08); /* Soft separator line */
+		border-right: 1px solid rgba(0, 0, 0, 0.08);
 	}
 
 	.logo-container {
@@ -43,7 +46,7 @@
 	}
 
 	a {
-		color: #555; /* Dark gray for unselected links */
+		color: #555;
 		text-decoration: none;
 		padding: 16px 24px;
 		font-size: 16px;
@@ -54,13 +57,13 @@
 	}
 
 	a:hover {
-		background-color: #f4f6f8; /* Soft gray hover */
+		background-color: #f4f6f8;
 		color: black;
 	}
 
 	a.active {
 		background-color: #f4f6f8;
 		color: black;
-		border-left: 4px solid black; /* Keep the active indicator crisp */
+		border-left: 4px solid black;
 	}
 </style>
