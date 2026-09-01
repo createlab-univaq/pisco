@@ -93,144 +93,135 @@ export const mockStats: Stats = {
 };
 
 export const mockExecutions: GameExecution[] = [
+    // ============================================================================
+    // PATIENT 0 - PATH 1 (ABC-123) - 4 Runs to show a nice trend on the Line Chart
+    // ============================================================================
     {
         id: 'exec-1',
+        runName: 'Run 1 - Baseline',
         patientPath: {
-            id: 'path-1',
-            patient: mockPatients[0],
-            polyglotPathId: 'poly-1',
-            uniqueCode: 'ABC-123',
-            assignedAt: '2026-05-01T09:00:00.000Z'
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
         },
         startedAt: '2026-05-01T09:10:00.000Z',
         finishedAt: '2026-05-01T09:35:00.000Z',
-        answers: [
-            {
-                id: 'ans-1',
-                polyglotNodeId: 'node-1',
-                nodeType: { label: 'Eyes Task' },
-                nodeName: 'Eyes Task',
-                category: 'TEST',
-                phase: 'PRE',
-                reactionTimeMs: 450,
-                totalResponseTimeMs: 890,
-                score: 9,
-                maxScore: 10,
-                mouseDistancePx: 120,
-                sequenceNumber: 1
-            },
-            {
-                id: 'ans-2',
-                polyglotNodeId: 'node-2',
-                nodeType: { label: 'Eyes Task' },
-                nodeName: 'Eyes Task',
-                category: 'TEST',
-                phase: 'POST',
-                reactionTimeMs: 380,
-                totalResponseTimeMs: 720,
-                score: 10,
-                maxScore: 10,
-                mouseDistancePx: 95,
-                sequenceNumber: 2
-            },
-            {
-                id: 'ans-3',
-                polyglotNodeId: 'node-3',
-                nodeType: { label: 'Training Empatia' },
-                nodeName: 'Training Empatia',
-                category: 'ESERCITAZIONE',
-                phase: 'NONE',
-                reactionTimeMs: 510,
-                totalResponseTimeMs: 1050,
-                score: 42,
-                maxScore: 50,
-                mouseDistancePx: 310,
-                sequenceNumber: 3
-            }
+        nodes: [
+            // Sequence 1: Theory of Mind (Pre -> Ex -> Post)
+            { id: 'n1', nodeId: 'node-1', nodeName: 'ToM (Pre)', nodeType: 'Theory of Mind', isExercise: false, score: 4, maxScore: 10, percentageScore: 0.40, averageReactionTimeInMilliseconds: 650, averageResponseTimeInMilliseconds: 1200, averageMouseDistanceInCentimeters: 18, answers: [] },
+            { id: 'n2', nodeId: 'node-2', nodeName: 'ToM Training', nodeType: 'Training', isExercise: true, score: 7, maxScore: 10, percentageScore: 0.70, averageReactionTimeInMilliseconds: 400, averageResponseTimeInMilliseconds: 800, averageMouseDistanceInCentimeters: 12, answers: [] },
+            { id: 'n3', nodeId: 'node-3', nodeName: 'ToM (Post)', nodeType: 'Theory of Mind', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 600, averageResponseTimeInMilliseconds: 1100, averageMouseDistanceInCentimeters: 16, answers: [] },
+            // Sequence 2: Standalone FauxPas test
+            { id: 'n4', nodeId: 'node-4', nodeName: 'FauxPas (Singolo)', nodeType: 'FauxPas', isExercise: false, score: 3, maxScore: 10, percentageScore: 0.30, averageReactionTimeInMilliseconds: 700, averageResponseTimeInMilliseconds: 1300, averageMouseDistanceInCentimeters: 22, answers: [] }
         ]
     },
     {
         id: 'exec-2',
+        runName: 'Run 2 - Follow up',
         patientPath: {
-            id: 'path-2',
-            patient: mockPatients[0],
-            polyglotPathId: 'poly-1',
-            uniqueCode: 'ABC-124',
-            assignedAt: '2026-05-08T09:00:00.000Z'
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
         },
-        startedAt: '2026-05-08T09:15:00.000Z',
-        finishedAt: '2026-05-08T09:40:00.000Z',
-        answers: [
-            {
-                id: 'ans-4',
-                polyglotNodeId: 'node-1',
-                nodeType: { label: 'Eyes Task' },
-                nodeName: 'Eyes Task',
-                category: 'TEST',
-                phase: 'PRE',
-                reactionTimeMs: 410,
-                totalResponseTimeMs: 810,
-                score: 9,
-                maxScore: 10,
-                mouseDistancePx: 110,
-                sequenceNumber: 1
-            },
-            {
-                id: 'ans-5',
-                polyglotNodeId: 'node-2',
-                nodeType: { label: 'Eyes Task' },
-                nodeName: 'Eyes Task',
-                category: 'TEST',
-                phase: 'POST',
-                reactionTimeMs: 350,
-                totalResponseTimeMs: 680,
-                score: 10,
-                maxScore: 10,
-                mouseDistancePx: 80,
-                sequenceNumber: 2
-            }
+        startedAt: '2026-05-08T10:00:00.000Z',
+        finishedAt: '2026-05-08T10:30:00.000Z',
+        nodes: [
+            { id: 'n5', nodeId: 'node-1', nodeName: 'ToM (Pre)', nodeType: 'Theory of Mind', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 580, averageResponseTimeInMilliseconds: 1050, averageMouseDistanceInCentimeters: 15, answers: [] },
+            { id: 'n6', nodeId: 'node-2', nodeName: 'ToM Training', nodeType: 'Training', isExercise: true, score: 8, maxScore: 10, percentageScore: 0.80, averageReactionTimeInMilliseconds: 350, averageResponseTimeInMilliseconds: 750, averageMouseDistanceInCentimeters: 10, answers: [] },
+            { id: 'n7', nodeId: 'node-3', nodeName: 'ToM (Post)', nodeType: 'Theory of Mind', isExercise: false, score: 7, maxScore: 10, percentageScore: 0.70, averageReactionTimeInMilliseconds: 520, averageResponseTimeInMilliseconds: 980, averageMouseDistanceInCentimeters: 13, answers: [] },
+            { id: 'n8', nodeId: 'node-4', nodeName: 'FauxPas (Singolo)', nodeType: 'FauxPas', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 650, averageResponseTimeInMilliseconds: 1150, averageMouseDistanceInCentimeters: 19, answers: [] }
         ]
     },
     {
         id: 'exec-3',
+        runName: 'Run 3 - Intermedia',
         patientPath: {
-            id: 'path-3',
-            patient: mockPatients[1],
-            polyglotPathId: 'poly-2',
-            uniqueCode: 'XYZ-789',
-            assignedAt: '2026-05-10T10:00:00.000Z'
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
         },
-        startedAt: '2026-05-10T10:15:00.000Z',
-        finishedAt: '2026-05-10T10:50:00.000Z',
-        answers: [
-            {
-                id: 'ans-6',
-                polyglotNodeId: 'node-4',
-                nodeType: { label: 'Faux Pas Test' },
-                nodeName: 'Faux Pas Test',
-                category: 'TEST',
-                phase: 'PRE',
-                reactionTimeMs: 620,
-                totalResponseTimeMs: 1200,
-                score: 7,
-                maxScore: 10,
-                mouseDistancePx: 240,
-                sequenceNumber: 1
-            },
-            {
-                id: 'ans-7',
-                polyglotNodeId: 'node-5',
-                nodeType: { label: 'Faux Pas Test' },
-                nodeName: 'Faux Pas Test',
-                category: 'TEST',
-                phase: 'POST',
-                reactionTimeMs: 540,
-                totalResponseTimeMs: 980,
-                score: 9,
-                maxScore: 10,
-                mouseDistancePx: 180,
-                sequenceNumber: 2
-            }
+        startedAt: '2026-05-15T14:15:00.000Z',
+        finishedAt: '2026-05-15T14:40:00.000Z',
+        nodes: [
+            { id: 'n9', nodeId: 'node-1', nodeName: 'ToM (Pre)', nodeType: 'Theory of Mind', isExercise: false, score: 6, maxScore: 10, percentageScore: 0.60, averageReactionTimeInMilliseconds: 500, averageResponseTimeInMilliseconds: 900, averageMouseDistanceInCentimeters: 12, answers: [] },
+            { id: 'n10', nodeId: 'node-2', nodeName: 'ToM Training', nodeType: 'Training', isExercise: true, score: 9, maxScore: 10, percentageScore: 0.90, averageReactionTimeInMilliseconds: 320, averageResponseTimeInMilliseconds: 680, averageMouseDistanceInCentimeters: 8, answers: [] },
+            { id: 'n11', nodeId: 'node-3', nodeName: 'ToM (Post)', nodeType: 'Theory of Mind', isExercise: false, score: 8, maxScore: 10, percentageScore: 0.80, averageReactionTimeInMilliseconds: 450, averageResponseTimeInMilliseconds: 820, averageMouseDistanceInCentimeters: 10, answers: [] },
+            { id: 'n12', nodeId: 'node-4', nodeName: 'FauxPas (Singolo)', nodeType: 'FauxPas', isExercise: false, score: 7, maxScore: 10, percentageScore: 0.70, averageReactionTimeInMilliseconds: 580, averageResponseTimeInMilliseconds: 1020, averageMouseDistanceInCentimeters: 15, answers: [] }
+        ]
+    },
+    {
+        id: 'exec-4',
+        runName: 'Run 4 - Finale',
+        patientPath: {
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
+        },
+        startedAt: '2026-05-22T09:30:00.000Z',
+        finishedAt: '2026-05-22T09:55:00.000Z',
+        nodes: [
+            { id: 'n13', nodeId: 'node-1', nodeName: 'ToM (Pre)', nodeType: 'Theory of Mind', isExercise: false, score: 8, maxScore: 10, percentageScore: 0.80, averageReactionTimeInMilliseconds: 420, averageResponseTimeInMilliseconds: 780, averageMouseDistanceInCentimeters: 9, answers: [] },
+            { id: 'n14', nodeId: 'node-2', nodeName: 'ToM Training', nodeType: 'Training', isExercise: true, score: 10, maxScore: 10, percentageScore: 1.00, averageReactionTimeInMilliseconds: 280, averageResponseTimeInMilliseconds: 600, averageMouseDistanceInCentimeters: 6, answers: [] },
+            { id: 'n15', nodeId: 'node-3', nodeName: 'ToM (Post)', nodeType: 'Theory of Mind', isExercise: false, score: 10, maxScore: 10, percentageScore: 1.00, averageReactionTimeInMilliseconds: 390, averageResponseTimeInMilliseconds: 710, averageMouseDistanceInCentimeters: 7, answers: [] },
+            { id: 'n16', nodeId: 'node-4', nodeName: 'FauxPas (Singolo)', nodeType: 'FauxPas', isExercise: false, score: 9, maxScore: 10, percentageScore: 0.90, averageReactionTimeInMilliseconds: 500, averageResponseTimeInMilliseconds: 890, averageMouseDistanceInCentimeters: 11, answers: [] }
+        ]
+    },
+
+    // ============================================================================
+    // PATIENT 0 - PATH 2 (DFE-567) - Tests isolated nodes without Exercises
+    // ============================================================================
+    {
+        id: 'exec-5',
+        runName: 'Run 1 - DFE',
+        patientPath: {
+            id: 'path-2', patient: mockPatients[0], polyglotPathId: 'poly-2', uniqueCode: 'DFE-567', assignedAt: '2026-06-01T09:00:00.000Z', flow: {} as any
+        },
+        startedAt: '2026-06-05T10:15:00.000Z',
+        finishedAt: '2026-06-05T10:40:00.000Z',
+        nodes: [
+            { id: 'n17', nodeId: 'node-5', nodeName: 'Riconoscimento Base', nodeType: 'Theory of Mind', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 410, averageResponseTimeInMilliseconds: 810, averageMouseDistanceInCentimeters: 11, answers: [] },
+            { id: 'n18', nodeId: 'node-6', nodeName: 'FauxPas Node', nodeType: 'FauxPas', isExercise: false, score: 9, maxScore: 10, percentageScore: 0.90, averageReactionTimeInMilliseconds: 250, averageResponseTimeInMilliseconds: 680, averageMouseDistanceInCentimeters: 7, answers: [] },
+            { id: 'n19', nodeId: 'node-7', nodeName: 'Riconoscimento Avanzato', nodeType: 'Theory of Mind', isExercise: false, score: 10, maxScore: 10, percentageScore: 1.0, averageReactionTimeInMilliseconds: 320, averageResponseTimeInMilliseconds: 580, averageMouseDistanceInCentimeters: 6, answers: [] }
+        ]
+    },
+    {
+        id: 'exec-6',
+        runName: 'Run 2 - DFE',
+        patientPath: {
+            id: 'path-2', patient: mockPatients[0], polyglotPathId: 'poly-2', uniqueCode: 'DFE-567', assignedAt: '2026-06-01T09:00:00.000Z', flow: {} as any
+        },
+        startedAt: '2026-06-12T11:00:00.000Z',
+        finishedAt: '2026-06-12T11:25:00.000Z',
+        nodes: [
+            { id: 'n20', nodeId: 'node-5', nodeName: 'Riconoscimento Base', nodeType: 'Theory of Mind', isExercise: false, score: 6, maxScore: 10, percentageScore: 0.60, averageReactionTimeInMilliseconds: 380, averageResponseTimeInMilliseconds: 750, averageMouseDistanceInCentimeters: 9, answers: [] },
+            { id: 'n21', nodeId: 'node-6', nodeName: 'FauxPas Node', nodeType: 'FauxPas', isExercise: false, score: 10, maxScore: 10, percentageScore: 1.00, averageReactionTimeInMilliseconds: 220, averageResponseTimeInMilliseconds: 600, averageMouseDistanceInCentimeters: 5, answers: [] },
+            { id: 'n22', nodeId: 'node-7', nodeName: 'Riconoscimento Avanzato', nodeType: 'Theory of Mind', isExercise: false, score: 10, maxScore: 10, percentageScore: 1.0, averageReactionTimeInMilliseconds: 290, averageResponseTimeInMilliseconds: 520, averageMouseDistanceInCentimeters: 4, answers: [] }
+        ]
+    },
+
+    // ============================================================================
+    // PATIENT 1 - PATH 3 (XYZ-999) - Memory & Attention Focus
+    // ============================================================================
+    {
+        id: 'exec-7',
+        runName: 'Sessione Iniziale',
+        patientPath: {
+            id: 'path-3', patient: mockPatients[1], polyglotPathId: 'poly-3', uniqueCode: 'XYZ-999', assignedAt: '2026-07-01T09:00:00.000Z', flow: {} as any
+        },
+        startedAt: '2026-07-03T09:10:00.000Z',
+        finishedAt: '2026-07-03T09:35:00.000Z',
+        nodes: [
+            { id: 'n23', nodeId: 'm-1', nodeName: 'Memoria a breve termine (Pre)', nodeType: 'Memory', isExercise: false, score: 3, maxScore: 10, percentageScore: 0.30, averageReactionTimeInMilliseconds: 800, averageResponseTimeInMilliseconds: 1500, averageMouseDistanceInCentimeters: 25, answers: [] },
+            { id: 'n24', nodeId: 'm-2', nodeName: 'Esercizio Memoria Visiva', nodeType: 'Memory Training', isExercise: true, score: 6, maxScore: 10, percentageScore: 0.60, averageReactionTimeInMilliseconds: 600, averageResponseTimeInMilliseconds: 1200, averageMouseDistanceInCentimeters: 20, answers: [] },
+            { id: 'n25', nodeId: 'm-3', nodeName: 'Memoria a breve termine (Post)', nodeType: 'Memory', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 700, averageResponseTimeInMilliseconds: 1300, averageMouseDistanceInCentimeters: 21, answers: [] },
+            { id: 'n26', nodeId: 'a-1', nodeName: 'Test Attenzione Sostenuta', nodeType: 'Attention', isExercise: false, score: 6, maxScore: 10, percentageScore: 0.60, averageReactionTimeInMilliseconds: 400, averageResponseTimeInMilliseconds: 850, averageMouseDistanceInCentimeters: 14, answers: [] }
+        ]
+    },
+    {
+        id: 'exec-8',
+        runName: 'Sessione Avanzata',
+        patientPath: {
+            id: 'path-3', patient: mockPatients[1], polyglotPathId: 'poly-3', uniqueCode: 'XYZ-999', assignedAt: '2026-07-01T09:00:00.000Z', flow: {} as any
+        },
+        startedAt: '2026-07-10T10:00:00.000Z',
+        finishedAt: '2026-07-10T10:30:00.000Z',
+        nodes: [
+            { id: 'n27', nodeId: 'm-1', nodeName: 'Memoria a breve termine (Pre)', nodeType: 'Memory', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 650, averageResponseTimeInMilliseconds: 1300, averageMouseDistanceInCentimeters: 20, answers: [] },
+            { id: 'n28', nodeId: 'm-2', nodeName: 'Esercizio Memoria Visiva', nodeType: 'Memory Training', isExercise: true, score: 8, maxScore: 10, percentageScore: 0.80, averageReactionTimeInMilliseconds: 500, averageResponseTimeInMilliseconds: 1000, averageMouseDistanceInCentimeters: 15, answers: [] },
+            { id: 'n29', nodeId: 'm-3', nodeName: 'Memoria a breve termine (Post)', nodeType: 'Memory', isExercise: false, score: 8, maxScore: 10, percentageScore: 0.80, averageReactionTimeInMilliseconds: 580, averageResponseTimeInMilliseconds: 1100, averageMouseDistanceInCentimeters: 17, answers: [] },
+            { id: 'n30', nodeId: 'a-1', nodeName: 'Test Attenzione Sostenuta', nodeType: 'Attention', isExercise: false, score: 8, maxScore: 10, percentageScore: 0.80, averageReactionTimeInMilliseconds: 350, averageResponseTimeInMilliseconds: 750, averageMouseDistanceInCentimeters: 10, answers: [] }
         ]
     }
 ];

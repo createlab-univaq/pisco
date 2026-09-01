@@ -1,92 +1,101 @@
 <script lang="ts">
-	import Chart from 'chart.js/auto';
-	import type { Action } from 'svelte/action';
+    import Chart from 'chart.js/auto';
+    import type { Action } from 'svelte/action';
 
-	// Defining the expected data structure based on your Flutter implementation
-	type ChartPoint = { x: string | number; y: number };
+    export type ChartDataset = {
+        label: string;
+        data: { x: string | number; y: number }[];
+    };
 
-	let {
-		data,
-		title,
-		xAxisTitle = '',
-		yAxisTitle = ''
-	}: {
-		data: ChartPoint[];
-		title: string;
-		xAxisTitle?: string;
-		yAxisTitle?: string;
-	} = $props();
+    let {
+        datasets,
+        title,
+        xAxisTitle = '',
+        yAxisTitle = ''
+    }: {
+        datasets: ChartDataset[];
+        title: string;
+        xAxisTitle?: string;
+        yAxisTitle?: string;
+    } = $props();
 
-	// Svelte Action to initialize and manage the Chart.js instance
-	const renderChart: Action<HTMLCanvasElement, ChartPoint[]> = (node, initialData) => {
-		const chart = new Chart(node, {
-			type: 'line',
-			data: {
-				labels: initialData.map((d) => d.x),
-				datasets: [
-					{
-						label: title,
-						data: initialData.map((d) => d.y),
-						borderColor: '#2563eb', // A clean, professional blue
-						backgroundColor: 'rgba(37, 99, 235, 0.1)', // Soft blue fill
-						borderWidth: 2,
-						tension: 0.3,
-						fill: true,
-						pointBackgroundColor: 'white', // White dots on the line
-						pointBorderColor: '#2563eb'
-					}
-				]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				scales: {
-					x: {
-						title: { display: !!xAxisTitle, text: xAxisTitle },
-						grid: { color: 'rgba(0,0,0,0.05)' } // Very faint grid lines
-					},
-					y: {
-						title: { display: !!yAxisTitle, text: yAxisTitle },
-						beginAtZero: true,
-						grid: { color: 'rgba(0,0,0,0.05)' }
-					}
-				},
-				plugins: {
-					legend: { display: false },
-					title: { display: true, text: title, font: { size: 16 } }
-				}
-			}
-		});
+    const colors = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#9333ea', '#0891b2'];
 
-		return {
-			// This runs whenever the 'data' prop changes
-			update(newData) {
-				chart.data.labels = newData.map((d) => d.x);
-				chart.data.datasets[0].data = newData.map((d) => d.y);
-				chart.update();
-			},
-			// Cleanup when the component is destroyed
-			destroy() {
-				chart.destroy();
-			}
-		};
-	};
+    const renderChart: Action<HTMLCanvasElement, ChartDataset[]> = (node, initialData) => {
+        const chart = new Chart(node, {
+            type: 'line',
+            data: {
+                labels: initialData.length > 0 ? initialData[0].data.map((d) => d.x) : [],
+                datasets: initialData.map((ds, i) => ({
+                    label: ds.label,
+                    data: ds.data.map((d) => d.y),
+                    borderColor: colors[i % colors.length],
+                    backgroundColor: colors[i % colors.length] + '1A',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: false,
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: colors[i % colors.length]
+                }))
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: !!xAxisTitle, text: xAxisTitle },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    y: {
+                        title: { display: !!yAxisTitle, text: yAxisTitle },
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                },
+                plugins: {
+                    legend: { display: true, position: 'bottom' },
+                    title: { display: true, text: title, font: { size: 16 } }
+                }
+            }
+        });
+
+        return {
+            update(newData) {
+                chart.data.labels = newData.length > 0 ? newData[0].data.map((d) => d.x) : [];
+                chart.data.datasets = newData.map((ds, i) => ({
+                    label: ds.label,
+                    data: ds.data.map((d) => d.y),
+                    borderColor: colors[i % colors.length],
+                    backgroundColor: colors[i % colors.length] + '1A',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: false,
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: colors[i % colors.length]
+                }));
+                chart.update();
+            },
+            destroy() {
+                chart.destroy();
+            }
+        };
+    };
 </script>
 
 <div class="chart-container">
-	<!-- Apply the action to the canvas element -->
-	<canvas use:renderChart={data}></canvas>
+    <canvas use:renderChart={datasets}></canvas>
 </div>
 
 <style>
-	.chart-container {
-		width: 100%;
-		height: 400px;
-		background-color: white;
-		padding: 24px;
-		border-radius: 16px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-		border: 1px solid rgba(0, 0, 0, 0.05);
-		box-sizing: border-box;
-	}
+    .chart-container {
+        width: 100%;
+        height: 400px;
+        background-color: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-sizing: border-box;
+    }
 </style>

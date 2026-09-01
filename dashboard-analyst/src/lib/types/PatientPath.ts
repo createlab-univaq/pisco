@@ -1,3 +1,4 @@
+import type { Flow } from "./Flow";
 import type { Patient } from "./Patient";
 
 export interface PatientPath {
@@ -6,4 +7,5 @@ export interface PatientPath {
     polyglotPathId: string;
     uniqueCode: string;
     assignedAt: string;
+    flow?: Flow | any;
 }
