@@ -1,28 +1,55 @@
+# Dependencies
 node_modules
+.pnp
+.pnp.js
 
-# Output
+# SvelteKit & Build Outputs
+.svelte-kit
+/build
 .output
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
-/build
+/package
 
-# OS
-.DS_Store
-Thumbs.db
+# Vite
+.vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
 
-# Env
+# Environment Variables
 .env
 .env.*
 !.env.example
 !.env.test
+!.env.development
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-# Playwright
+# Editor & IDE
+.vscode/
+.history/
+.ionide/
+
+# Testing & Coverage
 test-results
+playwright-report
+blob-report
+coverage
+.nyc_output
 
-# Debug
+# Logs & Diagnostics
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# OS & System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Local/Mock Data & Misc
 mock-database.json
+*.local
