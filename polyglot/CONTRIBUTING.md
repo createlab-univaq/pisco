@@ -21,7 +21,6 @@ npm install
 2. **Set up Environment Variables:**
 
 Make a copy of `.env.example` in the root directory and rename it `.env` or `.env.local`. You will need to configure your API endpoint and the mock data flag.
-
 ```env
 # API Configuration
 # Use NEXT_PUBLIC_ prefix so it is accessible in client components
@@ -32,7 +31,6 @@ USE_MOCK_DATA=true
 
 # Max image upload size
 MAX_UPLOAD_SIZE=10mb
-
 ```
 
 
