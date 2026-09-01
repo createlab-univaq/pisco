@@ -54,6 +54,16 @@ export const actions: Actions = {
                 expires: new Date(result.expiresAt)
             });
 
+            if (result.analyst?.id) {
+                cookies.set('analyst_id', result.analyst.id, {
+                    path: '/',
+                    httpOnly: true,
+                    secure: !dev,
+                    sameSite: 'lax',
+                    expires: new Date(result.expiresAt)
+                });
+            }
+
         } catch (err) {
             return fail(500, {
                 globalError: 'Errore di rete durante il login.',

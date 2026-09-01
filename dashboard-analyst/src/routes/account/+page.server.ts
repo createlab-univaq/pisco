@@ -1,13 +1,14 @@
+// src/routes/account/+page.server.ts
 import { fail, redirect } from '@sveltejs/kit';
 import { ANALYSTS_PATH } from '$lib/server/api-paths';
 import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
 import type { Analyst } from '$lib/types';
 
-export const load: PageServerLoad = async ({ fetch, locals }) => {
-    // Rely on locals.token, which is already verified globally by the root layout
+export const load: PageServerLoad = async ({ fetch, locals, cookies }) => {
     const token = locals.token;
-    const analystId = 'analyst-1';
+    // Dynamically retrieve the real ID from cookies, fallback to mock ID if absent
+    const analystId = cookies.get('analyst_id') || 'analyst-1';
 
     const response = await apiFetch(fetch, `${ANALYSTS_PATH}/${analystId}`, {
         token
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 };
 
 export const actions: Actions = {
-    updateProfile: async ({ request, fetch, locals }) => {
+    updateProfile: async ({ request, fetch, locals, cookies }) => {
         const data = await request.formData();
         const firstName = data.get('firstName')?.toString();
         const lastName = data.get('lastName')?.toString();
@@ -30,7 +31,7 @@ export const actions: Actions = {
         const password = data.get('password')?.toString();
 
         const token = locals.token;
-        const analystId = 'analyst-1';
+        const analystId = cookies.get('analyst_id') || 'analyst-1';
 
         if (!firstName || !lastName || !email) {
             return fail(400, { error: 'I campi Nome, Cognome ed Email sono obbligatori.' });
@@ -57,7 +58,7 @@ export const actions: Actions = {
 
     deleteAccount: async ({ fetch, locals, cookies }) => {
         const token = locals.token;
-        const analystId = 'analyst-1';
+        const analystId = cookies.get('analyst_id') || 'analyst-1';
 
         const response = await apiFetch(fetch, `${ANALYSTS_PATH}/${analystId}`, {
             method: 'DELETE',
@@ -69,6 +70,7 @@ export const actions: Actions = {
         }
 
         cookies.delete('session_token', { path: '/' });
+        cookies.delete('analyst_id', { path: '/' });
         throw redirect(303, '/login');
     }
 };
