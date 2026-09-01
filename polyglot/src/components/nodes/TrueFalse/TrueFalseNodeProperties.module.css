@@ -1,0 +1,35 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.validationBox {
+    padding: 0 0.5rem;
+    margin-bottom: 0.75rem;
+    color: #e53e3e;
+    font-size: 0.875rem;
+}
+
+.validationList {
+    margin: 4px 0 0 16px;
+    padding: 0;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.questionsContainer {
+    width: 100%;
+}

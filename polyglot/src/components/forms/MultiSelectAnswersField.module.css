@@ -1,0 +1,157 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+    /* Equivalent to mt={3} */
+    width: 100%;
+}
+
+.label {
+    font-size: 0.75rem;
+    /* size="xs" */
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    /* mb={1} */
+    color: #2d3748;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* spacing={2} */
+}
+
+/* Individual Answer Row */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* gap={3} */
+    width: 100%;
+}
+
+.checkboxWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #3182ce;
+    cursor: pointer;
+}
+
+/* Simulated Chakra Box with Border */
+.inputBox {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #ffffff;
+    color: #1a202c;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.inputBox:focus-within {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 1px #3182ce;
+}
+
+.textBox {
+    flex: 1;
+    /* flex="1" */
+}
+
+/* Unstyled internal input */
+.inputUnstyled {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: inherit;
+    padding: 0;
+}
+
+/* Explicitly force placeholder color so it doesn't wash out */
+.inputUnstyled::placeholder {
+    color: #a0aec0;
+    opacity: 1;
+}
+
+/* Buttons */
+.removeBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #718096;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    width: 32px;
+    /* size="sm" */
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.removeBtn:hover:not(:disabled) {
+    background-color: #edf2f7;
+    color: #1a202c;
+}
+
+.removeBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.addBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background-color: #edf2f7;
+    color: #1a202c;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    /* size="xs" */
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: fit-content;
+    margin-top: 0.5rem;
+    /* mt={2} */
+    transition: background-color 0.2s;
+}
+
+.addBtn:hover {
+    background-color: #e2e8f0;
+}
+
+.icon {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+}
+
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+}
+
+/* Force red borders on the inner input boxes when invalid */
+.containerInvalid .inputBox {
+    border-color: #e53e3e;
+}
+
+.containerInvalid .inputBox:focus-within {
+    box-shadow: 0 0 0 1px #e53e3e;
+}

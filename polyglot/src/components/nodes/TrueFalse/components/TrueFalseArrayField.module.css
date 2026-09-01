@@ -1,0 +1,141 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.mainLabel {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.25rem;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.toggleBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.75rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    border: 2px solid;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    background: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.toggleTrue {
+    border-color: #38a169;
+    background-color: #38a169;
+    color: white;
+}
+
+.toggleFalse {
+    border-color: #e53e3e;
+    background-color: #e53e3e;
+    color: white;
+}
+
+.toggleBtn:hover {
+    opacity: 0.85;
+}
+
+.inputWrapper {
+    position: relative;
+    flex: 1;
+}
+
+.input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.input:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 1px #3182ce;
+}
+
+.floatingLabel {
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    background-color: white;
+    padding: 0 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #4a5568;
+    pointer-events: none;
+}
+
+.removeBtn,
+.addBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+}
+
+.removeBtn {
+    background-color: #fee2e2;
+    color: #e53e3e;
+}
+
+.removeBtn:hover {
+    background-color: #fecaca;
+}
+
+.addBtn {
+    background-color: #edf2f7;
+    color: #1a202c;
+}
+
+.addBtn:hover:not(:disabled) {
+    background-color: #e2e8f0;
+}
+
+.addBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.icon {
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+}
+
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+}
+
+.containerInvalid .input {
+    border-color: #e53e3e !important;
+}
+
+.containerInvalid .input:focus {
+    box-shadow: 0 0 0 1px #e53e3e !important;
+}

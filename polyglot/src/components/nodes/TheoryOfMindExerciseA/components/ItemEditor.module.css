@@ -1,0 +1,28 @@
+.subHeaderFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.subTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2d3748;
+}
+
+.hintText {
+    font-size: 0.8rem;
+    color: #718096;
+    font-style: italic;
+    margin: 0.5rem 0;
+}
+
+.questionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}

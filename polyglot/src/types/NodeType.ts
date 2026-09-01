@@ -1,0 +1,15 @@
+export const NODE_TYPE = {
+  CONTAINER: 'ContainerNode',
+  EMOTION_ATTRIBUTION: 'EmotionAttributionNode',
+  EMOTION_ATTRIBUTION_EXERCISE_A: 'EmotionAttributionExerciseANode',
+  EMOTION_ATTRIBUTION_EXERCISE_B: 'EmotionAttributionExerciseBNode',
+  EYES_TASK: 'EyesTaskNode',
+  FAUX_PAS: 'FauxPasNode',
+  FAUX_PAS_EXERCISE_A: 'FauxPasExerciseANode',
+  EMOTION_RECOGNITION_EXERCISE_A: 'EmotionRecognitionExerciseANode',
+  SOCIAL_SITUATIONS: 'SocialSituationsNode',
+  SOCIAL_SITUATIONS_EXERCISE_A: 'SocialSituationsExerciseANode',
+  THEORY_OF_MIND: 'TheoryOfMindNode',
+  THEORY_OF_MIND_EXERCISE_A: 'TheoryOfMindExerciseANode',
+  TRUE_FALSE: 'TrueFalseNode',
+} as const;

@@ -1,0 +1,143 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+    /* Equivalent to Chakra mt={3} */
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    /* Equivalent to mb={2} */
+}
+
+.label {
+    font-size: 0.875rem;
+    /* Equivalent to fontSize="sm" */
+    color: #4a5568;
+}
+
+/* Badge styling */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.badgeSuccess {
+    background-color: #c6f6d5;
+    color: #22543d;
+}
+
+.badgeDefault {
+    background-color: #edf2f7;
+    color: #1a202c;
+}
+
+/* File Input styling */
+.fileInput {
+    display: block;
+    width: 100%;
+    font-size: 0.875rem;
+    color: #4a5568;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    cursor: pointer;
+}
+
+.fileInput:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f7fafc;
+}
+
+/* Button Group styling */
+.buttonGroup {
+    display: flex;
+    gap: 0.5rem;
+    /* gap={2} */
+    margin-top: 0.5rem;
+    /* mt={2} */
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s, filter 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+    filter: brightness(0.9);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btnUpload {
+    background-color: #319795;
+    /* Chakra teal.500 */
+    color: white;
+}
+
+.btnPreview {
+    background-color: #3182ce;
+    /* Chakra blue.500 */
+    color: white;
+}
+
+.btnDelete {
+    background-color: #e53e3e;
+    /* Chakra red.500 */
+    color: white;
+}
+
+/* Preview Image styling */
+.previewContainer {
+    margin-top: 0.75rem;
+    /* mt={3} */
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    background-color: #f8fafc;
+}
+
+.previewImage {
+    max-height: 220px;
+    object-fit: contain;
+    max-width: 100%;
+}
+
+/* Validation Error Styling */
+.errorText {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+}
+
+.containerInvalid .fileInput {
+    border-color: #e53e3e !important;
+    background-color: #fff5f5;
+}
