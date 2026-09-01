@@ -4,7 +4,7 @@
 	import { toast } from '$lib/stores/toast.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
-	let analyst = $derived(data.analyst);
+	let analyst = $derived(data.analyst || { firstName: '', lastName: '', email: '' });
 
 	function confirmDelete(e: Event) {
 		if (
@@ -43,17 +43,29 @@
 			<div class="input-row">
 				<div class="form-group">
 					<label for="firstName">Nome</label>
-					<input type="text" id="firstName" name="firstName" value={analyst.firstName} required />
+					<input
+						type="text"
+						id="firstName"
+						name="firstName"
+						value={analyst?.firstName || ''}
+						required
+					/>
 				</div>
 				<div class="form-group">
 					<label for="lastName">Cognome</label>
-					<input type="text" id="lastName" name="lastName" value={analyst.lastName} required />
+					<input
+						type="text"
+						id="lastName"
+						name="lastName"
+						value={analyst?.lastName || ''}
+						required
+					/>
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="email">Email</label>
-				<input type="email" id="email" name="email" value={analyst.email} required />
+				<input type="email" id="email" name="email" value={analyst?.email || ''} required />
 			</div>
 
 			<div class="form-group">

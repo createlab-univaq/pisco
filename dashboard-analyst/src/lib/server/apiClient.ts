@@ -9,6 +9,7 @@ import {
     ANALYSTS_PATH
 } from '$lib/server/api-paths';
 import { getDb, saveDb } from './mockDb';
+import { mockAnalyst } from './mocks/mockDatabase';
 
 export async function apiFetch(
     nativeFetch: typeof globalThis.fetch,
@@ -34,15 +35,12 @@ export async function apiFetch(
                 headers: { 'Content-Type': 'application/json' }
             });
 
-        // 1. Load the DB from mock-database.json
         const db = await getDb();
-
-        // 2. Safely parse JSON body for POST/PUT requests
         const body = options.body ? JSON.parse(options.body as string) : {};
 
         // --- AUTH ---
         if (pathname.endsWith(LOGIN_PATH) && method === 'POST') {
-            if (body.email === db.analyst.email) {
+            if (body.email === db.analyst?.email) {
                 return jsonResponse({
                     token: 'mock-jwt-token-12345',
                     expiresAt: new Date(Date.now() + 86400000).toISOString(),
@@ -65,9 +63,13 @@ export async function apiFetch(
         if (pathname.includes(ANALYSTS_PATH) && !pathname.endsWith(REGISTER_PATH)) {
             const parts = pathname.split('/').filter(Boolean);
             // Expected format: /api/analysts/{id}
-            if (parts.length === 3) {
+            if (parts.length === 2 && parts[0] === 'analysts') {
                 // GET /api/analysts/{id}
                 if (method === 'GET') {
+                    if (!db.analyst) {
+                        db.analyst = mockAnalyst;
+                        await saveDb(db);
+                    }
                     return jsonResponse(db.analyst);
                 }
 
@@ -97,16 +99,15 @@ export async function apiFetch(
         // --- PATIENTS & RELATIONS ---
         if (pathname.includes(PATIENTS_PATH)) {
             const parts = pathname.split('/').filter(Boolean);
-            const isBaseRoute = parts[parts.length - 1] === 'patients';
-            const patientId = !isBaseRoute ? parts[2] : null;
+            const patientId = parts.length > 1 ? parts[1] : null;
 
-            // POST /api/patients/{id}/paths
-            if (parts.includes('paths') && method === 'POST') {
+            // POST /patients/{id}/paths
+            if (parts.length === 3 && parts[2] === 'paths' && method === 'POST') {
                 const patient = db.patients.find((p: any) => p.id === patientId);
                 const newPath = {
                     id: `path-${Date.now()}`,
                     patient,
-                    flow: body.flow, // Stores the full flow object matching your schema response
+                    flow: body.flow,
                     uniqueCode: `CODE-${Math.floor(Math.random() * 10000)}`,
                     assignedAt: new Date().toISOString()
                 };
@@ -115,22 +116,22 @@ export async function apiFetch(
                 return jsonResponse(newPath, 201);
             }
 
-            // DELETE /api/patients/{id}/paths/{pathId}
-            if (parts.includes('paths') && method === 'DELETE') {
-                const pathId = parts[4];
+            // DELETE /patients/{id}/paths/{pathId}
+            if (parts.length === 4 && parts[2] === 'paths' && method === 'DELETE') {
+                const pathId = parts[3];
                 db.patientPaths = db.patientPaths.filter((p: any) => p.id !== pathId);
                 await saveDb(db);
                 return new Response(null, { status: 204 });
             }
 
-            // GET /api/patients/{id}/paths
-            if (parts.includes('paths') && method === 'GET') {
-                const assignedPaths = db.patientPaths.filter((p: any) => p.patient.id === patientId);
+            // GET /patients/{id}/paths
+            if (parts.length === 3 && parts[2] === 'paths' && method === 'GET') {
+                const assignedPaths = db.patientPaths.filter((p: any) => p.patient?.id === patientId);
                 return jsonResponse(assignedPaths);
             }
 
-            // POST /api/patients/{id}/diagnoses
-            if (parts.includes('diagnoses') && method === 'POST') {
+            // POST /patients/{id}/diagnoses
+            if (parts.length === 3 && parts[2] === 'diagnoses' && method === 'POST') {
                 const patient = db.patients.find((p: any) => p.id === patientId);
                 const newDiag = {
                     id: `diag-${Date.now()}`,
@@ -143,21 +144,48 @@ export async function apiFetch(
                 return jsonResponse(newDiag);
             }
 
-            // GET /api/patients/{id}/diagnoses
-            if (parts.includes('diagnoses') && method === 'GET') {
-                const patientDiags = db.diagnoses.filter((d: any) => d.patient.id === patientId);
+            // GET /patients/{id}/diagnoses
+            if (parts.length === 3 && parts[2] === 'diagnoses' && method === 'GET') {
+                const patientDiags = db.diagnoses.filter((d: any) => d.patient?.id === patientId);
                 return jsonResponse(patientDiags);
             }
 
-            // DELETE /api/patients/{id} 
-            if (method === 'DELETE' && parts.length === 3) {
+            // DELETE /patients/{id}
+            if (method === 'DELETE' && parts.length === 2) {
                 db.patients = db.patients.filter((p: any) => p.id !== patientId);
+                db.patientPaths = db.patientPaths.filter((p: any) => p.patient?.id !== patientId);
+                db.diagnoses = db.diagnoses.filter((d: any) => d.patient?.id !== patientId);
+                db.executions = db.executions.filter((e: any) => e.patientPath?.patient?.id !== patientId);
                 await saveDb(db);
-                return jsonResponse({ success: true });
+                return new Response(null, { status: 204 });
             }
 
-            // POST /api/patients (Create new patient)
-            if (method === 'POST' && parts.length === 2) {
+            // PUT /patients/{id}
+            if (method === 'PUT' && parts.length === 2) {
+                const pIndex = db.patients.findIndex((p: any) => p.id === patientId);
+                if (pIndex !== -1) {
+                    db.patients[pIndex] = {
+                        ...db.patients[pIndex],
+                        firstName: body.firstName,
+                        lastName: body.lastName,
+                        gender: body.gender,
+                        age: body.age,
+                        degree: body.degree
+                    };
+                    await saveDb(db);
+                    return jsonResponse(db.patients[pIndex]);
+                }
+                return jsonResponse({ error: 'Not found' }, 404);
+            }
+
+            // GET /patients/{id}
+            if (method === 'GET' && parts.length === 2) {
+                const patient = db.patients.find((p: any) => p.id === patientId);
+                return patient ? jsonResponse(patient) : jsonResponse({ error: 'Not found' }, 404);
+            }
+
+            // POST /patients
+            if (method === 'POST' && parts.length === 1) {
                 const degree = db.degrees.find((d: any) => d.code === body.degreeCode);
                 const newPatient = {
                     ...body,
@@ -170,32 +198,8 @@ export async function apiFetch(
                 return jsonResponse(newPatient, 201);
             }
 
-            // PUT /api/patients/{id}
-            if (method === 'PUT' && parts.length === 3) {
-                const pIndex = db.patients.findIndex((p: any) => p.id === patientId);
-                if (pIndex !== -1) {
-                    db.patients[pIndex] = {
-                        ...db.patients[pIndex],
-                        firstName: body.firstName,
-                        lastName: body.lastName,
-                        gender: body.gender,
-                        age: body.age,
-                        degree: body.degree // Body expects the full degree object based on your schema
-                    };
-                    await saveDb(db);
-                    return jsonResponse(db.patients[pIndex]);
-                }
-                return jsonResponse({ error: 'Not found' }, 404);
-            }
-
-            // GET /api/patients/{id}
-            if (method === 'GET' && parts.length === 3) {
-                const patient = db.patients.find((p: any) => p.id === patientId);
-                return patient ? jsonResponse(patient) : jsonResponse({ error: 'Not found' }, 404);
-            }
-
-            // GET /api/patients
-            if (method === 'GET' && parts.length === 2) {
+            // GET /patients
+            if (method === 'GET' && parts.length === 1) {
                 return jsonResponse(db.patients);
             }
         }
@@ -213,17 +217,14 @@ export async function apiFetch(
             if (method === 'GET') {
                 let execs = db.executions;
                 const filterPatientId = searchParams.get('patientId');
-
                 if (filterPatientId) {
                     execs = execs.filter((exec: any) => exec.patientPath?.patient?.id === filterPatientId);
                 }
-
                 return jsonResponse(execs);
             }
         }
     }
 
-    // --- FALLBACK TO REAL API ---
     const headers = new Headers(options.headers || {});
     if (options.token && !pathname.endsWith(LOGIN_PATH) && !pathname.endsWith(REGISTER_PATH)) {
         headers.set('Authorization', `Bearer ${options.token}`);
