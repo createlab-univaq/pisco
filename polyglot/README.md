@@ -50,7 +50,7 @@ Key features include:
 
 ### Built With
 
-* [![Next][Next.js]][Next-url] (App Router & Turbopack)
+* [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
 * [![TypeScript][TypeScript]][TS-url]
 * [![React Flow][ReactFlow]][ReactFlow-url]
@@ -91,7 +91,7 @@ Make a copy of `.env.example` in the root directory and rename it `.env` or `.en
 ```env
 # API Configuration
 # Use NEXT_PUBLIC_ prefix so it is accessible in client components
-NEXT_PUBLIC_API_BASE_URL="[https://your-api-domain.com/api](https://your-api-domain.com/api)"
+NEXT_PUBLIC_API_BASE_URL="https://your-api-domain.com/api"
 
 # Mock Data Toggle
 USE_MOCK_DATA=true
