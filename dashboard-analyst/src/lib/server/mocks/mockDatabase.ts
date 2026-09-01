@@ -1,20 +1,42 @@
 import type { Patient, Degree, Diagnosis, GameExecution, Stats, Analyst } from '$lib/types';
 import type { PolyglotPath } from '$lib/types/PolyglotPath';
 
-
 const MALE: string = 'MASCHIO';
 const FEMALE: string = 'FEMMINA';
+
+export const mockAnalyst: Analyst = {
+    id: 'analyst-1',
+    firstName: 'Admin',
+    lastName: 'Analyst',
+    email: 'admin@gmail.com',
+    role: 'ADMIN',
+    createdAt: '2026-01-01T00:00:00.000Z'
+};
 
 export const mockPolyglotPaths: PolyglotPath[] = [
     {
         id: 'poly-1',
         name: 'Protocollo Neurocognitivo Standard',
-        description: 'Valutazione completa di teoria della mente e riconoscimento emotivo.'
+        description: 'Valutazione completa di teoria della mente e riconoscimento emotivo.',
+        published: true,
+        flowJson: {
+            additionalProp1: 'config-1'
+        },
+        analyst: mockAnalyst,
+        createdAt: '2026-09-01T17:50:02.264Z',
+        updatedAt: '2026-09-01T17:50:02.264Z'
     },
     {
         id: 'poly-2',
         name: 'Modulo Avanzato Faux Pas',
-        description: 'Test mirato per interazioni sociali complesse e empatia cognitiva.'
+        description: 'Test mirato per interazioni sociali complesse e empatia cognitiva.',
+        published: true,
+        flowJson: {
+            additionalProp1: 'config-A'
+        },
+        analyst: mockAnalyst,
+        createdAt: '2026-09-01T17:50:02.264Z',
+        updatedAt: '2026-09-01T17:50:02.264Z'
     }
 ];
 
@@ -79,10 +101,38 @@ export const mockStats: Stats = {
     femmine: mockPatients.filter((p) => p.gender === FEMALE).length,
     percorsi: mockPolyglotPaths.length,
     testTable: [
-        { nomeTest: 'Theory of Mind', percentualePre: 85.0, percentualePost: 95.0, tempoMedio: 420.5 },
-        { nomeTest: 'Faux Pas Test', percentualePre: 70.0, percentualePost: 88.5, tempoMedio: 610.0 },
-        { nomeTest: 'Eyes Task', percentualePre: 65.2, percentualePost: 81.0, tempoMedio: 390.2 },
-        { nomeTest: 'Riconoscimento Emozioni', percentualePre: 78.4, percentualePost: 92.1, tempoMedio: 450.0 }
+        {
+            nodeType: 'Theory of Mind',
+            percentualePre: 85.0,
+            percentualePost: 95.0,
+            tempoMedio: 420.5,
+            tempoRispostaMedio: 1150.0,
+            distanzaMouseMedia: 16.5
+        },
+        {
+            nodeType: 'Faux Pas Test',
+            percentualePre: 70.0,
+            percentualePost: 88.5,
+            tempoMedio: 610.0,
+            tempoRispostaMedio: 1250.0,
+            distanzaMouseMedia: 20.0
+        },
+        {
+            nodeType: 'Eyes Task',
+            percentualePre: 65.2,
+            percentualePost: 81.0,
+            tempoMedio: 390.2,
+            tempoRispostaMedio: 950.0,
+            distanzaMouseMedia: 14.2
+        },
+        {
+            nodeType: 'Riconoscimento Emozioni',
+            percentualePre: 78.4,
+            percentualePost: 92.1,
+            tempoMedio: 450.0,
+            tempoRispostaMedio: 1020.0,
+            distanzaMouseMedia: 12.8
+        }
     ],
     chartData: [
         { x: 'Sess. 1', y: 72.5 },
@@ -93,23 +143,18 @@ export const mockStats: Stats = {
 };
 
 export const mockExecutions: GameExecution[] = [
-    // ============================================================================
-    // PATIENT 0 - PATH 1 (ABC-123) - 4 Runs to show a nice trend on the Line Chart
-    // ============================================================================
     {
         id: 'exec-1',
         runName: 'Run 1 - Baseline',
         patientPath: {
-            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: mockPolyglotPaths[0]
         },
         startedAt: '2026-05-01T09:10:00.000Z',
         finishedAt: '2026-05-01T09:35:00.000Z',
         nodes: [
-            // Sequence 1: Theory of Mind (Pre -> Ex -> Post)
             { id: 'n1', nodeId: 'node-1', nodeName: 'ToM (Pre)', nodeType: 'Theory of Mind', isExercise: false, score: 4, maxScore: 10, percentageScore: 0.40, averageReactionTimeInMilliseconds: 650, averageResponseTimeInMilliseconds: 1200, averageMouseDistanceInCentimeters: 18, answers: [] },
             { id: 'n2', nodeId: 'node-2', nodeName: 'ToM Training', nodeType: 'Training', isExercise: true, score: 7, maxScore: 10, percentageScore: 0.70, averageReactionTimeInMilliseconds: 400, averageResponseTimeInMilliseconds: 800, averageMouseDistanceInCentimeters: 12, answers: [] },
             { id: 'n3', nodeId: 'node-3', nodeName: 'ToM (Post)', nodeType: 'Theory of Mind', isExercise: false, score: 5, maxScore: 10, percentageScore: 0.50, averageReactionTimeInMilliseconds: 600, averageResponseTimeInMilliseconds: 1100, averageMouseDistanceInCentimeters: 16, answers: [] },
-            // Sequence 2: Standalone FauxPas test
             { id: 'n4', nodeId: 'node-4', nodeName: 'FauxPas (Singolo)', nodeType: 'FauxPas', isExercise: false, score: 3, maxScore: 10, percentageScore: 0.30, averageReactionTimeInMilliseconds: 700, averageResponseTimeInMilliseconds: 1300, averageMouseDistanceInCentimeters: 22, answers: [] }
         ]
     },
@@ -117,7 +162,7 @@ export const mockExecutions: GameExecution[] = [
         id: 'exec-2',
         runName: 'Run 2 - Follow up',
         patientPath: {
-            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: mockPolyglotPaths[0]
         },
         startedAt: '2026-05-08T10:00:00.000Z',
         finishedAt: '2026-05-08T10:30:00.000Z',
@@ -132,7 +177,7 @@ export const mockExecutions: GameExecution[] = [
         id: 'exec-3',
         runName: 'Run 3 - Intermedia',
         patientPath: {
-            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: mockPolyglotPaths[0]
         },
         startedAt: '2026-05-15T14:15:00.000Z',
         finishedAt: '2026-05-15T14:40:00.000Z',
@@ -147,7 +192,7 @@ export const mockExecutions: GameExecution[] = [
         id: 'exec-4',
         runName: 'Run 4 - Finale',
         patientPath: {
-            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: {} as any
+            id: 'path-1', patient: mockPatients[0], polyglotPathId: 'poly-1', uniqueCode: 'ABC-123', assignedAt: '2026-05-01T09:00:00.000Z', flow: mockPolyglotPaths[0]
         },
         startedAt: '2026-05-22T09:30:00.000Z',
         finishedAt: '2026-05-22T09:55:00.000Z',
@@ -158,15 +203,11 @@ export const mockExecutions: GameExecution[] = [
             { id: 'n16', nodeId: 'node-4', nodeName: 'FauxPas (Singolo)', nodeType: 'FauxPas', isExercise: false, score: 9, maxScore: 10, percentageScore: 0.90, averageReactionTimeInMilliseconds: 500, averageResponseTimeInMilliseconds: 890, averageMouseDistanceInCentimeters: 11, answers: [] }
         ]
     },
-
-    // ============================================================================
-    // PATIENT 0 - PATH 2 (DFE-567) - Tests isolated nodes without Exercises
-    // ============================================================================
     {
         id: 'exec-5',
         runName: 'Run 1 - DFE',
         patientPath: {
-            id: 'path-2', patient: mockPatients[0], polyglotPathId: 'poly-2', uniqueCode: 'DFE-567', assignedAt: '2026-06-01T09:00:00.000Z', flow: {} as any
+            id: 'path-2', patient: mockPatients[0], polyglotPathId: 'poly-2', uniqueCode: 'DFE-567', assignedAt: '2026-06-01T09:00:00.000Z', flow: mockPolyglotPaths[1]
         },
         startedAt: '2026-06-05T10:15:00.000Z',
         finishedAt: '2026-06-05T10:40:00.000Z',
@@ -180,7 +221,7 @@ export const mockExecutions: GameExecution[] = [
         id: 'exec-6',
         runName: 'Run 2 - DFE',
         patientPath: {
-            id: 'path-2', patient: mockPatients[0], polyglotPathId: 'poly-2', uniqueCode: 'DFE-567', assignedAt: '2026-06-01T09:00:00.000Z', flow: {} as any
+            id: 'path-2', patient: mockPatients[0], polyglotPathId: 'poly-2', uniqueCode: 'DFE-567', assignedAt: '2026-06-01T09:00:00.000Z', flow: mockPolyglotPaths[1]
         },
         startedAt: '2026-06-12T11:00:00.000Z',
         finishedAt: '2026-06-12T11:25:00.000Z',
@@ -190,15 +231,11 @@ export const mockExecutions: GameExecution[] = [
             { id: 'n22', nodeId: 'node-7', nodeName: 'Riconoscimento Avanzato', nodeType: 'Theory of Mind', isExercise: false, score: 10, maxScore: 10, percentageScore: 1.0, averageReactionTimeInMilliseconds: 290, averageResponseTimeInMilliseconds: 520, averageMouseDistanceInCentimeters: 4, answers: [] }
         ]
     },
-
-    // ============================================================================
-    // PATIENT 1 - PATH 3 (XYZ-999) - Memory & Attention Focus
-    // ============================================================================
     {
         id: 'exec-7',
         runName: 'Sessione Iniziale',
         patientPath: {
-            id: 'path-3', patient: mockPatients[1], polyglotPathId: 'poly-3', uniqueCode: 'XYZ-999', assignedAt: '2026-07-01T09:00:00.000Z', flow: {} as any
+            id: 'path-3', patient: mockPatients[1], polyglotPathId: 'poly-3', uniqueCode: 'XYZ-999', assignedAt: '2026-07-01T09:00:00.000Z', flow: mockPolyglotPaths[0]
         },
         startedAt: '2026-07-03T09:10:00.000Z',
         finishedAt: '2026-07-03T09:35:00.000Z',
@@ -213,7 +250,7 @@ export const mockExecutions: GameExecution[] = [
         id: 'exec-8',
         runName: 'Sessione Avanzata',
         patientPath: {
-            id: 'path-3', patient: mockPatients[1], polyglotPathId: 'poly-3', uniqueCode: 'XYZ-999', assignedAt: '2026-07-01T09:00:00.000Z', flow: {} as any
+            id: 'path-3', patient: mockPatients[1], polyglotPathId: 'poly-3', uniqueCode: 'XYZ-999', assignedAt: '2026-07-01T09:00:00.000Z', flow: mockPolyglotPaths[0]
         },
         startedAt: '2026-07-10T10:00:00.000Z',
         finishedAt: '2026-07-10T10:30:00.000Z',
@@ -255,12 +292,3 @@ export const mockDiagnoses: Diagnosis[] = [
         createdAt: '2026-05-11T11:00:00.000Z'
     }
 ];
-
-export const mockAnalyst: Analyst = {
-    id: 'analyst-1',
-    firstName: 'Admin',
-    lastName: 'Analyst',
-    email: 'admin@gmail.com',
-    role: 'ADMIN',
-    createdAt: '2026-01-01T00:00:00.000Z'
-};

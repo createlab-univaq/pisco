@@ -1,5 +1,5 @@
 export interface TestStat {
-    nomeTest: string;
+    nodeType: string;
     percentualePre: number;
     percentualePost: number;
     tempoMedio: number;

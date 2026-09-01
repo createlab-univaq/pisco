@@ -58,8 +58,8 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
         }
     });
 
-    const testTable = Object.keys(testMap).map((nomeTest) => {
-        const item = testMap[nomeTest];
+    const testTable = Object.keys(testMap).map((nodeType) => {
+        const item = testMap[nodeType];
         const avgPre = item.preScores.length ? item.preScores.reduce((a, b) => a + b, 0) / item.preScores.length : 0;
         const avgPost = item.postScores.length ? item.postScores.reduce((a, b) => a + b, 0) / item.postScores.length : 0;
         const avgTime = item.reactionTimes.length ? item.reactionTimes.reduce((a, b) => a + b, 0) / item.reactionTimes.length : 0;
@@ -67,7 +67,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
         const avgMouseDist = item.mouseDistances.length ? item.mouseDistances.reduce((a, b) => a + b, 0) / item.mouseDistances.length : 0;
 
         return {
-            nomeTest,
+            nodeType,
             percentualePre: parseFloat(avgPre.toFixed(1)),
             percentualePost: parseFloat(avgPost.toFixed(1)),
             tempoMedio: parseFloat(avgTime.toFixed(1)),

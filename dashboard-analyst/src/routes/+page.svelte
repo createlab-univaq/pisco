@@ -52,7 +52,7 @@
 			<tbody>
 				{#each stats.testTable as test: any}
 					<tr>
-						<td>{test.nomeTest}</td>
+						<td>{test.nodeType}</td>
 						<td>{test.percentualePre.toFixed(1)}%</td>
 						<td>{test.percentualePost.toFixed(1)}%</td>
 						<td>{test.tempoMedio.toFixed(2)} ms</td>
