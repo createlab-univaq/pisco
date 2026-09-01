@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { uploadImageAction, deleteImageAction } from '@/lib/actions/images';
+import { IMAGE_PATH } from '@/lib/server/api-paths';
 import styles from './QuestionImageUploadField.module.css';
 
 export type QuestionImageUploadFieldProps = {
@@ -53,12 +54,10 @@ const QuestionImageUploadField = ({
             setUploading(true);
             const base64 = await convertFileToBase64(file);
 
-            // Pack the large strings into a FormData object
             const formData = new FormData();
             formData.append('image', base64);
             formData.append('mimeType', file.type || 'image/jpeg');
 
-            // Pass the FormData instead of the raw strings
             const result = await uploadImageAction(formData);
 
             if (result.error || !result.imagePath) {
@@ -72,7 +71,6 @@ const QuestionImageUploadField = ({
             window.alert('Upload fallito: ' + err.message);
         } finally {
             setUploading(false);
-            // Reset input value so the same file can be selected again if needed
             e.target.value = '';
         }
     };
@@ -88,6 +86,10 @@ const QuestionImageUploadField = ({
             window.alert('Eliminazione fallita');
         }
     };
+
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+    console.log(apiBaseUrl)
+    const imageUrl = imageId ? `${apiBaseUrl}${IMAGE_PATH}/${imageId}` : '';
 
     return (
         <div className={containerClass}>
@@ -124,7 +126,7 @@ const QuestionImageUploadField = ({
             {imageId && (
                 <div className={styles.previewContainer}>
                     <img
-                        src={imageId}
+                        src={imageUrl}
                         alt="Question preview"
                         className={styles.previewImage}
                     />

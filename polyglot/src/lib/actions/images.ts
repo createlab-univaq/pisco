@@ -5,11 +5,9 @@ import { IMAGE_PATH } from '../server/api-paths';
 
 export async function uploadImageAction(formData: FormData) {
     try {
-        // Extract the strings from the FormData object
         const base64Image = formData.get('image') as string;
         const mimeType = formData.get('mimeType') as string;
 
-        // The rest of your API call remains completely unchanged
         const res = await apiFetch(IMAGE_PATH, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -21,7 +19,15 @@ export async function uploadImageAction(formData: FormData) {
         }
 
         const data = await res.json();
-        const imagePath = typeof data === 'string' ? data : (data.path || data.url || data);
+
+        const imagePath = typeof data === 'string'
+            ? data
+            : (data.id || data.path || data.url || '');
+
+        if (!imagePath) {
+            return { error: 'Invalid response from image upload server.' };
+        }
+
         return { success: true, imagePath };
     } catch (error) {
         console.error('Upload image error:', error);
@@ -31,7 +37,6 @@ export async function uploadImageAction(formData: FormData) {
 
 export async function deleteImageAction(imageId: string) {
     try {
-        // Extract ID or handle full path if passed as ID
         const cleanId = imageId.split('/').pop() || imageId;
         const res = await apiFetch(`${IMAGE_PATH}/${cleanId}`, {
             method: 'DELETE',

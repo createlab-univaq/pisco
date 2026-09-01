@@ -4,21 +4,31 @@ import Image from 'next/image';
 import Link from 'next/link';
 import cardImage from '@public/test_card.png';
 import styles from './FlowCard.module.css';
-import { Flow } from '@/types'; // <-- Updated import to match your new type
+import { Flow } from '@/types';
 
 type FlowCardProps = {
   flow: Flow;
   setSelected?: (flowId: string) => void;
 };
 
+const formatDate = (dateString?: string) => {
+  if (!dateString) return '';
+  try {
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return dateString;
+  }
+};
+
 const FlowCard = ({ flow, setSelected }: FlowCardProps) => {
-
-  // Fallback to calculate nodes from the flowJson object keys
-  const nodeCount = flow.flowJson ? Object.keys(flow.flowJson.nodes).length : 0;
-
   return (
     <div className={styles.card}>
-
       <div className={styles.imageContainer}>
         <Image
           src={cardImage}
@@ -31,7 +41,6 @@ const FlowCard = ({ flow, setSelected }: FlowCardProps) => {
 
       <div className={styles.content}>
         <div className={styles.cardBody}>
-
           <button
             className={styles.deleteButton}
             title="Delete"
@@ -55,18 +64,16 @@ const FlowCard = ({ flow, setSelected }: FlowCardProps) => {
           </h2>
 
           <p className={styles.description}>{flow.description}</p>
-
         </div>
 
         <div className={styles.cardFooter}>
-
           <p className={styles.metaText}>
-            In this Learning Path there are: <strong>{nodeCount}</strong> learning activities
+            Created: <strong>{formatDate(flow.createdAt)}</strong>
           </p>
 
           <div className={styles.publishStatus}>
             <span className={styles.publishText}>
-              {flow.published ? 'Published' : 'Not published'}: {/* Changed from publish to published */}
+              {flow.published ? 'Published' : 'Not published'}:
             </span>
             <div className={`${styles.statusIcon} ${flow.published ? styles.statusGreen : styles.statusRed}`}>
               {flow.published ? (
@@ -81,7 +88,6 @@ const FlowCard = ({ flow, setSelected }: FlowCardProps) => {
               )}
             </div>
           </div>
-
         </div>
       </div>
     </div>
