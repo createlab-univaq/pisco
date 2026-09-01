@@ -6,7 +6,6 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// The $derived rune ensures 'stats' stays in sync if 'data' ever updates!
 	let stats: Stats = $derived(
 		data.stats || {
 			pazienti: 0,
@@ -16,6 +15,15 @@
 			testTable: [],
 			chartData: []
 		}
+	);
+
+	let chartDatasets = $derived(
+		data.chartDatasets || [
+			{
+				label: 'Media risposte corrette',
+				data: stats.chartData
+			}
+		]
 	);
 </script>
 
@@ -33,29 +41,43 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Nome Test</th>
+					<th>Node Type</th>
 					<th>% superamento test pre-esercitazione</th>
 					<th>% superamento test post-esercitazione</th>
 					<th>Tempo medio di reazione</th>
+					<th>Tempo medio di risposta</th>
+					<th>Distanza media del mouse</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each stats.testTable as test}
+				{#each stats.testTable as test: any}
 					<tr>
 						<td>{test.nomeTest}</td>
 						<td>{test.percentualePre.toFixed(1)}%</td>
 						<td>{test.percentualePost.toFixed(1)}%</td>
 						<td>{test.tempoMedio.toFixed(2)} ms</td>
+						<td>{test.tempoRispostaMedio?.toFixed(2) ?? '0.00'} ms</td>
+						<td>{test.distanzaMouseMedia?.toFixed(1) ?? '0.0'} cm</td>
 					</tr>
 				{/each}
+				{#if stats.testTable.length === 0}
+					<tr>
+						<td colspan="6" class="empty-text">Nessun dato di test pre-post disponibile.</td>
+					</tr>
+				{/if}
 			</tbody>
 		</table>
 	</div>
 
 	<!-- Chart -->
-	{#if stats.chartData.length > 0}
-		<div class="chart-container">
-			<LineChart data={stats.chartData} title="Media risposte corrette per test" />
+	{#if chartDatasets.length > 0}
+		<div class="chart-container-wrapper">
+			<LineChart
+				datasets={chartDatasets}
+				title="Andamento per Tipologia di Nodo"
+				xAxisTitle="Sessioni / Run"
+				yAxisTitle="Punteggio Medio (%)"
+			/>
 		</div>
 	{/if}
 </div>
@@ -65,13 +87,15 @@
 		display: flex;
 		flex-direction: column;
 		gap: 40px;
+		max-width: 1100px;
+		margin: 0 auto;
 	}
 
 	.stats-grid {
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
 		gap: 24px;
-		height: 160px;
+		height: 140px;
 	}
 
 	.table-container {
@@ -79,6 +103,7 @@
 		padding: 20px;
 		border-radius: 16px;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+		border: 1px solid rgba(0, 0, 0, 0.08);
 		overflow-x: auto;
 	}
 
@@ -88,16 +113,30 @@
 	}
 
 	th {
-		background-color: white; /* Changed from black */
-		color: black; /* Changed from white */
+		background-color: white;
+		color: black;
 		text-align: left;
 		padding: 12px;
 		font-weight: bold;
-		border-bottom: 2px solid #ddd; /* Slightly thicker border for the header */
+		border-bottom: 2px solid #ddd;
 	}
 
 	td {
 		padding: 12px;
 		border-bottom: 1px solid #eee;
+	}
+
+	.empty-text {
+		color: #888;
+		font-style: italic;
+		text-align: center;
+	}
+
+	.chart-container-wrapper {
+		background: white;
+		border-radius: 16px;
+		padding: 12px;
+		border: 1px solid rgba(0, 0, 0, 0.08);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 	}
 </style>

@@ -3,4 +3,6 @@ export interface TestStat {
     percentualePre: number;
     percentualePost: number;
     tempoMedio: number;
+    tempoRispostaMedio: number,
+    distanzaMouseMedia: number,
 }
