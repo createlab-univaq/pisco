@@ -110,7 +110,7 @@ MAX_UPLOAD_SIZE=10mb
 
 ## Contributing
 
-If you want to add new Nodes, Exercise types, or Custom Edges, please check the [CONTRIBUTING.md](https://www.google.com/search?q=./CONTRIBUTING.md) guide in the root directory for standard architectural procedures.
+If you want to add new Nodes, Exercise types, or Custom Edges, please check the [CONTRIBUTING.md](./CONTRIBUTING.md) guide in the root directory for standard architectural procedures.
 
 ### Top contributors:
 
