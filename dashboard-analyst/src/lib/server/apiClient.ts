@@ -19,6 +19,15 @@ export async function apiFetch(
     const useMock = USE_MOCK_DATA === 'true';
     const method = options.method || 'GET';
 
+    // Safely extract pathname and search params to handle query strings correctly
+    let pathname = path;
+    let searchParams = new URLSearchParams();
+    if (path.includes('?')) {
+        const [base, query] = path.split('?');
+        pathname = base;
+        searchParams = new URLSearchParams(query);
+    }
+
     if (useMock) {
         const jsonResponse = (data: unknown, status = 200) =>
             new Response(JSON.stringify(data), {
@@ -33,8 +42,7 @@ export async function apiFetch(
         const body = options.body ? JSON.parse(options.body as string) : {};
 
         // --- AUTH ---
-        if (path.endsWith(LOGIN_PATH) && method === 'POST') {
-            // Verify credentials against the mock database analyst
+        if (pathname.endsWith(LOGIN_PATH) && method === 'POST') {
             if (body.email === db.analyst.email) {
                 return jsonResponse({
                     token: 'mock-jwt-token-12345',
@@ -46,19 +54,18 @@ export async function apiFetch(
             return jsonResponse({ globalError: 'Email o password errati. (Usa admin@gmail.com / password)' }, 401);
         }
 
-        if (path.endsWith(REGISTER_PATH) && method === 'POST') {
+        if (pathname.endsWith(REGISTER_PATH) && method === 'POST') {
             return jsonResponse({ success: true }, 201);
         }
 
         // --- STATIC COLLECTIONS ---
-        if (path.includes(STATS_PATH)) return jsonResponse(db.stats);
-        if (path.includes(DEGREES_PATH)) return jsonResponse(db.degrees);
-        if (path.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(db.polyglotPaths);
+        if (pathname.includes(STATS_PATH)) return jsonResponse(db.stats);
+        if (pathname.includes(DEGREES_PATH)) return jsonResponse(db.degrees);
+        if (pathname.includes(POLYGLOT_PATHS_PATH)) return jsonResponse(db.polyglotPaths);
 
         // --- ANALYST PROFILE ---
-        if (path.includes(ANALYSTS_PATH) && !path.endsWith(REGISTER_PATH)) {
-            const parts = path.split('/').filter(Boolean);
-
+        if (pathname.includes(ANALYSTS_PATH) && !pathname.endsWith(REGISTER_PATH)) {
+            const parts = pathname.split('/').filter(Boolean);
             // Expected format: /api/analysts/{id}
             if (parts.length === 3) {
                 // GET /api/analysts/{id}
@@ -73,7 +80,6 @@ export async function apiFetch(
                         firstName: body.firstName || db.analyst.firstName,
                         lastName: body.lastName || db.analyst.lastName,
                         email: body.email || db.analyst.email,
-                        // Not storing password in plain text mock for security practice, but it passes through
                         updatedAt: new Date().toISOString()
                     };
                     await saveDb(db);
@@ -91,8 +97,8 @@ export async function apiFetch(
         }
 
         // --- PATIENTS & RELATIONS ---
-        if (path.includes(PATIENTS_PATH)) {
-            const parts = path.split('/').filter(Boolean);
+        if (pathname.includes(PATIENTS_PATH)) {
+            const parts = pathname.split('/').filter(Boolean);
             const isBaseRoute = parts[parts.length - 1] === 'patients';
             const patientId = !isBaseRoute ? parts[2] : null;
 
@@ -167,6 +173,24 @@ export async function apiFetch(
                 return jsonResponse(newPatient, 201);
             }
 
+            // PUT /api/patients/{id}
+            if (method === 'PUT' && parts.length === 3) {
+                const pIndex = db.patients.findIndex((p: any) => p.id === patientId);
+                if (pIndex !== -1) {
+                    db.patients[pIndex] = {
+                        ...db.patients[pIndex],
+                        firstName: body.firstName,
+                        lastName: body.lastName,
+                        gender: body.gender,
+                        age: body.age,
+                        degree: body.degree // Body expects the full degree object based on your schema
+                    };
+                    await saveDb(db);
+                    return jsonResponse(db.patients[pIndex]);
+                }
+                return jsonResponse({ error: 'Not found' }, 404);
+            }
+
             // GET /api/patients/{id}
             if (method === 'GET' && parts.length === 3) {
                 const patient = db.patients.find((p: any) => p.id === patientId);
@@ -180,21 +204,31 @@ export async function apiFetch(
         }
 
         // --- EXECUTIONS ---
-        if (path.includes(GAME_EXECUTIONS_PATH)) {
+        if (pathname.includes(GAME_EXECUTIONS_PATH)) {
             if (method === 'POST') {
                 const newExec = { ...body, id: `exec-${Date.now()}` };
                 db.executions.push(newExec);
                 await saveDb(db);
                 return jsonResponse(newExec, 201);
             }
-            // GET /api/game-executions
-            return jsonResponse(db.executions);
+
+            // GET /api/game-executions?patientId=[id]
+            if (method === 'GET') {
+                let execs = db.executions;
+                const filterPatientId = searchParams.get('patientId');
+
+                if (filterPatientId) {
+                    execs = execs.filter((exec: any) => exec.patientPath?.patient?.id === filterPatientId);
+                }
+
+                return jsonResponse(execs);
+            }
         }
     }
 
     // --- FALLBACK TO REAL API ---
     const headers = new Headers(options.headers || {});
-    if (options.token && !path.endsWith(LOGIN_PATH) && !path.endsWith(REGISTER_PATH)) {
+    if (options.token && !pathname.endsWith(LOGIN_PATH) && !pathname.endsWith(REGISTER_PATH)) {
         headers.set('Authorization', `Bearer ${options.token}`);
     }
 

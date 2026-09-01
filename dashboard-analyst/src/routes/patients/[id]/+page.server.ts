@@ -1,19 +1,20 @@
-import { fail, error } from '@sveltejs/kit';
-import { PATIENTS_PATH, GAME_EXECUTIONS_PATH, POLYGLOT_PATHS_PATH } from '$lib/server/api-paths';
+import { fail, error, redirect } from '@sveltejs/kit';
+import { PATIENTS_PATH, GAME_EXECUTIONS_PATH, POLYGLOT_PATHS_PATH, DEGREES_PATH } from '$lib/server/api-paths';
 import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
-import type { Patient, PatientPath, Diagnosis, GameExecution, PolyglotPath } from '$lib/types';
+import type { Patient, PatientPath, Diagnosis, GameExecution, PolyglotPath, Degree } from '$lib/types';
 
 export const load: PageServerLoad = async ({ params, fetch, locals }) => {
     const patientId = params.id;
     const token = locals.token;
 
-    const [patientRes, pathsRes, diagnosesRes, executionsRes, polyglotRes] = await Promise.all([
+    const [patientRes, pathsRes, diagnosesRes, executionsRes, polyglotRes, degreesRes] = await Promise.all([
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}`, { token }),
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/paths`, { token }),
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/diagnoses`, { token }),
-        apiFetch(fetch, GAME_EXECUTIONS_PATH, { token }),
-        apiFetch(fetch, POLYGLOT_PATHS_PATH, { token })
+        apiFetch(fetch, `${GAME_EXECUTIONS_PATH}?patientId=${patientId}`, { token }),
+        apiFetch(fetch, POLYGLOT_PATHS_PATH, { token }),
+        apiFetch(fetch, DEGREES_PATH, { token }) // Fetch degrees for the edit form
     ]);
 
     if (!patientRes.ok) {
@@ -23,17 +24,58 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
     const patient = (await patientRes.json()) as Patient;
     const paths = pathsRes.ok ? ((await pathsRes.json()) as PatientPath[]) : [];
     const diagnoses = diagnosesRes.ok ? ((await diagnosesRes.json()) as Diagnosis[]) : [];
-    const allExecutions = executionsRes.ok ? ((await executionsRes.json()) as GameExecution[]) : [];
+    const executions = executionsRes.ok ? ((await executionsRes.json()) as GameExecution[]) : [];
     const polyglotPaths = polyglotRes.ok ? ((await polyglotRes.json()) as PolyglotPath[]) : [];
+    const degrees = degreesRes.ok ? ((await degreesRes.json()) as Degree[]) : [];
 
-    const patientExecutions = allExecutions.filter(
-        (exec) => exec.patientPath?.patient?.id === patientId
-    );
-
-    return { patient, paths, diagnoses, executions: patientExecutions, polyglotPaths };
+    return { patient, paths, diagnoses, executions, polyglotPaths, degrees };
 };
 
 export const actions: Actions = {
+    editPatient: async ({ request, params, fetch, locals }) => {
+        const data = await request.formData();
+        const patientId = params.id;
+
+        // Fetch degrees so we can attach the full Degree object required by the backend
+        const degreesRes = await apiFetch(fetch, DEGREES_PATH, { token: locals.token });
+        let degreeObj = null;
+        if (degreesRes.ok) {
+            const degrees = await degreesRes.json();
+            degreeObj = degrees.find((d: any) => d.code === data.get('degreeCode')?.toString());
+        }
+
+        const body = {
+            firstName: data.get('firstName')?.toString(),
+            lastName: data.get('lastName')?.toString(),
+            gender: data.get('gender')?.toString(),
+            age: Number(data.get('age')),
+            degree: degreeObj || { code: data.get('degreeCode')?.toString(), label: "", educationLevel: 0 }
+        };
+
+        const response = await apiFetch(fetch, `${PATIENTS_PATH}/${patientId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            token: locals.token
+        });
+
+        if (!response.ok) return fail(response.status, { error: 'Impossibile aggiornare i dati del paziente' });
+        return { success: true };
+    },
+
+    deletePatient: async ({ params, fetch, locals }) => {
+        const response = await apiFetch(fetch, `${PATIENTS_PATH}/${params.id}`, {
+            method: 'DELETE',
+            token: locals.token
+        });
+
+        if (!response.ok) return fail(response.status, { error: 'Impossibile eliminare il paziente' });
+
+        // Redirect back to the patients list after successful deletion
+        throw redirect(303, '/patients');
+    },
+
+    // --- The rest of your existing actions remain identical ---
     deletePath: async ({ request, params, fetch, locals }) => {
         const data = await request.formData();
         const pathId = data.get('pathId')?.toString();
@@ -46,10 +88,7 @@ export const actions: Actions = {
             token: locals.token
         });
 
-        if (!response.ok) {
-            return fail(response.status, { error: 'Impossibile eliminare il percorso' });
-        }
-
+        if (!response.ok) return fail(response.status, { error: 'Impossibile eliminare il percorso' });
         return { success: true };
     },
 
@@ -58,9 +97,7 @@ export const actions: Actions = {
         const polyglotPathId = data.get('polyglotPathId')?.toString();
         const patientId = params.id;
 
-        if (!polyglotPathId) {
-            return fail(400, { error: 'Seleziona un protocollo valido' });
-        }
+        if (!polyglotPathId) return fail(400, { error: 'Seleziona un protocollo valido' });
 
         const response = await apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/paths`, {
             method: 'POST',
@@ -69,10 +106,7 @@ export const actions: Actions = {
             token: locals.token
         });
 
-        if (!response.ok) {
-            return fail(response.status, { error: 'Impossibile assegnare il percorso' });
-        }
-
+        if (!response.ok) return fail(response.status, { error: 'Impossibile assegnare il percorso' });
         return { success: true };
     },
 
@@ -84,9 +118,7 @@ export const actions: Actions = {
         const medications = data.get('medications')?.toString() || '';
         const patientId = params.id;
 
-        if (!diagnosisText) {
-            return fail(400, { error: 'Il testo della diagnosi è obbligatorio' });
-        }
+        if (!diagnosisText) return fail(400, { error: 'Il testo della diagnosi è obbligatorio' });
 
         const response = await apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/diagnoses`, {
             method: 'POST',
@@ -95,10 +127,7 @@ export const actions: Actions = {
             token: locals.token
         });
 
-        if (!response.ok) {
-            return fail(response.status, { error: 'Impossibile salvare la diagnosi' });
-        }
-
+        if (!response.ok) return fail(response.status, { error: 'Impossibile salvare la diagnosi' });
         return { success: true };
     }
 };
