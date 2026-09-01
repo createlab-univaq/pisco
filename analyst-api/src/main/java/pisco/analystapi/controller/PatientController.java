@@ -157,10 +157,10 @@ public class PatientController {
     /** Returns the generated unique code -- the analyst hands it to the patient. */
     @Operation(
             summary = "Assegna un flow a un paziente",
-            description = "Il flow si indica per id: {\"flow\": {\"id\": \"...\"}}. Puo' essere "
-                    + "anche il flow di un collega. Restituisce il codice univoco generato, da "
-                    + "consegnare al paziente. 409 se lo stesso flow e' gia' assegnato: due "
-                    + "codici per un flow spezzerebbero la telemetria su entrambi.")
+            description = "Il flow si indica per id: {\"flow\": {\"id\": \"...\"}}, e deve essere "
+                    + "uno dei propri: quello di un collega risponde 404. Restituisce il codice "
+                    + "univoco generato, da consegnare al paziente. 409 se lo stesso flow e' "
+                    + "gia' assegnato: due codici per un flow spezzerebbero la telemetria.")
     @PostMapping("/{patientId}/paths")
     public ResponseEntity<PatientPathDTO> assignPath(
             @PathVariable UUID patientId, @Valid @RequestBody PatientPathDTO dto) {

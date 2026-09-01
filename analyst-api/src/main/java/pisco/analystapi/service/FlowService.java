@@ -7,7 +7,7 @@ import pisco.analystapi.model.entity.Flow;
 
 public interface FlowService {
 
-    /** Every flow, without its graph. */
+    /** The caller's own flows, without their graphs. */
     List<FlowDTO> findAll();
 
     /** The one place a flow comes back with its React Flow graph attached. */
@@ -19,6 +19,9 @@ public interface FlowService {
 
     void delete(UUID id);
 
-    /** The entity, for assigning a flow to a patient. Any analyst may assign any flow. */
-    Flow requireById(UUID id);
+    /**
+     * The entity, for assigning a flow to a patient. Scoped to the caller: a flow that
+     * belongs to someone else is a 404, exactly as it is on every other route here.
+     */
+    Flow requireOwned(UUID id);
 }

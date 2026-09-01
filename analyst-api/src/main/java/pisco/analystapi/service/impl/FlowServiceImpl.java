@@ -17,10 +17,7 @@ import pisco.analystapi.model.repository.AnalystRepository;
 import pisco.analystapi.model.repository.FlowRepository;
 import pisco.analystapi.service.FlowService;
 
-/**
- * Reading is open to every analyst so a colleague's flow can be assigned; writing is not,
- * since a flow belongs to whoever authored it.
- */
+/** A flow belongs to whoever authored it: nobody else can read, edit or assign it. */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,7 +30,8 @@ public class FlowServiceImpl implements FlowService {
     @Override
     @Transactional(readOnly = true)
     public List<FlowDTO> findAll() {
-        List<Flow> flows = repository.findAllByOrderByNameAsc();
+        List<Flow> flows =
+                repository.findAllByAnalystIdOrderByNameAsc(SecurityUtils.currentAnalystId());
         log.debug("Elenco flow: {} risultati", flows.size());
         return mapper.toDto(flows);
     }
@@ -41,7 +39,7 @@ public class FlowServiceImpl implements FlowService {
     @Override
     @Transactional(readOnly = true)
     public FlowDTO findById(UUID id) {
-        return mapper.toDetailDto(requireById(id));
+        return mapper.toDetailDto(requireOwned(id));
     }
 
     @Override
@@ -91,23 +89,18 @@ public class FlowServiceImpl implements FlowService {
         log.info("Flow eliminato id={}", id);
     }
 
+    /**
+     * Ownership is part of the query rather than a check after the fact: a flow belonging
+     * to another analyst comes back empty and turns into a 404, which tells the caller
+     * nothing about whether it exists.
+     */
     @Override
     @Transactional(readOnly = true)
-    public Flow requireById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> {
-            log.info("Flow {} non trovato", id);
+    public Flow requireOwned(UUID id) {
+        UUID analystId = SecurityUtils.currentAnalystId();
+        return repository.findByIdAndAnalystId(id, analystId).orElseThrow(() -> {
+            log.info("Flow {} non accessibile per analystId={}", id, analystId);
             return NotFoundException.of("Flow", id);
         });
-    }
-
-    private Flow requireOwned(UUID id) {
-        Flow flow = requireById(id);
-        UUID analystId = SecurityUtils.currentAnalystId();
-        if (!flow.getAnalyst().getId().equals(analystId)) {
-            log.warn("Flow {} non modificabile da analystId={}: appartiene a {}",
-                    id, analystId, flow.getAnalyst().getId());
-            throw new NotFoundException("Flow non modificabile: " + id);
-        }
-        return flow;
     }
 }

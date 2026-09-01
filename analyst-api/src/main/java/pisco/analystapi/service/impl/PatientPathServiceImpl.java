@@ -49,9 +49,8 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Transactional
     public PatientPathDTO assign(UUID patientId, PatientPathDTO dto) {
         AnalystPatient link = analystPatientService.requireLink(patientId);
-        // Any analyst may assign any flow, including a colleague's -- authorship governs
-        // editing the flow, not prescribing it.
-        Flow flow = flowService.requireById(dto.getFlow().getId());
+        // Only the author's own flows: an id belonging to a colleague is a 404 here too.
+        Flow flow = flowService.requireOwned(dto.getFlow().getId());
 
         // Re-assigning the same flow is a conflict rather than a second code: two live
         // codes for one flow would split that patient's telemetry across both.

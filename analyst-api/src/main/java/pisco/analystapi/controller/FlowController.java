@@ -28,16 +28,16 @@ import pisco.analystapi.service.FlowService;
 @Slf4j
 @Tag(
         name = "Flow",
-        description = "Percorsi autorati qui, non piu' su Polyglot. Ogni analista possiede i "
-                + "propri: tutti li vedono e possono assegnarli, solo l'autore li modifica.")
+        description = "Percorsi autorati qui, non piu' su Polyglot. Ogni analista vede e "
+                + "gestisce solo i propri: il flow di un collega risponde 404 su ogni rotta.")
 public class FlowController {
 
     private final FlowService service;
 
     @Operation(
-            summary = "Elenca i flow",
-            description = "Senza flowJson: la struttura arriva solo dal dettaglio. "
-                    + "Ordinati per nome.")
+            summary = "Elenca i propri flow",
+            description = "Solo quelli di cui il chiamante e' autore, ordinati per nome. "
+                    + "Senza flowJson: la struttura arriva solo dal dettaglio.")
     @GetMapping
     public List<FlowDTO> list() {
         log.info("GET /api/flows");
@@ -46,7 +46,8 @@ public class FlowController {
 
     @Operation(
             summary = "Recupera un flow con la sua struttura",
-            description = "L'unico endpoint che restituisce flowJson, il grafo React Flow.")
+            description = "Riservato all'autore. L'unico endpoint che restituisce flowJson, "
+                    + "il grafo React Flow.")
     @GetMapping("/{id}")
     public FlowDTO get(@PathVariable UUID id) {
         log.info("GET /api/flows/{}", id);
