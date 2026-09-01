@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { PageData, ActionData } from './$types';
 	import LineChart from '$lib/components/LineChart.svelte';
 	import BarChart from '$lib/components/BarChart.svelte';
 	import { exportSinglePatientExcel } from '$lib/utils/excelExport';
 	import { toast } from '$lib/stores/toast.svelte';
+	import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -20,6 +20,9 @@
 	let gestionePercorsiMode = $state(false);
 	let selectedPolyglotPathId = $state<string>('');
 	let editPatientMode = $state(false);
+
+	let showDiagnosisModal = $state(false);
+	let diagnosisFormElement = $state<HTMLFormElement | null>(null);
 
 	// 1. PATH SELECTION
 	let availableCodes = $derived(
@@ -78,7 +81,6 @@
 
 		return Array.from(types).map((type) => {
 			const datasetData = codeExecutions.map((exec, idx) => {
-				// Get average percentage for this node type in this run
 				const nodesOfType = exec.nodes.filter((n) => !n.isExercise && n.nodeType === type);
 				const avgScore =
 					nodesOfType.length > 0
@@ -122,23 +124,7 @@
 	<div class="patient-card">
 		{#if editPatientMode}
 			<!-- EDIT MODE FORM -->
-			<form
-				action="?/editPatient"
-				method="POST"
-				use:enhance={() => {
-					return async ({ result, update }) => {
-						if (result.type === 'success') {
-							toast.add('Paziente aggiornato con successo', 'success');
-							editPatientMode = false;
-						} else if (result.type === 'failure') {
-							const errData = result.data as Record<string, any>;
-							toast.add(errData?.error || 'Impossibile aggiornare il paziente', 'error');
-						}
-						await update();
-					};
-				}}
-				class="edit-patient-form"
-			>
+			<form action="?/editPatient" method="POST" class="edit-patient-form">
 				<div class="edit-row">
 					<div class="form-group">
 						<label for="firstName">Nome</label>
@@ -267,21 +253,7 @@
 									<span class="date">{new Date(path.assignedAt).toLocaleDateString()}</span>
 								</div>
 								{#if gestionePercorsiMode}
-									<form
-										action="?/deletePath"
-										method="POST"
-										use:enhance={() => {
-											return async ({ result, update }) => {
-												if (result.type === 'success') {
-													toast.add('Percorso rimosso con successo', 'success');
-												} else if (result.type === 'failure') {
-													const errData = result.data as Record<string, any>;
-													toast.add(errData?.error || 'Impossibile eliminare il percorso', 'error');
-												}
-												await update();
-											};
-										}}
-									>
+									<form action="?/deletePath" method="POST">
 										<input type="hidden" name="pathId" value={path.id} />
 										<button type="submit" class="btn-icon-delete" title="Rimuovi percorso">✕</button
 										>
@@ -294,23 +266,7 @@
 
 				<!-- Quick Assign Form in Management Mode -->
 				{#if gestionePercorsiMode}
-					<form
-						action="?/assignPath"
-						method="POST"
-						use:enhance={() => {
-							return async ({ result, update }) => {
-								if (result.type === 'success') {
-									toast.add('Percorso assegnato con successo', 'success');
-									selectedPolyglotPathId = '';
-								} else if (result.type === 'failure') {
-									const errData = result.data as Record<string, any>;
-									toast.add(errData?.error || 'Impossibile assegnare il percorso', 'error');
-								}
-								await update();
-							};
-						}}
-						class="quick-assign-form"
-					>
+					<form action="?/assignPath" method="POST" class="quick-assign-form">
 						<h4>Assegna Nuovo Percorso</h4>
 						<div class="assign-row">
 							<select
@@ -556,17 +512,7 @@
 		<form
 			action="?/addDiagnosis"
 			method="POST"
-			use:enhance={() => {
-				return async ({ result, update }) => {
-					if (result.type === 'success') {
-						toast.add('Diagnosi aggiunta con successo', 'success');
-					} else if (result.type === 'failure') {
-						const errData = result.data as Record<string, any>;
-						toast.add(errData?.error || 'Impossibile salvare la diagnosi', 'error');
-					}
-					await update();
-				};
-			}}
+			bind:this={diagnosisFormElement}
 			class="diagnosis-form"
 		>
 			<div class="diagnosis-form-header">
@@ -622,10 +568,35 @@
 			</div>
 
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary">Salva Diagnosi</button>
+				<button
+					type="button"
+					class="btn btn-primary"
+					onclick={() => {
+						if (diagnosisFormElement?.checkValidity()) {
+							showDiagnosisModal = true;
+						} else {
+							diagnosisFormElement?.reportValidity();
+						}
+					}}
+				>
+					Salva Diagnosi
+				</button>
 			</div>
 		</form>
 	</div>
+
+	<ConfirmModal
+		bind:isOpen={showDiagnosisModal}
+		title="Conferma Inserimento Diagnosi"
+		message="Attenzione: Una volta registrata, la diagnosi non potrà più essere rimossa o eliminata dal sistema. Confermi il salvataggio?"
+		confirmText="Registra Diagnosi"
+		onConfirm={() => {
+			if (diagnosisFormElement) {
+				toast.add('Diagnosi aggiunta con successo', 'success');
+				diagnosisFormElement.submit();
+			}
+		}}
+	/>
 </div>
 
 <style>
