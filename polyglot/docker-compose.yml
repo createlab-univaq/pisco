@@ -1,0 +1,41 @@
+# Deployment. One service: the Next.js editor, built from the Dockerfile in this
+# repo. It has no database of its own -- everything goes through analyst-api.
+#
+# Unlike the dashboard, this app cannot reach the API over an internal address.
+# NEXT_PUBLIC_API_BASE_URL is inlined into the client bundle at build time, and
+# QuestionImageUploadField uses it in the browser to build <img src> for question
+# images, so it has to be a public URL and analyst-api has to be published.
+#
+# That does not need a proxy in front of it. The only request the browser makes to
+# the API is GET /api/images/*, which SecurityConfig leaves permitAll and which an
+# <img> tag fetches without CORS -- so publishing the API is enough on its own, and
+# polyglot's origin does not have to appear in the API's CORS_ORIGINS. Every other
+# call goes through apiClient.ts, which runs server-side.
+#
+# NEXT_PUBLIC_API_BASE_URL and MAX_UPLOAD_SIZE are build arguments, not runtime
+# variables. In Coolify they must be marked "Build Variable" -- setting them as
+# plain environment variables leaves them empty in the image.
+#
+# See .env.example for the full list and what each one means.
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE:-10mb}
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-3000}
+      HOSTNAME: 0.0.0.0
+      # Server-side only, so this one is a genuine runtime variable.
+      USE_MOCK_DATA: ${USE_MOCK_DATA:-false}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s

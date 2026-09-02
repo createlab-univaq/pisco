@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+build/
+.git/
+.env
+.env.local
+.vscode/
+readme/
+coverage/
+README.md
+CONTRIBUTING.md
+docker-compose*.yml
+mock-database.json
