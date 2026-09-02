@@ -1,0 +1,40 @@
+# Deployment. One service: the SvelteKit dashboard, built from the Dockerfile in
+# this repo. It has no database of its own -- everything goes through analyst-api.
+#
+# The dashboard never calls the API from the browser: every route loads through a
+# +page.server.ts, and apiClient.ts reads API_BASE_URL from $env/dynamic/private.
+# So API_BASE_URL can be the API's internal address on Coolify's network and the API
+# does not have to be published at all for this app to work. No proxy in front of it,
+# and no entry needed in the API's CORS_ORIGINS.
+#
+# For the internal address to resolve, both this app and analyst-api must have
+# "Connect To Predefined Network" enabled in Coolify; the hostname to use is the one
+# Coolify shows under the API's "Internal URL".
+#
+# Every variable below must be set in the Coolify environment for this app.
+# See .env.example for the full list and what each one means.
+
+services:
+  dashboard:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+      # adapter-node reads PORT; the published port below has to agree with it.
+      PORT: ${PORT:-3000}
+      # adapter-node rejects form action POSTs whose Origin does not match the app's
+      # own. Behind Coolify's proxy the app only sees the internal host, so without
+      # this the login form fails with "Cross-site POST form submissions are
+      # forbidden". Set it to the dashboard's own public URL, scheme included, no
+      # trailing slash.
+      ORIGIN: ${ORIGIN}
+      API_BASE_URL: ${API_BASE_URL}
+      USE_MOCK_DATA: ${USE_MOCK_DATA:-false}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s

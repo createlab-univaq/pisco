@@ -1,0 +1,13 @@
+node_modules/
+build/
+.svelte-kit/
+.git/
+.env
+.vscode/
+readme/
+test-results/
+playwright-report/
+coverage/
+README.md
+docker-compose*.yml
+mock-database.json

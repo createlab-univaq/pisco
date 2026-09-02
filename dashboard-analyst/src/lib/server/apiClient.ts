@@ -1,4 +1,7 @@
-import { API_BASE_URL, USE_MOCK_DATA } from '$env/static/private';
+// Dynamic, not static: $env/static/private is substituted at build time, which would
+// bake the API URL into the image and make it a build argument on Coolify. Read at
+// runtime the same image can be promoted between environments.
+import { env } from '$env/dynamic/private';
 import {
     LOGIN_PATH,
     REGISTER_PATH,
@@ -16,7 +19,7 @@ export async function apiFetch(
     path: string,
     options: RequestInit & { token?: string } = {}
 ): Promise<Response> {
-    const useMock = USE_MOCK_DATA === 'true';
+    const useMock = env.USE_MOCK_DATA === 'true';
     const method = options.method || 'GET';
 
     // Safely extract pathname and search params to handle query strings correctly
@@ -230,7 +233,7 @@ export async function apiFetch(
         headers.set('Authorization', `Bearer ${options.token}`);
     }
 
-    return nativeFetch(`${API_BASE_URL}${path}`, {
+    return nativeFetch(`${env.API_BASE_URL}${path}`, {
         ...options,
         headers
     });
