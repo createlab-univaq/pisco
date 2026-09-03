@@ -74,7 +74,8 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Override
     @Transactional
     public void delete(UUID id) {
-        repository.delete(requireOwned(id));
+        requireOwned(id);
+        repository.deleteById(id);
         log.info("Diagnosi eliminata id={}", id);
     }
 

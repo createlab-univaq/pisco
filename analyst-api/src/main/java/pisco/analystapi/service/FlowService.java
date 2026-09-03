@@ -7,8 +7,11 @@ import pisco.analystapi.model.entity.Flow;
 
 public interface FlowService {
 
-    /** The caller's own flows, without their graphs. */
-    List<FlowDTO> findAll();
+    /**
+     * The caller's own flows, without their graphs. A non-blank {@code search} keeps only
+     * those whose name or description contains it, ignoring case; null or blank lists all.
+     */
+    List<FlowDTO> findAll(String search);
 
     /** The one place a flow comes back with its React Flow graph attached. */
     FlowDTO findById(UUID id);

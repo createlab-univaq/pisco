@@ -116,7 +116,8 @@ public class GameExecutionServiceImpl implements GameExecutionService {
     @Transactional
     public void delete(UUID id) {
         // Nodes and their answers go with it -- the foreign keys cascade.
-        repository.delete(requireOwned(id));
+        requireOwned(id);
+        repository.deleteById(id);
         log.info("Esecuzione eliminata id={} (risposte in cascata)", id);
     }
 

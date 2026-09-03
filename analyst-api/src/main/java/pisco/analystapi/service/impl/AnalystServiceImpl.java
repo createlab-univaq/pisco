@@ -107,7 +107,7 @@ public class AnalystServiceImpl implements AnalystService {
     @Transactional
     public void delete(UUID id) {
         assertSelfOrAdmin(id);
-        Analyst analyst = require(id);
+        require(id);
 
         // Assignments are not orphaned or silently destroyed: the caller has to deal with
         // them first. This is why that foreign key is restrict rather than cascade.
@@ -117,7 +117,7 @@ public class AnalystServiceImpl implements AnalystService {
                     "L'analista ha ancora pazienti associati: eliminarli o riassegnarli prima");
         }
 
-        repository.delete(analyst);
+        repository.deleteById(id);
         log.info("Analista eliminato id={}", id);
     }
 

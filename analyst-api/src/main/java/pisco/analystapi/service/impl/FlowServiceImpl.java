@@ -29,10 +29,12 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<FlowDTO> findAll() {
-        List<Flow> flows =
-                repository.findAllByAnalystIdOrderByNameAsc(SecurityUtils.currentAnalystId());
-        log.debug("Elenco flow: {} risultati", flows.size());
+    public List<FlowDTO> findAll(String search) {
+        // Collapsed to null so that ?search= behaves as no filter rather than as a
+        // like '%%' that every flow matches by accident.
+        String term = StringUtils.hasText(search) ? search.trim() : null;
+        List<Flow> flows = repository.findForAnalyst(SecurityUtils.currentAnalystId(), term);
+        log.debug("Elenco flow: search={} risultati={}", term, flows.size());
         return mapper.toDto(flows);
     }
 
@@ -85,7 +87,8 @@ public class FlowServiceImpl implements FlowService {
     public void delete(UUID id) {
         // Assignments referencing it block the delete: the foreign key on patient_paths is
         // restrict, so a flow handed to a patient cannot vanish under their feet.
-        repository.delete(requireOwned(id));
+        requireOwned(id);
+        repository.deleteById(id);
         log.info("Flow eliminato id={}", id);
     }
 

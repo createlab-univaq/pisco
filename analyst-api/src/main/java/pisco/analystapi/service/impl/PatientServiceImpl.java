@@ -92,7 +92,12 @@ public class PatientServiceImpl implements PatientService {
         // Deletes the patient outright, not just the caller's assignment (spec section 5).
         // Every assignment goes with them, and through those the diagnoses, assigned paths
         // and executions -- including another analyst's, if the patient was shared.
-        repository.delete(analystPatientService.requireLink(id).getPatient());
+        //
+        // requireLink is the authorization check and nothing more: its result is not what
+        // gets deleted. AnalystPatient.patient is lazy, so reaching through it hands the
+        // repository a proxy to remove rather than the row id we already have.
+        analystPatientService.requireLink(id);
+        repository.deleteById(id);
         log.info("Paziente eliminato id={} (assegnazioni, diagnosi, percorsi ed esecuzioni in cascata)", id);
     }
 

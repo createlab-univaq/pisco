@@ -74,7 +74,8 @@ public class ImageServiceImpl implements ImageService {
     public void delete(UUID id) {
         // Nothing checks whether a flow still references it: flowJson is opaque here, so
         // the graph can point at an image that has been removed and gets a 404 for it.
-        repository.delete(requireById(id));
+        requireById(id);
+        repository.deleteById(id);
         log.info("Immagine eliminata id={}", id);
     }
 

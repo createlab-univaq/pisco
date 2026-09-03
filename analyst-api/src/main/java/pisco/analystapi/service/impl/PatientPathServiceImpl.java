@@ -78,14 +78,14 @@ public class PatientPathServiceImpl implements PatientPathService {
     @Transactional
     public void remove(UUID patientId, UUID pathId) {
         AnalystPatient link = analystPatientService.requireLink(patientId);
-        PatientPath patientPath = repository.findByIdAndAnalystPatientId(pathId, link.getId())
+        repository.findByIdAndAnalystPatientId(pathId, link.getId())
                 .orElseThrow(() -> {
                     log.warn("Percorso {} non accessibile per patientId={}", pathId, patientId);
                     return NotFoundException.of("Percorso assegnato", pathId);
                 });
 
         // Executions recorded under this code go too -- the foreign key cascades.
-        repository.delete(patientPath);
+        repository.deleteById(pathId);
         log.info("Percorso rimosso id={} patientId={} (esecuzioni in cascata)", pathId, patientId);
     }
 

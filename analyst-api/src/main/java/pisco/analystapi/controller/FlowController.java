@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pisco.analystapi.model.dto.FlowDTO;
 import pisco.analystapi.model.dto.validation.ValidationGroups.Create;
@@ -37,11 +38,13 @@ public class FlowController {
     @Operation(
             summary = "Elenca i propri flow",
             description = "Solo quelli di cui il chiamante e' autore, ordinati per nome. "
-                    + "Senza flowJson: la struttura arriva solo dal dettaglio.")
+                    + "Senza flowJson: la struttura arriva solo dal dettaglio. Il parametro "
+                    + "search e' opzionale e filtra per nome o descrizione, senza distinzione "
+                    + "fra maiuscole e minuscole; omesso o vuoto restituisce tutto.")
     @GetMapping
-    public List<FlowDTO> list() {
-        log.info("GET /api/flows");
-        return service.findAll();
+    public List<FlowDTO> list(@RequestParam(required = false) String search) {
+        log.info("GET /api/flows search={}", search);
+        return service.findAll(search);
     }
 
     @Operation(
