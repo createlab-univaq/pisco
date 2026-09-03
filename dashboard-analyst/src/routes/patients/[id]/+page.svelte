@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import type { PageData, ActionData } from './$types';
+	import type { PageData } from './$types';
 	import LineChart from '$lib/components/LineChart.svelte';
 	import BarChart from '$lib/components/BarChart.svelte';
 	import { exportSinglePatientExcel } from '$lib/utils/excelExport';
 	import { toast } from '$lib/stores/toast.svelte';
 	import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+	let { data }: { data: PageData } = $props();
 
 	let patient = $derived(data.patient);
 	let paths = $derived(data.paths);
@@ -23,6 +24,9 @@
 
 	let showDiagnosisModal = $state(false);
 	let diagnosisFormElement = $state<HTMLFormElement | null>(null);
+
+	let showDeletePatientModal = $state(false);
+	let deleteFormElement = $state<HTMLFormElement | null>(null);
 
 	// 1. PATH SELECTION
 	let availableCodes = $derived(
@@ -188,16 +192,12 @@
 
 					<div class="spacer"></div>
 
-					<!-- Delete Button inside edit mode to prevent accidental clicks -->
+					<!-- Delete Button triggering ConfirmModal -->
 					<button
-						type="submit"
-						formaction="?/deletePatient"
+						type="button"
 						class="btn btn-danger"
-						onclick={(e) => {
-							if (
-								!confirm("Sei sicuro di voler eliminare questo paziente? L'azione è irreversibile.")
-							)
-								e.preventDefault();
+						onclick={() => {
+							showDeletePatientModal = true;
 						}}
 					>
 						Elimina Paziente
@@ -585,6 +585,14 @@
 		</form>
 	</div>
 
+	<!-- Hidden form for patient deletion via ConfirmModal -->
+	<form
+		action="?/deletePatient"
+		method="POST"
+		bind:this={deleteFormElement}
+		class="hidden-form"
+	></form>
+
 	<ConfirmModal
 		bind:isOpen={showDiagnosisModal}
 		title="Conferma Inserimento Diagnosi"
@@ -592,8 +600,19 @@
 		confirmText="Registra Diagnosi"
 		onConfirm={() => {
 			if (diagnosisFormElement) {
-				toast.add('Diagnosi aggiunta con successo', 'success');
 				diagnosisFormElement.submit();
+			}
+		}}
+	/>
+
+	<ConfirmModal
+		bind:isOpen={showDeletePatientModal}
+		title="Conferma Eliminazione Paziente"
+		message="Sei sicuro di voler eliminare questo paziente? L'azione è irreversibile e cancellerà tutti i dati associati."
+		confirmText="Elimina Paziente"
+		onConfirm={() => {
+			if (deleteFormElement) {
+				deleteFormElement.submit();
 			}
 		}}
 	/>
@@ -941,5 +960,8 @@
 	}
 	.btn-danger:hover {
 		background-color: #b71c1c;
+	}
+	.hidden-form {
+		display: none;
 	}
 </style>
