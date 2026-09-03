@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://dasdoe0ccug54"]
+
+[ext_resource type="Script" uid="uid://cfe8p60kih7l3" path="res://menu/login_screen.gd" id="1_u1yoo"]
+
+[node name="LoginScreen" type="Control" unique_id=1643785158]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u1yoo")
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1647873495]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_right = 150
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=892874293]
+layout_mode = 2
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="EmailLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=459984500]
+layout_mode = 2
+text = "Email"
+
+[node name="EmailLineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer" unique_id=881769913]
+layout_mode = 2
+
+[node name="PasswordLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1102709034]
+layout_mode = 2
+text = "Password"
+
+[node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer" unique_id=993464069]
+layout_mode = 2
+secret = true
+
+[node name="ErrorRichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=995436419]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 0, 0, 1)
+bbcode_enabled = true
+fit_content = true
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=1069296649]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 50
+
+[node name="LoginButton" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=1984907006]
+layout_mode = 2
+text = "Login"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/MarginContainer/LoginButton" to="." method="_on_login_button_pressed"]

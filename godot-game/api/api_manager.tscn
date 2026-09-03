@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dodlxp1ol8gyw"]
+
+[ext_resource type="Script" uid="uid://di1efk1mbusi3" path="res://api/api_manager.gd" id="1_bd38r"]
+
+[node name="APIManager" type="Node" unique_id=409589967]
+script = ExtResource("1_bd38r")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=203443390]
+use_threads = true

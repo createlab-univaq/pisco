@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 SceneChangerController="*uid://b0ldgv613wt7h"
 GameStateService="*uid://2y38bgt65h54"
+APIManager="*uid://dodlxp1ol8gyw"
 
 [display]
 
