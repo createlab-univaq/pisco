@@ -366,6 +366,7 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
                 type: type,
                 title: 'New Node',
                 description: '',
+                isExercise: false,
                 data: {} as any,
                 reactFlow: {
                     id: id,
