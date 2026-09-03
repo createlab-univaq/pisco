@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -15,6 +16,7 @@ import pisco.analystapi.model.entity.Flow;
 import pisco.analystapi.model.mapper.FlowMapper;
 import pisco.analystapi.model.repository.AnalystRepository;
 import pisco.analystapi.model.repository.FlowRepository;
+import pisco.analystapi.model.repository.FlowSpecifications;
 import pisco.analystapi.service.FlowService;
 
 /** A flow belongs to whoever authored it: nobody else can read, edit or assign it. */
@@ -30,11 +32,11 @@ public class FlowServiceImpl implements FlowService {
     @Override
     @Transactional(readOnly = true)
     public List<FlowDTO> findAll(String search) {
-        // Collapsed to null so that ?search= behaves as no filter rather than as a
-        // like '%%' that every flow matches by accident.
-        String term = StringUtils.hasText(search) ? search.trim() : null;
-        List<Flow> flows = repository.findForAnalyst(SecurityUtils.currentAnalystId(), term);
-        log.debug("Elenco flow: search={} risultati={}", term, flows.size());
+        List<Flow> flows = repository.findAll(
+                FlowSpecifications.ownedBy(SecurityUtils.currentAnalystId())
+                        .and(FlowSpecifications.matching(search)),
+                Sort.by(Sort.Direction.ASC, "name"));
+        log.debug("Elenco flow: search={} risultati={}", search, flows.size());
         return mapper.toDto(flows);
     }
 

@@ -1,33 +1,17 @@
 package pisco.analystapi.model.repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import pisco.analystapi.model.entity.Flow;
 
-public interface FlowRepository extends JpaRepository<Flow, UUID> {
-
-    /**
-     * A flow is private to its author, so every read is scoped rather than filtered later.
-     *
-     * <p>JPQL rather than a derived name because the search spans two fields: derived, the
-     * ownership check has to be repeated on both sides of the Or, and one wrong grouping
-     * there returns another analyst's flows. Written out, the scope sits outside the group
-     * where it cannot be misread. The {@code :search is null} branch lets one query serve
-     * both the filtered and the unfiltered list, as findForAnalyst does for executions.
-     */
-    @Query("""
-            select f from Flow f
-            where f.analyst.id = :analystId
-              and (:search is null
-                   or lower(f.name) like lower(concat('%', :search, '%'))
-                   or lower(f.description) like lower(concat('%', :search, '%')))
-            order by f.name asc
-            """)
-    List<Flow> findForAnalyst(@Param("analystId") UUID analystId, @Param("search") String search);
+/**
+ * The list read is composed from FlowSpecifications rather than declared here: the search
+ * spans two fields, so as a derived name the ownership check would have to be repeated on
+ * both sides of the Or, and one wrong grouping there returns another analyst's flows.
+ */
+public interface FlowRepository extends JpaRepository<Flow, UUID>, JpaSpecificationExecutor<Flow> {
 
     Optional<Flow> findByIdAndAnalystId(UUID id, UUID analystId);
 
