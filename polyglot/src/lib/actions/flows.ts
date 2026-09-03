@@ -9,7 +9,7 @@ import { Flow } from '@/types';
 export async function getFlowsAction(searchQuery?: string) {
     try {
         const url = searchQuery
-            ? `${FLOWS_PATH}?name=${encodeURIComponent(searchQuery)}`
+            ? `${FLOWS_PATH}?search=${encodeURIComponent(searchQuery)}`
             : FLOWS_PATH;
 
         const res = await apiFetch(url, {
