@@ -12,6 +12,16 @@ grow_vertical = 2
 script = ExtResource("1_u1yoo")
 metadata/_edit_use_anchors_ = true
 
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1536450672]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1647873495]
 layout_mode = 1
 anchors_preset = 15
@@ -48,6 +58,7 @@ layout_mode = 2
 theme_override_colors/default_color = Color(1, 0, 0, 1)
 bbcode_enabled = true
 fit_content = true
+horizontal_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=1069296649]
 layout_mode = 2
@@ -57,6 +68,18 @@ theme_override_constants/margin_right = 50
 
 [node name="LoginButton" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=1984907006]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 text = "Login"
+
+[node name="FadeColorRect" type="ColorRect" parent="." unique_id=63536061]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+metadata/_edit_use_anchors_ = true
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/MarginContainer/LoginButton" to="." method="_on_login_button_pressed"]

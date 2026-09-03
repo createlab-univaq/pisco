@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bxdmohj8f4br7"]
+
+[ext_resource type="Script" uid="uid://chgemufb0ideb" path="res://overlap/triggerable_area.gd" id="1_iasbr"]
+
+[node name="TriggerableArea" type="Area2D" unique_id=1257671708]
+script = ExtResource("1_iasbr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2145389743]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

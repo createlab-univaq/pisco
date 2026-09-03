@@ -12,7 +12,6 @@ enum States {
 }
 
 var state: States = States.WALK
-var player_direction: Vector2 = Vector2.DOWN
 var is_player_in_cutscene: bool = false
 
 func _physics_process(_delta) -> void:
@@ -33,7 +32,6 @@ func _walk_state() -> void:
 	input_vector = input_vector.normalized()
 	
 	if input_vector != Vector2.ZERO:
-		player_direction = input_vector
 		player_composite_sprite.face_direction(input_vector)
 		player_composite_sprite.change_animation(player_composite_sprite.WALK_ANIMATION_KEY)
 		velocity = velocity.move_toward(input_vector * SPEED, SPEED)

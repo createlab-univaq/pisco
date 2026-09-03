@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://dbl2duqqrtu17"]
+
+[ext_resource type="Script" uid="uid://baw6q5f5dr4if" path="res://menu/input_code_screen.gd" id="1_gkgln"]
+
+[node name="InputCodeScreen" type="Control" unique_id=2105049056]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gkgln")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1450545526]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=950219934]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 180
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 180
+theme_override_constants/margin_bottom = 150
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1832779394]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer" unique_id=1944614078]
+layout_mode = 2
+placeholder_text = "Inserisci il codice..."
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=236315019]
+layout_mode = 2
+theme_override_constants/margin_left = 70
+theme_override_constants/margin_right = 70
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=1202914819]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Inizia"

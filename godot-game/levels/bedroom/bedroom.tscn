@@ -9,14 +9,18 @@
 [ext_resource type="Texture2D" uid="uid://d3bj7w7wu5c3a" path="res://sprites/map/stairs.png" id="3_rkq2c"]
 [ext_resource type="Texture2D" uid="uid://crp5jkpmtr5d2" path="res://sprites/map/wooden_ceiling_1.png" id="4_6k2mn"]
 [ext_resource type="PackedScene" uid="uid://4j88pw51ipmk" path="res://actionables/actionable.tscn" id="8_0etjl"]
+[ext_resource type="Script" uid="uid://b2bdsqb0mimr0" path="res://levels/bedroom/bedroom_collisions.gd" id="8_amg3q"]
 [ext_resource type="Script" uid="uid://cpt6ahosv76bm" path="res://levels/bedroom/bedroom_ui.gd" id="9_3iurg"]
 [ext_resource type="PackedScene" uid="uid://by337nrm8aqbg" path="res://menu/custom_player_screen/custom_player_screen.tscn" id="9_cqvla"]
 [ext_resource type="PackedScene" uid="uid://bkenj2h8fog3f" path="res://system/scene_transition.tscn" id="9_hobr5"]
 [ext_resource type="PackedScene" uid="uid://c7fpk7k3ne82l" path="res://npcs/boba_the_cat.tscn" id="9_jbyh0"]
+[ext_resource type="PackedScene" uid="uid://bxdmohj8f4br7" path="res://overlap/triggerable_area.tscn" id="9_w554w"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="10_lhvc8"]
 [ext_resource type="Script" uid="uid://bql1rb1vxtfmo" path="res://levels/bedroom/bedroom_actionables.gd" id="10_xhnyy"]
 [ext_resource type="PackedScene" uid="uid://clqtj5oxcs0h3" path="res://menu/pet_shop_screen.tscn" id="11_17yto"]
 [ext_resource type="PackedScene" uid="uid://vx76gc5fc0ou" path="res://menu/companion_screen.tscn" id="12_oushh"]
+[ext_resource type="PackedScene" uid="uid://dbl2duqqrtu17" path="res://menu/input_code_screen.tscn" id="14_p0lhp"]
+[ext_resource type="Script" uid="uid://tfssd61d7lxs" path="res://levels/bedroom/bedroom_transitions.gd" id="17_0wck0"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0etjl"]
 texture = ExtResource("2_614nl")
@@ -141,6 +145,9 @@ physics_layer_0/collision_layer = 2
 physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_3xglk")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w554w"]
+size = Vector2(22, 32)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_buggl"]
 size = Vector2(32, 16)
 
@@ -151,7 +158,7 @@ size = Vector2(16, 16)
 size = Vector2(16, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cqvla"]
-size = Vector2(16, 32)
+size = Vector2(22, 32)
 
 [node name="Bedroom" type="Node2D" unique_id=1968043701]
 y_sort_enabled = true
@@ -186,6 +193,18 @@ z_index = 1
 tile_map_data = PackedByteArray("AAAFAAQAAAAAAAAAAAAFAAUAAAAAAAEAAAAFAAYAAAAAAAEAAAAFAAcAAAAAAAIAAAAKAAQAAAACAAAAAAAKAAUAAAACAAEAAAAKAAYAAAACAAEAAAAKAAcAAAACAAIAAAAGAAcAAAABAAIAAAAHAAcAAAABAAIAAAAIAAcAAAABAAIAAAAJAAcAAAABAAIAAAAGAAQAAAABAAAAAAAHAAQAAAABAAAAAAAIAAQAAAABAAAAAAAJAAQAAAABAAAAAAA=")
 tile_set = SubResource("TileSet_0etjl")
 
+[node name="Collisions" type="Node2D" parent="." unique_id=347260537]
+z_index = 1
+y_sort_enabled = true
+script = ExtResource("8_amg3q")
+
+[node name="TriggerableArea" parent="Collisions" unique_id=1257671708 instance=ExtResource("9_w554w")]
+position = Vector2(252, 213)
+direction = 4
+
+[node name="CollisionShape2D" parent="Collisions/TriggerableArea" index="0" unique_id=2145389743]
+shape = SubResource("RectangleShape2D_w554w")
+
 [node name="Player" parent="." unique_id=56829661 instance=ExtResource("3_c7cqy")]
 position = Vector2(366, 249)
 
@@ -206,6 +225,9 @@ visible = false
 [node name="CompanionScreen" parent="UI" unique_id=1405001249 node_paths=PackedStringArray("boba_the_cat") instance=ExtResource("12_oushh")]
 visible = false
 boba_the_cat = NodePath("../../BobaTheCat")
+
+[node name="InputCodeScreen" parent="UI" unique_id=2105049056 instance=ExtResource("14_p0lhp")]
+visible = false
 
 [node name="Actionables" type="Node" parent="." unique_id=1198991442]
 script = ExtResource("10_xhnyy")
@@ -235,13 +257,14 @@ exclamation_mark_facing_direction = 5
 shape = SubResource("RectangleShape2D_hobr5")
 
 [node name="Transitions" type="Node" parent="." unique_id=752459822]
+script = ExtResource("17_0wck0")
 
 [node name="SceneTransition" parent="Transitions" unique_id=1688190010 node_paths=PackedStringArray("player", "game_camera") instance=ExtResource("9_hobr5")]
 player = NodePath("../../Player")
 game_camera = NodePath("../../GameCamera")
 
 [node name="LDKSceneChangerTile" parent="Transitions" unique_id=314211868 node_paths=PackedStringArray("scene_transition", "boba_the_cat") instance=ExtResource("10_lhvc8")]
-position = Vector2(249, 213)
+position = Vector2(252, 213)
 scene_transition = NodePath("../SceneTransition")
 scene_to_change_into = "res://levels/ldk/ldk.tscn"
 player_next_room_spawn_position = Vector2(393, 285)
@@ -251,6 +274,8 @@ boba_the_cat = NodePath("../../BobaTheCat")
 [node name="CollisionShape2D" parent="Transitions/LDKSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_cqvla")
 
+[connection signal="input_code_screen_open_requested" from="Collisions" to="UI" method="_on_collisions_input_code_screen_open_requested"]
+[connection signal="area_triggered" from="Collisions/TriggerableArea" to="Collisions" method="_on_triggerable_area_area_triggered"]
 [connection signal="pet_bought" from="UI/PetShopScreen" to="." method="_on_pet_shop_screen_pet_bought"]
 [connection signal="follow_player_changed" from="UI/CompanionScreen" to="." method="_on_companion_screen_follow_player_changed"]
 [connection signal="pethouse_open_requested" from="Actionables" to="UI" method="_on_actionables_pethouse_open_requested"]
@@ -260,6 +285,7 @@ shape = SubResource("RectangleShape2D_cqvla")
 [connection signal="actioned" from="Actionables/PethouseActionable" to="Actionables" method="_on_pethouse_actionable_actioned"]
 [connection signal="actioned" from="Actionables/PCActionable" to="Actionables" method="_on_pc_actionable_actioned"]
 
+[editable path="Collisions/TriggerableArea"]
 [editable path="Actionables/WardrobeActionable"]
 [editable path="Actionables/PethouseActionable"]
 [editable path="Actionables/PCActionable"]
