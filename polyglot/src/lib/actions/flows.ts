@@ -74,7 +74,7 @@ export async function deleteFlowAction(flowId: string) {
         });
 
         if (!res.ok) {
-            return { error: 'Failed to delete flow.' };
+            return { error: 'Failed to delete flow. Check if there are patients assigned to this flow' };
         }
 
         revalidatePath('/');
