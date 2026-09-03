@@ -1,7 +1,7 @@
 import { EDGE_TYPE } from '@/types/EdgeType';
 import { PolyglotEdgeBase } from '@/types/PolyglotEdgeBase';
 
-export type ConditionalOperator = '>' | '>=' | '<' | '<=' | '==';
+export type ConditionalOperator = '>' | '>=' | '<' | '<=' | '==' | '!=';
 
 export type ConditionalEdgeData = {
     edgeData: Record<string, any>;

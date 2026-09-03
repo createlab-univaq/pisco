@@ -7,7 +7,6 @@ type SearchItems = string[];
 
 type SearchBarProps = {
   inputValue: string;
-  // Fix: Changed from Dispatch<SetStateAction<string>> to a generic callback
   setInputValue: (value: string) => void;
   placeholder?: string;
   items: SearchItems;
@@ -28,11 +27,32 @@ export default function SearchBar({
   removeSearchButton,
 }: SearchBarProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Maintain local state so typing remains instantly responsive in the UI
+  const [localValue, setLocalValue] = useState(inputValue);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Filter items based on user input (case-insensitive)
+  // Sync local value if parent updates `inputValue` externally
+  useEffect(() => {
+    setLocalValue(inputValue);
+  }, [inputValue]);
+
+  // 2. Debounce the parent's `setInputValue` update by 200ms
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (localValue !== inputValue) {
+        setInputValue(localValue);
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [localValue, setInputValue, inputValue]);
+
+  // Filter items based on local user input (case-insensitive)
   const filteredItems = items.filter((item) =>
-    item.toLowerCase().includes(inputValue.toLowerCase())
+    item.toLowerCase().includes(localValue.toLowerCase())
   );
 
   // Close dropdown when clicking outside
@@ -50,9 +70,12 @@ export default function SearchBar({
     onSelectOption?.(value);
 
     if (multiple) {
-      setInputValue(''); // Clear input text after adding a tag
+      setLocalValue('');
+      setInputValue(''); // Clear input text immediately after adding a tag
     } else {
-      setInputValue(clearAfterSearch ? '' : value);
+      const nextValue = clearAfterSearch ? '' : value;
+      setLocalValue(nextValue);
+      setInputValue(nextValue);
     }
 
     setIsOpen(false);
@@ -60,16 +83,13 @@ export default function SearchBar({
 
   return (
     <div className={styles.container}>
-
       <div className={styles.autocompleteWrapper} ref={wrapperRef}>
-
-        {/* Fix: Added the missing input element! */}
         <input
           type="text"
-          className={styles.input} /* Ensure this class exists in your CSS */
-          value={inputValue}
+          className={styles.input}
+          value={localValue} // Controlled by local state for instant feedback
           onChange={(e) => {
-            setInputValue(e.target.value);
+            setLocalValue(e.target.value); // Updates instantly locally
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
@@ -117,7 +137,6 @@ export default function SearchBar({
           </svg>
         </button>
       )}
-
     </div>
   );
 }

@@ -37,6 +37,7 @@ const ConditionalEdgeProperties = ({ element: baseElement, onUpdateElement }: Po
                                 <option value="<">&lt;</option>
                                 <option value="<=">&lt;=</option>
                                 <option value="==">==</option>
+                                <option value="!=">!=</option>
                             </>
                         }
                     />
