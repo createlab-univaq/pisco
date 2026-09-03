@@ -27,9 +27,9 @@ func _on_login_request_completed(_result: int, response_code: int, _headers: Pac
 	http_request.request_completed.disconnect(_on_login_request_completed.bind(on_login))
 	
 	var json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
-	var login_response: LoginResponse = LoginResponse.new()
-	login_response.success = response_code == 200
-	if login_response.success:
+	var server_response: ServerResponse = ServerResponse.new()
+	server_response.success = response_code == 200
+	if server_response.success:
 		var login_response_dto: LoginResponseDTO = LoginResponseDTO.new(json)
 		session_token = login_response_dto.token
 		session_token_expiration_time = login_response_dto.expires_at
@@ -37,9 +37,9 @@ func _on_login_request_completed(_result: int, response_code: int, _headers: Pac
 		logged_analyst = Analyst.new(analyst.id, analyst.first_name, analyst.last_name, analyst.email, analyst.role, analyst.created_at)
 	else:
 		var server_error_dto: ServerErrorDTO = ServerErrorDTO.new(json)
-		login_response.error = server_error_dto.detail
+		server_response.error = server_error_dto.detail
 	
-	on_login.call(login_response)
+	on_login.call(server_response)
 
 func _get_auth_headers() -> String:
 	return BEARER_AUTHORIZATION_HEADER + session_token
@@ -54,4 +54,13 @@ func _on_redeem_path_request_completed(_result: int, response_code: int, _header
 	http_request.request_completed.disconnect(_on_redeem_path_request_completed.bind(on_redeem_path))
 	
 	var json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
-	print(json)
+	var server_response: ServerResponse = ServerResponse.new()
+	server_response.success = response_code == 200
+	if server_response.success:
+		# TODO
+		pass
+	else:
+		var server_error_dto: ServerErrorDTO = ServerErrorDTO.new(json)
+		server_response.error = server_error_dto.detail
+	
+	on_redeem_path.call(server_response)

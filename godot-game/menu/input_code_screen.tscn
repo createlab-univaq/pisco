@@ -57,9 +57,9 @@ layout_mode = 2
 theme_override_constants/margin_left = 70
 theme_override_constants/margin_right = 70
 
-[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=1202914819]
+[node name="RedeemButton" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=1202914819]
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "Inizia"
+text = "Redeem"
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/MarginContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/MarginContainer/RedeemButton" to="." method="_on_redeem_button_pressed"]

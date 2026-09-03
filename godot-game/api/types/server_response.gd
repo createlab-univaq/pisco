@@ -1,4 +1,4 @@
-class_name LoginResponse
+class_name ServerResponse
 extends RefCounted
 
 var success: bool = false:

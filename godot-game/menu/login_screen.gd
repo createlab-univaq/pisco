@@ -12,9 +12,9 @@ func _ready() -> void:
 	fade_color_rect.color.a = 0
 	_reset_login_button()
 
-func _on_login_response(login_response: LoginResponse):
-	if not login_response.success:
-		error_rich_text_label.text = login_response.error
+func _on_login_response(server_response: ServerResponse):
+	if not server_response.success:
+		error_rich_text_label.text = server_response.error
 		_reset_login_button()
 		return
 	_fade_out()
