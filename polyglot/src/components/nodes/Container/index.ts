@@ -12,7 +12,7 @@ export const containerNodeConfig = {
     elementType: NODE_TYPE.CONTAINER,
     name: 'Container',
     icon: icon.src,
-    group: 'concept',
+    isExercise: true,
     propertiesComponent: ContainerNodeProperties,
     elementComponent: ReactFlowContainerNode,
     defaultData: {

@@ -10,8 +10,7 @@ export const socialSituationsNodeConfig = {
     elementType: NODE_TYPE.SOCIAL_SITUATIONS,
     name: 'Social Situations',
     icon: icon.src,
-    group: 'remember_assessment',
-
+    isExercise: false,
     propertiesComponent: SocialSituationsNodeProperties,
     elementComponent: ReactFlowSocialSituationsNode,
     defaultData: {

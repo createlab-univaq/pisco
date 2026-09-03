@@ -10,8 +10,7 @@ export const trueFalseNodeConfig = {
     elementType: NODE_TYPE.TRUE_FALSE,
     name: 'True False',
     icon: icon.src,
-    group: 'remember_assessment',
-
+    isExercise: false,
     propertiesComponent: TrueFalseNodeProperties,
     elementComponent: ReactFlowTrueFalseNode,
     defaultData: {

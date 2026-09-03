@@ -10,8 +10,7 @@ export const socialSituationsExerciseANodeConfig = {
     elementType: NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
     name: 'Social Situations Exercise (A)',
     icon: icon.src,
-    group: 'apply_assessment',
-
+    isExercise: true,
     propertiesComponent: SocialSituationsExerciseANodeProperties,
     elementComponent: ReactFlowSocialSituationsExerciseANode,
     defaultData: {

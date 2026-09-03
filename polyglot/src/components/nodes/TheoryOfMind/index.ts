@@ -12,8 +12,7 @@ export const theoryOfMindNodeConfig = {
     elementType: NODE_TYPE.THEORY_OF_MIND,
     name: 'Theory Of Mind',
     icon: icon.src,
-    group: 'remember_assessment',
-
+    isExercise: false,
     propertiesComponent: TheoryOfMindNodeProperties,
     elementComponent: ReactFlowTheoryOfMindNode,
     defaultData: {

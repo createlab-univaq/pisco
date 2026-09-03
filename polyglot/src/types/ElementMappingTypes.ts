@@ -22,7 +22,7 @@ export type MappingType<T, U, K> = {
     elementType: string;
     name: string;
     icon?: string;
-    group?: string;
+    isExercise?: boolean;
     propertiesComponent: React.ComponentType<T>;
     elementComponent: React.ComponentType<U>;
     defaultData: any;

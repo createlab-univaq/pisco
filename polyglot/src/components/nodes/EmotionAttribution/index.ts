@@ -15,7 +15,7 @@ export const emotionAttributionNodeConfig = {
     elementType: NODE_TYPE.EMOTION_ATTRIBUTION,
     name: 'Emotion Attribution',
     icon: icon.src,
-    group: 'remember_assessment',
+    isExercise: false,
     propertiesComponent: EmotionAttributionNodeProperties,
     elementComponent: ReactFlowEmotionAttributionNode,
     defaultData: {

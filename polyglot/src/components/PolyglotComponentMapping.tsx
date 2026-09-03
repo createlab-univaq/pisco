@@ -6,7 +6,7 @@ export class PolyglotComponentMapping<T, U, K extends { type: string }> {
     public componentMapping: Record<string, React.ComponentType<U>> = {};
     public nameMapping: Record<string, string> = {};
     public iconMapping: Record<string, string | undefined> = {};
-    public groupMapping: Record<string, string | undefined> = {};
+    public isExerciseMapping: Record<string, boolean> = {};
     public defaultDataMapping: Record<string, any> = {};
     public transformMapping: Record<string, (data: K) => K> = {};
 
@@ -18,7 +18,7 @@ export class PolyglotComponentMapping<T, U, K extends { type: string }> {
         this.componentMapping[config.elementType] = config.elementComponent;
         this.nameMapping[config.elementType] = config.name;
         this.iconMapping[config.elementType] = config.icon;
-        this.groupMapping[config.elementType] = config.group;
+        this.isExerciseMapping[config.elementType] = config.isExercise || false;
         this.defaultDataMapping[config.elementType] = config.defaultData;
         this.transformMapping[config.elementType] = config.transformData || ((d) => d);
     }

@@ -32,10 +32,13 @@ export const createNewDefaultPolyglotNode = (
         ?? nodeType.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
         ?? 'New Node';
 
+    const defaultIsExercise = polyglotNodeComponentMapping.isExerciseMapping?.[nodeType];
+
     return {
         _id: id,
         type: nodeType,
         title: defaultTitle,
+        isExercise: defaultIsExercise,
         description: '',
         data: defaultData,
         reactFlow: {

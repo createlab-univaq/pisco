@@ -1,12 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { DragEvent, useEffect, useRef, useState } from 'react';
+import { DragEvent, useEffect, useRef, useState, useMemo } from 'react';
 import styles from './ContextualSidebar.module.css';
 import { polyglotNodeComponentMapping } from '../ElementMapping';
 import { PolyglotNode } from '@/types/PolyglotNode';
 import ElementProperties from '../editor/ElementProperties';
-import { NODE_TYPE } from '@/types/NodeType'; // <-- IMPORT NODE TYPES
 import { PolyglotEdge } from '@/types/PolyglotEdge';
 
 export type ContextualSidebarProps = {
@@ -16,36 +15,6 @@ export type ContextualSidebarProps = {
 };
 
 const ITEM_COLORS = ['#FFCC49', '#FFF0C8'];
-
-// USE NODE_TYPE CONSTANTS INSTEAD OF HARDCODED STRINGS
-const MENU_SECTIONS: Array<{
-    label: string;
-    nodes: string[];
-}> = [
-        {
-            label: 'Assessments',
-            nodes: [
-                NODE_TYPE.EMOTION_ATTRIBUTION,
-                NODE_TYPE.EYES_TASK,
-                NODE_TYPE.FAUX_PAS,
-                NODE_TYPE.SOCIAL_SITUATIONS,
-                NODE_TYPE.THEORY_OF_MIND,
-                NODE_TYPE.TRUE_FALSE,
-            ],
-        },
-        {
-            label: 'Exercises',
-            nodes: [
-                NODE_TYPE.CONTAINER,
-                NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A,
-                NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_B,
-                NODE_TYPE.FAUX_PAS_EXERCISE_A,
-                NODE_TYPE.SOCIAL_SITUATIONS_EXERCISE_A,
-                NODE_TYPE.EMOTION_RECOGNITION_EXERCISE_A,
-                NODE_TYPE.THEORY_OF_MIND_EXERCISE_A,
-            ],
-        },
-    ];
 
 // Reusable SVG Icons
 const ChevronDown = () => (
@@ -70,6 +39,34 @@ const ContextualSidebar = ({
         Exercises: true,
     });
     const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // --- DYNAMIC SECTIONS LOGIC ---
+    // Automatically group nodes based on the isExercise flag in the registry
+    const menuSections = useMemo(() => {
+        const assessments: any[] = [];
+        const exercises: any[] = [];
+
+        Object.keys(polyglotNodeComponentMapping.nameMapping).forEach((nodeType) => {
+            const isExercise = polyglotNodeComponentMapping.isExerciseMapping[nodeType];
+
+            const nodeData = {
+                text: polyglotNodeComponentMapping.nameMapping[nodeType],
+                icon: polyglotNodeComponentMapping.iconMapping[nodeType] ?? '',
+                index: nodeType,
+            };
+
+            if (isExercise) {
+                exercises.push(nodeData);
+            } else {
+                assessments.push(nodeData);
+            }
+        });
+
+        return [
+            { label: 'Assessments', nodes: assessments },
+            { label: 'Exercises', nodes: exercises },
+        ];
+    }, []);
 
     // --- RESIZER LOGIC ---
     const sidebarRef = useRef<HTMLElement>(null);
@@ -120,13 +117,6 @@ const ContextualSidebar = ({
         e.dataTransfer.effectAllowed = 'move';
     };
 
-    const allNodes = Object.keys(polyglotNodeComponentMapping.nameMapping).map((index) => ({
-        text: polyglotNodeComponentMapping.nameMapping[index],
-        icon: polyglotNodeComponentMapping.iconMapping[index] ?? '',
-        index,
-    }));
-    const pickNodesInOrder = (types: string[]) => types.map((t) => allNodes.find((n) => n.index === t)).filter(Boolean) as any[];
-
     // THE MAGIC SWAP: Are we showing Properties or Toolbox?
     const isShowingProperties = !!selectedElement;
 
@@ -163,9 +153,12 @@ const ContextualSidebar = ({
                             onUpdateElement={onUpdateElement}
                         />
                     ) : (
-                        MENU_SECTIONS.map((section) => {
-                            const sectionNodes = pickNodesInOrder(section.nodes);
+                        menuSections.map((section) => {
                             const isExpanded = openSections[section.label];
+
+                            // Don't render the section if it has no nodes
+                            if (section.nodes.length === 0) return null;
+
                             return (
                                 <div key={section.label} className={styles.accordionItem}>
                                     <button
@@ -178,7 +171,7 @@ const ContextualSidebar = ({
 
                                     {isExpanded && (
                                         <div className={styles.accordionPanel}>
-                                            {sectionNodes.map((node, idx) => {
+                                            {section.nodes.map((node, idx) => {
                                                 const bgColor = ITEM_COLORS[idx % ITEM_COLORS.length];
 
                                                 return (

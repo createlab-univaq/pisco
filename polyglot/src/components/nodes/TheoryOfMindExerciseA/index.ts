@@ -10,7 +10,7 @@ export const theoryOfMindExerciseANodeConfig = {
     elementType: NODE_TYPE.THEORY_OF_MIND_EXERCISE_A,
     name: 'Theory Of Mind Exercise (A)',
     icon: icon.src,
-    group: 'apply_assessment',
+    isExercise: true,
     propertiesComponent: TheoryOfMindExerciseANodeProperties,
     elementComponent: ReactFlowTheoryOfMindExerciseANode,
     defaultData: {},

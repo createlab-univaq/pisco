@@ -11,8 +11,7 @@ export const fauxPasNodeConfig = {
     elementType: NODE_TYPE.FAUX_PAS,
     name: 'Faux Pas',
     icon: icon.src,
-    group: 'remember_assessment',
-    
+    isExercise: false,
     propertiesComponent: FauxPasNodeProperties,
     elementComponent: ReactFlowFauxPasNode,
     defaultData: {

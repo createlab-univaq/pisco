@@ -15,8 +15,7 @@ export const eyesTaskNodeConfig = {
     elementType: NODE_TYPE.EYES_TASK,
     name: 'Eyes Task',
     icon: icon.src,
-    group: 'remember_assessment',
-
+    isExercise: false,
     propertiesComponent: EyesTaskNodeProperties,
     elementComponent: ReactFlowEyesTaskNode,
     defaultData: {

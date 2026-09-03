@@ -10,7 +10,7 @@ export const emotionAttributionExerciseANodeConfig = {
   elementType: NODE_TYPE.EMOTION_ATTRIBUTION_EXERCISE_A,
   name: 'Emotion Attribution Exercise (A)',
   icon: icon.src,
-  group: 'remember_assessment',
+  isExercise: true,
   propertiesComponent: EmotionAttributionExerciseANodeProperties,
   elementComponent: ReactFlowEmotionAttributionExerciseANode,
   defaultData: {

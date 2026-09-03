@@ -69,15 +69,11 @@ Create a new folder in `src/components/nodes/YourNewNode/` containing the follow
 
 * Update `src/components/nodes/ElementMapping.ts`: Import your node's configuration object from its `index.ts` and add it to the bulk registration list so the React Flow engine recognizes it.
 
-**Step 4: Make it Draggable**
-
-* Update `src/components/navbars/ContextualSidebar.tsx`: Add your new `NODE_TYPE` constant to the appropriate toolbox section so users can drag it onto the canvas.
-
-**Step 5: Ensure Global Type Safety**
+**Step 4: Ensure Global Type Safety**
 
 * Update `src/types/PolyglotNode.ts`: Include your new node type interface in the master global TypeScript union. This ensures state updates and data handlers remain fully type-safe.
 
-**Step 6: Update Validation Rules**
+**Step 5: Update Validation Rules**
 
 * Update `src/lib/validation/nodeValidator.ts` (and `conditionalEdgeValidator.ts` if your node calculates points) to include your node in the global validation cycle.
 
