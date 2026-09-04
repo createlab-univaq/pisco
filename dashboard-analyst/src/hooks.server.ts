@@ -7,5 +7,11 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.locals.token = token;
     }
 
+    const analystId = event.cookies.get('analyst_id')
+
+    if (analystId) {
+        event.locals.analystId = analystId
+    }
+
     return await resolve(event);
 };

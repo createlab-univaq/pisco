@@ -1,14 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { PATIENTS_PATH, GAME_EXECUTIONS_PATH } from '$lib/server/api-paths';
+import { GAME_EXECUTIONS_PATH, PATIENTS_PATH } from '$lib/server/api-paths';
 import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
 import type { Patient, GameExecution, Diagnosis } from '$lib/types';
+import { ANALYSTS_PATH } from '$lib/server/api-paths';
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
     const token = locals.token;
 
+    const analystId = locals.analystId;
+    const analystPatientsPath = `${ANALYSTS_PATH}/${analystId}/patients`
+
     const [patientsRes, executionsRes] = await Promise.all([
-        apiFetch(fetch, PATIENTS_PATH, { token }),
+        apiFetch(fetch, analystPatientsPath, { token }),
         apiFetch(fetch, GAME_EXECUTIONS_PATH, { token })
     ]);
 

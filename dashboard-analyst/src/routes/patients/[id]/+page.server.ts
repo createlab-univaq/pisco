@@ -4,6 +4,8 @@ import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
 import type { Patient, PatientPath, Diagnosis, GameExecution, PolyglotPath, Degree } from '$lib/types';
 
+const publishedFlowsPath = `${POLYGLOT_PATHS_PATH}?published=true`;
+
 export const load: PageServerLoad = async ({ params, fetch, locals }) => {
     const patientId = params.id;
     const token = locals.token;
@@ -13,7 +15,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/paths`, { token }),
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/diagnoses`, { token }),
         apiFetch(fetch, `${GAME_EXECUTIONS_PATH}?patientId=${patientId}`, { token }),
-        apiFetch(fetch, POLYGLOT_PATHS_PATH, { token }),
+        apiFetch(fetch, publishedFlowsPath, { token }),
         apiFetch(fetch, DEGREES_PATH, { token })
     ]);
 
@@ -97,7 +99,7 @@ export const actions: Actions = {
         if (!polyglotPathId) return fail(400, { error: 'Seleziona un protocollo valido' });
 
         // Fetch polyglot paths to locate the matching full flow object
-        const pathsRes = await apiFetch(fetch, POLYGLOT_PATHS_PATH, { token: locals.token });
+        const pathsRes = await apiFetch(fetch, publishedFlowsPath, { token: locals.token });
         const polyglotPaths = pathsRes.ok ? ((await pathsRes.json()) as PolyglotPath[]) : [];
         const selectedPath = polyglotPaths.find((p) => p.id === polyglotPathId);
 

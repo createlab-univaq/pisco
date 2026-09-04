@@ -4,7 +4,8 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			token: string | undefined; // Tell TypeScript this property exists
+			token: string | undefined;
+			analystId: string | undefined;
 		}
 		// interface Locals {}
 		// interface PageData {}

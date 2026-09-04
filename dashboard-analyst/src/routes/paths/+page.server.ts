@@ -1,13 +1,21 @@
 import { fail } from '@sveltejs/kit';
-import { POLYGLOT_PATHS_PATH, PATIENTS_PATH } from '$lib/server/api-paths';
+import { POLYGLOT_PATHS_PATH } from '$lib/server/api-paths';
 import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad, Actions } from './$types';
 import type { PolyglotPath, Patient } from '$lib/types';
+import { ANALYSTS_PATH } from '$lib/server/api-paths';
+import { PATIENTS_PATH } from '$lib/server/api-paths';
+
+const publishedFlowsPath = `${POLYGLOT_PATHS_PATH}?published=true`;
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
+
+    const analystId = locals.analystId;
+    const analystPatientsPath = `${ANALYSTS_PATH}/${analystId}/patients`
+
     const [polyglotRes, patientsRes] = await Promise.all([
-        apiFetch(fetch, POLYGLOT_PATHS_PATH, { token: locals.token }),
-        apiFetch(fetch, PATIENTS_PATH, { token: locals.token })
+        apiFetch(fetch, publishedFlowsPath, { token: locals.token }),
+        apiFetch(fetch, analystPatientsPath, { token: locals.token })
     ]);
 
     const polyglotPaths = polyglotRes.ok ? ((await polyglotRes.json()) as PolyglotPath[]) : [];
@@ -27,7 +35,7 @@ export const actions: Actions = {
         }
 
         // 1. Fetch the full list of paths to find the matching flow object
-        const pathsRes = await apiFetch(fetch, POLYGLOT_PATHS_PATH, { token: locals.token });
+        const pathsRes = await apiFetch(fetch, publishedFlowsPath, { token: locals.token });
         const polyglotPaths = pathsRes.ok ? ((await pathsRes.json()) as PolyglotPath[]) : [];
         const selectedPath = polyglotPaths.find((p) => p.id === polyglotPathId);
 

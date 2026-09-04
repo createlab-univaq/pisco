@@ -1,15 +1,20 @@
-import { PATIENTS_PATH, GAME_EXECUTIONS_PATH, POLYGLOT_PATHS_PATH } from '$lib/server/api-paths';
+import { GAME_EXECUTIONS_PATH, POLYGLOT_PATHS_PATH, ANALYSTS_PATH } from '$lib/server/api-paths';
 import { apiFetch } from '$lib/server/apiClient';
 import type { PageServerLoad } from './$types';
 import type { Stats, Patient, GameExecution, PolyglotPath, ChartPoint } from '$lib/types';
 
+const publishedFlowsPath = `${POLYGLOT_PATHS_PATH}?published=true`;
+
 export const load: PageServerLoad = async ({ fetch, locals }) => {
     const token = locals.token;
 
+    const analystId = locals.analystId;
+    const analystPatientsPath = `${ANALYSTS_PATH}/${analystId}/patients`
+
     const [patientsRes, executionsRes, polyglotRes] = await Promise.all([
-        apiFetch(fetch, PATIENTS_PATH, { token }),
+        apiFetch(fetch, analystPatientsPath, { token }),
         apiFetch(fetch, GAME_EXECUTIONS_PATH, { token }),
-        apiFetch(fetch, POLYGLOT_PATHS_PATH, { token })
+        apiFetch(fetch, publishedFlowsPath, { token })
     ]);
 
     const patients = patientsRes.ok ? ((await patientsRes.json()) as Patient[]) : [];

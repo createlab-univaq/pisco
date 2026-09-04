@@ -233,6 +233,46 @@ export async function apiFetch(
         headers.set('Authorization', `Bearer ${options.token}`);
     }
 
+    // --- [START] FULL SERVER CONSOLE LOG ---
+    if (!pathname.endsWith(LOGIN_PATH)) {
+        // Basic terminal colors for better readability
+        const c_blue = '\x1b[34m';
+        const c_yellow = '\x1b[33m';
+        const c_cyan = '\x1b[36m';
+        const c_dim = '\x1b[90m';
+        const c_reset = '\x1b[0m';
+
+        let formattedBody = `${c_dim}None${c_reset}`;
+        if (options.body) {
+            try {
+                formattedBody = JSON.stringify(JSON.parse(options.body as string), null, 2);
+            } catch {
+                formattedBody = String(options.body);
+            }
+        }
+
+        const headersObj = Object.fromEntries(headers.entries());
+
+        // Remove authorization header from logs for security/cleanliness
+        delete headersObj['authorization'];
+
+        const formattedHeaders = Object.keys(headersObj).length > 0
+            ? JSON.stringify(headersObj, null, 2)
+            : `${c_dim}None${c_reset}`;
+
+        // Construct a single string to prevent interleaved logs from concurrent requests
+        const logOutput =
+            `\n${c_blue}═══ API REQUEST ══════════════════════════════════════════════${c_reset}\n` +
+            `${c_yellow}[METHOD]${c_reset}  ${method}\n` +
+            `${c_cyan}[URL]${c_reset}     ${env.API_BASE_URL}${path}\n` +
+            `${c_yellow}[HEADERS]${c_reset}\n${formattedHeaders}\n` +
+            `${c_yellow}[BODY]${c_reset}\n${formattedBody}\n` +
+            `${c_blue}══════════════════════════════════════════════════════════════${c_reset}\n`;
+
+        console.log(logOutput);
+    }
+    // --- [END] FULL SERVER CONSOLE LOG ---
+
     return nativeFetch(`${env.API_BASE_URL}${path}`, {
         ...options,
         headers
