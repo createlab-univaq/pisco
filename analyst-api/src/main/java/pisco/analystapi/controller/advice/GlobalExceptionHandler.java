@@ -3,6 +3,7 @@ package pisco.analystapi.controller.advice;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -33,6 +34,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handleBadRequest(BadRequestException ex) {
         logger.error("Richiesta non valida: " + ex.getMessage());
         return problem(HttpStatus.BAD_REQUEST, "Richiesta non valida", ex.getMessage());
+    }
+
+    /**
+     * An orderBy naming a property the entity does not have. Spring Data raises this while
+     * building the query, so without a handler an ordinary typo in a query string comes
+     * back as a 500.
+     */
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ProblemDetail handleUnknownSortProperty(PropertyReferenceException ex) {
+        logger.error("Ordinamento non valido: " + ex.getMessage());
+        return problem(HttpStatus.BAD_REQUEST, "Ordinamento non valido",
+                "Proprieta' inesistente per l'ordinamento: " + ex.getPropertyName());
     }
 
     @ExceptionHandler(ConflictException.class)

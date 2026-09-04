@@ -15,6 +15,13 @@ public interface AnalystPatientService {
      */
     AnalystPatient requireLink(UUID patientId);
 
+    /**
+     * The same authorization check, loading nothing. Use it when the patient is about to
+     * be deleted: a managed AnalystPatient still referencing that row makes Hibernate
+     * resurrect the patient at flush, re-inserting it under a fresh id.
+     */
+    void assertLinked(UUID patientId);
+
     /** Assignments held by one analyst, ordered by the patient's name. */
     List<AnalystPatient> findLinksForAnalyst(UUID analystId);
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pisco.analystapi.model.criteria.FlowCriteria;
 import pisco.analystapi.model.dto.FlowDTO;
 import pisco.analystapi.model.dto.validation.ValidationGroups.Create;
 import pisco.analystapi.model.dto.validation.ValidationGroups.Update;
@@ -42,9 +44,9 @@ public class FlowController {
                     + "search e' opzionale e filtra per nome o descrizione, senza distinzione "
                     + "fra maiuscole e minuscole; omesso o vuoto restituisce tutto.")
     @GetMapping
-    public List<FlowDTO> list(@RequestParam(required = false) String search) {
-        log.info("GET /api/flows search={}", search);
-        return service.findAll(search);
+    public List<FlowDTO> list(@ParameterObject FlowCriteria criteria) {
+        log.info("GET /api/flows criteria={}", criteria);
+        return service.findAll(criteria);
     }
 
     @Operation(

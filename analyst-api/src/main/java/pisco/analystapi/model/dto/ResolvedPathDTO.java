@@ -11,8 +11,8 @@ import lombok.Setter;
  * the session, plus the flow it refers to. Nothing clinical and nothing anagraphic, since
  * this endpoint is reachable without logging in.
  *
- * <p>The flow comes back without its graph, like everywhere outside the flow detail
- * endpoint.
+ * <p>The flow arrives complete, flowJson included -- this is the one place outside the
+ * flow detail endpoint that carries the graph, because the game needs it to play.
  */
 @Getter
 @Setter

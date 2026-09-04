@@ -1,25 +1,31 @@
 package pisco.analystapi.service.impl;
 
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import pisco.analystapi.config.security.SecurityUtils;
 import pisco.analystapi.exception.ConflictException;
 import pisco.analystapi.exception.NotFoundException;
+import pisco.analystapi.model.criteria.FlowCriteria;
 import pisco.analystapi.model.dto.FlowDTO;
 import pisco.analystapi.model.entity.Flow;
 import pisco.analystapi.model.mapper.FlowMapper;
 import pisco.analystapi.model.repository.AnalystRepository;
 import pisco.analystapi.model.repository.FlowRepository;
-import pisco.analystapi.model.repository.FlowSpecifications;
+import pisco.analystapi.model.repository.specifications.FlowSpecifications;
 import pisco.analystapi.service.FlowService;
 
-/** A flow belongs to whoever authored it: nobody else can read, edit or assign it. */
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+/**
+ * A flow belongs to whoever authored it: nobody else can read, edit or assign it.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,12 +37,11 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<FlowDTO> findAll(String search) {
-        List<Flow> flows = repository.findAll(
-                FlowSpecifications.ownedBy(SecurityUtils.currentAnalystId())
-                        .and(FlowSpecifications.matching(search)),
-                Sort.by(Sort.Direction.ASC, "name"));
-        log.debug("Elenco flow: search={} risultati={}", search, flows.size());
+    public List<FlowDTO> findAll(FlowCriteria criteria) {
+        Specification<Flow> specification = FlowCriteria.getSpecification(criteria);
+        specification = specification.and(FlowSpecifications.ownedBy(SecurityUtils.currentAnalystId()));
+        List<Flow> flows = repository.findAll(specification, criteria.toSort());
+        log.debug("Elenco flow: {}, {}", criteria, flows.size());
         return mapper.toDto(flows);
     }
 
@@ -74,7 +79,7 @@ public class FlowServiceImpl implements FlowService {
         // name means "leave it alone" rather than "rename to null".
         if (StringUtils.hasText(dto.getName())
                 && repository.existsByAnalystIdAndNameAndIdNot(
-                        flow.getAnalyst().getId(), dto.getName(), id)) {
+                flow.getAnalyst().getId(), dto.getName(), id)) {
             log.warn("Modifica flow {} rifiutata: nome {} gia' usato", id, dto.getName());
             throw new ConflictException("Esiste gia' un flow con questo nome: " + dto.getName());
         }

@@ -93,10 +93,11 @@ public class PatientServiceImpl implements PatientService {
         // Every assignment goes with them, and through those the diagnoses, assigned paths
         // and executions -- including another analyst's, if the patient was shared.
         //
-        // requireLink is the authorization check and nothing more: its result is not what
-        // gets deleted. AnalystPatient.patient is lazy, so reaching through it hands the
-        // repository a proxy to remove rather than the row id we already have.
-        analystPatientService.requireLink(id);
+        // assertLinked rather than requireLink: it authorizes without loading anything.
+        // A managed AnalystPatient would still reference this patient at flush, and since
+        // the assignment row goes away through a database cascade Hibernate never sees,
+        // it resolves the dangling reference by re-inserting the patient under a new id.
+        analystPatientService.assertLinked(id);
         repository.deleteById(id);
         log.info("Paziente eliminato id={} (assegnazioni, diagnosi, percorsi ed esecuzioni in cascata)", id);
     }

@@ -38,6 +38,16 @@ public class AnalystPatientServiceImpl implements AnalystPatientService {
 
     @Override
     @Transactional(readOnly = true)
+    public void assertLinked(UUID patientId) {
+        UUID analystId = SecurityUtils.currentAnalystId();
+        if (!repository.existsByAnalystIdAndPatientId(analystId, patientId)) {
+            log.warn("Paziente {} non in carico all'analista {}", patientId, analystId);
+            throw NotFoundException.of("Paziente", patientId);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<AnalystPatient> findLinksForAnalyst(UUID analystId) {
         return repository.findAllByAnalystIdOrderByPatientLastNameAscPatientFirstNameAsc(analystId);
     }

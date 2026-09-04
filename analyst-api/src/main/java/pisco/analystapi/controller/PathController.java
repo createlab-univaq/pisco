@@ -36,8 +36,9 @@ public class PathController {
     @Operation(
             summary = "Risolve un codice univoco nel flow assegnato",
             description = "Endpoint pubblico (spec sezione 1): il paziente non ha login e "
-                    + "riscatta il codice ricevuto. Restituisce il flow senza flowJson e non "
-                    + "espone alcun dato anagrafico del paziente.")
+                    + "riscatta il codice ricevuto. Restituisce il flow completo, flowJson "
+                    + "incluso, perche' e' cio' che il gioco deve eseguire. Del paziente "
+                    + "espone solo l'id.")
     @SecurityRequirements
     @GetMapping("/resolve/{uniqueCode}")
     public ResolvedPathDTO resolve(@PathVariable String uniqueCode) {

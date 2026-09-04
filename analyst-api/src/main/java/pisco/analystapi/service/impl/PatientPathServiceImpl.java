@@ -96,13 +96,14 @@ public class PatientPathServiceImpl implements PatientPathService {
         log.info("Codice risolto patientPathId={} flowId={}",
                 patientPath.getId(), patientPath.getFlow().getId());
 
-        // Ids and the flow's identity only, deliberately: this response is served without
-        // a token, so it carries neither the patient's details nor the flow's structure.
+        // The whole flow, graph included: redeeming a code is how the game gets what it
+        // has to play. The patient is still identified by id alone -- this response is
+        // served without a token, so none of their details travel with it.
         return new ResolvedPathDTO(
                 patientPath.getUniqueCode(),
                 patientPath.getId(),
                 patientPath.getAnalystPatient().getPatient().getId(),
-                flowMapper.toDto(patientPath.getFlow()));
+                flowMapper.toDetailDto(patientPath.getFlow()));
     }
 
     @Override

@@ -18,6 +18,13 @@ public interface AnalystPatientRepository extends JpaRepository<AnalystPatient, 
      */
     Optional<AnalystPatient> findByAnalystIdAndPatientId(UUID analystId, UUID patientId);
 
+    /**
+     * The same check without loading anything. Deleting a patient needs it: a managed
+     * AnalystPatient left in the persistence context still points at the row being
+     * removed, and Hibernate resurrects the patient to satisfy that reference.
+     */
+    boolean existsByAnalystIdAndPatientId(UUID analystId, UUID patientId);
+
     List<AnalystPatient> findAllByAnalystIdOrderByPatientLastNameAscPatientFirstNameAsc(
             UUID analystId);
 

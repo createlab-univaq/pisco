@@ -1,8 +1,9 @@
-package pisco.analystapi.model.repository;
+package pisco.analystapi.model.repository.specifications;
 
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
+import pisco.analystapi.model.entity.Analyst;
 import pisco.analystapi.model.entity.Flow;
 
 /**
@@ -18,6 +19,10 @@ public final class FlowSpecifications {
     /** A flow is private to its author, so this is on every list read, never optional. */
     public static Specification<Flow> ownedBy(UUID analystId) {
         return (root, query, builder) -> builder.equal(root.get("analyst").get("id"), analystId);
+    }
+
+    public static Specification<Flow> published(boolean published) {
+        return ((root, query, builder) -> builder.equal(root.get("published"), published));
     }
 
     /**
