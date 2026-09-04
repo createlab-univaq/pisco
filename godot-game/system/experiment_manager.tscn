@@ -1,6 +1,15 @@
 [gd_scene format=3 uid="uid://uosa5c6owore"]
 
 [ext_resource type="Script" uid="uid://83thvwwfwjn4" path="res://system/experiment_manager.gd" id="1_n7bim"]
+[ext_resource type="PackedScene" uid="uid://ijxrtwqt20tx" path="res://system/stopwatch.tscn" id="2_wexxx"]
+[ext_resource type="PackedScene" uid="uid://bq6istetnigeu" path="res://system/mouse_distance_tracker.tscn" id="3_mbov4"]
+[ext_resource type="PackedScene" uid="uid://bpis41x2r3k51" path="res://system/first_input_interceptor.tscn" id="4_tov0m"]
 
 [node name="ExperimentManager" type="Node" unique_id=1876397545]
 script = ExtResource("1_n7bim")
+
+[node name="Stopwatch" parent="." unique_id=2118671575 instance=ExtResource("2_wexxx")]
+
+[node name="MouseDistanceTracker" parent="." unique_id=1604235214 instance=ExtResource("3_mbov4")]
+
+[node name="FirstInputInterceptor" parent="." unique_id=1691022316 instance=ExtResource("4_tov0m")]

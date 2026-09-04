@@ -35,10 +35,6 @@ interact={
 ]
 }
 
-[internationalization]
-
-locale/translations=PackedStringArray("res://dialogues/intro/dialogues.en.translation", "res://dialogues/intro/dialogues.es.translation", "res://dialogues/intro/dialogues.it.translation")
-
 [layer_names]
 
 2d_physics/layer_1="Player"

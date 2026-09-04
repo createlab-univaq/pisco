@@ -20,7 +20,9 @@ extends Control
 signal dialogue_started
 signal line_finished
 signal dialogue_completed
+signal choices_shown
 signal choice_made(outcome: String)
+signal text_input_shown
 signal text_submitted(submitted_text: String)
 
 var tween: Tween
@@ -46,22 +48,6 @@ func _ready() -> void:
 	_reset_textbox()
 	
 	_close_textbox()
-	
-	# queue_dialogue([
-	# 	DialogueData.new("DIALOGUE_1"),
-	# 	DialogueData.new("DIALOGUE_2"),
-	# 	DialogueData.new("DIALOGUE_3"),
-	# 	DialogueData.new("DIALOGUE_4_QUESTION", DialogueData.DialogueTypes.CHOICES, [
-	# 		DialogueChoiceData.new("CHOICE_YES", "yes_path", [
-	# 			DialogueData.new("DIALOGUE_YES_1"),
-	# 			DialogueData.new("DIALOGUE_YES_2"),
-	# 		]),
-	# 		DialogueChoiceData.new("CHOICE_NO", "no_path", [
-	# 			DialogueData.new("DIALOGUE_NO_1")
-	# 		])
-	# 	]),
-	# 	DialogueData.new("DIALOGUE_5_INPUT", DialogueData.DialogueTypes.INPUT)
-	# ])
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
@@ -83,11 +69,6 @@ func _unhandled_input(event: InputEvent) -> void:
 					_on_dialogue_completed()
 				else:
 					_display_text()
-
-func insert_dialogue_next(dialogue_sequence: Array[DialogueData]) -> void:
-	var new_queue: Array[DialogueData] = dialogue_sequence.duplicate()
-	new_queue.append_array(text_queue)
-	text_queue = new_queue
 
 func queue_dialogue(dialogue_sequence: Array[DialogueData]) -> void:
 	text_queue.append_array(dialogue_sequence)
@@ -149,7 +130,7 @@ func _display_text() -> void:
 		tween.kill()
 	
 	current_line = text_queue.pop_front()
-	var text: String = tr(current_line.text)
+	var text: String = current_line.text
 	
 	dialogue_text_label.text = text
 	dialogue_text_label.visible_ratio = 0.0
@@ -169,6 +150,7 @@ func _change_state(next_state: States) -> void:
 	current_state = next_state
 
 func _on_textbox_action_performed():
+	_change_state(States.READY)
 	if not text_queue.is_empty():
 		_display_text()
 	else:
@@ -184,20 +166,22 @@ func _on_dialogue_line_complete() -> void:
 		
 		DialogueData.DialogueTypes.CHOICES:
 			_display_choices(current_line.choices)
+			choices_shown.emit()
 		
 		DialogueData.DialogueTypes.INPUT:
 			_display_input()
+			text_input_shown.emit()
 
-func _display_choices(choices: Array[DialogueChoiceData]) -> void:
+func _display_choices(choices: Array[String]) -> void:
 	assert(not current_line.choices.is_empty(), "No choices provided")
 	
 	_change_state(States.CHOOSING)
 	_clear_choice_buttons()
 	choices_margin_container.show()
 	
-	for choice: DialogueChoiceData in choices:
+	for choice: String in choices:
 		var btn: Button = Button.new()
-		btn.text = tr(choice.text)
+		btn.text = choice
 		
 		btn.focus_mode = Control.FOCUS_ALL
 		
@@ -207,17 +191,12 @@ func _display_choices(choices: Array[DialogueChoiceData]) -> void:
 	if choices_v_box_container.get_child_count() > 0:
 		choices_v_box_container.get_child(0).call_deferred("grab_focus")
 
-func _on_choice_pressed(choice: DialogueChoiceData) -> void:
+func _on_choice_pressed(choice: String) -> void:
 	choices_margin_container.hide()
 	_clear_choice_buttons()
 	
-	choice_made.emit(choice.outcome)
+	choice_made.emit(choice)
 	
-	_change_state(States.READY)
-	
-	if not choice.next_lines.is_empty():
-		insert_dialogue_next(choice.next_lines)
-		
 	_on_textbox_action_performed()
 
 func _clear_choice_buttons() -> void:
@@ -239,8 +218,6 @@ func _on_text_submitted(new_text: String) -> void:
 	_clear_line_edit()
 	
 	text_submitted.emit(new_text)
-	
-	_change_state(States.READY)
 	
 	_on_textbox_action_performed()
 

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bq6istetnigeu"]
+
+[ext_resource type="Script" uid="uid://cl38eoduxnvlp" path="res://system/mouse_distance_tracker.gd" id="1_0ai1p"]
+
+[node name="MouseDistanceTracker" type="Node" unique_id=1604235214]
+script = ExtResource("1_0ai1p")

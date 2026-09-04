@@ -235,8 +235,5 @@ boba_the_cat = NodePath("../../BobaTheCat")
 [node name="CollisionShape2D" parent="Transitions/BedroomSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_04khg")
 
-[connection signal="experiment_completed" from="ExperimentManager" to="Transitions" method="_on_experiment_manager_experiment_completed"]
-[connection signal="actioned" from="Actionables/MomActionable" to="Actionables" method="_on_mom_actionable_actioned"]
-
 [editable path="Actionables/MomActionable"]
 [editable path="Transitions/BedroomSceneChangerTile"]

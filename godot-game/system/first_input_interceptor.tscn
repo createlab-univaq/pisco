@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bpis41x2r3k51"]
+
+[ext_resource type="Script" uid="uid://c8by58o2qc7lx" path="res://system/first_input_interceptor.gd" id="1_e7lfp"]
+
+[node name="FirstInputInterceptor" type="Node" unique_id=1691022316]
+script = ExtResource("1_e7lfp")

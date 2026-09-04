@@ -12,6 +12,7 @@ var BEARER_AUTHORIZATION_HEADER = "Authorization: Bearer "
 var logged_analyst: Analyst = null
 var session_token: String = ""
 var session_token_expiration_time: String = ""
+var redeemed_flow: Dictionary = {}
 
 func login(email: String, password: String, on_login: Callable) -> void:
 	var login_dto: LoginDTO = LoginDTO.new(email, password)
