@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://uosa5c6owore" path="res://system/experiment_manager.tscn" id="11_kjq3q"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
 [ext_resource type="Script" uid="uid://br07gggew5dud" path="res://levels/ldk/ldk_transitions.gd" id="14_jovqs"]
+[ext_resource type="Script" uid="uid://dpw1beuqk636o" path="res://levels/ldk/ldk_actionables.gd" id="14_qgnl5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hsbbr"]
 texture = ExtResource("1_85fs1")
@@ -208,6 +209,7 @@ actionable = NodePath("../Actionables/MomActionable")
 textbox = NodePath("../Dialogues/TextBox")
 
 [node name="Actionables" type="Node" parent="." unique_id=461493670]
+script = ExtResource("14_qgnl5")
 
 [node name="MomActionable" parent="Actionables" unique_id=707098243 node_paths=PackedStringArray("player") instance=ExtResource("11_04khg")]
 position = Vector2(284, 281)
@@ -234,6 +236,9 @@ boba_the_cat = NodePath("../../BobaTheCat")
 
 [node name="CollisionShape2D" parent="Transitions/BedroomSceneChangerTile/Area2D" parent_id_path=PackedInt32Array(314211868, 1599916876) index="0" unique_id=718691639]
 shape = SubResource("RectangleShape2D_04khg")
+
+[connection signal="experiment_completed" from="ExperimentManager" to="Actionables" method="_on_experiment_manager_experiment_completed"]
+[connection signal="experiment_completed" from="ExperimentManager" to="Transitions" method="_on_experiment_manager_experiment_completed"]
 
 [editable path="Actionables/MomActionable"]
 [editable path="Transitions/BedroomSceneChangerTile"]
