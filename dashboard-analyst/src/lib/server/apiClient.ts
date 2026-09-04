@@ -245,7 +245,16 @@ export async function apiFetch(
         let formattedBody = `${c_dim}None${c_reset}`;
         if (options.body) {
             try {
-                formattedBody = JSON.stringify(JSON.parse(options.body as string), null, 2);
+                // Parse the body first
+                const parsedBody = JSON.parse(options.body as string);
+                
+                // Safely check for and redact the password field
+                if (parsedBody && typeof parsedBody === 'object' && 'password' in parsedBody) {
+                    parsedBody.password = '[REDACTED]';
+                }
+                
+                // Stringify the sanitized object for the log
+                formattedBody = JSON.stringify(parsedBody, null, 2);
             } catch {
                 formattedBody = String(options.body);
             }
