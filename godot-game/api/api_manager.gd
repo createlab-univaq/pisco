@@ -3,6 +3,7 @@ extends Node
 const API_URL: String = "https://pisco-analyst-api.createlab-univaq.it/api"
 const LOGIN_PATH: String = "/auth/login"
 const REDEEM_FLOW: String = "/paths/resolve"
+const IMAGES_PATH: String = "/images"
 
 const JSON_APPLICATION_HEADER = "Content-Type: application/json"
 var BEARER_AUTHORIZATION_HEADER = "Authorization: Bearer "

@@ -6,11 +6,20 @@ extends Control
 @export var end_symbol: String = "v"
 @export var start_symbol: String = "*"
 
+@onready var image_margin_container: MarginContainer = $VBoxContainer/ImageMarginContainer
+@onready var image_texture_rect: TextureRect = $VBoxContainer/ImageMarginContainer/ImageTextureRect
+@onready var image_downloader: ImageDownloader = $VBoxContainer/ImageMarginContainer/ImageDownloader
+
 @onready var choices_margin_container: MarginContainer = $VBoxContainer/ChoicesMarginContainer
 @onready var choices_v_box_container: VBoxContainer = $VBoxContainer/ChoicesMarginContainer/ChoicesVBoxContainer
 
 @onready var text_input_margin_container: MarginContainer = $VBoxContainer/TextInputMarginContainer
 @onready var line_edit: LineEdit = $VBoxContainer/TextInputMarginContainer/LineEdit
+
+@onready var question_text_box_panel_container: PanelContainer = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer
+@onready var question_start_symbol_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/StartSymbolLabel
+@onready var question_dialogue_text_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/DialogueTextLabel
+@onready var question_end_symbol_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/EndSymbolLabel
 
 @onready var text_box_panel_container: PanelContainer = $VBoxContainer/MarginContainer/TextBoxPanelContainer
 @onready var start_symbol_label: Label = $VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/StartSymbolLabel
@@ -32,7 +41,9 @@ enum States {
 	READING,
 	FINISHED,
 	CHOOSING,
-	WAITING_INPUT
+	WAITING_INPUT,
+	DOWNLOADING_IMAGE,
+	READING_QUESTION
 }
 
 var current_state: States = States.READY
@@ -61,8 +72,14 @@ func _unhandled_input(event: InputEvent) -> void:
 				dialogue_text_label.visible_ratio = 1.0
 				if tween and tween.is_valid():
 					tween.kill()
+				_on_tween_completed()
+			
+			States.READING_QUESTION:
+				question_dialogue_text_label.visible_ratio = 1.0
+				if tween and tween.is_valid():
+					tween.kill()
 				_on_dialogue_line_complete()
-				
+			
 			States.FINISHED:
 				if text_queue.is_empty():
 					_change_state(States.READY)
@@ -116,34 +133,80 @@ func _reset_textbox() -> void:
 	end_symbol_label.text = ""
 	dialogue_text_label.text = ""
 	text_box_panel_container.hide()
-	text_input_margin_container.hide()
-	_clear_line_edit()
+	
+	question_start_symbol_label.text = ""
+	question_end_symbol_label.text = ""
+	question_dialogue_text_label.text = ""
+	question_text_box_panel_container.hide()
+	
+	image_margin_container.hide()
+	_clear_image_texture()
 	choices_margin_container.hide()
 	_clear_choice_buttons()
+	text_input_margin_container.hide()
+	_clear_line_edit()
 
 func _setup_textbox() -> void:
 	start_symbol_label.text = start_symbol
 	text_box_panel_container.show()
+
+func _setup_question_textbox() -> void:
+	question_start_symbol_label.text = start_symbol
+	question_text_box_panel_container.show()
 
 func _display_text() -> void:
 	if tween and tween.is_valid():
 		tween.kill()
 	
 	current_line = text_queue.pop_front()
-	var text: String = current_line.text
 	
-	dialogue_text_label.text = text
-	dialogue_text_label.visible_ratio = 0.0
-	end_symbol_label.text = ""
-	
-	_change_state(States.READING)
-	_setup_textbox()
-	
-	tween = create_tween()
-	tween.tween_property(dialogue_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
-	tween.tween_callback(_on_tween_completed)
+	if current_line.dialogue_type == current_line.DialogueTypes.IMAGES:
+		_change_state(States.DOWNLOADING_IMAGE)
+		image_downloader.load_image_from_web(current_line.image_url, _on_image_downloaded)
+	elif current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+		var text: String = current_line.text
+		
+		dialogue_text_label.text = text
+		dialogue_text_label.visible_ratio = 1.0
+		end_symbol_label.text = end_symbol
+		
+		_setup_textbox()
+		
+		_on_tween_completed()
+		
+	else:
+		var text: String = current_line.text
+		
+		dialogue_text_label.text = text
+		dialogue_text_label.visible_ratio = 0.0
+		end_symbol_label.text = ""
+		
+		_change_state(States.READING)
+		_setup_textbox()
+		
+		tween = create_tween()
+		tween.tween_property(dialogue_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_callback(_on_tween_completed)
 
 func _on_tween_completed() -> void:
+	if current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_CHOICE or current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_INPUT or current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+		var question_text: String = current_line.question_text
+		
+		question_dialogue_text_label.text = question_text
+		question_dialogue_text_label.visible_ratio = 0.0
+		question_end_symbol_label.text = ""
+		
+		_change_state(States.READING_QUESTION)
+		_setup_question_textbox()
+		
+		tween = create_tween()
+		tween.tween_property(question_dialogue_text_label, "visible_ratio", 1.0, question_text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_callback(_on_dialogue_line_complete)
+	else:
+		_on_dialogue_line_complete()
+
+func _on_image_downloaded(image_texture: ImageTexture) -> void:
+	image_texture_rect.texture = image_texture
 	_on_dialogue_line_complete()
 
 func _change_state(next_state: States) -> void:
@@ -171,6 +234,26 @@ func _on_dialogue_line_complete() -> void:
 		DialogueData.DialogueTypes.INPUT:
 			_display_input()
 			text_input_shown.emit()
+		
+		DialogueData.DialogueTypes.IMAGES:
+			_display_image_choices(current_line.choices)
+			choices_shown.emit()
+		
+		DialogueData.DialogueTypes.TEXT_WITH_QUESTION_CHOICE:
+			_display_choices(current_line.choices)
+			choices_shown.emit()
+		
+		DialogueData.DialogueTypes.TEXT_WITH_QUESTION_INPUT:
+			_display_input()
+			text_input_shown.emit()
+		
+		DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+			_display_choices(current_line.choices)
+			choices_shown.emit()
+
+func _display_image_choices(choices: Array[String]) -> void:
+	image_margin_container.show()
+	_display_choices(choices)
 
 func _display_choices(choices: Array[String]) -> void:
 	assert(not current_line.choices.is_empty(), "No choices provided")
@@ -223,3 +306,6 @@ func _on_text_submitted(new_text: String) -> void:
 
 func _clear_line_edit() -> void:
 	line_edit.clear()
+
+func _clear_image_texture() -> void:
+	image_texture_rect.texture = null

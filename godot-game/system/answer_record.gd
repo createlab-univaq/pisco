@@ -1,6 +1,12 @@
 class_name AnswerRecord
 extends RefCounted
 
+var user_answer: Variant = null:
+	get:
+		return user_answer
+	set(value):
+		user_answer = value
+
 var correct: bool = false:
 	get:
 		return correct
