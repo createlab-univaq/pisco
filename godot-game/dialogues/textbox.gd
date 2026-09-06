@@ -58,31 +58,27 @@ func _ready() -> void:
 	
 	line_edit.text_submitted.connect(_on_text_submitted)
 	_reset_textbox()
-	
 	_close_textbox()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
-		
-		# CONSUME THE INPUT! 
-		# This stops the event here so the player/world doesn't also react to it.
 		get_viewport().set_input_as_handled()
 		
 		match current_state:
 			States.READING:
 				dialogue_text_rich_text_label.visible_ratio = 1.0
-				if tween and tween.is_valid():
-					tween.kill()
-				if current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+				_kill_tween()
+				
+				if current_line.dialogue_type == DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
 					_on_dialogue_line_complete()
 				else:
 					_on_tween_completed()
 			
 			States.READING_QUESTION:
 				question_dialogue_text_rich_text_label.visible_ratio = 1.0
-				if tween and tween.is_valid():
-					tween.kill()
-				if current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+				_kill_tween()
+				
+				if current_line.dialogue_type == DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
 					_on_tween_completed()
 				else:
 					_on_dialogue_line_complete()
@@ -97,7 +93,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func queue_dialogue(dialogue_sequence: Array[DialogueData]) -> void:
 	text_queue.append_array(dialogue_sequence)
 	
-	# Automatically start playing if the textbox is idle
 	if current_state == States.READY and not text_queue.is_empty():
 		_setup_dialogue_state()
 		dialogue_started.emit()
@@ -108,19 +103,16 @@ func _on_dialogue_completed() -> void:
 	dialogue_completed.emit()
 	_remove_dialogue_state()
 
-func _setup_dialogue_state():
+func _setup_dialogue_state() -> void:
 	if player.is_player_in_cutscene:
 		is_player_already_in_cutscene = true
 	else:
 		player.set_player_as_in_dialogue()
 	
 	self.show()
-	
-	# Wait until the engine finishes the current frame before enabling inputs.
-	# This instantly prevents double-firing!
 	call_deferred("set_process_unhandled_input", true)
 
-func _remove_dialogue_state():
+func _remove_dialogue_state() -> void:
 	if not is_player_already_in_cutscene:
 		player.set_player_as_not_in_dialogue()
 	is_player_already_in_cutscene = false
@@ -161,138 +153,102 @@ func _setup_question_textbox() -> void:
 	question_start_symbol_label.text = start_symbol
 	question_text_box_panel_container.show()
 
-func _display_text() -> void:
+func _kill_tween() -> void:
 	if tween and tween.is_valid():
 		tween.kill()
+		tween = null
+
+func _animate_text(label: RichTextLabel, text: String, target_state: States, callback: Callable) -> void:
+	_kill_tween()
+	label.text = text
+	label.visible_ratio = 0.0
+	_change_state(target_state)
 	
+	tween = create_tween()
+	tween.tween_property(label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_callback(callback)
+
+func _display_text() -> void:
+	_kill_tween()
 	current_line = text_queue.pop_front()
 	
-	if current_line.dialogue_type == current_line.DialogueTypes.IMAGES:
-		_change_state(States.DOWNLOADING_IMAGE)
-		image_downloader.load_image_from_web(current_line.image_url, _on_image_downloaded)
-	elif current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
-		var text: String = current_line.text
-		
-		dialogue_text_rich_text_label.text = text
-		dialogue_text_rich_text_label.visible_ratio = 1.0
-		end_symbol_label.text = end_symbol
-		
-		_setup_textbox()
-		
-		_on_tween_completed()
-	
-	elif current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
-		var question_text: String = current_line.question_text
-		
-		question_dialogue_text_rich_text_label.text = question_text
-		question_dialogue_text_rich_text_label.visible_ratio = 0.0
-		question_end_symbol_label.text = ""
-		
-		_change_state(States.READING_QUESTION)
-		_setup_question_textbox()
-		
-		tween = create_tween()
-		tween.tween_property(question_dialogue_text_rich_text_label, "visible_ratio", 1.0, question_text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_tween_completed)
-	else:
-		var text: String = current_line.text
-		
-		dialogue_text_rich_text_label.text = text
-		dialogue_text_rich_text_label.visible_ratio = 0.0
-		end_symbol_label.text = ""
-		
-		_change_state(States.READING)
-		_setup_textbox()
-		
-		tween = create_tween()
-		tween.tween_property(dialogue_text_rich_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_tween_completed)
+	match current_line.dialogue_type:
+		DialogueData.DialogueTypes.IMAGES:
+			_change_state(States.DOWNLOADING_IMAGE)
+			image_downloader.load_image_from_web(current_line.image_url, _on_image_downloaded)
+			
+		DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+			dialogue_text_rich_text_label.text = current_line.text
+			dialogue_text_rich_text_label.visible_ratio = 1.0
+			end_symbol_label.text = end_symbol
+			_setup_textbox()
+			_on_tween_completed()
+			
+		DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+			question_end_symbol_label.text = ""
+			_setup_question_textbox()
+			_animate_text(question_dialogue_text_rich_text_label, current_line.question_text, States.READING_QUESTION, _on_tween_completed)
+			
+		_: # Any remaining standard text types
+			end_symbol_label.text = ""
+			_setup_textbox()
+			_animate_text(dialogue_text_rich_text_label, current_line.text, States.READING, _on_tween_completed)
 
 func _on_tween_completed() -> void:
-	if current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_CHOICE or current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_INPUT or current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
-		var question_text: String = current_line.question_text
-		
-		question_dialogue_text_rich_text_label.text = question_text
-		question_dialogue_text_rich_text_label.visible_ratio = 0.0
-		question_end_symbol_label.text = ""
-		
-		_change_state(States.READING_QUESTION)
-		_setup_question_textbox()
-		
-		tween = create_tween()
-		tween.tween_property(question_dialogue_text_rich_text_label, "visible_ratio", 1.0, question_text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_dialogue_line_complete)
-	elif current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
-		var text: String = current_line.text
-		
-		dialogue_text_rich_text_label.text = text
-		dialogue_text_rich_text_label.visible_ratio = 0.0
-		end_symbol_label.text = ""
-		
-		_change_state(States.READING)
-		_setup_textbox()
-		
-		tween = create_tween()
-		tween.tween_property(dialogue_text_rich_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_dialogue_line_complete)
-	else:
-		_on_dialogue_line_complete()
-
-func _on_image_downloaded(image_texture: ImageTexture) -> void:
-	image_texture_rect.texture = image_texture
-	_on_dialogue_line_complete()
-
-func _change_state(next_state: States) -> void:
-	current_state = next_state
-
-func _on_textbox_action_performed():
-	_change_state(States.READY)
-	if not text_queue.is_empty():
-		_display_text()
-	else:
-		_on_dialogue_completed()
+	match current_line.dialogue_type:
+		DialogueData.DialogueTypes.TEXT_WITH_QUESTION_CHOICE, DialogueData.DialogueTypes.TEXT_WITH_QUESTION_INPUT, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+			question_end_symbol_label.text = ""
+			_setup_question_textbox()
+			_animate_text(question_dialogue_text_rich_text_label, current_line.question_text, States.READING_QUESTION, _on_dialogue_line_complete)
+			
+		DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+			end_symbol_label.text = ""
+			_setup_textbox()
+			_animate_text(dialogue_text_rich_text_label, current_line.text, States.READING, _on_dialogue_line_complete)
+			
+		_: # If no follow-up animation is needed
+			_on_dialogue_line_complete()
 
 func _on_dialogue_line_complete() -> void:
 	line_finished.emit()
 	
 	match current_line.dialogue_type:
-		DialogueData.DialogueTypes.TEXT_ONLY:
+		DialogueData.DialogueTypes.TEXT_ONLY, DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
 			end_symbol_label.text = end_symbol
 			dialogue_text_shown.emit()
 			_change_state(States.FINISHED)
-		
-		DialogueData.DialogueTypes.CHOICES:
+			
+		DialogueData.DialogueTypes.CHOICES, DialogueData.DialogueTypes.TEXT_WITH_QUESTION_CHOICE, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
 			_display_choices(current_line.choices)
 			choices_shown.emit()
-		
-		DialogueData.DialogueTypes.INPUT:
+			
+		DialogueData.DialogueTypes.INPUT, DialogueData.DialogueTypes.TEXT_WITH_QUESTION_INPUT:
 			_display_input()
 			text_input_shown.emit()
-		
+			
 		DialogueData.DialogueTypes.IMAGES:
-			_display_image_choices(current_line.choices)
-			choices_shown.emit()
-		
-		DialogueData.DialogueTypes.TEXT_WITH_QUESTION_CHOICE:
+			image_margin_container.show() # Condensed from _display_image_choices
 			_display_choices(current_line.choices)
 			choices_shown.emit()
-		
-		DialogueData.DialogueTypes.TEXT_WITH_QUESTION_INPUT:
-			_display_input()
-			text_input_shown.emit()
-		
-		DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
-			_display_choices(current_line.choices)
-			choices_shown.emit()
-		
-		DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
-			end_symbol_label.text = end_symbol
-			dialogue_text_shown.emit()
-			_change_state(States.FINISHED)
 
-func _display_image_choices(choices: Array[String]) -> void:
-	image_margin_container.show()
-	_display_choices(choices)
+func _on_image_downloaded(image_texture: ImageTexture) -> void:
+	if image_texture == null:
+		push_warning("Skipping image display due to download error.")
+		_clear_image_texture()
+	else:
+		image_texture_rect.texture = image_texture
+		
+	_on_dialogue_line_complete()
+
+func _change_state(next_state: States) -> void:
+	current_state = next_state
+
+func _on_textbox_action_performed() -> void:
+	_change_state(States.READY)
+	if not text_queue.is_empty():
+		_display_text()
+	else:
+		_on_dialogue_completed()
 
 func _display_choices(choices: Array[String]) -> void:
 	assert(not current_line.choices.is_empty(), "No choices provided")
@@ -304,9 +260,7 @@ func _display_choices(choices: Array[String]) -> void:
 	for choice: String in choices:
 		var btn: Button = Button.new()
 		btn.text = choice
-		
 		btn.focus_mode = Control.FOCUS_ALL
-		
 		btn.pressed.connect(_on_choice_pressed.bind(choice))
 		choices_v_box_container.add_child(btn)
 	
@@ -318,7 +272,6 @@ func _on_choice_pressed(choice: String) -> void:
 	_clear_choice_buttons()
 	
 	choice_made.emit(choice)
-	
 	_on_textbox_action_performed()
 
 func _clear_choice_buttons() -> void:
@@ -340,7 +293,6 @@ func _on_text_submitted(new_text: String) -> void:
 	_clear_line_edit()
 	
 	text_submitted.emit(new_text)
-	
 	_on_textbox_action_performed()
 
 func _clear_line_edit() -> void:

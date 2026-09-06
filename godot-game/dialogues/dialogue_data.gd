@@ -1,11 +1,11 @@
 class_name DialogueData
 extends RefCounted
 
-@export var text: String
-@export var dialogue_type: DialogueTypes
-@export var choices: Array[String]
-@export var image_url: String
-@export var question_text: String
+var text: String
+var dialogue_type: DialogueTypes
+var choices: Array[String]
+var image_url: String
+var question_text: String
 
 enum DialogueTypes {
 	TEXT_ONLY,

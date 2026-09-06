@@ -13,6 +13,7 @@ func _on_image_downloaded(result: int, response_code: int, headers: PackedString
 	# Check if the download was successful
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		push_error("Failed to download image. Response Code: ", response_code)
+		on_image_downloaded.call(null)
 		return
 		
 	var image: Image = Image.new()
@@ -31,6 +32,7 @@ func _on_image_downloaded(result: int, response_code: int, headers: PackedString
 		
 	if error != OK:
 		push_error("Couldn't parse the image buffer. It might be an unsupported format.")
+		on_image_downloaded.call(null)
 		return
 		
 	# Convert the Image to an ImageTexture
