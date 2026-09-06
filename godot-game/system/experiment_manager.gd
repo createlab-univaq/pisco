@@ -20,7 +20,11 @@ enum NodeType {
 	TRUE_FALSE_NODE,
 	EMOTION_ATTRIBUTION_NODE,
 	EYES_TASK_NODE,
-	FAUX_PAS_NODE
+	FAUX_PAS_NODE,
+	SOCIAL_SITUATIONS,
+	THEORY_OF_MIND,
+	EMOTION_ATTRIBUTION_EXERCISE_A_NODE,
+	EMOTION_ATTRIBUTION_EXERCISE_B_NODE
 }
 
 enum EdgeType {
@@ -41,7 +45,11 @@ const NODE_TYPE_MAP: Dictionary[NodeType, String] = {
 	NodeType.TRUE_FALSE_NODE: "TrueFalseNode",
 	NodeType.EMOTION_ATTRIBUTION_NODE: "EmotionAttributionNode",
 	NodeType.EYES_TASK_NODE: "EyesTaskNode",
-	NodeType.FAUX_PAS_NODE: "FauxPasNode"
+	NodeType.FAUX_PAS_NODE: "FauxPasNode",
+	NodeType.SOCIAL_SITUATIONS: "SocialSituationsNode",
+	NodeType.THEORY_OF_MIND: "TheoryOfMindNode",
+	NodeType.EMOTION_ATTRIBUTION_EXERCISE_A_NODE: "EmotionAttributionExerciseANode",
+	NodeType.EMOTION_ATTRIBUTION_EXERCISE_B_NODE: "EmotionAttributionExerciseBNode",
 }
 
 const EDGE_TYPE_MAP: Dictionary[EdgeType, String] = {
@@ -78,6 +86,19 @@ const SKIP_IF_KEY: String = "skipIf"
 const ENABLED_KEY: String = "enabled"
 const ANSWER_INDEX: String = "answerIndex"
 const QUESTION_INDEX: String = "questionIndex"
+const ITEMS_KEY: String = "items"
+const SECTIONS_KEY: String = "sections"
+const BEFORE_TEXT_KEY: String = "before"
+const BOLD_TEXT_KEY: String = "bold"
+const AFTER_TEXT_KEY: String = "after"
+const CORRECT_INDEXES_KEY: String = "correctIndexes"
+const SCENARIO_KEY: String = "scenario"
+const DOMANDA_KEY: String = "domanda"
+const CORRECT_ANSWER_EXPLAINATION_KEY: String = "spiegazioneR"
+const SCENARIO_EXPLAINATION_KEY: String = "spiegazioneS"
+const RISPOSTE_CORRETTE_KEY: String = "risposteCorrette"
+const EMOTION_KEY: String = "emotion"
+const EXPLANATION_KEY: String = "explanation"
 
 # Node Choices Keys
 const TRUE_CHOICE_KEY: String = "Vero"
@@ -137,6 +158,14 @@ func _start_node() -> void:
 			_handle_eyes_task_node(current_node)
 		NODE_TYPE_MAP[NodeType.FAUX_PAS_NODE]:
 			_handle_faux_pas_node(current_node)
+		NODE_TYPE_MAP[NodeType.SOCIAL_SITUATIONS]:
+			_handle_social_situations_node(current_node)
+		NODE_TYPE_MAP[NodeType.THEORY_OF_MIND]:
+			_handle_theory_of_mind_node(current_node)
+		NODE_TYPE_MAP[NodeType.EMOTION_ATTRIBUTION_EXERCISE_A_NODE]:
+			_handle_emotion_attribution_exercise_a_node(current_node)
+		NODE_TYPE_MAP[NodeType.EMOTION_ATTRIBUTION_EXERCISE_B_NODE]:
+			_handle_emotion_attribution_exercise_b_node(current_node)
 
 func _record_answer(user_answer: Variant, is_answer_correct: bool) -> void:
 	
@@ -458,7 +487,7 @@ func _on_faux_pas_questions_finished() -> void:
 
 func _show_faux_pas_question() -> void:
 	var faux_pas_node_question: FauxPasNodeQuestion = experiment_questions_queue.front()
-	var faux_pas_choice: DialogueData = DialogueData.new(faux_pas_node_question.narration, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE, faux_pas_node_question.choices, "", faux_pas_node_question.question)
+	var faux_pas_choice: DialogueData = DialogueData.new(faux_pas_node_question.narration, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE, faux_pas_node_question.choices, "", faux_pas_node_question.text)
 	textbox.queue_dialogue([faux_pas_choice])
 	textbox.choices_shown.connect(_on_faux_pas_node_choice_shown, CONNECT_ONE_SHOT)
 
@@ -476,6 +505,222 @@ func _on_faux_pas_node_choice_made(outcome: String) -> void:
 	_next_faux_pas_question()
 
 ######### FAUX PAS NODE LOGIC #########
+
+######### SOCIAL SITUATIONS NODE LOGIC #########
+
+func _handle_social_situations_node(social_situations_node: Dictionary) -> void:
+	
+	var node_data: Dictionary = social_situations_node[DATA_KEY]
+	
+	var items: Array = node_data[ITEMS_KEY]
+	# update node record max score
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	current_node_record.max_score = items.size()
+	
+	for item in items:
+		for section in item[SECTIONS_KEY]:
+			var social_situations_question: SocialSituationsNodeQuestion = SocialSituationsNodeQuestion.new(section[BEFORE_TEXT_KEY], section[BOLD_TEXT_KEY], section[AFTER_TEXT_KEY], section[ANSWERS_KEY], section[CORRECT_INDEXES_KEY])
+			experiment_questions_queue.append(social_situations_question)
+	
+	textbox.choice_made.connect(_on_social_situations_node_choice_made)
+	_next_social_situations_question()
+
+func _next_social_situations_question() -> void:
+	if experiment_questions_queue.is_empty():
+		textbox.choice_made.disconnect(_on_social_situations_node_choice_made)
+		_end_node()
+		return
+	
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	# create empty answer record
+	current_node_record.answers.append(AnswerRecord.new())
+	
+	var social_situations_node_question: SocialSituationsNodeQuestion = experiment_questions_queue.front()
+	var social_situations_choice: DialogueData = DialogueData.new(social_situations_node_question.text, DialogueData.DialogueTypes.CHOICES, social_situations_node_question.choices)
+	textbox.queue_dialogue([social_situations_choice])
+	textbox.choices_shown.connect(_on_social_situations_node_choice_shown, CONNECT_ONE_SHOT)
+
+func _on_social_situations_node_choice_shown() -> void:
+	_on_response_shown_to_user()
+
+func _on_social_situations_node_choice_made(outcome: String) -> void:
+	_on_user_response_submission()
+	
+	var social_situations_node_question: SocialSituationsNodeQuestion = experiment_questions_queue.pop_front()
+	var choices: Array[String] = social_situations_node_question.choices
+	var is_user_answer_correct: bool = false
+	var correct_answer_index_cursor: int = 0
+	var correct_answers_indexes: Array[int] = social_situations_node_question.correct_choices_indexes
+	while not is_user_answer_correct and correct_answer_index_cursor < correct_answers_indexes.size():
+		var current_correct_answer_index: int = correct_answers_indexes[correct_answer_index_cursor]
+		var current_correct_answer: String = choices[current_correct_answer_index].to_lower()
+		is_user_answer_correct = current_correct_answer == outcome.to_lower()
+		correct_answer_index_cursor += 1
+	
+	_record_answer(outcome, is_user_answer_correct)
+	
+	_next_social_situations_question()
+
+######### SOCIAL SITUATIONS NODE LOGIC #########
+
+######### THEORY OF MIND NODE LOGIC #########
+
+func _handle_theory_of_mind_node(theory_of_mind_node: Dictionary) -> void:
+	
+	var node_data: Dictionary = theory_of_mind_node[DATA_KEY]
+	
+	var quiz_questions: Array = node_data[QUIZ_KEY]
+	# update node record max score
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	current_node_record.max_score = quiz_questions.size()
+	
+	for question: Dictionary in quiz_questions:
+		var quiz_single_questions: Array = question[QUESTIONS_KEY]
+		var quiz_single_question_index: int = 0
+		while quiz_single_question_index < quiz_single_questions.size() :
+			var single_question: Dictionary = quiz_single_questions[quiz_single_question_index]
+			var theory_of_mind_question: TheoryOfMindNodeQuestion = TheoryOfMindNodeQuestion.new(single_question[SINGLE_QUESTION_KEY], quiz_single_question_index == 0, question[NARRATION_KEY], single_question[CORRECT_INDEX_KEY], single_question[ANSWERS_KEY])
+			experiment_questions_queue.append(theory_of_mind_question)
+			quiz_single_question_index += 1
+	
+	textbox.choice_made.connect(_on_theory_of_mind_choice_made)
+	_next_theory_of_mind_question()
+
+func _next_theory_of_mind_question() -> void:
+	if experiment_questions_queue.is_empty():
+		textbox.choice_made.disconnect(_on_theory_of_mind_choice_made)
+		_end_node()
+		return
+	
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	var current_node_answers: Array[AnswerRecord] = current_node_record.answers
+	# create empty answer record
+	current_node_answers.append(AnswerRecord.new())
+	
+	var theory_of_mind_question: TheoryOfMindNodeQuestion = experiment_questions_queue.front()
+	
+	if theory_of_mind_question.is_first:
+		var theory_of_mind_text: DialogueData = DialogueData.new(theory_of_mind_question.narration, DialogueData.DialogueTypes.TEXT_ONLY)
+		textbox.dialogue_completed.connect(_show_theory_of_mind_question, CONNECT_ONE_SHOT)
+	else:
+		_show_theory_of_mind_question()
+
+func _show_theory_of_mind_question() -> void:
+	var theory_of_mind_question: TheoryOfMindNodeQuestion = experiment_questions_queue.front()
+	var theory_of_mind_choice: DialogueData = DialogueData.new(theory_of_mind_question.narration, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE, theory_of_mind_question.choices, "", theory_of_mind_question.text)
+	textbox.queue_dialogue([theory_of_mind_choice])
+	textbox.choices_shown.connect(_on_theory_of_mind_node_choice_shown, CONNECT_ONE_SHOT)
+
+func _on_theory_of_mind_node_choice_shown() -> void:
+	_on_response_shown_to_user()
+
+func _on_theory_of_mind_choice_made(outcome: String) -> void:
+	_on_user_response_submission()
+	
+	var theory_of_mind_question: TheoryOfMindNodeQuestion = experiment_questions_queue.pop_front()
+	var is_user_answer_correct: bool = outcome == theory_of_mind_question.choices[theory_of_mind_question.correct_question_index]
+	
+	_record_answer(outcome, is_user_answer_correct)
+	
+	_next_theory_of_mind_question()
+
+######### THEORY OF MIND NODE LOGIC #########
+
+######### EMOTION ATTRIBUTION EXERCISE A NODE LOGIC #########
+
+func _handle_emotion_attribution_exercise_a_node(emotion_attribution_exercise_a_node: Dictionary) -> void:
+	
+	var node_data: Dictionary = emotion_attribution_exercise_a_node[DATA_KEY]
+	
+	# update node record max score
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	current_node_record.max_score = 1
+	
+	var emotion_attribution_exercise_a_node_question: EmotionAttributionExerciseANodeQuestion = EmotionAttributionExerciseANodeQuestion.new(node_data[SCENARIO_KEY], node_data[DOMANDA_KEY], node_data[RISPOSTE_CORRETTE_KEY], node_data[CORRECT_ANSWER_EXPLAINATION_KEY], node_data[SCENARIO_EXPLAINATION_KEY])
+	experiment_questions_queue.append(emotion_attribution_exercise_a_node_question)
+	
+	# create empty answer record
+	current_node_record.answers.append(AnswerRecord.new())
+	
+	var emotion_attribution_exercise_a_text_input: DialogueData = DialogueData.new(emotion_attribution_exercise_a_node_question.scenario, DialogueData.DialogueTypes.TEXT_WITH_QUESTION_INPUT, [], "", emotion_attribution_exercise_a_node_question.text)
+	textbox.queue_dialogue([emotion_attribution_exercise_a_text_input])
+	textbox.text_input_shown.connect(_on_emotion_attribution_exercise_a_node_text_input_shown, CONNECT_ONE_SHOT)
+	textbox.text_submitted.connect(_on_emotion_attribution_exercise_a_node_text_submitted, CONNECT_ONE_SHOT)
+
+func _on_emotion_attribution_exercise_a_node_text_input_shown() -> void:
+	_on_response_shown_to_user()
+
+func _on_emotion_attribution_exercise_a_node_text_submitted(submitted_text: String) -> void:
+	_on_user_response_submission()
+	
+	var emotion_attribution_exercise_a_node_question: EmotionAttributionExerciseANodeQuestion = experiment_questions_queue.pop_front()
+	var is_user_answer_correct: bool = false
+	var correct_answer_index: int = 0
+	var correct_answers: Array[String] = emotion_attribution_exercise_a_node_question.correct_answers
+	while not is_user_answer_correct and correct_answer_index < correct_answers.size():
+		var current_correct_answer: String = correct_answers[correct_answer_index].to_lower()
+		is_user_answer_correct = current_correct_answer == submitted_text.to_lower()
+		correct_answer_index += 1
+	
+	_record_answer(submitted_text, is_user_answer_correct)
+	
+	# show explainations
+	var scenario_explaination_dialogue: DialogueData = DialogueData.new(emotion_attribution_exercise_a_node_question.scenario_explaination, DialogueData.DialogueTypes.TEXT_ONLY)
+	var correct_answer_explaination_dialogue: DialogueData = DialogueData.new(emotion_attribution_exercise_a_node_question.correct_answer_explaination, DialogueData.DialogueTypes.TEXT_ONLY)
+	textbox.queue_dialogue([scenario_explaination_dialogue, correct_answer_explaination_dialogue])
+
+######### EMOTION ATTRIBUTION EXERCISE A NODE LOGIC #########
+
+######### EMOTION ATTRIBUTION EXERCISE B NODE LOGIC #########
+
+func _handle_emotion_attribution_exercise_b_node(emotion_attribution_exercise_b_node: Dictionary) -> void:
+	
+	var node_data: Dictionary = emotion_attribution_exercise_b_node[DATA_KEY]
+	
+	var items: Array = node_data[ITEMS_KEY]
+	# update node record max score
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	current_node_record.max_score = items.size()
+	
+	for item: Dictionary in items:
+		var emotion_attribution_exercise_b_node_question: EmotionAttributionExerciseBNodeQuestion = EmotionAttributionExerciseBNodeQuestion.new(item[SCENARIO_KEY], item[EMOTION_KEY], item[EXPLANATION_KEY])
+		experiment_questions_queue.append(emotion_attribution_exercise_b_node_question)
+	
+	_next_emotion_attribution_exercise_b_question()
+
+func _next_emotion_attribution_exercise_b_question() -> void:
+	if experiment_questions_queue.is_empty():
+		_end_node()
+		return
+	
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	# create empty answer record
+	current_node_record.answers.append(AnswerRecord.new())
+	
+	var emotion_attribution_exercise_b_node_question: EmotionAttributionExerciseBNodeQuestion = experiment_questions_queue.front()
+	var emotion_attribution_exercise_b_scenario_dialogue_text: DialogueData = DialogueData.new(emotion_attribution_exercise_b_node_question.scenario, DialogueData.DialogueTypes.TEXT_ONLY)
+	textbox.queue_dialogue([emotion_attribution_exercise_b_scenario_dialogue_text])
+	textbox.dialogue_completed.connect(_on_emotion_attribution_exercise_b_node_scenario_dialogue_completed, CONNECT_ONE_SHOT)
+
+func _on_emotion_attribution_exercise_b_node_scenario_dialogue_completed() -> void:
+	var emotion_attribution_exercise_b_node_question: EmotionAttributionExerciseBNodeQuestion = experiment_questions_queue.front()
+	var emotion_attribution_exercise_b_explanation_and_emotion_dialogue_text: DialogueData = DialogueData.new(emotion_attribution_exercise_b_node_question.scenario, DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY, [], "", emotion_attribution_exercise_b_node_question.emotion)
+	textbox.queue_dialogue([emotion_attribution_exercise_b_explanation_and_emotion_dialogue_text])
+	
+	textbox.dialogue_text_shown.connect(_on_emotion_attribution_exercise_b_node_explanation_and_emotion_dialogue_text_shown, CONNECT_ONE_SHOT)
+	textbox.dialogue_completed.connect(_on_emotion_attribution_exercise_b_node_explanation_and_emotion_dialogue_completed, CONNECT_ONE_SHOT)
+
+func _on_emotion_attribution_exercise_b_node_explanation_and_emotion_dialogue_text_shown() -> void:
+	_on_response_shown_to_user()
+
+func _on_emotion_attribution_exercise_b_node_explanation_and_emotion_dialogue_completed() -> void:
+	_on_user_response_submission()
+	
+	_record_answer(null, true)
+	
+	_next_emotion_attribution_exercise_b_question()
+
+######### EMOTION ATTRIBUTION EXERCISE B NODE LOGIC #########
 
 func _on_actionable_actioned(_tile: Actionable, _player: Player) -> void:
 	_start_node()

@@ -16,19 +16,20 @@ extends Control
 @onready var text_input_margin_container: MarginContainer = $VBoxContainer/TextInputMarginContainer
 @onready var line_edit: LineEdit = $VBoxContainer/TextInputMarginContainer/LineEdit
 
-@onready var question_text_box_panel_container: PanelContainer = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer
-@onready var question_start_symbol_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/StartSymbolLabel
-@onready var question_dialogue_text_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/DialogueTextLabel
-@onready var question_end_symbol_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/EndSymbolLabel
+@onready var question_text_box_panel_container: PanelContainer = $VBoxContainer/QuestionMarginContainer/QuestionTextBoxPanelContainer
+@onready var question_start_symbol_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/QuestionStartSymbolLabel
+@onready var question_dialogue_text_rich_text_label: RichTextLabel = $VBoxContainer/QuestionMarginContainer/QuestionTextBoxPanelContainer/MarginContainer/HBoxContainer/QuestionDialogueTextRichTextLabel
+@onready var question_end_symbol_label: Label = $VBoxContainer/QuestionMarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/QuestionEndSymbolLabel
 
 @onready var text_box_panel_container: PanelContainer = $VBoxContainer/MarginContainer/TextBoxPanelContainer
 @onready var start_symbol_label: Label = $VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/StartSymbolLabel
-@onready var dialogue_text_label: Label = $VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/DialogueTextLabel
+@onready var dialogue_text_rich_text_label: RichTextLabel = $VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/DialogueTextRichTextLabel
 @onready var end_symbol_label: Label = $VBoxContainer/MarginContainer/TextBoxPanelContainer/MarginContainer/HBoxContainer/EndSymbolLabel
 
 signal dialogue_started
 signal line_finished
 signal dialogue_completed
+signal dialogue_text_shown
 signal choices_shown
 signal choice_made(outcome: String)
 signal text_input_shown
@@ -69,16 +70,22 @@ func _unhandled_input(event: InputEvent) -> void:
 		
 		match current_state:
 			States.READING:
-				dialogue_text_label.visible_ratio = 1.0
+				dialogue_text_rich_text_label.visible_ratio = 1.0
 				if tween and tween.is_valid():
 					tween.kill()
-				_on_tween_completed()
+				if current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+					_on_dialogue_line_complete()
+				else:
+					_on_tween_completed()
 			
 			States.READING_QUESTION:
-				question_dialogue_text_label.visible_ratio = 1.0
+				question_dialogue_text_rich_text_label.visible_ratio = 1.0
 				if tween and tween.is_valid():
 					tween.kill()
-				_on_dialogue_line_complete()
+				if current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+					_on_tween_completed()
+				else:
+					_on_dialogue_line_complete()
 			
 			States.FINISHED:
 				if text_queue.is_empty():
@@ -131,12 +138,12 @@ func _close_textbox() -> void:
 func _reset_textbox() -> void:
 	start_symbol_label.text = ""
 	end_symbol_label.text = ""
-	dialogue_text_label.text = ""
+	dialogue_text_rich_text_label.text = ""
 	text_box_panel_container.hide()
 	
 	question_start_symbol_label.text = ""
 	question_end_symbol_label.text = ""
-	question_dialogue_text_label.text = ""
+	question_dialogue_text_rich_text_label.text = ""
 	question_text_box_panel_container.hide()
 	
 	image_margin_container.hide()
@@ -166,41 +173,67 @@ func _display_text() -> void:
 	elif current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
 		var text: String = current_line.text
 		
-		dialogue_text_label.text = text
-		dialogue_text_label.visible_ratio = 1.0
+		dialogue_text_rich_text_label.text = text
+		dialogue_text_rich_text_label.visible_ratio = 1.0
 		end_symbol_label.text = end_symbol
 		
 		_setup_textbox()
 		
 		_on_tween_completed()
-		
-	else:
-		var text: String = current_line.text
-		
-		dialogue_text_label.text = text
-		dialogue_text_label.visible_ratio = 0.0
-		end_symbol_label.text = ""
-		
-		_change_state(States.READING)
-		_setup_textbox()
-		
-		tween = create_tween()
-		tween.tween_property(dialogue_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_tween_completed)
-
-func _on_tween_completed() -> void:
-	if current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_CHOICE or current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_INPUT or current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+	
+	elif current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
 		var question_text: String = current_line.question_text
 		
-		question_dialogue_text_label.text = question_text
-		question_dialogue_text_label.visible_ratio = 0.0
+		question_dialogue_text_rich_text_label.text = question_text
+		question_dialogue_text_rich_text_label.visible_ratio = 0.0
 		question_end_symbol_label.text = ""
 		
 		_change_state(States.READING_QUESTION)
 		_setup_question_textbox()
 		
 		tween = create_tween()
-		tween.tween_property(question_dialogue_text_label, "visible_ratio", 1.0, question_text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_property(question_dialogue_text_rich_text_label, "visible_ratio", 1.0, question_text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_callback(_on_tween_completed)
+	else:
+		var text: String = current_line.text
+		
+		dialogue_text_rich_text_label.text = text
+		dialogue_text_rich_text_label.visible_ratio = 0.0
+		end_symbol_label.text = ""
+		
+		_change_state(States.READING)
+		_setup_textbox()
+		
+		tween = create_tween()
+		tween.tween_property(dialogue_text_rich_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_callback(_on_tween_completed)
+
+func _on_tween_completed() -> void:
+	if current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_CHOICE or current_line.dialogue_type == current_line.DialogueTypes.TEXT_WITH_QUESTION_INPUT or current_line.dialogue_type == current_line.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
+		var question_text: String = current_line.question_text
+		
+		question_dialogue_text_rich_text_label.text = question_text
+		question_dialogue_text_rich_text_label.visible_ratio = 0.0
+		question_end_symbol_label.text = ""
+		
+		_change_state(States.READING_QUESTION)
+		_setup_question_textbox()
+		
+		tween = create_tween()
+		tween.tween_property(question_dialogue_text_rich_text_label, "visible_ratio", 1.0, question_text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_callback(_on_dialogue_line_complete)
+	elif current_line.dialogue_type == current_line.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+		var text: String = current_line.text
+		
+		dialogue_text_rich_text_label.text = text
+		dialogue_text_rich_text_label.visible_ratio = 0.0
+		end_symbol_label.text = ""
+		
+		_change_state(States.READING)
+		_setup_textbox()
+		
+		tween = create_tween()
+		tween.tween_property(dialogue_text_rich_text_label, "visible_ratio", 1.0, text.length() * char_read_rate).set_trans(Tween.TRANS_LINEAR)
 		tween.tween_callback(_on_dialogue_line_complete)
 	else:
 		_on_dialogue_line_complete()
@@ -225,6 +258,7 @@ func _on_dialogue_line_complete() -> void:
 	match current_line.dialogue_type:
 		DialogueData.DialogueTypes.TEXT_ONLY:
 			end_symbol_label.text = end_symbol
+			dialogue_text_shown.emit()
 			_change_state(States.FINISHED)
 		
 		DialogueData.DialogueTypes.CHOICES:
@@ -250,6 +284,11 @@ func _on_dialogue_line_complete() -> void:
 		DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE:
 			_display_choices(current_line.choices)
 			choices_shown.emit()
+		
+		DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY:
+			end_symbol_label.text = end_symbol
+			dialogue_text_shown.emit()
+			_change_state(States.FINISHED)
 
 func _display_image_choices(choices: Array[String]) -> void:
 	image_margin_container.show()

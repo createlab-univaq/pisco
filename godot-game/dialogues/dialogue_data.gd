@@ -14,7 +14,8 @@ enum DialogueTypes {
 	IMAGES,
 	TEXT_WITH_QUESTION_CHOICE,
 	TEXT_WITH_QUESTION_INPUT,
-	FIXED_TEXT_WITH_QUESTION_CHOICE
+	FIXED_TEXT_WITH_QUESTION_CHOICE,
+	QUESTION_WITH_TEXT_ONLY
 }
 
 func _init(p_text: String = "", p_dialogue_type: DialogueTypes = DialogueTypes.TEXT_ONLY, p_choices: Array[String] = [], p_image_url: String = '', p_question_text: String = '') -> void:
