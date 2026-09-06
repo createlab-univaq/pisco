@@ -24,7 +24,8 @@ enum NodeType {
 	SOCIAL_SITUATIONS,
 	THEORY_OF_MIND,
 	EMOTION_ATTRIBUTION_EXERCISE_A_NODE,
-	EMOTION_ATTRIBUTION_EXERCISE_B_NODE
+	EMOTION_ATTRIBUTION_EXERCISE_B_NODE,
+	FAUX_PAS_EXERCISE_A_NODE
 }
 
 enum EdgeType {
@@ -50,6 +51,7 @@ const NODE_TYPE_MAP: Dictionary[NodeType, String] = {
 	NodeType.THEORY_OF_MIND: "TheoryOfMindNode",
 	NodeType.EMOTION_ATTRIBUTION_EXERCISE_A_NODE: "EmotionAttributionExerciseANode",
 	NodeType.EMOTION_ATTRIBUTION_EXERCISE_B_NODE: "EmotionAttributionExerciseBNode",
+	NodeType.FAUX_PAS_EXERCISE_A_NODE: "FauxPasExerciseANode"
 }
 
 const EDGE_TYPE_MAP: Dictionary[EdgeType, String] = {
@@ -166,6 +168,8 @@ func _start_node() -> void:
 			_handle_emotion_attribution_exercise_a_node(current_node)
 		NODE_TYPE_MAP[NodeType.EMOTION_ATTRIBUTION_EXERCISE_B_NODE]:
 			_handle_emotion_attribution_exercise_b_node(current_node)
+		NODE_TYPE_MAP[NodeType.FAUX_PAS_EXERCISE_A_NODE]:
+			_handle_faux_pas_exercise_a_node(current_node)
 
 func _record_answer(user_answer: Variant, is_answer_correct: bool) -> void:
 	
@@ -477,6 +481,7 @@ func _next_faux_pas_question() -> void:
 	
 	if faux_pas_node_question.is_first:
 		var faux_pas_text: DialogueData = DialogueData.new(faux_pas_node_question.narration, DialogueData.DialogueTypes.TEXT_ONLY)
+		textbox.queue_dialogue([faux_pas_text])
 		textbox.dialogue_completed.connect(_show_faux_pas_question, CONNECT_ONE_SHOT)
 	else:
 		_show_faux_pas_question()
@@ -601,6 +606,7 @@ func _next_theory_of_mind_question() -> void:
 	
 	if theory_of_mind_question.is_first:
 		var theory_of_mind_text: DialogueData = DialogueData.new(theory_of_mind_question.narration, DialogueData.DialogueTypes.TEXT_ONLY)
+		textbox.queue_dialogue([theory_of_mind_text])
 		textbox.dialogue_completed.connect(_show_theory_of_mind_question, CONNECT_ONE_SHOT)
 	else:
 		_show_theory_of_mind_question()
@@ -721,6 +727,98 @@ func _on_emotion_attribution_exercise_b_node_explanation_and_emotion_dialogue_co
 	_next_emotion_attribution_exercise_b_question()
 
 ######### EMOTION ATTRIBUTION EXERCISE B NODE LOGIC #########
+
+######### FAUX PAS EXERCISE A NODE LOGIC #########
+
+func _handle_faux_pas_exercise_a_node(faux_pas_exercise_a_node: Dictionary) -> void:
+	
+	var node_data: Dictionary = faux_pas_exercise_a_node[DATA_KEY]
+	
+	var quiz_questions: Array = node_data[QUIZ_KEY]
+	# update node record max score
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	current_node_record.max_score = quiz_questions.size()
+	
+	for question: Dictionary in quiz_questions:
+		var quiz_single_questions: Array = question[QUESTIONS_KEY]
+		var quiz_single_question_index: int = 0
+		while quiz_single_question_index < quiz_single_questions.size() :
+			var single_question: Dictionary = quiz_single_questions[quiz_single_question_index]
+			var faux_pas_skip_question: FauxPasSkipQuestion = null
+			var skip_if: Dictionary = single_question[SKIP_IF_KEY]
+			if skip_if[ENABLED_KEY]:
+				var skip_if_question_index: int = skip_if[QUESTION_INDEX]
+				var skip_if_question: Dictionary = quiz_single_questions[skip_if_question_index]
+				var skip_if_question_answer: String = skip_if_question[ANSWERS_KEY][skip_if[ANSWER_INDEX]]
+				faux_pas_skip_question = FauxPasSkipQuestion.new(skip_if_question_index, skip_if_question_answer)
+			var faux_pas_exercise_a_node_question: FauxPasExerciseANodeQuestion = FauxPasExerciseANodeQuestion.new(single_question[SINGLE_QUESTION_KEY], quiz_single_question_index == 0, quiz_single_question_index == quiz_single_questions.size() - 1, question[NARRATION_KEY], single_question[CORRECT_INDEX_KEY], single_question[ANSWERS_KEY], faux_pas_skip_question, question[EXPLANATION_KEY])
+			experiment_questions_queue.append(faux_pas_exercise_a_node_question)
+			quiz_single_question_index += 1
+	
+	textbox.choice_made.connect(_on_faux_pas_exercise_a_node_choice_made)
+	_next_faux_pas_exercise_a_question()
+
+func _next_faux_pas_exercise_a_question() -> void:
+	if experiment_questions_queue.is_empty():
+		_on_faux_pas_exercise_a_questions_finished()
+		return
+	
+	var current_node_record: NodeRecord = experiment_records[current_node_id]
+	var current_node_answers: Array[AnswerRecord] = current_node_record.answers
+	# create empty answer record
+	current_node_answers.append(AnswerRecord.new())
+	
+	var faux_pas_exercise_a_node_question: FauxPasExerciseANodeQuestion = experiment_questions_queue.front()
+	var faux_pas_node_skip_question: FauxPasSkipQuestion = faux_pas_exercise_a_node_question.skip_question
+	var is_skip_question: bool = true
+	while is_skip_question and not experiment_questions_queue.is_empty():
+		is_skip_question = current_node_answers[faux_pas_node_skip_question.answer_index].user_answer == faux_pas_node_skip_question.question_answer
+		if is_skip_question:
+			# skip current answer
+			experiment_questions_queue.pop_front()
+			faux_pas_exercise_a_node_question = experiment_questions_queue.front()
+			faux_pas_node_skip_question = faux_pas_exercise_a_node_question.skip_question
+	
+	if experiment_questions_queue.is_empty():
+		_on_faux_pas_exercise_a_questions_finished()
+		return
+	
+	if faux_pas_exercise_a_node_question.is_first:
+		var faux_pas_exercise_a_text: DialogueData = DialogueData.new(faux_pas_exercise_a_node_question.narration, DialogueData.DialogueTypes.TEXT_ONLY)
+		textbox.queue_dialogue([faux_pas_exercise_a_text])
+		textbox.dialogue_completed.connect(_show_faux_pas_exercise_a_question, CONNECT_ONE_SHOT)
+	else:
+		_show_faux_pas_exercise_a_question()
+
+func _on_faux_pas_exercise_a_questions_finished() -> void:
+	textbox.choice_made.disconnect(_on_faux_pas_exercise_a_node_choice_made)
+	_end_node()
+
+func _show_faux_pas_exercise_a_question() -> void:
+	var faux_pas_exercise_a_node_question: FauxPasExerciseANodeQuestion = experiment_questions_queue.front()
+	var faux_pas_exercise_a_choice: DialogueData = DialogueData.new(faux_pas_exercise_a_node_question.narration, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE, faux_pas_exercise_a_node_question.choices, "", faux_pas_exercise_a_node_question.text)
+	textbox.queue_dialogue([faux_pas_exercise_a_choice])
+	textbox.choices_shown.connect(_on_faux_pas_exercise_a_node_choice_shown, CONNECT_ONE_SHOT)
+
+func _on_faux_pas_exercise_a_node_choice_shown() -> void:
+	_on_response_shown_to_user()
+
+func _on_faux_pas_exercise_a_node_choice_made(outcome: String) -> void:
+	_on_user_response_submission()
+	
+	var faux_pas_exercise_a_node_question: FauxPasExerciseANodeQuestion = experiment_questions_queue.pop_front()
+	var is_user_answer_correct: bool = outcome == faux_pas_exercise_a_node_question.choices[faux_pas_exercise_a_node_question.correct_question_index]
+	
+	_record_answer(outcome, is_user_answer_correct)
+	
+	if faux_pas_exercise_a_node_question.is_last:
+		var faux_pas_exercise_a_explanation_dialogue: DialogueData = DialogueData.new(faux_pas_exercise_a_node_question.explanation, DialogueData.DialogueTypes.TEXT_ONLY)
+		textbox.dialogue_completed.connect(_next_faux_pas_exercise_a_question)
+		textbox.queue_dialogue([faux_pas_exercise_a_explanation_dialogue])
+	else:
+		_next_faux_pas_exercise_a_question()
+
+######### FAUX PAS EXERCISE A NODE LOGIC #########
 
 func _on_actionable_actioned(_tile: Actionable, _player: Player) -> void:
 	_start_node()
