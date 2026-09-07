@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bsw16nfb1p87m"]
+
+[ext_resource type="Script" uid="uid://c4b2lxklhlild" path="res://system/experiment_manager/experiment_nodes/emotion_attribution_exercise_b/emotion_attribution_exercise_b_controller.gd" id="1_kxfuk"]
+
+[node name="EmotionAttributionExerciseBController" type="Node" unique_id=1406457833]
+script = ExtResource("1_kxfuk")

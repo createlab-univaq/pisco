@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://booa8oupqx417"]
+
+[ext_resource type="Script" uid="uid://3pipw308wlye" path="res://system/experiment_manager/experiment_nodes/eyes_task/eyes_task_controller.gd" id="1_lwjq2"]
+
+[node name="EyesTaskController" type="Node" unique_id=1418771497]
+script = ExtResource("1_lwjq2")

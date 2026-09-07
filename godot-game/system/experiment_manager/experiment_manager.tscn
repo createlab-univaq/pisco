@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://uosa5c6owore"]
+
+[ext_resource type="Script" uid="uid://83thvwwfwjn4" path="res://system/experiment_manager/experiment_manager.gd" id="1_n7bim"]
+[ext_resource type="PackedScene" uid="uid://ijxrtwqt20tx" path="res://system/experiment_manager/components/stopwatch.tscn" id="2_wexxx"]
+[ext_resource type="PackedScene" uid="uid://bq6istetnigeu" path="res://system/experiment_manager/components/mouse_distance_tracker.tscn" id="3_mbov4"]
+[ext_resource type="PackedScene" uid="uid://bpis41x2r3k51" path="res://system/experiment_manager/components/first_input_interceptor.tscn" id="4_tov0m"]
+[ext_resource type="PackedScene" uid="uid://booa8oupqx417" path="res://system/experiment_manager/experiment_nodes/eyes_task/eyes_task_controller.tscn" id="5_0lmxd"]
+[ext_resource type="PackedScene" uid="uid://c7wuqyx5r1qri" path="res://system/experiment_manager/experiment_nodes/true_false/true_false_controller.tscn" id="6_hcg63"]
+[ext_resource type="PackedScene" uid="uid://d4nvxcxqij87i" path="res://system/experiment_manager/experiment_nodes/emotion_attribution/emotion_attribution_controller.tscn" id="7_k4oqp"]
+[ext_resource type="PackedScene" uid="uid://b6hxb0mqasfjv" path="res://system/experiment_manager/experiment_nodes/faux_pas/faux_pas_controller.tscn" id="8_polh7"]
+[ext_resource type="PackedScene" uid="uid://x3orexqvh0hk" path="res://system/experiment_manager/experiment_nodes/social_situations/social_situations_controller.tscn" id="9_rgvwp"]
+[ext_resource type="PackedScene" uid="uid://yl47jy2iw8g2" path="res://system/experiment_manager/experiment_nodes/theory_of_mind/theory_of_mind_controller.tscn" id="10_fng84"]
+[ext_resource type="PackedScene" uid="uid://c7jgxsocafeno" path="res://system/experiment_manager/experiment_nodes/emotion_attribution_exercise_a/emotion_attribution_exercise_a_controller.tscn" id="11_inoql"]
+[ext_resource type="PackedScene" uid="uid://bsw16nfb1p87m" path="res://system/experiment_manager/experiment_nodes/emotion_attribution_exercise_b/emotion_attribution_exercise_b_controller.tscn" id="12_cvd8d"]
+[ext_resource type="PackedScene" uid="uid://dcgmiuv1gyf7j" path="res://system/experiment_manager/experiment_nodes/faux_pas_exercise_a/faux_pas_exercise_a_controller.tscn" id="13_1e5gn"]
+
+[node name="ExperimentManager" type="Node" unique_id=1876397545]
+script = ExtResource("1_n7bim")
+
+[node name="Stopwatch" parent="." unique_id=2118671575 instance=ExtResource("2_wexxx")]
+
+[node name="MouseDistanceTracker" parent="." unique_id=1604235214 instance=ExtResource("3_mbov4")]
+
+[node name="FirstInputInterceptor" parent="." unique_id=1691022316 instance=ExtResource("4_tov0m")]
+
+[node name="TaskControllers" type="Node" parent="." unique_id=1359475662]
+
+[node name="TrueFalseController" parent="TaskControllers" unique_id=61698118 instance=ExtResource("6_hcg63")]
+
+[node name="EmotionAttributionController" parent="TaskControllers" unique_id=1659781658 instance=ExtResource("7_k4oqp")]
+
+[node name="EyesTaskController" parent="TaskControllers" unique_id=1418771497 instance=ExtResource("5_0lmxd")]
+
+[node name="FauxPasController" parent="TaskControllers" unique_id=1193036295 instance=ExtResource("8_polh7")]
+
+[node name="SocialSituationsController" parent="TaskControllers" unique_id=1562310096 instance=ExtResource("9_rgvwp")]
+
+[node name="TheoryOfMindController" parent="TaskControllers" unique_id=1172397988 instance=ExtResource("10_fng84")]
+
+[node name="EmotionAttributionExerciseAController" parent="TaskControllers" unique_id=2031574372 instance=ExtResource("11_inoql")]
+
+[node name="EmotionAttributionExerciseBController" parent="TaskControllers" unique_id=1406457833 instance=ExtResource("12_cvd8d")]
+
+[node name="FauxPasExerciseAController" parent="TaskControllers" unique_id=40138384 instance=ExtResource("13_1e5gn")]

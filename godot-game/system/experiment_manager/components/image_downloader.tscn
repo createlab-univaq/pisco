@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cc20o4517vew1"]
 
-[ext_resource type="Script" uid="uid://dcyw72p2g1k21" path="res://system/image_downloader.gd" id="1_w4vs6"]
+[ext_resource type="Script" uid="uid://dcyw72p2g1k21" path="res://system/experiment_manager/components/image_downloader.gd" id="1_w4vs6"]
 
 [node name="ImageDownloader" type="Node" unique_id=1388424457]
 script = ExtResource("1_w4vs6")

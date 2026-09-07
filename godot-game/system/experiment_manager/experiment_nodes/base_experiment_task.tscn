@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://byjg12phsqqsp"]
+
+[ext_resource type="Script" uid="uid://bjuld7seuwij3" path="res://system/experiment_manager/experiment_nodes/base_experiment_task.gd" id="1_h1mbe"]
+
+[node name="BaseExperimentTask" type="Node" unique_id=1828201731]
+script = ExtResource("1_h1mbe")

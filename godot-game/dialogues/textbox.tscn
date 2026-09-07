@@ -2,7 +2,7 @@
 
 [ext_resource type="FontFile" uid="uid://3omt7ys46b5a" path="res://fonts/Born2bSportyV2.ttf" id="1_0lrlq"]
 [ext_resource type="Script" uid="uid://c6kgb0qtqg7s4" path="res://dialogues/textbox.gd" id="1_m1w5b"]
-[ext_resource type="PackedScene" uid="uid://cc20o4517vew1" path="res://system/image_downloader.tscn" id="2_as824"]
+[ext_resource type="PackedScene" uid="uid://cc20o4517vew1" path="res://system/experiment_manager/components/image_downloader.tscn" id="2_as824"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s1ypb"]
 bg_color = Color(0.60032797, 0.5355304, 0.21848252, 1)

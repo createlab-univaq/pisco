@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c7wuqyx5r1qri"]
+
+[ext_resource type="Script" uid="uid://be6u366gxsi6g" path="res://system/experiment_manager/experiment_nodes/true_false/true_false_controller.gd" id="1_hh8ce"]
+
+[node name="TrueFalseController" type="Node" unique_id=61698118]
+script = ExtResource("1_hh8ce")

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://x3orexqvh0hk"]
+
+[ext_resource type="Script" uid="uid://cc6hs1cbftom5" path="res://system/experiment_manager/experiment_nodes/social_situations/social_situations_controller.gd" id="1_hjqdg"]
+
+[node name="SocialSituationsController" type="Node" unique_id=1562310096]
+script = ExtResource("1_hjqdg")

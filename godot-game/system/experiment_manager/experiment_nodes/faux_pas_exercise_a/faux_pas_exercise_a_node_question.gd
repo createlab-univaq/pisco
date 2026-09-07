@@ -7,10 +7,10 @@ var is_last: bool
 var narration: String
 var correct_question_index: int
 var choices: Array[String]
-var skip_question: FauxPasSkipQuestion
+var skip_question: FauxPasExerciseASkipQuestion
 var explanation: String
 
-func _init(p_text: String, p_is_first: bool, p_is_last: bool, p_narration: String, p_correct_question_index: int, p_choices: Array[String], p_skip_question: FauxPasSkipQuestion, p_explanation: String) -> void:
+func _init(p_text: String, p_is_first: bool, p_is_last: bool, p_narration: String, p_correct_question_index: int, p_choices: Array[String], p_skip_question: FauxPasExerciseASkipQuestion, p_explanation: String) -> void:
 	self.text = p_text
 	self.is_first = p_is_first
 	self.is_last = p_is_last

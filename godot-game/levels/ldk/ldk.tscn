@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://4j88pw51ipmk" path="res://actionables/actionable.tscn" id="11_04khg"]
 [ext_resource type="PackedScene" uid="uid://c7fpk7k3ne82l" path="res://npcs/boba_the_cat.tscn" id="11_6l2fb"]
 [ext_resource type="PackedScene" uid="uid://bmfxrm35oitpd" path="res://dialogues/textbox.tscn" id="11_08ey3"]
-[ext_resource type="PackedScene" uid="uid://uosa5c6owore" path="res://system/experiment_manager.tscn" id="11_kjq3q"]
+[ext_resource type="PackedScene" uid="uid://uosa5c6owore" path="res://system/experiment_manager/experiment_manager.tscn" id="11_kjq3q"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
 [ext_resource type="Script" uid="uid://br07gggew5dud" path="res://levels/ldk/ldk_transitions.gd" id="14_jovqs"]
 [ext_resource type="Script" uid="uid://dpw1beuqk636o" path="res://levels/ldk/ldk_actionables.gd" id="14_qgnl5"]

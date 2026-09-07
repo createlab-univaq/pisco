@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b6hxb0mqasfjv"]
+
+[ext_resource type="Script" uid="uid://ddk5sshorxbil" path="res://system/experiment_manager/experiment_nodes/faux_pas/faux_pas_controller.gd" id="1_auww5"]
+
+[node name="FauxPasController" type="Node" unique_id=1193036295]
+script = ExtResource("1_auww5")
