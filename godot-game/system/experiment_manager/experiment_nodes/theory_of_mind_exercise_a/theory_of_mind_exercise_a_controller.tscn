@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://kwr4f1ttrc0g"]
+
+[ext_resource type="Script" uid="uid://h4v5x7n1b3qt" path="res://system/experiment_manager/experiment_nodes/theory_of_mind_exercise_a/theory_of_mind_exercise_a_controller.gd" id="1_8ruo0"]
+
+[node name="TheoryOfMindExerciseAController" type="Node" unique_id=1560012899]
+script = ExtResource("1_8ruo0")

@@ -36,7 +36,6 @@ func _execute_task() -> void:
 			questions_queue.append(node_question)
 			quiz_single_question_index += 1
 	
-	# textbox.choice_made.connect(_on_choice_made)
 	_next_question()
 
 func _next_question() -> void:
