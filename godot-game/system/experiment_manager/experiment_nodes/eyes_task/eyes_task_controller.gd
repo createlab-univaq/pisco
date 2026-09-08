@@ -17,23 +17,32 @@ func _execute_task() -> void:
 		var node_question: EyesTaskNodeQuestion = EyesTaskNodeQuestion.new(question[IMAGE_ID_KEY], question[ANSWERS_KEY], question[CORRECT_INDEX_KEY])
 		questions_queue.append(node_question)
 	
-	textbox.choice_made.connect(_on_choice_made)
 	_next_question()
 
 func _next_question() -> void:
 	if questions_queue.is_empty():
-		textbox.choice_made.disconnect(_on_choice_made)
 		finish_task() # Tells the manager we are done!
 		return
 		
 	var current_question: EyesTaskNodeQuestion = questions_queue.front()
+	var image_data = DialogueData.new(DialogueData.DialogueTypes.IMAGE)
 	var image_url = "%s/images/%s" % [APIManager.API_URL, current_question.image_id]
-	var choice_data = DialogueData.new("", DialogueData.DialogueTypes.IMAGES, current_question.choices, image_url)
-	
-	textbox.queue_dialogue([choice_data])
-	textbox.choices_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
+	image_data.image_urls = [image_url]
+	dialogue_controller.queue_dialogue(image_data)
+	dialogue_controller.imagebox_textbox_lock_input()
+	dialogue_controller.action_shown.connect(_show_choices, CONNECT_ONE_SHOT)
+
+func _show_choices() -> void:
+	var current_question: EyesTaskNodeQuestion = questions_queue.front()
+	var choice_data = DialogueData.new(DialogueData.DialogueTypes.CHOICES)
+	choice_data.choices = current_question.choices
+	dialogue_controller.queue_dialogue(choice_data)
+	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_choice_made, CONNECT_ONE_SHOT)
 
 func _on_choice_made(outcome: String) -> void:
+	dialogue_controller.imagebox_textbox_unlock_input_and_perform_action()
+	
 	var current_question: EyesTaskNodeQuestion = questions_queue.pop_front()
 	var is_user_answer_correct: bool = outcome == current_question.choices[current_question.correct_choice_index]
 	

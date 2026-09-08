@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://bx6y2r1xe2f5s"]
+
+[ext_resource type="FontFile" uid="uid://3omt7ys46b5a" path="res://fonts/Born2bSportyV2.ttf" id="1_uc2i2"]
+[ext_resource type="Script" uid="uid://d012cn1p0jpvw" path="res://dialogues/components/text_input.gd" id="2_mjaef"]
+
+[node name="TextInput" type="Control" unique_id=1367755689]
+custom_minimum_size = Vector2(300, 40)
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.083333336
+offset_bottom = -40.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("2_mjaef")
+metadata/_edit_use_anchors_ = true
+
+[node name="LineEdit" type="LineEdit" parent="." unique_id=2108649127]
+custom_minimum_size = Vector2(300, 40)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("1_uc2i2")
+theme_override_font_sizes/font_size = 30
+metadata/_edit_use_anchors_ = true
+
+[connection signal="text_submitted" from="LineEdit" to="." method="_on_line_edit_text_submitted"]

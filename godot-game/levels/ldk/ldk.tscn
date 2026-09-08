@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://1f8mdj7uxb8i" path="res://npcs/mom.tscn" id="10_wo7pg"]
 [ext_resource type="PackedScene" uid="uid://4j88pw51ipmk" path="res://actionables/actionable.tscn" id="11_04khg"]
 [ext_resource type="PackedScene" uid="uid://c7fpk7k3ne82l" path="res://npcs/boba_the_cat.tscn" id="11_6l2fb"]
-[ext_resource type="PackedScene" uid="uid://bmfxrm35oitpd" path="res://dialogues/textbox.tscn" id="11_08ey3"]
+[ext_resource type="PackedScene" uid="uid://bmfxrm35oitpd" path="res://dialogues/dialogue_controller.tscn" id="11_08ey3"]
 [ext_resource type="PackedScene" uid="uid://uosa5c6owore" path="res://system/experiment_manager/experiment_manager.tscn" id="11_kjq3q"]
 [ext_resource type="PackedScene" uid="uid://m2bagfg2w062" path="res://system/scene_changer_tile.tscn" id="12_wo7pg"]
 [ext_resource type="Script" uid="uid://br07gggew5dud" path="res://levels/ldk/ldk_transitions.gd" id="14_jovqs"]
@@ -200,13 +200,11 @@ player = NodePath("../Player")
 
 [node name="Dialogues" type="CanvasLayer" parent="." unique_id=1728289888]
 
-[node name="TextBox" parent="Dialogues" unique_id=241977233 node_paths=PackedStringArray("player") instance=ExtResource("11_08ey3")]
-visible = false
-player = NodePath("../../Player")
+[node name="DialogueController" parent="Dialogues" unique_id=241977233 instance=ExtResource("11_08ey3")]
 
 [node name="ExperimentManager" parent="." unique_id=1876397545 node_paths=PackedStringArray("actionable", "textbox") instance=ExtResource("11_kjq3q")]
 actionable = NodePath("../Actionables/MomActionable")
-textbox = NodePath("../Dialogues/TextBox")
+textbox = NodePath("")
 
 [node name="Actionables" type="Node" parent="." unique_id=461493670]
 script = ExtResource("14_qgnl5")

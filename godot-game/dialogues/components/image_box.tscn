@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://dc7d26fyqgsgn"]
+
+[ext_resource type="Script" uid="uid://bh1iff7wnc1rb" path="res://dialogues/components/image_box.gd" id="1_553vq"]
+[ext_resource type="PackedScene" uid="uid://cc20o4517vew1" path="res://system/experiment_manager/components/image_downloader.tscn" id="1_vac5d"]
+
+[node name="ImageBox" type="Control" unique_id=553995390]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("1_553vq")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1324502013]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="ImageDownloader" parent="." unique_id=1388424457 instance=ExtResource("1_vac5d")]

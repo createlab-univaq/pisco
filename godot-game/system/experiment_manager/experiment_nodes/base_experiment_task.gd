@@ -3,7 +3,7 @@ extends Node
 
 signal task_completed(answers: Array[AnswerRecord], max_score: int)
 
-var textbox: TextBox
+var dialogue_controller: DialogueController
 var stopwatch: Stopwatch
 var mouse_tracker: MouseDistanceTracker
 var first_input_interceptor: FirstInputInterceptor
@@ -13,8 +13,8 @@ var answers_record: Array[AnswerRecord] = []
 var max_score: int = 0
 
 # The Manager will call this to inject dependencies
-func initialize(p_textbox: TextBox, p_stopwatch: Stopwatch, p_mouse: MouseDistanceTracker, p_first_input_interceptor: FirstInputInterceptor) -> void:
-	self.textbox = p_textbox
+func initialize(p_dialogue_controller: DialogueController, p_stopwatch: Stopwatch, p_mouse: MouseDistanceTracker, p_first_input_interceptor: FirstInputInterceptor) -> void:
+	self.dialogue_controller = p_dialogue_controller
 	self.stopwatch = p_stopwatch
 	self.mouse_tracker = p_mouse
 	self.first_input_interceptor = p_first_input_interceptor

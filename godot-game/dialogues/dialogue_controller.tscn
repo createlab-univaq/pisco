@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://bmfxrm35oitpd"]
+
+[ext_resource type="Script" uid="uid://c6kgb0qtqg7s4" path="res://dialogues/dialogue_controller.gd" id="1_m1w5b"]
+[ext_resource type="PackedScene" uid="uid://c4fncw1q6kx10" path="res://dialogues/components/choices_box.tscn" id="2_2jc5g"]
+[ext_resource type="PackedScene" uid="uid://dc7d26fyqgsgn" path="res://dialogues/components/image_box.tscn" id="2_3rxmu"]
+[ext_resource type="PackedScene" uid="uid://bx6y2r1xe2f5s" path="res://dialogues/components/text_input.tscn" id="3_2jc5g"]
+[ext_resource type="PackedScene" uid="uid://oiaieuty0bld" path="res://dialogues/components/text_box.tscn" id="4_3rxmu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2jc5g"]
+
+[node name="DialogueController" type="Control" unique_id=241977233]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m1w5b")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=408287454]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="ChoicesMarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=971901747]
+layout_mode = 2
+theme_override_constants/margin_left = 55
+theme_override_constants/margin_right = 55
+
+[node name="ChoicesBox" parent="VBoxContainer/ChoicesMarginContainer" unique_id=1522304800 instance=ExtResource("2_2jc5g")]
+layout_mode = 2
+
+[node name="TextInputMarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1673103578]
+layout_mode = 2
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_right = 150
+
+[node name="TextInput" parent="VBoxContainer/TextInputMarginContainer" unique_id=1367755689 instance=ExtResource("3_2jc5g")]
+layout_mode = 2
+
+[node name="ImageMarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=702337391]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_right = 50
+
+[node name="ImageBox" parent="VBoxContainer/ImageMarginContainer" unique_id=553995390 instance=ExtResource("2_3rxmu")]
+layout_mode = 2
+
+[node name="QuestionTextBoxCenterContainer" type="CenterContainer" parent="VBoxContainer" unique_id=1300751741]
+layout_mode = 2
+
+[node name="QuestionTextBox" parent="VBoxContainer/QuestionTextBoxCenterContainer" unique_id=121477490 instance=ExtResource("4_3rxmu")]
+custom_minimum_size = Vector2(550, 55)
+layout_mode = 2
+show_end_symbol = false
+width = 550.0
+
+[node name="TextBoxCenterContainer" type="CenterContainer" parent="VBoxContainer" unique_id=2087145342]
+layout_mode = 2
+
+[node name="TextBox" parent="VBoxContainer/TextBoxCenterContainer" unique_id=1589564299 instance=ExtResource("4_3rxmu")]
+custom_minimum_size = Vector2(550, 120)
+layout_mode = 2
+width = 550.0
+height = 120.0
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=797257850]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_2jc5g")
+
+[connection signal="action_performed" from="VBoxContainer/ChoicesMarginContainer/ChoicesBox" to="." method="_on_choices_box_action_performed"]
+[connection signal="action_shown" from="VBoxContainer/ChoicesMarginContainer/ChoicesBox" to="." method="_on_choices_box_action_shown"]
+[connection signal="action_started" from="VBoxContainer/ChoicesMarginContainer/ChoicesBox" to="." method="_on_choices_box_action_started"]
+[connection signal="action_stopped" from="VBoxContainer/ChoicesMarginContainer/ChoicesBox" to="." method="_on_choices_box_action_stopped"]
+[connection signal="action_performed" from="VBoxContainer/TextInputMarginContainer/TextInput" to="." method="_on_text_input_action_performed"]
+[connection signal="action_shown" from="VBoxContainer/TextInputMarginContainer/TextInput" to="." method="_on_text_input_action_shown"]
+[connection signal="action_started" from="VBoxContainer/TextInputMarginContainer/TextInput" to="." method="_on_text_input_action_started"]
+[connection signal="action_stopped" from="VBoxContainer/TextInputMarginContainer/TextInput" to="." method="_on_text_input_action_stopped"]
+[connection signal="action_performed" from="VBoxContainer/ImageMarginContainer/ImageBox" to="." method="_on_image_box_action_performed"]
+[connection signal="action_shown" from="VBoxContainer/ImageMarginContainer/ImageBox" to="." method="_on_image_box_action_shown"]
+[connection signal="action_started" from="VBoxContainer/ImageMarginContainer/ImageBox" to="." method="_on_image_box_action_started"]
+[connection signal="action_stopped" from="VBoxContainer/ImageMarginContainer/ImageBox" to="." method="_on_image_box_action_stopped"]
+[connection signal="action_performed" from="VBoxContainer/QuestionTextBoxCenterContainer/QuestionTextBox" to="." method="_on_question_text_box_action_performed"]
+[connection signal="action_shown" from="VBoxContainer/QuestionTextBoxCenterContainer/QuestionTextBox" to="." method="_on_question_text_box_action_shown"]
+[connection signal="action_started" from="VBoxContainer/QuestionTextBoxCenterContainer/QuestionTextBox" to="." method="_on_question_text_box_action_started"]
+[connection signal="action_stopped" from="VBoxContainer/QuestionTextBoxCenterContainer/QuestionTextBox" to="." method="_on_question_text_box_action_stopped"]
+[connection signal="action_performed" from="VBoxContainer/TextBoxCenterContainer/TextBox" to="." method="_on_text_box_action_performed"]
+[connection signal="action_shown" from="VBoxContainer/TextBoxCenterContainer/TextBox" to="." method="_on_text_box_action_shown"]
+[connection signal="action_started" from="VBoxContainer/TextBoxCenterContainer/TextBox" to="." method="_on_text_box_action_started"]
+[connection signal="action_stopped" from="VBoxContainer/TextBoxCenterContainer/TextBox" to="." method="_on_text_box_action_stopped"]

@@ -1,26 +1,18 @@
 class_name DialogueData
 extends RefCounted
 
-var text: String
 var dialogue_type: DialogueTypes
+var text_sequence: Array[String]
 var choices: Array[String]
-var image_url: String
-var question_text: String
+var image_urls: Array[String]
 
 enum DialogueTypes {
-	TEXT_ONLY,
+	TEXT,
 	INPUT,
-	CHOICES,
-	IMAGES,
-	TEXT_WITH_QUESTION_CHOICE,
-	TEXT_WITH_QUESTION_INPUT,
-	FIXED_TEXT_WITH_QUESTION_CHOICE,
-	QUESTION_WITH_TEXT_ONLY
+	IMAGE,
+	QUESTION,
+	CHOICES
 }
 
-func _init(p_text: String = "", p_dialogue_type: DialogueTypes = DialogueTypes.TEXT_ONLY, p_choices: Array[String] = [], p_image_url: String = '', p_question_text: String = '') -> void:
-	self.text = p_text
+func _init(p_dialogue_type: DialogueTypes) -> void:
 	self.dialogue_type = p_dialogue_type
-	self.choices = p_choices
-	self.image_url = p_image_url
-	self.question_text = p_question_text

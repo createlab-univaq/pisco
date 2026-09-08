@@ -72,7 +72,7 @@ const EDGE_TYPE_MAP: Dictionary[EdgeType, String] = {
 }
 
 @export var actionable: Actionable
-@export var textbox: TextBox
+@export var dialogue_controller: DialogueController
 
 const ID_KEY: String = "_id"
 const TITLE_KEY: String = "title"
@@ -97,10 +97,10 @@ var experiment_records: Dictionary[String, NodeRecord] = {}
 
 func _ready():
 	assert(actionable, "No actionable specified")
-	assert(textbox, "No TextBox specified")
+	assert(dialogue_controller, "No Dialogue Controller specified")
 	
 	for handler: BaseExperimentTask in task_handlers.values():
-		handler.initialize(textbox, stopwatch, mouse_distance_tracker, first_input_interceptor)
+		handler.initialize(dialogue_controller, stopwatch, mouse_distance_tracker, first_input_interceptor)
 	
 	actionable.actioned.connect(_on_actionable_actioned)
 	

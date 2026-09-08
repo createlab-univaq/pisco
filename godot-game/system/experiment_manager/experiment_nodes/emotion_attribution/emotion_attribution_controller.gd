@@ -17,22 +17,38 @@ func _execute_task() -> void:
 		var node_question: EmotionAttributionNodeQuestion = EmotionAttributionNodeQuestion.new(question[NARRATION_KEY], question[SINGLE_QUESTION_KEY], question[CORRECT_ANSWERS_KEY])
 		questions_queue.append(node_question)
 	
-	textbox.text_submitted.connect(_on_text_submitted)
 	_next_question()
 
 func _next_question() -> void:
 	if questions_queue.is_empty():
-		textbox.text_submitted.disconnect(_on_text_submitted)
 		finish_task() # Tells the manager we are done!
 		return
 	
 	var current_question: EmotionAttributionNodeQuestion = questions_queue.front()
-	var text_input_data: DialogueData = DialogueData.new(current_question.narration, DialogueData.DialogueTypes.TEXT_WITH_QUESTION_INPUT, [], "", current_question.question)
-	
-	textbox.queue_dialogue([text_input_data])
-	textbox.text_input_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
+	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
+	text_data.text_sequence = [current_question.narration]
+	dialogue_controller.queue_dialogue(text_data)
+	dialogue_controller.textbox_lock_input()
+	dialogue_controller.action_shown.connect(_show_question, CONNECT_ONE_SHOT)
+
+func _show_question() -> void:
+	var current_question: EmotionAttributionNodeQuestion = questions_queue.front()
+	var question_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
+	question_data.text_sequence = [current_question.question]
+	dialogue_controller.queue_dialogue(question_data)
+	dialogue_controller.question_textbox_lock_input()
+	dialogue_controller.action_shown.connect(_show_input, CONNECT_ONE_SHOT)
+
+func _show_input() -> void:
+	var input_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.INPUT)
+	dialogue_controller.queue_dialogue(input_data)
+	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_text_submitted, CONNECT_ONE_SHOT)
 
 func _on_text_submitted(submitted_text: String) -> void:
+	dialogue_controller.textbox_unlock_input_and_perform_action()
+	dialogue_controller.question_textbox_unlock_input_and_perform_action()
+	
 	var current_question: EmotionAttributionNodeQuestion = questions_queue.pop_front()
 	var is_user_answer_correct: bool = false
 	var correct_answer_index: int = 0

@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://c4fncw1q6kx10"]
+
+[ext_resource type="Script" uid="uid://dsgq1xyu0njds" path="res://dialogues/components/choices_box.gd" id="1_d2fmd"]
+
+[node name="ChoicesBox" type="Control" unique_id=1522304800]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("1_d2fmd")
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=609434398]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+theme_override_constants/separation = 10
