@@ -62,21 +62,21 @@ func _next_question() -> void:
 	if current_question.is_first:
 		var narration_text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 		narration_text_data.text_sequence = [current_question.narration]
-		dialogue_controller.textbox_lock_input()
 		dialogue_controller.action_shown.connect(_show_question, CONNECT_ONE_SHOT)
 		dialogue_controller.queue_dialogue(narration_text_data)
 	else:
 		_show_question()
 
 func _show_question() -> void:
+	dialogue_controller.textbox_lock_input()
 	var current_question: FauxPasNodeQuestion = questions_queue.front()
 	var question_text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
 	question_text_data.text_sequence = [current_question.text]
-	dialogue_controller.question_textbox_lock_input()
 	dialogue_controller.action_shown.connect(_show_choices, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(question_text_data)
 
 func _show_choices() -> void:
+	dialogue_controller.question_textbox_lock_input()
 	var current_question: FauxPasNodeQuestion = questions_queue.front()
 	var choice_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.CHOICES)
 	choice_data.choices = current_question.choices

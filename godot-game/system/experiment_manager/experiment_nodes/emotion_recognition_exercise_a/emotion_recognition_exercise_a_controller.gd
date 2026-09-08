@@ -20,11 +20,11 @@ func _execute_task() -> void:
 	var image_data = DialogueData.new(DialogueData.DialogueTypes.IMAGE)
 	var image_url = "%s/images/%s" % [APIManager.API_URL, node_question.image_id]
 	image_data.image_urls = [image_url]
-	dialogue_controller.imagebox_textbox_lock_input()
 	dialogue_controller.action_shown.connect(_show_choices, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(image_data)
 
 func _show_choices() -> void:
+	dialogue_controller.imagebox_textbox_lock_input()
 	var current_question: EmotionRecognitionExerciseANodeQuestion = questions_queue.front()
 	var choice_data = DialogueData.new(DialogueData.DialogueTypes.CHOICES)
 	choice_data.choices = current_question.choices

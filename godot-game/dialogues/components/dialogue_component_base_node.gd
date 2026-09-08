@@ -28,19 +28,23 @@ func _kill_tween() -> void:
 		tween = null
 
 func open() -> void:
+	print("open and unlock %s" % [self.name])
 	_reset()
 	self.show()
 	set_process_unhandled_input.call_deferred(true)
 
 func close() -> void:
+	print("close and lock %s" % [self.name])
 	self.hide()
 	_reset()
 	set_process_unhandled_input.call_deferred(false)
 
 func lock_input() -> void:
+	print("lock %s" % [self.name])
 	set_process_unhandled_input.call_deferred(false)
 
 func unlock_input() -> void:
+	print("unlock %s" % [self.name])
 	set_process_unhandled_input.call_deferred(true)
 
 func perform_action() -> void:

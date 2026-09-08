@@ -29,11 +29,11 @@ func _next_question() -> void:
 	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
 	text_data.text_sequence = [current_question.emotion]
-	dialogue_controller.question_textbox_lock_input()
 	dialogue_controller.action_shown.connect(_show_scenario, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(text_data)
 
 func _show_scenario() -> void:
+	dialogue_controller.question_textbox_lock_input()
 	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	text_data.text_sequence = [current_question.scenario]

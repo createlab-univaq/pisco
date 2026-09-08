@@ -50,6 +50,7 @@ func _ready() -> void:
 		super._ready()
 
 func _unhandled_input(event: InputEvent) -> void:
+	print("maggio")
 	if Engine.is_editor_hint():
 		return
 	

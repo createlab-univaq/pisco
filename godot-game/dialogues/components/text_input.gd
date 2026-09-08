@@ -15,6 +15,8 @@ func show_input() -> void:
 		_change_state(STATE_WAITING)
 
 func _on_line_edit_text_submitted(new_text: String) -> void:
+	if new_text.is_empty():
+		return
 	_reset()
 	action_performed.emit(new_text)
 	action_stopped.emit()

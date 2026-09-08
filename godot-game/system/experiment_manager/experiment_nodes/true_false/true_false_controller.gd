@@ -40,11 +40,11 @@ func _next_question() -> void:
 	var current_question: TrueFalseNodeQuestion = questions_queue.front()
 	var choice_text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	choice_text_data.text_sequence = [current_question.text]
-	dialogue_controller.textbox_lock_input()
 	dialogue_controller.action_shown.connect(_on_choice_text_shown, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(choice_text_data)
 
 func _on_choice_text_shown() -> void:
+	dialogue_controller.textbox_lock_input()
 	var choice_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.CHOICES)
 	choice_data.choices = [TRUE_CHOICE_KEY, FALSE_CHOICE_KEY]
 	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
