@@ -27,7 +27,10 @@ func _execute_task() -> void:
 	var instructions_text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	instructions_text_data.text_sequence = [current_node_data[INSTRUCTIONS_KEY]]
 	dialogue_controller.queue_dialogue(instructions_text_data)
-	dialogue_controller.action_performed.connect(_next_question, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_instruction_text_action_performed, CONNECT_ONE_SHOT)
+
+func _on_instruction_text_action_performed(_output: Variant) -> void:
+	_next_question()
 
 func _next_question() -> void:
 	if questions_queue.is_empty():
@@ -46,7 +49,7 @@ func _on_choice_text_shown() -> void:
 	choice_data.choices = [TRUE_CHOICE_KEY, FALSE_CHOICE_KEY]
 	dialogue_controller.queue_dialogue(choice_data)
 	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
-	dialogue_controller.action_performede.connect(_on_choice_made, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_choice_made, CONNECT_ONE_SHOT)
 
 func _on_choice_made(outcome: String) -> void:
 	dialogue_controller.textbox_unlock_input_and_perform_action()

@@ -128,7 +128,7 @@ func _prepare_experiment() -> void:
 		return
 	
 	var redeemed_flow_nodes: Array = redeemed_flow[NODES_KEY]
-	current_node_id = redeemed_flow_nodes.front()
+	current_node_id = redeemed_flow_nodes.front()[ID_KEY]
 	
 	for node: Dictionary in redeemed_flow_nodes:
 		nodes[node[ID_KEY]] = node

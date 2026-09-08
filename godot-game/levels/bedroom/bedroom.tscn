@@ -276,8 +276,10 @@ shape = SubResource("RectangleShape2D_cqvla")
 
 [connection signal="input_code_screen_open_requested" from="Collisions" to="UI" method="_on_collisions_input_code_screen_open_requested"]
 [connection signal="area_triggered" from="Collisions/TriggerableArea" to="Collisions" method="_on_triggerable_area_area_triggered"]
+[connection signal="flow_successfully_redeemed" from="UI" to="Transitions" method="_on_ui_flow_successfully_redeemed"]
 [connection signal="pet_bought" from="UI/PetShopScreen" to="." method="_on_pet_shop_screen_pet_bought"]
 [connection signal="follow_player_changed" from="UI/CompanionScreen" to="." method="_on_companion_screen_follow_player_changed"]
+[connection signal="flow_successfully_redeemed" from="UI/InputCodeScreen" to="UI" method="_on_input_code_screen_flow_successfully_redeemed"]
 [connection signal="pethouse_open_requested" from="Actionables" to="UI" method="_on_actionables_pethouse_open_requested"]
 [connection signal="store_open_requested" from="Actionables" to="UI" method="_on_actionables_store_open_requested"]
 [connection signal="wardrobe_open_requested" from="Actionables" to="UI" method="_on_actionables_wardrobe_open_requested"]

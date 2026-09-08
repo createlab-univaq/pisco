@@ -200,11 +200,12 @@ player = NodePath("../Player")
 
 [node name="Dialogues" type="CanvasLayer" parent="." unique_id=1728289888]
 
-[node name="DialogueController" parent="Dialogues" unique_id=241977233 instance=ExtResource("11_08ey3")]
+[node name="DialogueController" parent="Dialogues" unique_id=241977233 node_paths=PackedStringArray("player") instance=ExtResource("11_08ey3")]
+player = NodePath("../../Player")
 
-[node name="ExperimentManager" parent="." unique_id=1876397545 node_paths=PackedStringArray("actionable", "textbox") instance=ExtResource("11_kjq3q")]
+[node name="ExperimentManager" parent="." unique_id=1876397545 node_paths=PackedStringArray("actionable", "dialogue_controller") instance=ExtResource("11_kjq3q")]
 actionable = NodePath("../Actionables/MomActionable")
-textbox = NodePath("")
+dialogue_controller = NodePath("../Dialogues/DialogueController")
 
 [node name="Actionables" type="Node" parent="." unique_id=461493670]
 script = ExtResource("14_qgnl5")

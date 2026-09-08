@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+signal flow_successfully_redeemed
+
 @onready var custom_player_screen: CustomPlayerScreen = $CustomPlayerScreen
 @onready var pet_shop_screen: PetShopScreen = $PetShopScreen
 @onready var companion_screen: CompanionScreen = $CompanionScreen
@@ -22,3 +24,7 @@ func _on_actionables_pethouse_open_requested() -> void:
 
 func _on_collisions_input_code_screen_open_requested() -> void:
 	input_code_screen.show()
+
+func _on_input_code_screen_flow_successfully_redeemed() -> void:
+	input_code_screen.hide()
+	flow_successfully_redeemed.emit()

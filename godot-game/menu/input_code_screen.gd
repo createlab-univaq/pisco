@@ -1,6 +1,8 @@
 class_name InputCodeScreen
 extends Control
 
+signal flow_successfully_redeemed
+
 @onready var code_line_edit: LineEdit = $MarginContainer/VBoxContainer/CodeLineEdit
 @onready var error_rich_text_label: RichTextLabel = $MarginContainer/VBoxContainer/ErrorRichTextLabel
 @onready var redeem_button: Button = $MarginContainer/VBoxContainer/MarginContainer/RedeemButton
@@ -25,6 +27,8 @@ func _on_redeem_path_response(server_response: ServerResponse):
 		error_rich_text_label.text = server_response.error
 		_reset_redeem_button()
 		return
+	redeem_button.text = "Redeemed"
+	flow_successfully_redeemed.emit()
 
 func _reset_redeem_button() -> void:
 	redeem_button.disabled = false
