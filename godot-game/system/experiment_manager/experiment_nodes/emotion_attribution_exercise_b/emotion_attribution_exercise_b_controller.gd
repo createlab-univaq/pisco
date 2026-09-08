@@ -1,6 +1,7 @@
 class_name EmotionAttributionExerciseBController
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const ITEMS_KEY: String = "items"
 const SCENARIO_KEY: String = "scenario"
 const EMOTION_KEY: String = "emotion"
@@ -9,6 +10,7 @@ const EXPLANATION_KEY: String = "explanation"
 var questions_queue: Array[EmotionAttributionExerciseBNodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var items: Array = current_node_data[ITEMS_KEY]
 	max_score = items.size()
 	questions_queue.clear()

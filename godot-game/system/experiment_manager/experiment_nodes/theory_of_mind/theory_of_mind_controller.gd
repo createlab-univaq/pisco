@@ -1,6 +1,7 @@
 class_name TheoryOfMindController
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const QUIZ_KEY: String = "quiz"
 const QUESTIONS_KEY: String = "questions"
 const SINGLE_QUESTION_KEY: String = "question"
@@ -11,6 +12,7 @@ const ANSWERS_KEY: String = "answers"
 var questions_queue: Array[TheoryOfMindNodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var quiz_questions: Array = current_node_data[QUIZ_KEY]
 	max_score = quiz_questions.size()
 	questions_queue.clear()

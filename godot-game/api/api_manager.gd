@@ -13,7 +13,7 @@ var BEARER_AUTHORIZATION_HEADER = "Authorization: Bearer "
 var logged_analyst: Analyst = null
 var session_token: String = ""
 var session_token_expiration_time: String = ""
-var redeemed_flow: Dictionary = {}
+var redeemed_flow: RedeemedPath = null
 
 func login(email: String, password: String, on_login: Callable) -> void:
 	var login_dto: LoginDTO = LoginDTO.new(email, password)
@@ -59,8 +59,40 @@ func _on_redeem_path_request_completed(_result: int, response_code: int, _header
 	var server_response: ServerResponse = ServerResponse.new()
 	server_response.success = response_code == 200
 	if server_response.success:
-		# TODO
-		pass
+		var redeem_path_response_dto: RedeemPathResponseDTO = RedeemPathResponseDTO.new(json)
+		
+		var domain_analyst: Analyst = null
+		if redeem_path_response_dto.flow != null and redeem_path_response_dto.flow.analyst != null:
+			var a_dto: AnalystDTO = redeem_path_response_dto.flow.analyst
+			domain_analyst = Analyst.new(
+				a_dto.id, 
+				a_dto.first_name, 
+				a_dto.last_name, 
+				a_dto.email, 
+				a_dto.role, 
+				a_dto.created_at
+			)
+		
+		var domain_flow: Flow = null
+		if redeem_path_response_dto.flow != null:
+			var f_dto: FlowDTO = redeem_path_response_dto.flow
+			domain_flow = Flow.new(
+				f_dto.id, 
+				f_dto.name, 
+				f_dto.description, 
+				f_dto.published, 
+				f_dto.flow_json, 
+				domain_analyst, 
+				f_dto.created_at, 
+				f_dto.updated_at
+			)
+		
+		redeemed_flow = RedeemedPath.new(
+			redeem_path_response_dto.unique_code,
+			redeem_path_response_dto.patient_path_id,
+			redeem_path_response_dto.patient_id,
+			domain_flow
+		)
 	else:
 		var server_error_dto: ServerErrorDTO = ServerErrorDTO.new(json)
 		server_response.error = server_error_dto.detail

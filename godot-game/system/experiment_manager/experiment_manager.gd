@@ -119,7 +119,7 @@ func _ready():
 	_prepare_experiment()
 
 func _prepare_experiment() -> void:
-	var redeemed_flow: Dictionary = APIManager.redeemed_flow
+	var redeemed_flow: Dictionary = APIManager.redeemed_flow.flow.flow_json
 	
 	if not redeemed_flow:
 		return

@@ -1,6 +1,7 @@
 class_name EmotionAttributionController
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const QUESTIONS_KEY: String = "questions"
 const NARRATION_KEY: String = "narration"
 const SINGLE_QUESTION_KEY: String = "question"
@@ -9,6 +10,7 @@ const CORRECT_ANSWERS_KEY: String = "correctAnswers"
 var questions_queue: Array[EmotionAttributionNodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var questions: Array = current_node_data[QUESTIONS_KEY]
 	max_score = questions.size()
 	questions_queue.clear()

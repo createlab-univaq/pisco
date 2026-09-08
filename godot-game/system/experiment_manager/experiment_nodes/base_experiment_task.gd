@@ -8,7 +8,7 @@ var stopwatch: Stopwatch
 var mouse_tracker: MouseDistanceTracker
 var first_input_interceptor: FirstInputInterceptor
 
-var current_node_data: Dictionary
+var current_node_definition: Dictionary
 var answers_record: Array[AnswerRecord] = []
 var max_score: int = 0
 
@@ -21,7 +21,7 @@ func initialize(p_dialogue_controller: DialogueController, p_stopwatch: Stopwatc
 
 # The Manager calls this to begin the specific task
 func start_task(node_data: Dictionary) -> void:
-	current_node_data = node_data
+	current_node_definition = node_data
 	answers_record.clear()
 	_execute_task() # Children will override this!
 

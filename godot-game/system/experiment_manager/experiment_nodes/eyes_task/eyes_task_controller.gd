@@ -1,6 +1,7 @@
 class_name EyesTaskController
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const QUESTIONS_KEY: String = "questions"
 const IMAGE_ID_KEY: String = "imageId"
 const ANSWERS_KEY: String = "answers"
@@ -9,6 +10,7 @@ const CORRECT_INDEX_KEY: String = "correctIndex"
 var questions_queue: Array[EyesTaskNodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var questions: Array = current_node_data[QUESTIONS_KEY]
 	max_score = questions.size()
 	questions_queue.clear()

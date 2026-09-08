@@ -1,6 +1,7 @@
 class_name TrueFalseController
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const QUESTIONS_KEY: String = "questions"
 const IS_QUESTION_CORRECT_KEY: String = "isQuestionCorrect"
 const INSTRUCTIONS_KEY: String = "instructions"
@@ -10,6 +11,7 @@ const FALSE_CHOICE_KEY: String = "False"
 var questions_queue: Array[TrueFalseNodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var questions: Array = current_node_data[QUESTIONS_KEY]
 	max_score = questions.size()
 	questions_queue.clear()

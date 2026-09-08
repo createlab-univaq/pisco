@@ -30,6 +30,7 @@ const NODE_TYPE_MAP: Dictionary[NodeType, String] = {
 	NODE_TYPE_MAP[NodeType.THEORY_OF_MIND_EXERCISE_A_NODE]: preload("uid://kwr4f1ttrc0g")
 }
 
+const DATA_KEY: String = "data"
 const SECTIONS_KEY: String = "sections"
 const ITEMS_KEY: String = "items"
 const TYPE_KEY: String = "type"
@@ -37,6 +38,7 @@ const TYPE_KEY: String = "type"
 var exercise_node_queue: Array[Dictionary] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var sections: Array = current_node_data[SECTIONS_KEY]
 	_reset()
 	

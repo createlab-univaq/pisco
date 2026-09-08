@@ -1,6 +1,7 @@
 class_name FauxPasControler
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const QUIZ_KEY: String = "quiz"
 const QUESTIONS_KEY: String = "questions"
 const SKIP_IF_KEY: String = "skipIf"
@@ -15,6 +16,7 @@ const CORRECT_INDEX_KEY: String = "correctIndex"
 var questions_queue: Array[FauxPasNodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	var quiz_questions: Array = current_node_data[QUIZ_KEY]
 	max_score = quiz_questions.size()
 	questions_queue.clear()

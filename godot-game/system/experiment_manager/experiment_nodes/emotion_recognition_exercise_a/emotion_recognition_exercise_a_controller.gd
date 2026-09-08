@@ -1,6 +1,7 @@
 class_name EmotionRecognitionExerciseAController
 extends BaseExperimentTask
 
+const DATA_KEY: String = "data"
 const IMAGE_ID_KEY: String = "imageId"
 const ANSWERS_KEY: String = "answers"
 const CORRECT_INDEX_KEY: String = "correctIndex"
@@ -9,6 +10,7 @@ const EXPLANATION_KEY: String = "explanation"
 var questions_queue: Array[EmotionAttributionExerciseANodeQuestion] = []
 
 func _execute_task() -> void:
+	var current_node_data: Dictionary = current_node_definition[DATA_KEY]
 	max_score = 1
 	questions_queue.clear()
 	
