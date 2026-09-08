@@ -22,11 +22,11 @@ const COMPONENTS_ID_MAP: Dictionary[Components, String] = {
 	Components.TEXT_BOX: "TextBox",
 }
 
-@onready var choices_box: ChoicesBox = $VBoxContainer/ChoicesMarginContainer/ChoicesBox
-@onready var image_box: ImageBox = $VBoxContainer/ImageMarginContainer/ImageBox
-@onready var text_input: TextInput = $VBoxContainer/TextInputMarginContainer/TextInput
-@onready var question_text_box: TextBox = $VBoxContainer/QuestionTextBoxCenterContainer/QuestionTextBox
-@onready var text_box: TextBox = $VBoxContainer/TextBoxCenterContainer/TextBox
+@onready var choices_box: ChoicesBox = $MarginContainer/VBoxContainer/ChoicesMarginContainer/ChoicesBox
+@onready var image_box: ImageBox = $MarginContainer/VBoxContainer/ImageMarginContainer/ImageBox
+@onready var text_input: TextInput = $MarginContainer/VBoxContainer/TextInputMarginContainer/TextInput
+@onready var question_text_box: TextBox = $MarginContainer/VBoxContainer/QuestionTextBoxCenterContainer/QuestionTextBox
+@onready var text_box: TextBox = $MarginContainer/VBoxContainer/TextBoxCenterContainer/TextBox
 
 @export var player: Player
 
@@ -55,15 +55,19 @@ func _remove_dialogue_state() -> void:
 	
 	self.hide()
 
-func _activate_dialogue_component(dialogue_component: DialogueComponentBaseNode) -> void:
+func _activate_dialogue_component(dialogue_component: DialogueComponentBaseNode, component_id: String) -> void:
+	_add_active_dialogue_component_to_queue(component_id)
+	
 	if active_dialogue_components_queue.is_empty():
 		_setup_dialogue_state()
-		dialogue_component.open()
+	dialogue_component.open()
 
-func _deactivate_dialogue_component(dialogue_component: DialogueComponentBaseNode) -> void:
+func _deactivate_dialogue_component(dialogue_component: DialogueComponentBaseNode, component_id: String) -> void:
+	_remove_active_dialogue_component_to_queue(component_id)
+	
 	if active_dialogue_components_queue.is_empty():
-		dialogue_component.close()
 		_remove_dialogue_state()
+	dialogue_component.close()
 
 func _add_active_dialogue_component_to_queue(component_id: String) -> void:
 	if not active_dialogue_components_queue.has(component_id):
@@ -90,44 +94,34 @@ func queue_dialogue(dialogue_data: DialogueData) -> void:
 			question_text_box.queue_dialogue_text(dialogue_data.text_sequence)
 
 func _on_text_box_action_started() -> void:
-	_activate_dialogue_component(text_box)
-	_add_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.TEXT_BOX])
+	_activate_dialogue_component(text_box, COMPONENTS_ID_MAP[Components.TEXT_BOX])
 
 func _on_text_box_action_stopped() -> void:
-	_remove_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.TEXT_BOX])
-	_deactivate_dialogue_component(text_box)
+	_deactivate_dialogue_component(text_box, COMPONENTS_ID_MAP[Components.TEXT_BOX])
 
 func _on_text_input_action_started() -> void:
-	_activate_dialogue_component(text_input)
-	_add_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.TEXT_INPUT])
+	_activate_dialogue_component(text_input, COMPONENTS_ID_MAP[Components.TEXT_INPUT])
 
 func _on_text_input_action_stopped() -> void:
-	_remove_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.TEXT_INPUT])
-	_deactivate_dialogue_component(text_input)
+	_deactivate_dialogue_component(text_input, COMPONENTS_ID_MAP[Components.TEXT_INPUT])
 
 func _on_image_box_action_started() -> void:
-	_activate_dialogue_component(image_box)
-	_add_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.IMAGE_BOX])
+	_activate_dialogue_component(image_box, COMPONENTS_ID_MAP[Components.IMAGE_BOX])
 
 func _on_image_box_action_stopped() -> void:
-	_remove_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.IMAGE_BOX])
-	_deactivate_dialogue_component(image_box)
+	_deactivate_dialogue_component(image_box, COMPONENTS_ID_MAP[Components.IMAGE_BOX])
 
 func _on_choices_box_action_started() -> void:
-	_activate_dialogue_component(choices_box)
-	_add_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.CHOICES_BOX])
+	_activate_dialogue_component(choices_box, COMPONENTS_ID_MAP[Components.CHOICES_BOX])
 
 func _on_choices_box_action_stopped() -> void:
-	_remove_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.CHOICES_BOX])
-	_deactivate_dialogue_component(choices_box)
+	_deactivate_dialogue_component(choices_box, COMPONENTS_ID_MAP[Components.CHOICES_BOX])
 
 func _on_question_text_box_action_started() -> void:
-	_activate_dialogue_component(question_text_box)
-	_add_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.QUESTION_TEXT_BOX])
+	_activate_dialogue_component(question_text_box, COMPONENTS_ID_MAP[Components.QUESTION_TEXT_BOX])
 
 func _on_question_text_box_action_stopped() -> void:
-	_remove_active_dialogue_component_to_queue(COMPONENTS_ID_MAP[Components.QUESTION_TEXT_BOX])
-	_deactivate_dialogue_component(question_text_box)
+	_deactivate_dialogue_component(question_text_box, COMPONENTS_ID_MAP[Components.QUESTION_TEXT_BOX])
 
 func _on_text_box_action_shown() -> void:
 	action_shown.emit()

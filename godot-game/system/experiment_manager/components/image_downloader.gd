@@ -9,7 +9,7 @@ func load_image_from_web(url: String, on_image_downloaded: Callable) -> void:
 	if error != OK:
 		push_error("An error occurred while starting the HTTP request.")
 
-func _on_image_downloaded(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, on_image_downloaded: Callable) -> void:
+func _on_image_downloaded(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray, on_image_downloaded: Callable) -> void:
 	# Check if the download was successful
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		push_error("Failed to download image. Response Code: ", response_code)

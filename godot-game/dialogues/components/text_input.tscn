@@ -6,10 +6,11 @@
 [node name="TextInput" type="Control" unique_id=1367755689]
 custom_minimum_size = Vector2(300, 40)
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.083333336
-offset_bottom = -40.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 script = ExtResource("2_mjaef")
 metadata/_edit_use_anchors_ = true
@@ -22,6 +23,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_bottom = -1.0
 grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("1_uc2i2")
 theme_override_font_sizes/font_size = 30
 metadata/_edit_use_anchors_ = true

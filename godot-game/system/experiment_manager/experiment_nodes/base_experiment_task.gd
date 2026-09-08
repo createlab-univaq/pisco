@@ -39,9 +39,11 @@ func _start_question_timers() -> void:
 	
 	# Add an empty answer record ready to be filled
 	answers_record.append(AnswerRecord.new())
+	print("marco")
 
 # Shared logic for recording an answer (used by all children)
 func _record_answer(user_answer: Variant, is_user_answer_correct: bool) -> void:
+	print("paolo")
 	# Stop response time stopwatch
 	stopwatch.stop()
 	

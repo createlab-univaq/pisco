@@ -26,8 +26,8 @@ func _execute_task() -> void:
 	
 	var instructions_text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	instructions_text_data.text_sequence = [current_node_data[INSTRUCTIONS_KEY]]
-	dialogue_controller.queue_dialogue(instructions_text_data)
 	dialogue_controller.action_performed.connect(_on_instruction_text_action_performed, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(instructions_text_data)
 
 func _on_instruction_text_action_performed(_output: Variant) -> void:
 	_next_question()
@@ -40,16 +40,16 @@ func _next_question() -> void:
 	var current_question: TrueFalseNodeQuestion = questions_queue.front()
 	var choice_text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	choice_text_data.text_sequence = [current_question.text]
-	dialogue_controller.queue_dialogue(choice_text_data)
 	dialogue_controller.textbox_lock_input()
 	dialogue_controller.action_shown.connect(_on_choice_text_shown, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(choice_text_data)
 
 func _on_choice_text_shown() -> void:
 	var choice_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.CHOICES)
 	choice_data.choices = [TRUE_CHOICE_KEY, FALSE_CHOICE_KEY]
-	dialogue_controller.queue_dialogue(choice_data)
 	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
 	dialogue_controller.action_performed.connect(_on_choice_made, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(choice_data)
 
 func _on_choice_made(outcome: String) -> void:
 	dialogue_controller.textbox_unlock_input_and_perform_action()

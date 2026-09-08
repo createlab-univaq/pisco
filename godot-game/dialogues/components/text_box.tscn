@@ -16,20 +16,27 @@ base_font = ExtResource("1_5c4dx")
 [node name="TextBox" type="Control" unique_id=121477490]
 custom_minimum_size = Vector2(300, 55)
 layout_mode = 3
-anchors_preset = 0
-offset_right = 300.0
-offset_bottom = 55.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 0
 script = ExtResource("1_evow0")
+metadata/_edit_use_anchors_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1656090585]
 custom_minimum_size = Vector2(300, 55)
-layout_mode = 0
-offset_right = 300.0
-offset_bottom = 55.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme = SubResource("Theme_as824")
+metadata/_edit_use_anchors_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=109146262]
 layout_mode = 2
