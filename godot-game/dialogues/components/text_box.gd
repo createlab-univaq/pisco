@@ -105,7 +105,7 @@ func _on_dialogue_completed() -> void:
 	action_stopped.emit()
 
 func _state_finished() -> void:
-	action_performed.emit(null)
+	action_performed.emit('')
 	if dialogue_text_queue.is_empty():
 		_change_state(STATE_READY)
 		_on_dialogue_completed()

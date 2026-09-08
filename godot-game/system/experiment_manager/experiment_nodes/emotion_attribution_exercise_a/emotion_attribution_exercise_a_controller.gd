@@ -20,23 +20,23 @@ func _execute_task() -> void:
 	
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	text_data.text_sequence = [node_question.scenario]
-	dialogue_controller.queue_dialogue(text_data)
 	dialogue_controller.textbox_lock_input()
 	dialogue_controller.action_shown.connect(_show_question, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(text_data)
 
 func _show_question() -> void:
 	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.pop_front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
 	text_data.text_sequence = [node_question.text]
-	dialogue_controller.queue_dialogue(text_data)
 	dialogue_controller.question_textbox_lock_input()
 	dialogue_controller.action_shown.connect(_show_input, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(text_data)
 
 func _show_input() -> void:
 	var input_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.INPUT)
-	dialogue_controller.queue_dialogue(input_data)
 	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
 	dialogue_controller.action_performed.connect(_on_text_submitted, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(input_data)
 
 func _on_text_submitted(submitted_text: String) -> void:
 	dialogue_controller.textbox_unlock_input_and_perform_action()
@@ -56,12 +56,12 @@ func _on_text_submitted(submitted_text: String) -> void:
 	# show explainations
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	text_data.text_sequence = [node_question.scenario_explaination]
-	dialogue_controller.queue_dialogue(text_data)
 	dialogue_controller.action_performed.connect(_show_answer_explanation)
+	dialogue_controller.queue_dialogue(text_data)
 
 func _show_answer_explanation() -> void:
 	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.pop_front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	text_data.text_sequence = [node_question.correct_answer_explaination]
-	dialogue_controller.queue_dialogue(text_data)
 	dialogue_controller.action_performed.connect(finish_task)
+	dialogue_controller.queue_dialogue(text_data)

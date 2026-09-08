@@ -32,6 +32,7 @@ func _execute_task() -> void:
 # Shared logic for starting a question (used by all children)
 func _start_question_timers() -> void:
 	mouse_tracker.start_tracking()
+	# Start reaction time stopwatch
 	stopwatch.start()
 	
 	first_input_interceptor.first_input_detected.connect(_on_first_input_detected, CONNECT_ONE_SHOT)
@@ -39,11 +40,9 @@ func _start_question_timers() -> void:
 	
 	# Add an empty answer record ready to be filled
 	answers_record.append(AnswerRecord.new())
-	print("marco")
 
 # Shared logic for recording an answer (used by all children)
 func _record_answer(user_answer: Variant, is_user_answer_correct: bool) -> void:
-	print("paolo")
 	# Stop response time stopwatch
 	stopwatch.stop()
 	

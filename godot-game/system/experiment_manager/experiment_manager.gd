@@ -192,10 +192,11 @@ func _on_task_completed(answers: Array[AnswerRecord], max_score: int) -> void:
 	_end_node()
 
 func _end_node() -> void:
+	is_experiment_running = false
+	
 	if not edges.has(current_node_id):
 		# experiment ended
 		finished_at = Time.get_datetime_string_from_system(true, true)
-		is_experiment_running = false
 		APIManager.record_game_execution(experiment_records.values(), APIManager.redeemed_flow, started_at, finished_at)
 		GameStateService.experiment_completed()
 		experiment_completed.emit()
@@ -204,7 +205,7 @@ func _end_node() -> void:
 	_record_node()
 	
 	# get edges from current node
-	var source_node_edges: Array[Dictionary] = edges[current_node_id]
+	var source_node_edges: Array = edges[current_node_id]
 	
 	var edge_index: int = 0
 	var next_node_found: bool = false
@@ -217,7 +218,7 @@ func _end_node() -> void:
 			EDGE_TYPE_MAP[EdgeType.CONDITIONAL_EDGE]:
 				# get node record
 				var current_node_record: NodeRecord = experiment_records[current_node_id]
-				var edge_data: Dictionary = current_edge[DATA_KEY]
+				var edge_data: Dictionary = current_edge[REACT_FLOW_KEY][DATA_KEY]
 				next_node_found = _check_threshold(edge_data[OPERATOR_KEY], edge_data[THRESHOLD_KEY], current_node_record.score)
 		
 		if next_node_found:

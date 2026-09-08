@@ -30,18 +30,18 @@ func _kill_tween() -> void:
 func open() -> void:
 	_reset()
 	self.show()
-	set_process_unhandled_input(true)
+	set_process_unhandled_input.call_deferred(true)
 
 func close() -> void:
 	self.hide()
 	_reset()
-	set_process_unhandled_input(false)
+	set_process_unhandled_input.call_deferred(false)
 
 func lock_input() -> void:
-	set_process_unhandled_input(false)
+	set_process_unhandled_input.call_deferred(false)
 
 func unlock_input() -> void:
-	set_process_unhandled_input(true)
+	set_process_unhandled_input.call_deferred(true)
 
 func perform_action() -> void:
 	assert(false, "DialogueComponentBaseNode children must override _perform_action() function!")

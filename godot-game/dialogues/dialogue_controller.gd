@@ -43,7 +43,6 @@ func _setup_dialogue_state() -> void:
 		is_player_already_in_cutscene = true
 	else:
 		player.set_player_as_in_dialogue()
-	
 	self.show()
 
 func _remove_dialogue_state() -> void:
@@ -52,14 +51,13 @@ func _remove_dialogue_state() -> void:
 	if not is_player_already_in_cutscene:
 		player.set_player_as_not_in_dialogue()
 	is_player_already_in_cutscene = false
-	
 	self.hide()
 
 func _activate_dialogue_component(dialogue_component: DialogueComponentBaseNode, component_id: String) -> void:
-	_add_active_dialogue_component_to_queue(component_id)
-	
 	if active_dialogue_components_queue.is_empty():
 		_setup_dialogue_state()
+	
+	_add_active_dialogue_component_to_queue(component_id)
 	dialogue_component.open()
 
 func _deactivate_dialogue_component(dialogue_component: DialogueComponentBaseNode, component_id: String) -> void:

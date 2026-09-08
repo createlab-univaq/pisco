@@ -18,6 +18,7 @@ func display_choices(dialogue_choices: Array[String]) -> void:
 			var button: Button = Button.new()
 			button.text = choice
 			button.pressed.connect(_on_choice_pressed.bind(choice))
+			button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 			v_box_container.add_child(button)
 		
 		action_shown.emit()
