@@ -36,12 +36,12 @@ func _execute_task() -> void:
 			questions_queue.append(node_question)
 			quiz_single_question_index += 1
 	
-	textbox.choice_made.connect(_on_choice_made)
+	# textbox.choice_made.connect(_on_choice_made)
 	_next_question()
 
 func _next_question() -> void:
 	if questions_queue.is_empty():
-		_on_questions_finished()
+		finish_task() # Tells the manager we are done!
 		return
 	
 	var current_question: FauxPasExerciseANodeQuestion = questions_queue.front()
@@ -56,38 +56,50 @@ func _next_question() -> void:
 			skip_question = current_question.skip_question
 	
 	if questions_queue.is_empty():
-		_on_questions_finished()
+		finish_task() # Tells the manager we are done!
 		return
 	
 	if current_question.is_first:
-		var text_data: DialogueData = DialogueData.new(current_question.narration, DialogueData.DialogueTypes.TEXT_ONLY)
-		
-		textbox.queue_dialogue([text_data])
-		textbox.dialogue_completed.connect(_show_question, CONNECT_ONE_SHOT)
+		var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
+		text_data.text_sequence = [current_question.narration]
+		dialogue_controller.queue_dialogue(text_data)
+		dialogue_controller.action_performed.connect(_show_explanation, CONNECT_ONE_SHOT)
 	else:
 		_show_question()
 
+func _show_explanation() -> void:
+	var current_question: FauxPasExerciseANodeQuestion = questions_queue.front()
+	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
+	text_data.text_sequence = [current_question.explanation]
+	dialogue_controller.queue_dialogue(text_data)
+	dialogue_controller.textbox_lock_input()
+	dialogue_controller.action_shown.connect(_show_question, CONNECT_ONE_SHOT)
+
 func _show_question() -> void:
 	var current_question: FauxPasExerciseANodeQuestion = questions_queue.front()
-	var choice_data: DialogueData = DialogueData.new(current_question.narration, DialogueData.DialogueTypes.FIXED_TEXT_WITH_QUESTION_CHOICE, current_question.choices, "", current_question.text)
+	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
+	text_data.text_sequence = [current_question.text]
+	dialogue_controller.queue_dialogue(text_data)
+	dialogue_controller.question_textbox_lock_input()
+	dialogue_controller.action_shown.connect(_show_choices, CONNECT_ONE_SHOT)
 	
-	textbox.queue_dialogue([choice_data])
-	textbox.choices_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
-
-func _on_questions_finished() -> void:
-	textbox.choice_made.disconnect(_on_choice_made)
-	finish_task() # Tells the manager we are done!
+func _show_choices() -> void:
+	var current_question: FauxPasExerciseANodeQuestion = questions_queue.front()
+	var choice_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.CHOICES)
+	choice_data.choices = current_question.choices
+	dialogue_controller.queue_dialogue(choice_data)
+	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_choice_made, CONNECT_ONE_SHOT)
 
 func _on_choice_made(outcome: String) -> void:
+	dialogue_controller.question_textbox_unlock_input()
+	
 	var current_question: FauxPasExerciseANodeQuestion = questions_queue.pop_front()
 	var is_user_answer_correct: bool = outcome == current_question.choices[current_question.correct_question_index]
 	
 	_record_answer(outcome, is_user_answer_correct)
 	
 	if current_question.is_last:
-		var explanation_text_data: DialogueData = DialogueData.new(current_question.explanation, DialogueData.DialogueTypes.TEXT_ONLY)
-		
-		textbox.queue_dialogue([explanation_text_data])
-		textbox.dialogue_completed.connect(_next_question, CONNECT_ONE_SHOT)
-	else:
-		_next_question()
+		dialogue_controller.textbox_unlock_input_and_perform_action()
+	
+	_next_question()

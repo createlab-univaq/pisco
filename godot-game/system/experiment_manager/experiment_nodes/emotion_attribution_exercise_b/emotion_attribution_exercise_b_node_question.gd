@@ -3,9 +3,9 @@ extends RefCounted
 
 var scenario: String
 var emotion: String
-var explaination: String
+var explanation: String
 
-func _init(p_scenario: String, p_emotion: String, p_explaination: String) -> void:
+func _init(p_scenario: String, p_emotion: String, p_explanation: String) -> void:
 	self.scenario = p_scenario
 	self.emotion = p_emotion
-	self.explaination = p_explaination
+	self.explanation = p_explanation

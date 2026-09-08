@@ -25,20 +25,28 @@ func _next_question() -> void:
 		return
 	
 	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.front()
-	var scenario_dialogue_text_data: DialogueData = DialogueData.new(current_question.scenario, DialogueData.DialogueTypes.TEXT_ONLY)
-	
-	textbox.queue_dialogue([scenario_dialogue_text_data])
-	textbox.dialogue_completed.connect(_on_scenario_dialogue_completed, CONNECT_ONE_SHOT)
+	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
+	text_data.text_sequence = [current_question.emotion]
+	dialogue_controller.queue_dialogue(text_data)
+	dialogue_controller.question_textbox_lock_input()
+	dialogue_controller.action_shown.connect(_show_scenario, CONNECT_ONE_SHOT)
 
-func _on_scenario_dialogue_completed() -> void:
+func _show_scenario() -> void:
 	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.front()
-	var explanation_and_emotion_text_data: DialogueData = DialogueData.new(current_question.scenario, DialogueData.DialogueTypes.QUESTION_WITH_TEXT_ONLY, [], "", current_question.emotion)
-	textbox.queue_dialogue([explanation_and_emotion_text_data])
-	
-	textbox.dialogue_text_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
-	textbox.dialogue_completed.connect(_on_explanation_and_emotion_dialogue_completed, CONNECT_ONE_SHOT)
+	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
+	text_data.text_sequence = [current_question.scenario]
+	dialogue_controller.action_performed.connect(_show_explanation, CONNECT_ONE_SHOT)
+
+func _show_explanation() -> void:
+	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.front()
+	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
+	text_data.text_sequence = [current_question.explanation]
+	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_explanation_and_emotion_dialogue_completed, CONNECT_ONE_SHOT)
 
 func _on_explanation_and_emotion_dialogue_completed() -> void:
+	dialogue_controller.question_textbox_unlock_input_and_perform_action()
+	
 	_record_answer(null, true)
 	
 	_next_question()
