@@ -28,7 +28,8 @@ enum NodeType {
 	FAUX_PAS_EXERCISE_A_NODE,
 	THEORY_OF_MIND_EXERCISE_A_NODE,
 	EMOTION_RECOGNITION_EXERCISE_A_CONTROLLER,
-	SOCIAL_SITUATIONS_EXERCISE_A_NODE
+	SOCIAL_SITUATIONS_EXERCISE_A_NODE,
+	CONTAINER_NODE
 }
 
 enum EdgeType {
@@ -58,6 +59,7 @@ const NODE_TYPE_MAP: Dictionary[NodeType, String] = {
 	NodeType.THEORY_OF_MIND_EXERCISE_A_NODE: "TheoryOfMindExerciseANode",
 	NodeType.EMOTION_RECOGNITION_EXERCISE_A_CONTROLLER: "EmotionRecognitionExerciseANode",
 	NodeType.SOCIAL_SITUATIONS_EXERCISE_A_NODE: "SocialSituationsExerciseANode",
+	NodeType.CONTAINER_NODE: "ContainerNode"
 }
 
 const EDGE_TYPE_MAP: Dictionary[EdgeType, String] = {
@@ -77,7 +79,8 @@ const EDGE_TYPE_MAP: Dictionary[EdgeType, String] = {
 	NODE_TYPE_MAP[NodeType.FAUX_PAS_EXERCISE_A_NODE]: $TaskControllers/FauxPasExerciseAController,
 	NODE_TYPE_MAP[NodeType.THEORY_OF_MIND_EXERCISE_A_NODE]: $TaskControllers/TheoryOfMindExerciseAController,
 	NODE_TYPE_MAP[NodeType.EMOTION_RECOGNITION_EXERCISE_A_CONTROLLER]: $TaskControllers/EmotionRecognitionExerciseAController,
-	NODE_TYPE_MAP[NodeType.SOCIAL_SITUATIONS_EXERCISE_A_NODE]: $TaskControllers/SocialSituationsExerciseAController
+	NODE_TYPE_MAP[NodeType.SOCIAL_SITUATIONS_EXERCISE_A_NODE]: $TaskControllers/SocialSituationsExerciseAController,
+	NODE_TYPE_MAP[NodeType.CONTAINER_NODE]: $TaskControllers/ContainerController
 }
 
 @export var actionable: Actionable
