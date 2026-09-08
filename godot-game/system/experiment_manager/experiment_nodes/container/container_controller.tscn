@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://4ebdmhyi8irw"]
+
+[ext_resource type="Script" uid="uid://cs5lmywu0rg0x" path="res://system/experiment_manager/experiment_nodes/container/container_controller.gd" id="1_bnwsy"]
+
+[node name="ContainerController" type="Node" unique_id=1763611277]
+script = ExtResource("1_bnwsy")
+
+[node name="ChildrenExerciseController" type="Node" parent="." unique_id=1138453426]
