@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cc0a80ynj5blr"]
+
+[ext_resource type="Script" uid="uid://cqlnb318clrho" path="res://system/experiment_manager/experiment_nodes/emotion_recognition_exercise_a/emotion_recognition_exercise_a_controller.gd" id="1_bh68j"]
+
+[node name="EmotionRecognitionExerciseAController" type="Node" unique_id=1873830760]
+script = ExtResource("1_bh68j")
