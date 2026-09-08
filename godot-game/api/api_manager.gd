@@ -4,6 +4,7 @@ const API_URL: String = "https://pisco-analyst-api.createlab-univaq.it/api"
 const LOGIN_PATH: String = "/auth/login"
 const REDEEM_FLOW: String = "/paths/resolve"
 const IMAGES_PATH: String = "/images"
+const GAME_EXECUTIONS: String = "/game-executions"
 
 const JSON_APPLICATION_HEADER = "Content-Type: application/json"
 var BEARER_AUTHORIZATION_HEADER = "Authorization: Bearer "
@@ -22,12 +23,10 @@ func login(email: String, password: String, on_login: Callable) -> void:
 	var headers: Array[String] = [JSON_APPLICATION_HEADER]
 	var json: String = login_dto.to_string()
 	
-	http_request.request_completed.connect(_on_login_request_completed.bind(on_login))
+	http_request.request_completed.connect(_on_login_request_completed.bind(on_login), CONNECT_ONE_SHOT)
 	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
 
 func _on_login_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray, on_login: Callable) -> void:
-	http_request.request_completed.disconnect(_on_login_request_completed.bind(on_login))
-	
 	var json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
 	var server_response: ServerResponse = ServerResponse.new()
 	server_response.success = response_code == 200
@@ -49,12 +48,10 @@ func _get_auth_headers() -> String:
 func redeem_path(code: String, on_redeem_path: Callable) -> void:
 	var url: String = API_URL + REDEEM_FLOW + "/" + code
 	var headers: Array[String] = [_get_auth_headers()]
-	http_request.request_completed.connect(_on_redeem_path_request_completed.bind(on_redeem_path))
+	http_request.request_completed.connect(_on_redeem_path_request_completed.bind(on_redeem_path), CONNECT_ONE_SHOT)
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func _on_redeem_path_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray, on_redeem_path: Callable) -> void:
-	http_request.request_completed.disconnect(_on_redeem_path_request_completed.bind(on_redeem_path))
-	
 	var json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
 	var server_response: ServerResponse = ServerResponse.new()
 	server_response.success = response_code == 200
@@ -98,3 +95,30 @@ func _on_redeem_path_request_completed(_result: int, response_code: int, _header
 		server_response.error = server_error_dto.detail
 	
 	on_redeem_path.call(server_response)
+
+func record_game_execution(node_records: Array[NodeRecord], run_redeemed_flow: RedeemedPath, run_started_at_time: String, run_finished_at_time: String) -> void:
+	var timestamp_name: String = Time.get_datetime_string_from_system(true, true)
+	
+	var execution_dto = GameExecutionDTO.new(
+		timestamp_name,
+		run_redeemed_flow.unique_code,
+		run_started_at_time,
+		run_finished_at_time,
+		node_records
+	)
+	
+	var url: String = API_URL + GAME_EXECUTIONS
+	var headers: Array[String] = [JSON_APPLICATION_HEADER]
+	var json: String = execution_dto.to_string()
+	
+	http_request.request_completed.connect(_on_record_game_execution_completed, CONNECT_ONE_SHOT)
+	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
+
+func _on_record_game_execution_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	var json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
+	var server_response: ServerResponse = ServerResponse.new()
+	server_response.success = response_code == 200
+	if not server_response.success:
+		var server_error_dto: ServerErrorDTO = ServerErrorDTO.new(json)
+		server_response.error = server_error_dto.detail
+		printerr(server_response.error)

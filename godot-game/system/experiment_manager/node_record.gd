@@ -74,3 +74,22 @@ func _init(n_node_id: String, n_node_name: String, n_node_type: String, n_is_exe
 	self.node_name = n_node_name
 	self.node_type = n_node_type
 	self.is_exercise = n_is_exercise
+
+func to_dict() -> Dictionary:
+	var answers_array: Array = []
+	for answer: AnswerRecord in self.answers:
+		answers_array.append(answer.to_dict())
+		
+	return {
+		"nodeId": self.node_id,
+		"nodeName": self.node_name,
+		"nodeType": self.node_type,
+		"isExercise": self.is_exercise,
+		"maxScore": self.max_score,
+		"score": self.score,
+		"percentageScore": self.percentage_score,
+		"averageReactionTimeInMilliseconds": self.average_reaction_time_in_milliseconds,
+		"averageResponseTimeInMilliseconds": self.average_response_time_in_milliseconds,
+		"averageMouseDistanceInCentimeters": self.average_mouse_distance_in_centimeters,
+		"answers": answers_array
+	}

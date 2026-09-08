@@ -30,3 +30,11 @@ var mouse_distance_in_centimeters: float = 0.0:
 		return mouse_distance_in_centimeters
 	set(value):
 		mouse_distance_in_centimeters = value
+
+func to_dict() -> Dictionary:
+	return {
+		"reactionTime": self.reaction_time_in_milliseconds,
+		"responseTime": self.response_time_in_milliseconds,
+		"mouseDistance": self.mouse_distance_in_centimeters,
+		"correct": self.correct
+	}

@@ -107,6 +107,9 @@ var edges: Dictionary[String, Array] = {}
 # Key: node_id, Value: node_record
 var experiment_records: Dictionary[String, NodeRecord] = {}
 
+var started_at: String = ""
+var finished_at: String = ""
+
 func _ready():
 	assert(actionable, "No actionable specified")
 	assert(dialogue_controller, "No Dialogue Controller specified")
@@ -167,6 +170,8 @@ func _on_task_completed(answers: Array[AnswerRecord], max_score: int) -> void:
 func _end_node() -> void:
 	if not edges.has(current_node_id):
 		# experiment ended
+		finished_at = Time.get_datetime_string_from_system(true, true)
+		APIManager.record_game_execution(experiment_records.values(), APIManager.redeemed_flow, started_at, finished_at)
 		GameStateService.experiment_completed()
 		experiment_completed.emit()
 		return
@@ -239,4 +244,6 @@ func _check_threshold(operator_key: String, threshold: float, value: float) -> b
 	return false
 
 func _on_actionable_actioned(_tile: Actionable, _player: Player) -> void:
+	if started_at.is_empty():
+		started_at = Time.get_datetime_string_from_system(true, true)
 	_start_node()
