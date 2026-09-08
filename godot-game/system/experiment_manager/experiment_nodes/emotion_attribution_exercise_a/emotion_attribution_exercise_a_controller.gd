@@ -15,7 +15,16 @@ func _execute_task() -> void:
 	max_score = 1
 	questions_queue.clear()
 	
-	var node_question: EmotionAttributionExerciseANodeQuestion = EmotionAttributionExerciseANodeQuestion.new(current_node_data[SCENARIO_KEY], current_node_data[DOMANDA_KEY], current_node_data[RISPOSTE_CORRETTE_KEY], current_node_data[CORRECT_ANSWER_EXPLAINATION_KEY], current_node_data[SCENARIO_EXPLAINATION_KEY])
+	var raw_correct_answers: Array = current_node_data[RISPOSTE_CORRETTE_KEY]
+	var typed_correct_answers: Array[String] = []
+	typed_correct_answers.assign(raw_correct_answers)
+	var node_question: EmotionAttributionExerciseANodeQuestion = EmotionAttributionExerciseANodeQuestion.new(
+		current_node_data[SCENARIO_KEY], 
+		current_node_data[DOMANDA_KEY], 
+		typed_correct_answers, # <--- Perfectly typed Array[String]
+		current_node_data[CORRECT_ANSWER_EXPLAINATION_KEY], 
+		current_node_data[SCENARIO_EXPLAINATION_KEY]
+	)
 	questions_queue.append(node_question)
 	
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
@@ -25,7 +34,7 @@ func _execute_task() -> void:
 
 func _show_question() -> void:
 	dialogue_controller.textbox_lock_input()
-	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.pop_front()
+	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.QUESTION)
 	text_data.text_sequence = [node_question.text]
 	dialogue_controller.action_shown.connect(_show_input, CONNECT_ONE_SHOT)
@@ -42,7 +51,7 @@ func _on_text_submitted(submitted_text: String) -> void:
 	dialogue_controller.textbox_unlock_input_and_perform_action()
 	dialogue_controller.question_textbox_unlock_input_and_perform_action()
 	
-	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.pop_front()
+	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.front()
 	var is_user_answer_correct: bool = false
 	var correct_answer_index: int = 0
 	var correct_answers: Array[String] = node_question.correct_answers

@@ -16,7 +16,14 @@ func _execute_task() -> void:
 	questions_queue.clear()
 	
 	for question: Dictionary in questions:
-		var node_question: EmotionAttributionNodeQuestion = EmotionAttributionNodeQuestion.new(question[NARRATION_KEY], question[SINGLE_QUESTION_KEY], question[CORRECT_ANSWERS_KEY])
+		var raw_answers: Array = question[CORRECT_ANSWERS_KEY]
+		var typed_answers: Array[String] = []
+		typed_answers.assign(raw_answers)
+		var node_question = EmotionAttributionNodeQuestion.new(
+			question[NARRATION_KEY], 
+			question[SINGLE_QUESTION_KEY], 
+			typed_answers
+		)
 		questions_queue.append(node_question)
 	
 	_next_question()

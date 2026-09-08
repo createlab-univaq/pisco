@@ -33,7 +33,18 @@ func _execute_task() -> void:
 				var skip_if_question: Dictionary = quiz_single_questions[skip_if_question_index]
 				var skip_if_question_answer: String = skip_if_question[ANSWERS_KEY][skip_if[ANSWER_INDEX]]
 				skip_question = FauxPasSkipQuestion.new(skip_if_question_index, skip_if_question_answer)
-			var node_question: FauxPasNodeQuestion = FauxPasNodeQuestion.new(single_question[SINGLE_QUESTION_KEY], quiz_single_question_index == 0, quiz_single_question_index == quiz_single_questions.size() - 1, question[NARRATION_KEY], single_question[CORRECT_INDEX_KEY], single_question[ANSWERS_KEY], skip_question)
+			var raw_choices: Array = single_question[ANSWERS_KEY]
+			var typed_choices: Array[String] = []
+			typed_choices.assign(raw_choices)
+			var node_question: FauxPasNodeQuestion = FauxPasNodeQuestion.new(
+				single_question[SINGLE_QUESTION_KEY], 
+				quiz_single_question_index == 0, 
+				quiz_single_question_index == quiz_single_questions.size() - 1, 
+				question[NARRATION_KEY], 
+				single_question[CORRECT_INDEX_KEY], 
+				typed_choices,
+				skip_question
+			)
 			questions_queue.append(node_question)
 			quiz_single_question_index += 1
 	
@@ -45,15 +56,19 @@ func _next_question() -> void:
 		return
 	
 	var current_question: FauxPasNodeQuestion = questions_queue.front()
-	var skip_question: FauxPasSkipQuestion = current_question.skip_question
-	var is_skip_question: bool = true
-	while is_skip_question and not questions_queue.is_empty():
-		is_skip_question = answers_record[skip_question.answer_index].user_answer == skip_question.question_answer
-		if is_skip_question:
-			# skip current answer
-			questions_queue.pop_front()
-			current_question = questions_queue.front()
-			skip_question = current_question.skip_question
+	if not answers_record.is_empty():
+		var skip_question: FauxPasSkipQuestion = current_question.skip_question
+		var is_skip_question: bool = true
+		while is_skip_question and not questions_queue.is_empty():
+			if skip_question:
+				is_skip_question = answers_record[skip_question.question_index].user_answer == skip_question.question_answer
+			else:
+				is_skip_question = false
+			if is_skip_question:
+				# skip current answer
+				questions_queue.pop_front()
+				current_question = questions_queue.front()
+				skip_question = current_question.skip_question
 	
 	if questions_queue.is_empty():
 		finish_task()

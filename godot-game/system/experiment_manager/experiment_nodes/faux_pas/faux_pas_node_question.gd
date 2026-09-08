@@ -15,5 +15,5 @@ func _init(p_text: String, p_is_first: bool, p_is_last: bool, p_narration: Strin
 	self.is_last = p_is_last
 	self.narration = p_narration
 	self.correct_question_index = p_correct_question_index
-	self.choices = p_choices
+	self.choices.assign(p_choices)
 	self.skip_question = p_skip_question

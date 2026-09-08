@@ -14,7 +14,15 @@ func _execute_task() -> void:
 	max_score = 1
 	questions_queue.clear()
 	
-	var node_question: EmotionRecognitionExerciseANodeQuestion = EmotionRecognitionExerciseANodeQuestion.new(current_node_data[IMAGE_ID_KEY], current_node_data[ANSWERS_KEY], current_node_data[CORRECT_INDEX_KEY], current_node_data[EXPLANATION_KEY])
+	var raw_choices: Array = current_node_data[ANSWERS_KEY]
+	var typed_choices: Array[String] = []
+	typed_choices.assign(raw_choices)
+	var node_question: EmotionRecognitionExerciseANodeQuestion = EmotionRecognitionExerciseANodeQuestion.new(
+		current_node_data[IMAGE_ID_KEY], 
+		typed_choices,
+		current_node_data[CORRECT_INDEX_KEY], 
+		current_node_data[EXPLANATION_KEY]
+	)
 	questions_queue.append(node_question)
 	
 	var image_data = DialogueData.new(DialogueData.DialogueTypes.IMAGE)

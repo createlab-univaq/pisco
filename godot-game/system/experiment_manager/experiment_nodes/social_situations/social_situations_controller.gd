@@ -20,7 +20,19 @@ func _execute_task() -> void:
 	
 	for item in items:
 		for section in item[SECTIONS_KEY]:
-			var node_question: SocialSituationsNodeQuestion = SocialSituationsNodeQuestion.new(section[BEFORE_TEXT_KEY], section[BOLD_TEXT_KEY], section[AFTER_TEXT_KEY], section[ANSWERS_KEY], section[CORRECT_INDEXES_KEY])
+			var raw_choices: Array = section[ANSWERS_KEY]
+			var typed_choices: Array[String] = []
+			typed_choices.assign(raw_choices)
+			var raw_indexes: Array = section[CORRECT_INDEXES_KEY]
+			var typed_indexes: Array[int] = []
+			typed_indexes.assign(raw_indexes)
+			var node_question: SocialSituationsNodeQuestion = SocialSituationsNodeQuestion.new(
+				section[BEFORE_TEXT_KEY], 
+				section[BOLD_TEXT_KEY], 
+				section[AFTER_TEXT_KEY], 
+				typed_choices,
+				typed_indexes
+			)
 			questions_queue.append(node_question)
 	
 	_next_question()
@@ -43,6 +55,7 @@ func _show_choices() -> void:
 	choice_data.choices = current_question.choices
 	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
 	dialogue_controller.action_performed.connect(_on_choice_made, CONNECT_ONE_SHOT)
+	dialogue_controller.queue_dialogue(choice_data)
 
 func _on_choice_made(outcome: String) -> void:
 	dialogue_controller.textbox_unlock_input_and_perform_action()

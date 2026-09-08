@@ -1,7 +1,7 @@
 class_name ImageBox
 extends DialogueComponentBaseNode
 
-@onready var texture_rect: TextureRect = $TextureRect
+@onready var texture_rect: TextureRect = $CenterContainer/TextureRect
 @onready var image_downloader: ImageDownloader = $ImageDownloader
 
 const STATE_DOWNLOADING_IMAGE: StringName = &"DOWNLOADING_IMAGE"

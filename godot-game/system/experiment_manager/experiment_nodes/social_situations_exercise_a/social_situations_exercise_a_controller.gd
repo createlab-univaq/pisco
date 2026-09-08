@@ -26,7 +26,21 @@ func _execute_task() -> void:
 			for answer: Dictionary in section[ANSWERS_KEY]:
 				var choice: SocialSituationsExerciseAChoice = SocialSituationsExerciseAChoice.new(answer[TEXT_KEY], answer[EXPLANATION_KEY])
 				node_choices.append(choice)
-			var node_question: SocialSituationsExerciseANodeQuestion = SocialSituationsExerciseANodeQuestion.new(section[BEFORE_TEXT_KEY], section[BOLD_TEXT_KEY], section[AFTER_TEXT_KEY], node_choices, section[CORRECT_INDEXES_KEY])
+			var raw_choices: Array = section[ANSWERS_KEY]
+			var typed_choices: Array[SocialSituationsExerciseAChoice] = []
+			for choice_data: Dictionary in raw_choices:
+				var choice_obj = SocialSituationsExerciseAChoice.new(
+					choice_data[TEXT_KEY],
+					choice_data[EXPLANATION_KEY]
+				)
+				typed_choices.append(choice_obj)
+			var node_question: SocialSituationsExerciseANodeQuestion = SocialSituationsExerciseANodeQuestion.new(
+				section[BEFORE_TEXT_KEY], 
+				section[BOLD_TEXT_KEY], 
+				section[AFTER_TEXT_KEY], 
+				typed_choices,
+				section[CORRECT_INDEXES_KEY]
+			)
 			questions_queue.append(node_question)
 	
 	_next_question()

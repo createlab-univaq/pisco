@@ -21,6 +21,8 @@ func display_choices(dialogue_choices: Array[String]) -> void:
 			button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 			v_box_container.add_child(button)
 		
+		self.custom_minimum_size = v_box_container.get_minimum_size()
+		
 		action_shown.emit()
 		_change_state(STATE_CHOOSING)
 

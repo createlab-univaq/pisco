@@ -24,7 +24,19 @@ func _execute_task() -> void:
 		var quiz_single_question_index: int = 0
 		while quiz_single_question_index < quiz_single_questions.size() :
 			var single_question: Dictionary = quiz_single_questions[quiz_single_question_index]
-			var node_question: TheoryOfMindExerciseANodeQuestion = TheoryOfMindExerciseANodeQuestion.new(single_question[SINGLE_QUESTION_KEY], quiz_single_question_index == 0, quiz_single_question_index == quiz_single_questions.size() - 1, question[IMAGE_ID_KEY], question[CAPTION_KEY], single_question[ANSWERS_KEY], single_question[CORRECT_INDEX_KEY], single_question[EXPLANATION_KEY])
+			var raw_choices: Array = single_question[ANSWERS_KEY]
+			var typed_choices: Array[String] = []
+			typed_choices.assign(raw_choices)
+			var node_question: TheoryOfMindExerciseANodeQuestion = TheoryOfMindExerciseANodeQuestion.new(
+				single_question[SINGLE_QUESTION_KEY], 
+				quiz_single_question_index == 0, 
+				quiz_single_question_index == quiz_single_questions.size() - 1, 
+				question[IMAGE_ID_KEY], 
+				question[CAPTION_KEY], 
+				typed_choices,
+				single_question[CORRECT_INDEX_KEY], 
+				single_question[EXPLANATION_KEY]
+			)
 			questions_queue.append(node_question)
 			quiz_single_question_index += 1
 	
