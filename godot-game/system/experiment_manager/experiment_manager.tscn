@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://dcgmiuv1gyf7j" path="res://system/experiment_manager/experiment_nodes/faux_pas_exercise_a/faux_pas_exercise_a_controller.tscn" id="13_1e5gn"]
 [ext_resource type="PackedScene" uid="uid://kwr4f1ttrc0g" path="res://system/experiment_manager/experiment_nodes/theory_of_mind_exercise_a/theory_of_mind_exercise_a_controller.tscn" id="14_crb3o"]
 [ext_resource type="PackedScene" uid="uid://cc0a80ynj5blr" path="res://system/experiment_manager/experiment_nodes/emotion_recognition_exercise_a/emotion_recognition_exercise_a_controller.tscn" id="15_6lh1k"]
+[ext_resource type="PackedScene" uid="uid://dou3w53uiy55t" path="res://system/experiment_manager/experiment_nodes/social_situations_exercise_a/social_situations_exercise_a_controller.tscn" id="16_5ken7"]
 
 [node name="ExperimentManager" type="Node" unique_id=1876397545]
 script = ExtResource("1_n7bim")
@@ -48,3 +49,5 @@ script = ExtResource("1_n7bim")
 [node name="TheoryOfMindExerciseAController" parent="TaskControllers" unique_id=1560012899 instance=ExtResource("14_crb3o")]
 
 [node name="EmotionRecognitionExerciseAController" parent="TaskControllers" unique_id=1873830760 instance=ExtResource("15_6lh1k")]
+
+[node name="SocialSituationsExerciseAController" parent="TaskControllers" unique_id=1426038540 instance=ExtResource("16_5ken7")]
