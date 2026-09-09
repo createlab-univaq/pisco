@@ -10,9 +10,15 @@ var nodes: Array[NodeRecord]
 func _init(n_run_name: String, n_flow_code: String, n_started_at: String, n_finished_at: String, n_nodes: Array[NodeRecord] = []) -> void:
 	self.run_name = n_run_name
 	self.flow_code = n_flow_code
-	self.started_at = n_started_at
-	self.finished_at = n_finished_at
 	self.nodes = n_nodes
+	self.started_at = _format_iso_date(n_started_at)
+	self.finished_at = _format_iso_date(n_finished_at)
+
+func _format_iso_date(date_string: String) -> String:
+	var iso_date = date_string.replace(" ", "T")
+	if not iso_date.ends_with("Z"):
+		iso_date += "Z"
+	return iso_date
 
 func _to_string() -> String:
 	var nodes_array: Array = []
@@ -27,5 +33,4 @@ func _to_string() -> String:
 		"nodes": nodes_array
 	}
 	
-	# We stringify ONE time at the very end to ensure perfectly clean JSON structure.
 	return JSON.stringify(dictionary)

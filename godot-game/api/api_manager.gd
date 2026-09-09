@@ -117,7 +117,7 @@ func record_game_execution(node_records: Array[NodeRecord], run_redeemed_flow: R
 func _on_record_game_execution_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	var json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
 	var server_response: ServerResponse = ServerResponse.new()
-	server_response.success = response_code == 200
+	server_response.success = response_code == 201
 	if not server_response.success:
 		var server_error_dto: ServerErrorDTO = ServerErrorDTO.new(json)
 		server_response.error = server_error_dto.detail
