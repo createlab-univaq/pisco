@@ -15,23 +15,28 @@ func _on_image_downloaded(result: int, response_code: int, _headers: PackedStrin
 		push_error("Failed to download image. Response Code: ", response_code)
 		on_image_downloaded.call(null)
 		return
-		
+	
+	if body.size() < 4:
+		push_error("Downloaded image data is too small or empty.")
+		on_image_downloaded.call(null)
+		return
+	
 	var image: Image = Image.new()
-	var error: Error
+	var error: Error = ERR_FILE_UNRECOGNIZED
 	
-	# We try loading it as a PNG first. 
-	# If that fails, we try JPG, then WebP. 
-	# This avoids having to manually parse the HTTP Content-Type headers!
-	error = image.load_png_from_buffer(body)
-	
-	if error != OK:
+	# Check the "Magic Bytes" at the start of the file buffer
+	if body[0] == 137 and body[1] == 80 and body[2] == 78 and body[3] == 71:
+		# PNG: Starts with [137, 80, 78, 71]
+		error = image.load_png_from_buffer(body)
+	elif body[0] == 255 and body[1] == 216 and body[2] == 255:
+		# JPG: Starts with [255, 216, 255]
 		error = image.load_jpg_from_buffer(body)
-		
-	if error != OK:
+	elif body[0] == 82 and body[1] == 73 and body[2] == 70 and body[3] == 70:
+		# WEBP (RIFF Header): Starts with 'R', 'I', 'F', 'F' [82, 73, 70, 70]
 		error = image.load_webp_from_buffer(body)
-		
+	
 	if error != OK:
-		push_error("Couldn't parse the image buffer. It might be an unsupported format.")
+		push_error("Couldn't parse the image buffer. It might be an unsupported format or corrupted.")
 		on_image_downloaded.call(null)
 		return
 		

@@ -2,6 +2,71 @@
 
 [ext_resource type="Script" uid="uid://bh1iff7wnc1rb" path="res://dialogues/components/image_box.gd" id="1_553vq"]
 [ext_resource type="PackedScene" uid="uid://cc20o4517vew1" path="res://system/experiment_manager/components/image_downloader.tscn" id="1_vac5d"]
+[ext_resource type="Texture2D" uid="uid://dujurtoaloho6" path="res://sprites/chara/pets/boba_the_cat.png" id="2_t23bm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kyknh"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tkflh"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_884jv"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r66bk"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_va8cr"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqr23"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_446iu"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3t412"]
+atlas = ExtResource("2_t23bm")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e3l3u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kyknh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tkflh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_884jv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r66bk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_va8cr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqr23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_446iu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3t412")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="ImageBox" type="Control" unique_id=553995390]
 custom_minimum_size = Vector2(0, 200)
@@ -32,4 +97,32 @@ expand_mode = 1
 stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
+[node name="ErrorLabel" type="Label" parent="CenterContainer" unique_id=639288948]
+layout_mode = 2
+
 [node name="ImageDownloader" parent="." unique_id=1388424457 instance=ExtResource("1_vac5d")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=714382116]
+
+[node name="LoadingWrapper" type="Control" parent="CanvasLayer" unique_id=1792454943]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasLayer/LoadingWrapper" unique_id=1825598584]
+position = Vector2(64, 64)
+scale = Vector2(3, 3)
+sprite_frames = SubResource("SpriteFrames_e3l3u")
+autoplay = "default"
+frame_progress = 0.5082086

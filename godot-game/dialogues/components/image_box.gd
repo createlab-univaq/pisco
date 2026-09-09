@@ -3,6 +3,8 @@ extends DialogueComponentBaseNode
 
 @onready var texture_rect: TextureRect = $CenterContainer/TextureRect
 @onready var image_downloader: ImageDownloader = $ImageDownloader
+@onready var error_label: Label = $CenterContainer/ErrorLabel
+@onready var loading_wrapper: Control = $CanvasLayer/LoadingWrapper
 
 const STATE_DOWNLOADING_IMAGE: StringName = &"DOWNLOADING_IMAGE"
 const STATE_WAITING: StringName = &"WAITING"
@@ -19,9 +21,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _reset() -> void:
 	texture_rect.texture = null
+	loading_wrapper.hide()
+	error_label.hide()
 
 func _state_waiting() -> void:
-	action_performed.emit()
+	action_performed.emit('')
 	if dialogue_images_url_queue.is_empty():
 		_change_state(STATE_READY)
 		_on_dialogue_completed()
@@ -32,12 +36,20 @@ func _display_image() -> void:
 	var current_image_url = dialogue_images_url_queue.pop_front()
 	
 	_change_state(STATE_DOWNLOADING_IMAGE)
+	
+	error_label.hide()
+	loading_wrapper.show()
+	
 	image_downloader.load_image_from_web(current_image_url, _on_image_downloaded)
 
 func _on_image_downloaded(image_texture: ImageTexture) -> void:
+	loading_wrapper.hide()
+	
 	if image_texture == null:
 		push_warning("Skipping image display due to download error.")
-		_reset()
+		texture_rect.texture = null
+		error_label.text = "Error: Could not load the image."
+		error_label.show()
 	else:
 		texture_rect.texture = image_texture
 	

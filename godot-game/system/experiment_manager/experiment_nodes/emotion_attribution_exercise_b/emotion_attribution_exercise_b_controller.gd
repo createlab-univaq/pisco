@@ -40,15 +40,15 @@ func _show_scenario() -> void:
 	dialogue_controller.action_performed.connect(_show_explanation, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(text_data)
 
-func _show_explanation() -> void:
-	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.front()
+func _show_explanation(_output: Variant) -> void:
+	var current_question: EmotionAttributionExerciseBNodeQuestion = questions_queue.pop_front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	text_data.text_sequence = [current_question.explanation]
 	dialogue_controller.action_shown.connect(_start_question_timers, CONNECT_ONE_SHOT)
 	dialogue_controller.action_performed.connect(_on_explanation_and_emotion_dialogue_completed, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(text_data)
 
-func _on_explanation_and_emotion_dialogue_completed() -> void:
+func _on_explanation_and_emotion_dialogue_completed(_output: Variant) -> void:
 	dialogue_controller.question_textbox_unlock_input_and_perform_action()
 	
 	_record_answer(null, true)

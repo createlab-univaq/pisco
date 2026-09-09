@@ -5,8 +5,8 @@ const DATA_KEY: String = "data"
 const SCENARIO_KEY: String = "scenario"
 const DOMANDA_KEY: String = "domanda"
 const RISPOSTE_CORRETTE_KEY: String = "risposteCorrette"
-const CORRECT_ANSWER_EXPLAINATION_KEY: String = "spiegazioneR"
-const SCENARIO_EXPLAINATION_KEY: String = "spiegazioneS"
+const CORRECT_ANSWER_EXPLANATION_KEY: String = "spiegazioneR"
+const SCENARIO_EXPLANATION_KEY: String = "spiegazioneS"
 
 var questions_queue: Array[EmotionAttributionExerciseANodeQuestion] = []
 
@@ -21,9 +21,9 @@ func _execute_task() -> void:
 	var node_question: EmotionAttributionExerciseANodeQuestion = EmotionAttributionExerciseANodeQuestion.new(
 		current_node_data[SCENARIO_KEY], 
 		current_node_data[DOMANDA_KEY], 
-		typed_correct_answers, # <--- Perfectly typed Array[String]
-		current_node_data[CORRECT_ANSWER_EXPLAINATION_KEY], 
-		current_node_data[SCENARIO_EXPLAINATION_KEY]
+		typed_correct_answers,
+		current_node_data[CORRECT_ANSWER_EXPLANATION_KEY], 
+		current_node_data[SCENARIO_EXPLANATION_KEY]
 	)
 	questions_queue.append(node_question)
 	
@@ -62,15 +62,18 @@ func _on_text_submitted(submitted_text: String) -> void:
 	
 	_record_answer(submitted_text, is_user_answer_correct)
 	
-	# show explainations
+	# show explanations
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
-	text_data.text_sequence = [node_question.scenario_explaination]
-	dialogue_controller.action_performed.connect(_show_answer_explanation)
+	text_data.text_sequence = [node_question.scenario_explanation]
+	dialogue_controller.action_performed.connect(_show_answer_explanation, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(text_data)
 
-func _show_answer_explanation() -> void:
+func _show_answer_explanation(_output: Variant) -> void:
 	var node_question: EmotionAttributionExerciseANodeQuestion = questions_queue.pop_front()
 	var text_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.TEXT)
-	text_data.text_sequence = [node_question.correct_answer_explaination]
-	dialogue_controller.action_performed.connect(finish_task)
+	text_data.text_sequence = [node_question.correct_answer_explanation]
+	dialogue_controller.action_performed.connect(_on_answer_explanation_shown, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(text_data)
+
+func _on_answer_explanation_shown(_output: Variant) -> void:
+	finish_task()
