@@ -9,17 +9,29 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
     const token = locals.token;
 
     const analystId = locals.analystId;
-    const analystPatientsPath = `${ANALYSTS_PATH}/${analystId}/patients`
+    const analystPatientsPath = `${ANALYSTS_PATH}/${analystId}/patients`;
 
-    const [patientsRes, executionsRes, polyglotRes] = await Promise.all([
+    const [patientsRes, executionsSummaryRes, polyglotRes] = await Promise.all([
         apiFetch(fetch, analystPatientsPath, { token }),
-        apiFetch(fetch, GAME_EXECUTIONS_PATH, { token }),
+        apiFetch(fetch, GAME_EXECUTIONS_PATH, { token }), // Returns summaries
         apiFetch(fetch, publishedFlowsPath, { token })
     ]);
 
     const patients = patientsRes.ok ? ((await patientsRes.json()) as Patient[]) : [];
-    const executions = executionsRes.ok ? ((await executionsRes.json()) as GameExecution[]) : [];
     const polyglotPaths = polyglotRes.ok ? ((await polyglotRes.json()) as PolyglotPath[]) : [];
+
+    // --- Fetch full details to get the 'nodes' array ---
+    const executionsSummary = executionsSummaryRes.ok ? ((await executionsSummaryRes.json()) as GameExecution[]) : [];
+
+    const executions = await Promise.all(
+        executionsSummary.map(async (execSummary) => {
+            const detailRes = await apiFetch(fetch, `${GAME_EXECUTIONS_PATH}/${execSummary.id}`, { token });
+            if (detailRes.ok) {
+                return (await detailRes.json()) as GameExecution;
+            }
+            return execSummary; // Fallback
+        })
+    );
 
     // 1. Compute Basic Counts
     const pazienti = patients.length;
