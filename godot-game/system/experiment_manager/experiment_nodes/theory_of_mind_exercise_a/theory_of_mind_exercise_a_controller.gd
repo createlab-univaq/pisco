@@ -88,7 +88,7 @@ func _on_choice_made(outcome: String) -> void:
 	dialogue_controller.question_textbox_unlock_input_and_perform_action()
 	
 	var current_question: TheoryOfMindExerciseANodeQuestion = questions_queue.pop_front()
-	var is_user_answer_correct: bool = outcome == current_question.choices[current_question.correct_question_index]
+	var is_user_answer_correct: bool = outcome == current_question.choices[current_question.correct_answer_index]
 	
 	_record_answer(outcome, is_user_answer_correct)
 	

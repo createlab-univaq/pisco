@@ -8,7 +8,7 @@ const BEFORE_TEXT_KEY: String = "before"
 const BOLD_TEXT_KEY: String = "bold"
 const AFTER_TEXT_KEY: String = "after"
 const ANSWERS_KEY: String = "answers"
-const CORRECT_INDEXES_KEY: String = "correctIndexes"
+const CORRECT_INDEXES_KEY: String = "correctIndex"
 const TEXT_KEY: String = "text"
 const EXPLANATION_KEY: String = "explanation"
 
