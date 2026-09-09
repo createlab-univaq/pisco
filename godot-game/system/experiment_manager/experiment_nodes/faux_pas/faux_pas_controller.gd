@@ -21,21 +21,28 @@ func _execute_task() -> void:
 	max_score = quiz_questions.size()
 	questions_queue.clear()
 	
+	var global_question_index: int = 0
+	
 	for question: Dictionary in quiz_questions:
 		var quiz_single_questions: Array = question[QUESTIONS_KEY]
+		var scenario_start_index: int = global_question_index
+		
 		var quiz_single_question_index: int = 0
 		while quiz_single_question_index < quiz_single_questions.size() :
 			var single_question: Dictionary = quiz_single_questions[quiz_single_question_index]
 			var skip_question: FauxPasSkipQuestion = null
 			var skip_if: Dictionary = single_question[SKIP_IF_KEY]
+			
 			if skip_if[ENABLED_KEY]:
 				var skip_if_question_index: int = skip_if[QUESTION_INDEX]
+				var absolute_skip_index: int = scenario_start_index + skip_if_question_index
 				var skip_if_question: Dictionary = quiz_single_questions[skip_if_question_index]
 				var skip_if_question_answer: String = skip_if_question[ANSWERS_KEY][skip_if[ANSWER_INDEX]]
-				skip_question = FauxPasSkipQuestion.new(skip_if_question_index, skip_if_question_answer)
+				skip_question = FauxPasSkipQuestion.new(absolute_skip_index, skip_if_question_answer)
 			var raw_choices: Array = single_question[ANSWERS_KEY]
 			var typed_choices: Array[String] = []
 			typed_choices.assign(raw_choices)
+			
 			var node_question: FauxPasNodeQuestion = FauxPasNodeQuestion.new(
 				single_question[SINGLE_QUESTION_KEY], 
 				quiz_single_question_index == 0, 
@@ -47,6 +54,7 @@ func _execute_task() -> void:
 			)
 			questions_queue.append(node_question)
 			quiz_single_question_index += 1
+			global_question_index += 1
 	
 	_next_question()
 
@@ -56,19 +64,29 @@ func _next_question() -> void:
 		return
 	
 	var current_question: FauxPasNodeQuestion = questions_queue.front()
+	
 	if not answers_record.is_empty():
 		var skip_question: FauxPasSkipQuestion = current_question.skip_question
 		var is_skip_question: bool = true
 		while is_skip_question and not questions_queue.is_empty():
-			if skip_question:
+			if skip_question and skip_question.question_index < answers_record.size():
 				is_skip_question = answers_record[skip_question.question_index].user_answer == skip_question.question_answer
 			else:
 				is_skip_question = false
+			
 			if is_skip_question:
+				_record_answer("SKIPPED", true)
 				# skip current answer
-				questions_queue.pop_front()
-				current_question = questions_queue.front()
-				skip_question = current_question.skip_question
+				var skipped_question: FauxPasNodeQuestion = questions_queue.pop_front()
+				
+				if skipped_question.is_last:
+					dialogue_controller.textbox_unlock_input_and_perform_action()
+				
+				if not questions_queue.is_empty():
+					current_question = questions_queue.front()
+					skip_question = current_question.skip_question
+				else:
+					break
 	
 	if questions_queue.is_empty():
 		finish_task()

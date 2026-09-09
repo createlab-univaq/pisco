@@ -50,5 +50,8 @@ func _on_choice_made(outcome: String) -> void:
 	
 	var text_data = DialogueData.new(DialogueData.DialogueTypes.TEXT)
 	text_data.text_sequence = [current_question.explanation]
-	dialogue_controller.action_performed.connect(finish_task, CONNECT_ONE_SHOT)
+	dialogue_controller.action_performed.connect(_on_explanation_dialogue_completed, CONNECT_ONE_SHOT)
 	dialogue_controller.queue_dialogue(text_data)
+
+func _on_explanation_dialogue_completed(_output: Variant) -> void:
+	finish_task()

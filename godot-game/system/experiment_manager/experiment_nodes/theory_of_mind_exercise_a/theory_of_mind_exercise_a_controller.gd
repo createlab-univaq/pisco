@@ -100,7 +100,7 @@ func _on_choice_made(outcome: String) -> void:
 	else:
 		_next_question()
 
-func _on_explaination_dialogue_completed() -> void:
+func _on_explaination_dialogue_completed(_output: Variant) -> void:
 	dialogue_controller.imagebox_textbox_unlock_input_and_perform_action()
 	
 	_next_question()
