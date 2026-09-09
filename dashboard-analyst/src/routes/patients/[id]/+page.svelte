@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 	import LineChart from '$lib/components/LineChart.svelte';
@@ -28,20 +27,19 @@
 	let showDeletePatientModal = $state(false);
 	let deleteFormElement = $state<HTMLFormElement | null>(null);
 
-	// 1. PATH SELECTION
 	let availableCodes = $derived(
-		Array.from(new Set(executions.map((e) => e.patientPath.uniqueCode)))
+		Array.from(new Set(executions.map((e) => e.patientPath?.uniqueCode).filter(Boolean)))
 	);
+	
 	let selectedCode = $state<string>('');
 	$effect(() => {
 		if (availableCodes.length > 0 && !selectedCode) selectedCode = availableCodes[0];
 	});
 
 	let codeExecutions = $derived(
-		executions.filter((e) => e.patientPath.uniqueCode === selectedCode)
+		executions.filter((e) => e.patientPath?.uniqueCode === selectedCode)
 	);
 
-	// 2. RUN SELECTION
 	let selectedRunId = $state<string>('');
 	$effect(() => {
 		if (
@@ -54,14 +52,13 @@
 
 	let activeSession = $derived(codeExecutions.find((e) => e.id === selectedRunId));
 
-	// 3. TABLE DATA COMPUTATION (Based on Active Session)
-	let testNodes = $derived(activeSession?.nodes.filter((n) => !n.isExercise) || []);
-	let exerciseNodes = $derived(activeSession?.nodes.filter((n) => n.isExercise) || []);
+	let testNodes = $derived((activeSession?.nodes || []).filter((n) => !n.isExercise));
+	let exerciseNodes = $derived((activeSession?.nodes || []).filter((n) => n.isExercise));
 
 	// Calculate Pre-Post link (Test -> Exercise -> Test of same type)
-	let prePostGroups = $derived(() => {
+	let prePostGroups = $derived.by(() => {
 		const groups = [];
-		const nodes = activeSession?.nodes || [];
+		const nodes = activeSession?.nodes || []; // Already safe
 		for (let i = 0; i < nodes.length - 2; i++) {
 			const pre = nodes[i];
 			const ex = nodes[i + 1];
@@ -73,19 +70,21 @@
 		return groups;
 	});
 
-	// 4. MULTI-LINE CHART DATA (Cross-run for selected path)
-	let lineChartDatasets = $derived(() => {
+	// MULTI-LINE CHART DATA (Safely handle missing exec.nodes)
+	let lineChartDatasets = $derived.by(() => {
 		if (codeExecutions.length === 0) return [];
 		const types = new Set<string>();
-		codeExecutions.forEach((e) =>
+		
+		codeExecutions.forEach((e) => {
+			if (!e.nodes) return; // Prevent crash if nodes is missing
 			e.nodes.forEach((n) => {
 				if (!n.isExercise) types.add(n.nodeType);
-			})
-		);
+			});
+		});
 
 		return Array.from(types).map((type) => {
 			const datasetData = codeExecutions.map((exec, idx) => {
-				const nodesOfType = exec.nodes.filter((n) => !n.isExercise && n.nodeType === type);
+				const nodesOfType = (exec.nodes || []).filter((n) => !n.isExercise && n.nodeType === type);
 				const avgScore =
 					nodesOfType.length > 0
 						? nodesOfType.reduce((sum, n) => sum + n.percentageScore * 100, 0) / nodesOfType.length
@@ -97,11 +96,12 @@
 		});
 	});
 
-	// 5. BAR CHART DATA (Single run, cross-nodetype)
-	let barChartData = $derived(() => {
+	// BAR CHART DATA (Single run, cross-nodetype)
+	let barChartData = $derived.by(() => {
 		if (!activeSession) return [];
 		const types = new Set<string>();
-		testNodes.forEach((n) => types.add(n.nodeType));
+		
+		testNodes.forEach((n) => types.add(n.nodeType)); // testNodes is already guaranteed to be an array now
 
 		return Array.from(types).map((type) => {
 			const nodesOfType = testNodes.filter((n) => n.nodeType === type);
@@ -412,7 +412,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each prePostGroups() as group}
+						{#each prePostGroups as group}
 							<tr>
 								<td>{group.ex.nodeName}</td>
 								<td>{group.pre.nodeType}</td>
@@ -449,7 +449,7 @@
 								</td>
 							</tr>
 						{/each}
-						{#if prePostGroups().length === 0}
+						{#if prePostGroups.length === 0}
 							<tr>
 								<td colspan="7" class="empty-text">
 									Nessun pattern Pre -> Esercitazione -> Post trovato in questa run.
@@ -465,7 +465,7 @@
 		<div class="section-card">
 			<h2>Andamento Storico per Percorso (Tutte le Run)</h2>
 			<LineChart
-				datasets={lineChartDatasets()}
+				datasets={lineChartDatasets}
 				title={`Trend Punteggi - Percorso: ${selectedCode}`}
 				xAxisTitle="Run"
 				yAxisTitle="Punteggio Medio (%)"
@@ -475,7 +475,7 @@
 		<div class="section-card">
 			<h2>Dettaglio Run Corrente ({activeSession.runName || 'Run'})</h2>
 			<BarChart
-				data={barChartData()}
+				data={barChartData}
 				title="Punteggi per Tipologia di Nodo"
 				xAxisTitle="Tipologia Nodo"
 				yAxisTitle="Punteggio Medio (%)"

@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}`, { token }),
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/paths`, { token }),
         apiFetch(fetch, `${PATIENTS_PATH}/${patientId}/diagnoses`, { token }),
-        apiFetch(fetch, `${GAME_EXECUTIONS_PATH}?patientId=${patientId}`, { token }),
+        apiFetch(fetch, `${GAME_EXECUTIONS_PATH}?patientId=${patientId}`, { token }), // Returns summaries
         apiFetch(fetch, publishedFlowsPath, { token }),
         apiFetch(fetch, DEGREES_PATH, { token })
     ]);
@@ -26,9 +26,22 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
     const patient = (await patientRes.json()) as Patient;
     const paths = pathsRes.ok ? ((await pathsRes.json()) as PatientPath[]) : [];
     const diagnoses = diagnosesRes.ok ? ((await diagnosesRes.json()) as Diagnosis[]) : [];
-    const executions = executionsRes.ok ? ((await executionsRes.json()) as GameExecution[]) : [];
     const polyglotPaths = polyglotRes.ok ? ((await polyglotRes.json()) as PolyglotPath[]) : [];
     const degrees = degreesRes.ok ? ((await degreesRes.json()) as Degree[]) : [];
+
+    // --- Fetch full details for executions so we get the 'nodes' array ---
+    const executionsSummary = executionsRes.ok ? ((await executionsRes.json()) as GameExecution[]) : [];
+    
+    const executions = await Promise.all(
+        executionsSummary.map(async (execSummary) => {
+            // Fetch the detailed object using its specific ID
+            const detailRes = await apiFetch(fetch, `${GAME_EXECUTIONS_PATH}/${execSummary.id}`, { token });
+            if (detailRes.ok) {
+                return (await detailRes.json()) as GameExecution;
+            }
+            return execSummary; // Fallback to summary if fetch fails
+        })
+    );
 
     return { patient, paths, diagnoses, executions, polyglotPaths, degrees };
 };
