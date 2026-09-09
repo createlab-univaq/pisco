@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://c4akco7pcqcth"]
+
+[ext_resource type="Script" uid="uid://corhxyy0nyx88" path="res://dialogues/components/waiting_overlay.gd" id="1_2r1g4"]
+[ext_resource type="Texture2D" uid="uid://dujurtoaloho6" path="res://sprites/chara/pets/boba_the_cat.png" id="1_fmwk1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kyknh"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tkflh"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_884jv"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r66bk"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_va8cr"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqr23"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_446iu"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3t412"]
+atlas = ExtResource("1_fmwk1")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e3l3u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kyknh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tkflh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_884jv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r66bk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_va8cr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqr23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_446iu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3t412")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="WaitingOverlay" type="CanvasLayer" unique_id=730426069]
+script = ExtResource("1_2r1g4")
+
+[node name="LoadingWrapper" type="VBoxContainer" parent="." unique_id=2118593429]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+
+[node name="CenterContainer" type="CenterContainer" parent="LoadingWrapper" unique_id=2056377997]
+layout_mode = 2
+
+[node name="AnimationSpacer" type="Control" parent="LoadingWrapper/CenterContainer" unique_id=632444300]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="LoadingWrapper/CenterContainer/AnimationSpacer" unique_id=214682452]
+position = Vector2(64, 64)
+scale = Vector2(3, 3)
+sprite_frames = SubResource("SpriteFrames_e3l3u")
+autoplay = "default"
+frame = 6
+frame_progress = 0.41817823
+
+[node name="LoadingLabel" type="Label" parent="LoadingWrapper" unique_id=1931948001]
+layout_mode = 2

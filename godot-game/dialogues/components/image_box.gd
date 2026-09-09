@@ -4,7 +4,7 @@ extends DialogueComponentBaseNode
 @onready var texture_rect: TextureRect = $CenterContainer/TextureRect
 @onready var image_downloader: ImageDownloader = $ImageDownloader
 @onready var error_label: Label = $CenterContainer/ErrorLabel
-@onready var loading_wrapper: Control = $CanvasLayer/LoadingWrapper
+@onready var waiting_overlay: WaitingOverlay = $WaitingOverlay
 
 const STATE_DOWNLOADING_IMAGE: StringName = &"DOWNLOADING_IMAGE"
 const STATE_WAITING: StringName = &"WAITING"
@@ -21,7 +21,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _reset() -> void:
 	texture_rect.texture = null
-	loading_wrapper.hide()
+	waiting_overlay.stop()
 	error_label.hide()
 
 func _state_waiting() -> void:
@@ -38,12 +38,12 @@ func _display_image() -> void:
 	_change_state(STATE_DOWNLOADING_IMAGE)
 	
 	error_label.hide()
-	loading_wrapper.show()
+	waiting_overlay.start("Downloading image")
 	
 	image_downloader.load_image_from_web(current_image_url, _on_image_downloaded)
 
 func _on_image_downloaded(image_texture: ImageTexture) -> void:
-	loading_wrapper.hide()
+	waiting_overlay.stop()
 	
 	if image_texture == null:
 		push_warning("Skipping image display due to download error.")
