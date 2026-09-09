@@ -123,30 +123,8 @@ func _ready():
 	
 	_prepare_experiment()
 
-# TODO REMOVE
-func load_json_file(file_path: String) -> Variant:
-	# 1. Safety Check: Does the file exist?
-	if not FileAccess.file_exists(file_path):
-		printerr("Error: JSON file not found at ", file_path)
-		return null
-		
-	# 2. Open the file in READ mode and get the text
-	var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
-	var json_string: String = file.get_as_text()
-	
-	# 3. Parse the string into a Godot Dictionary or Array
-	var parsed_data: Variant = JSON.parse_string(json_string)
-	
-	# 4. Safety Check: Is it valid JSON?
-	if parsed_data == null:
-		printerr("Error: Failed to parse JSON. Invalid format in: ", file_path)
-		return null
-		
-	return parsed_data
-
 func _prepare_experiment() -> void:
-	# var redeemed_flow: Dictionary = APIManager.redeemed_flow.flow.flow_json
-	var redeemed_flow: Dictionary = load_json_file("res://system/experiment_manager/text_path.json")
+	var redeemed_flow: Dictionary = APIManager.redeemed_flow.flow.flow_json
 	
 	if not redeemed_flow:
 		return
