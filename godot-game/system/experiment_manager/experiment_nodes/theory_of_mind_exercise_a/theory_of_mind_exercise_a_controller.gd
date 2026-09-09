@@ -51,7 +51,9 @@ func _next_question() -> void:
 	
 	if current_question.is_first:
 		var image_data: DialogueData = DialogueData.new(DialogueData.DialogueTypes.IMAGE)
-		image_data.image_urls = [current_question.image_url]
+		var image_url: String = "%s/images/%s" % [APIManager.API_URL, current_question.image_id]
+		var image_urls: Array[String] = [image_url]
+		image_data.image_urls = image_urls
 		dialogue_controller.action_shown.connect(_show_caption, CONNECT_ONE_SHOT)
 		dialogue_controller.queue_dialogue(image_data)
 	else:
