@@ -75,7 +75,7 @@ func _next_question() -> void:
 				is_skip_question = false
 			
 			if is_skip_question:
-				_record_answer("SKIPPED", true)
+				_record_answer("SKIPPED", false)
 				# skip current answer
 				var skipped_question: FauxPasNodeQuestion = questions_queue.pop_front()
 				

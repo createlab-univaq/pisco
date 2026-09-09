@@ -78,12 +78,13 @@ func _next_question() -> void:
 				is_skip_question = false
 			
 			if is_skip_question:
-				_record_answer("SKIPPED", true)
+				_record_answer("SKIPPED", false)
 				# skip current answer
-				var skipped_question: FauxPasNodeQuestion = questions_queue.pop_front()
+				var skipped_question: FauxPasExerciseANodeQuestion = questions_queue.pop_front()
 				
 				if skipped_question.is_last:
 					dialogue_controller.textbox_unlock_input_and_perform_action()
+					dialogue_controller.question_textbox_unlock_input_and_perform_action()
 				
 				if not questions_queue.is_empty():
 					current_question = questions_queue.front()
@@ -129,6 +130,7 @@ func _show_choices() -> void:
 
 func _on_choice_made(outcome: String) -> void:
 	dialogue_controller.question_textbox_unlock_input()
+	dialogue_controller.question_textbox_unlock_input_and_perform_action()
 	
 	var current_question: FauxPasExerciseANodeQuestion = questions_queue.pop_front()
 	var is_user_answer_correct: bool = outcome == current_question.choices[current_question.correct_question_index]
