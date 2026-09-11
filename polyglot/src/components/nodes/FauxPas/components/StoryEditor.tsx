@@ -36,8 +36,8 @@ export const StoryEditor = ({ story, index, onChange, onRemove, getFieldError }:
                 ...questions,
                 {
                     question: '',
-                    answers: ['Si', 'No'],
-                    correctIndex: 0,
+                    answers: ['Nessuna risposta corretta', 'Si', 'No'],
+                    correctIndex: 0, // This is already correctly set to 0!
                     skipIf: { enabled: false, questionIndex: null, answerIndex: null }
                 }
             ]

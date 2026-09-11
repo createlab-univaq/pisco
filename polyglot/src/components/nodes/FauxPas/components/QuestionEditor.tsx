@@ -51,12 +51,12 @@ export const QuestionEditor = ({ question, index, storyIndex, allQuestions, onCh
 
             <SingleSelectAnswersField
                 label="Answers"
-                answers={question.answers || ['Si', 'No']}
+                answers={question.answers || ['Nessuna risposta corretta', 'Si', 'No']}
                 correctIndex={question.correctIndex}
                 onAnswersChange={(newAnswers) => onChange({ ...question, answers: newAnswers })}
                 onCorrectIndexChange={(newIndex) => onChange({ ...question, correctIndex: newIndex })}
                 minAnswers={2}
-                defaultAnswers={['Si', 'No']}
+                defaultAnswers={['Nessuna risposta corretta', 'Si', 'No']}
                 allowNoCorrect={true}
                 error={answersError || correctIndexError}
             />

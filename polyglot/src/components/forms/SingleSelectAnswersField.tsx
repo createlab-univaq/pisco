@@ -3,7 +3,6 @@
 import { useId } from 'react';
 import styles from './SingleSelectAnswersField.module.css';
 
-// Reusable SVGs replacing Chakra Icons
 const AddIcon = () => (
     <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -25,7 +24,6 @@ export type SingleSelectAnswersFieldProps = {
     minAnswers?: number;
     defaultAnswers?: string[];
     allowNoCorrect?: boolean;
-    noCorrectLabel?: string;
     isDisabled?: boolean;
     error?: string;
 };
@@ -39,31 +37,26 @@ const SingleSelectAnswersField = ({
     minAnswers = 2,
     defaultAnswers = ['', ''],
     allowNoCorrect = false,
-    noCorrectLabel = 'Nessuna risposta corretta',
     isDisabled = false,
     error,
 }: SingleSelectAnswersFieldProps) => {
-    // Generate a unique name for the radio group so multiple instances don't clash
     const radioGroupId = useId();
-
     const containerClass = `${styles.container} ${error ? styles.containerInvalid : ''}`;
 
-    // Inizializzo se l'array è vuoto
     const effectiveAnswers = answers.length ? answers : defaultAnswers;
 
-    // Normalizza answers + clamp correctIndex se serve
     const handleAnswersChange = (next: string[]) => {
-        // Mantengo almeno minAnswers risposte
-        const normalized = next.length >= minAnswers
+        // If allowNoCorrect is active, the static option counts as 1, so we need minAnswers + 1
+        const min = allowNoCorrect ? minAnswers + 1 : minAnswers;
+        const normalized = next.length >= min
             ? next
             : [
                 ...next,
-                ...Array.from({ length: minAnswers - next.length }, () => ''),
+                ...Array.from({ length: min - next.length }, () => ''),
             ];
 
         onAnswersChange(normalized);
 
-        // Se correctIndex è un numero, lo tengo dentro range
         if (typeof correctIndex === 'number') {
             const maxIndex = Math.max(0, normalized.length - 1);
             if (correctIndex > maxIndex) {
@@ -79,6 +72,7 @@ const SingleSelectAnswersField = ({
     };
 
     const handleRemoveAnswer = (idx: number) => {
+        if (allowNoCorrect && idx === 0) return; // Prevent removing the static label
         handleAnswersChange(effectiveAnswers.filter((_, i) => i !== idx));
     };
 
@@ -91,58 +85,51 @@ const SingleSelectAnswersField = ({
             <h4 className={styles.label}>{label}</h4>
 
             <div className={styles.radioGroup}>
+                {effectiveAnswers.map((answer, idx) => {
+                    const isStaticNoCorrectOption = allowNoCorrect && idx === 0;
 
-                {/* Opzione "nessuna corretta" disponibile solo se abilitata (es: Faux Pas) */}
-                {allowNoCorrect && (
-                    <label className={styles.radioRow}>
-                        <input
-                            type="radio"
-                            name={radioGroupId}
-                            value="none"
-                            checked={correctIndex === null}
-                            onChange={() => onCorrectIndexChange(null)}
-                            disabled={isDisabled}
-                            className={styles.radioInput}
-                        />
-                        <span className={styles.radioLabel}>{noCorrectLabel}</span>
-                    </label>
-                )}
+                    return (
+                        <div key={idx} className={styles.row}>
+                            <input
+                                type="radio"
+                                name={radioGroupId}
+                                value={String(idx)}
+                                checked={correctIndex === idx}
+                                onChange={() => onCorrectIndexChange(idx)}
+                                disabled={isDisabled}
+                                className={styles.radioInput}
+                                title="Segna come corretta"
+                            />
 
-                {effectiveAnswers.map((answer, idx) => (
-                    <div key={idx} className={styles.row}>
+                            {isStaticNoCorrectOption ? (
+                                <span style={{ flex: 1, padding: '0.5rem 0.75rem', fontSize: '0.875rem', color: '#4a5568', fontWeight: 500 }}>
+                                    {answer}
+                                </span>
+                            ) : (
+                                <input
+                                    type="text"
+                                    value={answer ?? ''}
+                                    placeholder={`Answer ${allowNoCorrect ? idx : idx + 1}`}
+                                    onChange={(e) => handleTextChange(idx, e.target.value)}
+                                    disabled={isDisabled}
+                                    className={styles.textInput}
+                                />
+                            )}
 
-                        <input
-                            type="radio"
-                            name={radioGroupId}
-                            value={String(idx)}
-                            checked={correctIndex === idx}
-                            onChange={() => onCorrectIndexChange(idx)}
-                            disabled={isDisabled}
-                            className={styles.radioInput}
-                            title="Segna come corretta"
-                        />
-
-                        <input
-                            type="text"
-                            value={answer ?? ''}
-                            placeholder={`Answer ${idx + 1}`}
-                            onChange={(e) => handleTextChange(idx, e.target.value)}
-                            disabled={isDisabled}
-                            className={styles.textInput}
-                        />
-
-                        <button
-                            type="button"
-                            className={styles.removeBtn}
-                            onClick={() => handleRemoveAnswer(idx)}
-                            disabled={isDisabled || effectiveAnswers.length <= minAnswers}
-                            aria-label="Remove answer"
-                            title="Rimuovi risposta"
-                        >
-                            <CloseIcon />
-                        </button>
-                    </div>
-                ))}
+                            <button
+                                type="button"
+                                className={styles.removeBtn}
+                                onClick={() => handleRemoveAnswer(idx)}
+                                disabled={isDisabled || isStaticNoCorrectOption || effectiveAnswers.length <= (allowNoCorrect ? minAnswers + 1 : minAnswers)}
+                                aria-label="Remove answer"
+                                title="Rimuovi risposta"
+                                style={{ visibility: isStaticNoCorrectOption ? 'hidden' : 'visible' }}
+                            >
+                                <CloseIcon />
+                            </button>
+                        </div>
+                    );
+                })}
             </div>
 
             <button
