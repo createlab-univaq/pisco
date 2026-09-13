@@ -30,7 +30,7 @@
 	let availableCodes = $derived(
 		Array.from(new Set(executions.map((e) => e.patientPath?.uniqueCode).filter(Boolean)))
 	);
-	
+
 	let selectedCode = $state<string>('');
 	$effect(() => {
 		if (availableCodes.length > 0 && !selectedCode) selectedCode = availableCodes[0];
@@ -74,7 +74,7 @@
 	let lineChartDatasets = $derived.by(() => {
 		if (codeExecutions.length === 0) return [];
 		const types = new Set<string>();
-		
+
 		codeExecutions.forEach((e) => {
 			if (!e.nodes) return; // Prevent crash if nodes is missing
 			e.nodes.forEach((n) => {
@@ -87,7 +87,7 @@
 				const nodesOfType = (exec.nodes || []).filter((n) => !n.isExercise && n.nodeType === type);
 				const avgScore =
 					nodesOfType.length > 0
-						? nodesOfType.reduce((sum, n) => sum + n.percentageScore * 100, 0) / nodesOfType.length
+						? nodesOfType.reduce((sum, n) => sum + n.percentageScore, 0) / nodesOfType.length
 						: 0;
 
 				return { x: exec.runName || `Run ${idx + 1}`, y: parseFloat(avgScore.toFixed(1)) };
@@ -100,14 +100,14 @@
 	let barChartData = $derived.by(() => {
 		if (!activeSession) return [];
 		const types = new Set<string>();
-		
+
 		testNodes.forEach((n) => types.add(n.nodeType)); // testNodes is already guaranteed to be an array now
 
 		return Array.from(types).map((type) => {
 			const nodesOfType = testNodes.filter((n) => n.nodeType === type);
 			const avgScore =
 				nodesOfType.length > 0
-					? nodesOfType.reduce((sum, n) => sum + n.percentageScore * 100, 0) / nodesOfType.length
+					? nodesOfType.reduce((sum, n) => sum + n.percentageScore, 0) / nodesOfType.length
 					: 0;
 			return { x: type, y: parseFloat(avgScore.toFixed(1)) };
 		});
@@ -351,7 +351,7 @@
 								<td>{node.nodeName}</td>
 								<td>{node.nodeType}</td>
 								<td>{node.score.toFixed(1)} / {node.maxScore.toFixed(1)}</td>
-								<td>{(node.percentageScore * 100).toFixed(1)}%</td>
+								<td>{node.percentageScore.toFixed(1)}%</td>
 								<td>{node.averageReactionTimeInMilliseconds.toFixed(0)} ms</td>
 								<td>{node.averageResponseTimeInMilliseconds.toFixed(0)} ms</td>
 								<td>{node.averageMouseDistanceInCentimeters.toFixed(1)} cm</td>
@@ -384,7 +384,7 @@
 								<td>{node.nodeName}</td>
 								<td>{node.nodeType}</td>
 								<td>{node.score.toFixed(1)} / {node.maxScore.toFixed(1)}</td>
-								<td>{(node.percentageScore * 100).toFixed(1)}%</td>
+								<td>{node.percentageScore.toFixed(1)}%</td>
 								<td>{node.averageReactionTimeInMilliseconds.toFixed(0)} ms</td>
 								<td>{node.averageResponseTimeInMilliseconds.toFixed(0)} ms</td>
 								<td>{node.averageMouseDistanceInCentimeters.toFixed(1)} cm</td>

@@ -33,13 +33,13 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
         })
     );
 
-    // 1. Compute Basic Counts
+    // Compute Basic Counts
     const pazienti = patients.length;
     const maschi = patients.filter((p) => p.gender === 'MASCHIO').length;
     const femmine = patients.filter((p) => p.gender === 'FEMMINA').length;
     const percorsi = polyglotPaths.length;
 
-    // 2. Compute Global Test Table (Pre-Post matching with Response Times and Mouse Distances)
+    // Compute Global Test Table (Pre-Post matching with flexible First vs Last logic)
     const testMap: Record<string, {
         preScores: number[];
         postScores: number[];
@@ -50,29 +50,41 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
     executions.forEach((exec) => {
         const nodes = exec.nodes || [];
-        for (let i = 0; i < nodes.length - 2; i++) {
-            const pre = nodes[i];
-            const ex = nodes[i + 1];
-            const post = nodes[i + 2];
 
-            if (!pre.isExercise && ex.isExercise && !post.isExercise && pre.nodeType === post.nodeType) {
-                const name = pre.nodeType;
-                if (!testMap[name]) {
-                    testMap[name] = { preScores: [], postScores: [], reactionTimes: [], responseTimes: [], mouseDistances: [] };
-                }
-                testMap[name].preScores.push(pre.percentageScore * 100);
-                testMap[name].postScores.push(post.percentageScore * 100);
-
-                if (pre.averageReactionTimeInMilliseconds) testMap[name].reactionTimes.push(pre.averageReactionTimeInMilliseconds);
-                if (post.averageReactionTimeInMilliseconds) testMap[name].reactionTimes.push(post.averageReactionTimeInMilliseconds);
-
-                if (pre.averageResponseTimeInMilliseconds) testMap[name].responseTimes.push(pre.averageResponseTimeInMilliseconds);
-                if (post.averageResponseTimeInMilliseconds) testMap[name].responseTimes.push(post.averageResponseTimeInMilliseconds);
-
-                if (pre.averageMouseDistanceInCentimeters) testMap[name].mouseDistances.push(pre.averageMouseDistanceInCentimeters);
-                if (post.averageMouseDistanceInCentimeters) testMap[name].mouseDistances.push(post.averageMouseDistanceInCentimeters);
+        // Group test nodes by their nodeType
+        const nodesByType: Record<string, any[]> = {};
+        nodes.forEach(n => {
+            if (!n.isExercise) {
+                if (!nodesByType[n.nodeType]) nodesByType[n.nodeType] = [];
+                nodesByType[n.nodeType].push(n);
             }
-        }
+        });
+
+        // If a test was played at least twice in this run, consider First = Pre, Last = Post
+        Object.keys(nodesByType).forEach(nodeType => {
+            const instances = nodesByType[nodeType];
+
+            if (instances.length >= 2) {
+                const pre = instances[0]; // First time they played it
+                const post = instances[instances.length - 1]; // Last time they played it
+
+                if (!testMap[nodeType]) {
+                    testMap[nodeType] = { preScores: [], postScores: [], reactionTimes: [], responseTimes: [], mouseDistances: [] };
+                }
+
+                testMap[nodeType].preScores.push(pre.percentageScore);
+                testMap[nodeType].postScores.push(post.percentageScore);
+
+                if (pre.averageReactionTimeInMilliseconds) testMap[nodeType].reactionTimes.push(pre.averageReactionTimeInMilliseconds);
+                if (post.averageReactionTimeInMilliseconds) testMap[nodeType].reactionTimes.push(post.averageReactionTimeInMilliseconds);
+
+                if (pre.averageResponseTimeInMilliseconds) testMap[nodeType].responseTimes.push(pre.averageResponseTimeInMilliseconds);
+                if (post.averageResponseTimeInMilliseconds) testMap[nodeType].responseTimes.push(post.averageResponseTimeInMilliseconds);
+
+                if (pre.averageMouseDistanceInCentimeters) testMap[nodeType].mouseDistances.push(pre.averageMouseDistanceInCentimeters);
+                if (post.averageMouseDistanceInCentimeters) testMap[nodeType].mouseDistances.push(post.averageMouseDistanceInCentimeters);
+            }
+        });
     });
 
     const testTable = Object.keys(testMap).map((nodeType) => {
@@ -105,7 +117,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
         const datasetData = executions.map((exec, idx) => {
             const nodesOfType = (exec.nodes || []).filter((n) => !n.isExercise && n.nodeType === type);
             const avgScore = nodesOfType.length > 0
-                ? nodesOfType.reduce((sum, n) => sum + (n.percentageScore * 100), 0) / nodesOfType.length
+                ? nodesOfType.reduce((sum, n) => sum + n.percentageScore, 0) / nodesOfType.length
                 : 0;
 
             return {
@@ -123,7 +135,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
     const chartData: ChartPoint[] = executions.map((exec, idx) => {
         const testNodes = (exec.nodes || []).filter((n) => !n.isExercise);
         const avgRunScore = testNodes.length > 0
-            ? testNodes.reduce((sum, n) => sum + (n.percentageScore * 100), 0) / testNodes.length
+            ? testNodes.reduce((sum, n) => sum + n.percentageScore, 0) / testNodes.length
             : 0;
         return {
             x: exec.runName || `Sess. ${idx + 1}`,
