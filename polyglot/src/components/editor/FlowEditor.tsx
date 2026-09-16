@@ -45,6 +45,7 @@ import { validateConditionalEdges } from '@/lib/validation/conditionalEdgeValida
 import { useToast } from '@/components/providers/ToastProvider';
 import { Flow } from '@/types';
 import { PolyglotFlow } from '@/types/PolyglotFlow';
+import { validateEdgeIntegrity } from '@/lib/validation/edgeValidator';
 
 // ==========================================
 // CONFIGURABLE KEYBOARD SHORTCUTS
@@ -481,6 +482,18 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
     const handleSave = async (overrides?: Partial<Flow>) => {
         const cleanFlowJson = getCleanFlowJson();
 
+        // ==========================================
+        // 1. EDGE INTEGRITY CHECK (Ghost Nodes)
+        // ==========================================
+        const edgeIntegrityErrors = validateEdgeIntegrity(cleanFlowJson.nodes, cleanFlowJson.edges);
+        if (edgeIntegrityErrors.length > 0) {
+            showToast('Corrupted Edge Detected', edgeIntegrityErrors[0], 'error');
+            return;
+        }
+
+        // ==========================================
+        // 2. NODE DATA VALIDATION
+        // ==========================================
         const invalidNodes = cleanFlowJson.nodes.filter((node) => {
             const result = validateNodeData(node.type, node.data);
             return !result.ok;
@@ -491,6 +504,9 @@ const FlowEditor = ({ flow, saveFlow, onSelectionChange }: FlowEditorProps) => {
             return;
         }
 
+        // ==========================================
+        // 3. CONDITIONAL EDGE VALIDATION
+        // ==========================================
         const conditionalErrors = validateConditionalEdges(cleanFlowJson.nodes, cleanFlowJson.edges);
         if (conditionalErrors.length > 0) {
             showToast('Conditional Edge Error', conditionalErrors[0], 'error');

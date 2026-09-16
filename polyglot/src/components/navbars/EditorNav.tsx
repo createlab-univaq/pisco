@@ -14,6 +14,7 @@ import ViewCodeModal from '../modals/ViewCodeModal';
 import FlowSettingsModal from '../modals/FlowSettingsModal';
 import { useHasHydrated } from '@/hooks/useHasHydrated';
 import { Flow } from '@/types';
+import { validateEdgeIntegrity } from '@/lib/validation/edgeValidator';
 
 const ArrowBackIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
 const ArrowForwardIcon = () => <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
@@ -130,6 +131,18 @@ export default function EditorNav({
             if (!hasIncomingEdge) startingNode++;
         }
 
+        // ==========================================
+        // 1. EDGE INTEGRITY CHECK (Ghost Nodes)
+        // ==========================================
+        const edgeIntegrityErrors = validateEdgeIntegrity(flow.flowJson.nodes, flow.flowJson.edges);
+        if (edgeIntegrityErrors.length > 0) {
+            notify('Flow not published', 'Corrupted Edge Detected: ' + edgeIntegrityErrors[0], 'error');
+            return false;
+        }
+
+        // ==========================================
+        // 2. CONDITIONAL EDGE CHECK
+        // ==========================================
         // Validate conditional edges universally across all nodes
         const conditionalErrors = validateConditionalEdges(flow.flowJson.nodes, flow.flowJson.edges);
         if (conditionalErrors.length > 0) {
@@ -137,6 +150,9 @@ export default function EditorNav({
             return false;
         }
 
+        // ==========================================
+        // 3. FINAL EVALUATIONS
+        // ==========================================
         if (missingData !== '') {
             notify('Flow not published', 'Missing data for: ' + missingData, 'warning');
             return false;
