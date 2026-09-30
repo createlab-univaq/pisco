@@ -129,17 +129,31 @@ func _prepare_experiment() -> void:
 	if not redeemed_flow:
 		return
 	
-	var redeemed_flow_nodes: Array = redeemed_flow[NODES_KEY]
-	current_node_id = redeemed_flow_nodes.front()[ID_KEY]
+	var target_ids: Dictionary = {}
 	
-	for node: Dictionary in redeemed_flow_nodes:
-		nodes[node[ID_KEY]] = node
-	
+	# Map all edges and track every node that is a target (has incoming arrows)
 	for edge: Dictionary in redeemed_flow[EDGES_KEY]:
 		var source_id: String = edge[REACT_FLOW_KEY][SOURCE_KEY]
+		var target_id: String = edge[REACT_FLOW_KEY][TARGET_KEY]
+		
+		# Save the target_id in a dictionary for fast O(1) lookups
+		target_ids[target_id] = true
+		
 		if not edges.has(source_id):
 			edges[source_id] = []
 		edges[source_id].append(edge)
+	
+	# Map all nodes and find the one with 0 incoming arrows
+	var redeemed_flow_nodes: Array = redeemed_flow[NODES_KEY]
+	
+	for node: Dictionary in redeemed_flow_nodes:
+		var node_id: String = node[ID_KEY]
+		nodes[node_id] = node
+	
+		# If this node's ID was never recorded as a target, it's the starting node
+		if not target_ids.has(node_id):
+			current_node_id = node_id
+	
 
 func _start_node() -> void:
 	var current_node: Dictionary = nodes[current_node_id]
