@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://vx76gc5fc0ou" path="res://menu/companion_screen.tscn" id="12_oushh"]
 [ext_resource type="PackedScene" uid="uid://dbl2duqqrtu17" path="res://menu/input_code_screen.tscn" id="14_p0lhp"]
 [ext_resource type="Script" uid="uid://tfssd61d7lxs" path="res://levels/bedroom/bedroom_transitions.gd" id="17_0wck0"]
+[ext_resource type="PackedScene" uid="uid://ckdgmeus76veq" path="res://menu/credits_screen.tscn" id="17_cgvjo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0etjl"]
 texture = ExtResource("2_614nl")
@@ -157,6 +158,9 @@ size = Vector2(16, 16)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hobr5"]
 size = Vector2(16, 16)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cgvjo"]
+size = Vector2(24, 46)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cqvla"]
 size = Vector2(22, 32)
 
@@ -229,6 +233,9 @@ boba_the_cat = NodePath("../../BobaTheCat")
 [node name="InputCodeScreen" parent="UI" unique_id=2105049056 instance=ExtResource("14_p0lhp")]
 visible = false
 
+[node name="CreditsScreen" parent="UI" unique_id=141103961 instance=ExtResource("17_cgvjo")]
+visible = false
+
 [node name="Actionables" type="Node" parent="." unique_id=1198991442]
 script = ExtResource("10_xhnyy")
 
@@ -256,6 +263,14 @@ exclamation_mark_facing_direction = 5
 [node name="CollisionShape2D" parent="Actionables/PCActionable/Area2D" parent_id_path=PackedInt32Array(2003744028, 1462430373) index="0" unique_id=279065323]
 shape = SubResource("RectangleShape2D_hobr5")
 
+[node name="BedActionable" parent="Actionables" unique_id=1810463689 node_paths=PackedStringArray("player") instance=ExtResource("8_0etjl")]
+position = Vector2(248, 264)
+player = NodePath("../../Player")
+exclamation_mark_facing_direction = 5
+
+[node name="CollisionShape2D" parent="Actionables/BedActionable/Area2D" parent_id_path=PackedInt32Array(1810463689, 1462430373) index="0" unique_id=279065323]
+shape = SubResource("RectangleShape2D_cgvjo")
+
 [node name="Transitions" type="Node" parent="." unique_id=752459822]
 script = ExtResource("17_0wck0")
 
@@ -280,15 +295,18 @@ shape = SubResource("RectangleShape2D_cqvla")
 [connection signal="pet_bought" from="UI/PetShopScreen" to="." method="_on_pet_shop_screen_pet_bought"]
 [connection signal="follow_player_changed" from="UI/CompanionScreen" to="." method="_on_companion_screen_follow_player_changed"]
 [connection signal="flow_successfully_redeemed" from="UI/InputCodeScreen" to="UI" method="_on_input_code_screen_flow_successfully_redeemed"]
+[connection signal="credits_open_requested" from="Actionables" to="UI" method="_on_actionables_credits_open_requested"]
 [connection signal="pethouse_open_requested" from="Actionables" to="UI" method="_on_actionables_pethouse_open_requested"]
 [connection signal="store_open_requested" from="Actionables" to="UI" method="_on_actionables_store_open_requested"]
 [connection signal="wardrobe_open_requested" from="Actionables" to="UI" method="_on_actionables_wardrobe_open_requested"]
 [connection signal="actioned" from="Actionables/WardrobeActionable" to="Actionables" method="_on_wardrobe_actionable_actioned"]
 [connection signal="actioned" from="Actionables/PethouseActionable" to="Actionables" method="_on_pethouse_actionable_actioned"]
 [connection signal="actioned" from="Actionables/PCActionable" to="Actionables" method="_on_pc_actionable_actioned"]
+[connection signal="actioned" from="Actionables/BedActionable" to="Actionables" method="_on_bed_actionable_actioned"]
 
 [editable path="Collisions/TriggerableArea"]
 [editable path="Actionables/WardrobeActionable"]
 [editable path="Actionables/PethouseActionable"]
 [editable path="Actionables/PCActionable"]
+[editable path="Actionables/BedActionable"]
 [editable path="Transitions/LDKSceneChangerTile"]

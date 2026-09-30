@@ -6,12 +6,14 @@ signal flow_successfully_redeemed
 @onready var pet_shop_screen: PetShopScreen = $PetShopScreen
 @onready var companion_screen: CompanionScreen = $CompanionScreen
 @onready var input_code_screen: InputCodeScreen = $InputCodeScreen
+@onready var credits_screen: CreditsScreen = $CreditsScreen
 
 func _ready() -> void:
 	custom_player_screen.hide()
 	pet_shop_screen.hide()
 	companion_screen.hide()
 	input_code_screen.hide()
+	credits_screen.hide()
 
 func _on_actionables_wardrobe_open_requested() -> void:
 	custom_player_screen.show()
@@ -28,3 +30,6 @@ func _on_collisions_input_code_screen_open_requested() -> void:
 func _on_input_code_screen_flow_successfully_redeemed() -> void:
 	input_code_screen.hide()
 	flow_successfully_redeemed.emit()
+
+func _on_actionables_credits_open_requested() -> void:
+	credits_screen.start_credits()

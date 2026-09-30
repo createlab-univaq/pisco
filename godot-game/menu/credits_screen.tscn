@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://ckdgmeus76veq"]
+
+[ext_resource type="Script" uid="uid://dvlr28m6oybrf" path="res://menu/credits_screen.gd" id="1_oeuee"]
+
+[node name="CreditsScreen" type="Control" unique_id=141103961]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oeuee")
+metadata/_edit_use_anchors_ = true
+
+[node name="BackgroundColorRect" type="ColorRect" parent="." unique_id=1511579486]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="CreditsRichTextLabel" type="RichTextLabel" parent="." unique_id=637207177]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+bbcode_enabled = true
+text = "[center]
+[font_size=40][b]PISCO[/b][/font_size]
+
+[b]Lead Developer[/b]
+Calogero Carlino
+
+[b]Developers[/b]
+Calogero Carlino
+Franco Desideri
+Jacopo Lorenzini
+
+[b]Backend Developers[/b]
+Luca Francesco Macera
+
+[b]Art & Animation[/b]
+Calogero Carlino
+Diaeddine Jarmouni
+
+[b]Specialist Consultant[/b]
+Diaeddine Jarmouni
+
+[b]Project Coordinators[/b]
+Calogero Carlino
+Antonio Bucchiarone
+Margherita Attanasio
+Monica Mazza
+
+[b]Special Thanks[/b]
+Marco Mariani
+Luca Francesco Macera
+[/center]"
+fit_content = true
+scroll_active = false
