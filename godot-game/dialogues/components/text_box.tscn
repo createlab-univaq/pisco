@@ -2,12 +2,21 @@
 
 [ext_resource type="FontFile" uid="uid://3omt7ys46b5a" path="res://fonts/Born2bSportyV2.ttf" id="1_5c4dx"]
 [ext_resource type="Script" uid="uid://ctygfbccuwpcx" path="res://dialogues/components/text_box.gd" id="1_evow0"]
+[ext_resource type="Texture2D" uid="uid://1ngmru2fqr0w" path="res://sprites/ui/textbox_frame.png" id="2_qmdm6"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s1ypb"]
-bg_color = Color(0.60032797, 0.5355304, 0.21848252, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4ang7"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("2_qmdm6")
+texture_margin_left = 12.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 12.0
 
 [sub_resource type="Theme" id="Theme_as824"]
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_s1ypb")
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_4ang7")
 
 [sub_resource type="FontVariation" id="FontVariation_47n42"]
 resource_local_to_scene = true
@@ -56,15 +65,20 @@ theme_override_constants/separation = 0
 custom_minimum_size = Vector2(23, 0)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.23137255, 0.14117648, 0.078431375, 1)
 theme_override_fonts/font = SubResource("FontVariation_47n42")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 18
 text = "*"
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="DialogueTextRichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer" unique_id=1626747672]
 custom_minimum_size = Vector2(242, 43)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_colors/default_color = Color(0.23137255, 0.14117648, 0.078431375, 1)
+theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 autowrap_mode = 2
 
@@ -72,6 +86,9 @@ autowrap_mode = 2
 custom_minimum_size = Vector2(23, 0)
 layout_mode = 2
 size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.23137255, 0.14117648, 0.078431375, 1)
+theme_override_constants/line_spacing = 3
 theme_override_fonts/font = SubResource("FontVariation_47n42")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 18
 text = "v"
+horizontal_alignment = 1
