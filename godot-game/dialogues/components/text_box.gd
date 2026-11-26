@@ -27,7 +27,7 @@ extends DialogueComponentBaseNode
 const STATE_READING: StringName = &"READING"
 const STATE_FINISHED: StringName = &"FINISHED"
 
-const MINIMUM_MARGIN: int = 6
+const MINIMUM_MARGIN: int = 10
 const MINIMUM_TOTAL_HEIGHT: float = 45.0
 const DEFAULT_MARGIN: int = 5
 const DEFAULT_TOTAL_HEIGHT: float = 55.0
@@ -48,6 +48,7 @@ func _ready() -> void:
 		start_symbol_label.text = start_symbol # Previews the start symbol in editor!
 	else:
 		super._ready()
+		_on_set_dimension()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint():
@@ -87,6 +88,7 @@ func _display_text() -> void:
 	_setup_textbox()
 	dialogue_text_rich_text_label.text = current_line
 	dialogue_text_rich_text_label.visible_ratio = 0.0
+	dialogue_text_rich_text_label.get_v_scroll_bar().value = 0
 	_change_state(STATE_READING)
 	
 	tween = create_tween()
